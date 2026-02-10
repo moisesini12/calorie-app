@@ -23,9 +23,17 @@ SCOPES = [
 # ---------- Helpers ----------
 @st.cache_resource
 def _client() -> gspread.Client:
-    sa_info = st.secrets["gcp_service_account"]
+    sa_info = dict(st.secrets["gcp_service_account"])
+
+    # DEBUG rápido (quita luego)
+    st.write("Service account:", sa_info.get("client_email"))
+    pk = sa_info.get("private_key", "")
+    st.write("private_key first line:", pk.splitlines()[0] if pk else "MISSING")
+    st.write("private_key last line:", pk.splitlines()[-1] if pk else "MISSING")
+
     creds = Credentials.from_service_account_info(sa_info, scopes=SCOPES)
     return gspread.authorize(creds)
+
 
 
 def _sh():
@@ -355,6 +363,7 @@ def set_setting(key: str, value: str) -> None:
             ws.update(f"A{i}:B{i}", [[key, value]], value_input_option="USER_ENTERED")
             return
     ws.append_row([key, value], value_input_option="USER_ENTERED")
+
 
 
 
