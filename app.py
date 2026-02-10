@@ -94,14 +94,14 @@ from db_gsheets import (
     update_entry, delete_entry_by_id
 )
 from core import scale_macros, calculate_goals
-from your_foods import FOODS  # tu lista gigante original para cargar la BD la primera vez
+from your_foods import foods  # tu lista gigante original para cargar la BD la primera vez
 from db import update_entry, delete_entry_by_id
 
 
 st.set_page_config(page_title="Calculadora de calorías y macros", layout="wide")
 
 init_db()
-seed_foods_if_empty(FOODS)
+seed_foods_if_empty(foods)
 
 st.title("Calculadora de calorías y macros")
 
@@ -665,6 +665,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
