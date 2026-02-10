@@ -85,12 +85,13 @@ p, label {
 import pandas as pd
 from datetime import date
 
-from db import (
+from db_gsheets import (
     init_db, seed_foods_if_empty,
     list_categories, list_foods_by_category, add_food,
     add_entry, list_entries_by_date, daily_totals_last_days,
     set_setting, get_setting,
-    list_all_foods, update_food, delete_food_by_id
+    list_all_foods, update_food, delete_food_by_id,
+    update_entry, delete_entry_by_id
 )
 from core import scale_macros, calculate_goals
 from your_foods import FOODS  # tu lista gigante original para cargar la BD la primera vez
@@ -664,6 +665,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
