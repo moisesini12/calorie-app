@@ -563,6 +563,19 @@ elif page == "🧠 Coach IA":
     from db import list_categories, list_foods_by_category, get_setting
     from core import scale_macros
 
+    def send_coach():
+        prompt = st.session_state.get("coach_prompt", "").strip()
+        if not prompt:
+            return
+
+        st.session_state.chat_history.append({"role": "user", "content": prompt})
+        answer = chat_answer(st.session_state.chat_history)
+        st.session_state.chat_history.append({"role": "assistant", "content": answer})
+
+        # limpiar input (esto es válido porque ocurre dentro del callback)
+        st.session_state.coach_prompt = ""
+
+    
     if "chat_history" not in st.session_state:
         st.session_state.chat_history = [
             {"role": "system", "content": "Eres un asistente de nutrición. Sé claro, práctico y breve."}
@@ -580,16 +593,17 @@ elif page == "🧠 Coach IA":
 
     colA, colB = st.columns([6, 1])
     with colA:
-        prompt = st.text_input("Escribe tu pregunta de nutrición…", key="coach_prompt")
-    with colB:
-        send = st.button("Enviar", type="primary")
+        st.text_input(
+            "Escribe tu pregunta de nutrición…",
+            key="coach_prompt",
+            on_change=send_coach
+    )
 
-    if send and prompt.strip():
-        st.session_state.chat_history.append({"role": "user", "content": prompt})
-        answer = chat_answer(st.session_state.chat_history)
-        st.session_state.chat_history.append({"role": "assistant", "content": answer})
-        st.session_state["coach_prompt"] = ""
-        st.rerun()
+    with colB:
+        st.button("Enviar", type="primary", on_click=send_coach)
+
+
+
 
 
     # ✅ TODO lo de menú VA DENTRO de Coach IA
@@ -650,6 +664,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
