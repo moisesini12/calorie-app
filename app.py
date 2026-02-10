@@ -385,6 +385,12 @@ elif page == "🍽 Registro":
 # =========================
 # TAB 2: OBJETIVOS
 # =========================
+elif page == "🎯 Objetivos":
+
+
+# =========================
+# TAB 2: OBJETIVOS
+# =========================
 elif page == "➕ Añadir alimento":
     # --- TODO: aquí va gestión de alimentos ---
     st.subheader("Gestión de alimentos")
@@ -585,6 +591,7 @@ if st.button("✨ Generar menú", type="primary"):
         f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
     )
     st.subheader("🧠 Coach IA")
+
 
 
 
