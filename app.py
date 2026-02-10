@@ -58,7 +58,37 @@ seed_foods_if_empty(FOODS)
 
 st.title("Calculadora de calorías y macros")
 
-tab1, tab2, tab3, tab4 = st.tabs(["🍽️ Registro", "🧮 Objetivos", "➕ Añadir alimento", "🤖 Coach IA"])
+tab1, tab2, tab3, tab4 = st.tabs([
+	"🍽️ Registro",
+	"🧮 Objetivos",
+	"➕ Añadir alimento",
+	"🤖 Coach IA"
+])
+# ======================
+# TAB 0: DASHBOARD
+# ======================
+with tab0:
+    st.subheader("Resumen del día")
+
+    # usa el mismo selected_date_str si lo tienes global
+    # si no, usa date.today().isoformat()
+    day = date.today().isoformat()
+
+    rows = list_entries_by_date(day)
+    total_kcal = sum(r["calories"] for r in rows) if rows else 0
+    total_protein = sum(r["protein"] for r in rows) if rows else 0
+    total_carbs = sum(r["carbs"] for r in rows) if rows else 0
+    total_fat = sum(r["fat"] for r in rows) if rows else 0
+
+    col1, col2, col3, col4 = st.columns(4)
+    with col1:
+        st.metric("🔥 Calorías", f"{total_kcal:.0f} kcal")
+    with col2:
+        st.metric("🥩 Proteína", f"{total_protein:.1f} g")
+    with col3:
+        st.metric("🍚 Carbs", f"{total_carbs:.1f} g")
+    with col4:
+        st.metric("🥑 Grasas", f"{total_fat:.1f} g")
 
 # =========================
 # TAB 1: REGISTRO
@@ -510,6 +540,7 @@ if st.button("✨ Generar menú", type="primary"):
     st.success(
         f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
     )
+
 
 
 
