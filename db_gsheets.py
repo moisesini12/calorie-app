@@ -36,12 +36,14 @@ def _client() -> gspread.Client:
 
 
 
+@st.cache_resource
 def _sh():
     return _client().open_by_key(SHEET_ID)
 
-
+@st.cache_resource
 def _ws(tab_name: str):
     return _sh().worksheet(tab_name)
+
 
 
 def _to_float(x: Any, default: float = 0.0) -> float:
@@ -62,9 +64,11 @@ def _to_int(x: Any, default: int = 0) -> int:
         return default
 
 
-def _get_all_records(tab_name: str) -> List[Dict[str, Any]]:
+@st.cache_data(ttl=15)
+def _get_all_records(tab_name: str):
     ws = _ws(tab_name)
-    return ws.get_all_records()  # usa la fila 1 como headers
+    return ws.get_all_records()
+
 
 
 def _next_id(tab_name: str) -> int:
@@ -363,6 +367,7 @@ def set_setting(key: str, value: str) -> None:
             ws.update(f"A{i}:B{i}", [[key, value]], value_input_option="USER_ENTERED")
             return
     ws.append_row([key, value], value_input_option="USER_ENTERED")
+
 
 
 
