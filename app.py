@@ -63,7 +63,7 @@ selected_date_str = selected_date.isoformat()
 
 
 tab0, tab1, tab2, tab3, tab4 = st.tabs([
-	"📊 Dashboard"
+	"📊 Dashboard",
 	"🍽️ Registro",
 	"🧮 Objetivos",
 	"➕ Añadir alimento",
@@ -543,6 +543,7 @@ if st.button("✨ Generar menú", type="primary"):
     st.success(
         f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
     )
+
 
 
 
