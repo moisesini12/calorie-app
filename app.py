@@ -117,7 +117,8 @@ page = st.sidebar.radio(
 # TAB 0: DASHBOARD
 # ======================
 if page == "📊 Dashboard":
-    st.title("📊 Dashboard")
+    # --- TODO: aquí va tu código del dashboard ---
+     st.title("📊 Dashboard")
     st.caption(f"Día: {selected_date_str}")
     st.divider()
 
@@ -167,6 +168,7 @@ if page == "📊 Dashboard":
     st.markdown(f"**🥑 Grasas:** {total_fat:.1f} / {target_f:.1f} g")
     st.progress(ratio(total_fat, target_f))
     st.caption(f"{ratio(total_fat, target_f)*100:.1f}% del objetivo")
+    st.subheader("📊 Dashboard")
 
 
 # =========================
@@ -616,6 +618,7 @@ if st.button("✨ Generar menú", type="primary"):
     st.success(
         f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
     )
+
 
 
 
