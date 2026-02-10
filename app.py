@@ -175,7 +175,7 @@ st.caption(f"{ratio(total_fat, target_f)*100:.1f}% del objetivo")
 # =========================
 # TAB 1: REGISTRO
 # =========================
-elif page == "🍽️ Registro":
+elif page == "🍽 Registro":
 
     categories = list_categories()
     if not categories:
@@ -621,6 +621,7 @@ if st.button("✨ Generar menú", type="primary"):
     st.success(
         f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
     )
+
 
 
 
