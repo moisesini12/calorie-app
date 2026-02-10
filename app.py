@@ -558,11 +558,9 @@ elif page == "➕ Añadir alimento":
 # TAB 3: COACH AI
 # =========================
 elif page == "🧠 Coach IA":
-    
     import json
-    import streamlit as st
     from ai_groq import chat_answer, generate_menu_json
-    from db import list_categories, list_foods_by_category, get_setting, list_entries_by_date
+    from db import list_categories, list_foods_by_category, get_setting
     from core import scale_macros
 
     if "chat_history" not in st.session_state:
@@ -579,74 +577,70 @@ elif page == "🧠 Coach IA":
             st.write(m["content"])
 
     prompt = st.chat_input("Pregúntame sobre nutrición…")
-
     if prompt:
         st.session_state.chat_history.append({"role": "user", "content": prompt})
         answer = chat_answer(st.session_state.chat_history)
         st.session_state.chat_history.append({"role": "assistant", "content": answer})
         st.rerun()
 
+    # ✅ TODO lo de menú VA DENTRO de Coach IA
+    st.divider()
+    st.subheader("🍽️ Generador de menú (según tus alimentos)")
 
-st.divider()
-st.subheader("🍽️ Generador de menú (según tus alimentos)")
+    cats = list_categories()
+    food_map = {}
+    for c in cats:
+        for f in list_foods_by_category(c):
+            food_map[f["name"]] = f
+    allowed = list(food_map.keys())
 
-# Construir lista de alimentos permitidos desde tu BD
-cats = list_categories()
-food_map = {}
-for c in cats:
-    for f in list_foods_by_category(c):
-        food_map[f["name"]] = f
-allowed = list(food_map.keys())
+    target_def = float(get_setting("target_deficit_calories", 2000))
+    target_p = float(get_setting("target_protein", 120))
+    target_c = float(get_setting("target_carbs", 250))
+    target_f = float(get_setting("target_fat", 60))
 
-target_def = float(get_setting("target_deficit_calories", 2000))
-target_p = float(get_setting("target_protein", 120))
-target_c = float(get_setting("target_carbs", 250))
-target_f = float(get_setting("target_fat", 60))
+    kcal_obj = st.number_input("Objetivo kcal (día)", min_value=800.0, max_value=6000.0, value=target_def, step=50.0, key="menu_kcal")
+    prot_obj = st.number_input("Proteína objetivo (g)", min_value=0.0, max_value=400.0, value=target_p, step=5.0, key="menu_p")
+    carb_obj = st.number_input("Carbs objetivo (g)", min_value=0.0, max_value=800.0, value=target_c, step=10.0, key="menu_c")
+    fat_obj  = st.number_input("Grasas objetivo (g)", min_value=0.0, max_value=300.0, value=target_f, step=5.0, key="menu_f")
 
-kcal_obj = st.number_input("Objetivo kcal (día)", min_value=800.0, max_value=6000.0, value=target_def, step=50.0, key="menu_kcal")
-prot_obj = st.number_input("Proteína objetivo (g)", min_value=0.0, max_value=400.0, value=target_p, step=5.0, key="menu_p")
-carb_obj = st.number_input("Carbs objetivo (g)", min_value=0.0, max_value=800.0, value=target_c, step=10.0, key="menu_c")
-fat_obj  = st.number_input("Grasas objetivo (g)", min_value=0.0, max_value=300.0, value=target_f, step=5.0, key="menu_f")
+    pref = st.selectbox("Preferencia", ["Equilibrado", "Alta proteína", "Baja grasa", "Bajo carb"], key="menu_pref")
 
-pref = st.selectbox("Preferencia", ["Equilibrado", "Alta proteína", "Baja grasa", "Bajo carb"], key="menu_pref")
+    if st.button("✨ Generar menú", type="primary"):
+        context = (
+            f"Objetivo diario: {kcal_obj} kcal; Proteína {prot_obj}g; Carbs {carb_obj}g; Grasas {fat_obj}g. "
+            f"Preferencia: {pref}. "
+            "Crea un menú de 4 comidas (Desayuno, Almuerzo, Merienda, Cena)."
+        )
+        raw = generate_menu_json(context, allowed_food_names=allowed)
 
-if st.button("✨ Generar menú", type="primary"):
-    context = (
-        f"Objetivo diario: {kcal_obj} kcal; Proteína {prot_obj}g; Carbs {carb_obj}g; Grasas {fat_obj}g. "
-        f"Preferencia: {pref}. "
-        "Crea un menú de 4 comidas (Desayuno, Almuerzo, Merienda, Cena)."
-    )
-    raw = generate_menu_json(context, allowed_food_names=allowed)
-    try:
-        menu = json.loads(raw)
-    except json.JSONDecodeError:
-        st.error("La IA devolvió un formato raro. Vuelve a generar.")
-        st.code(raw)
-        st.stop()
+        try:
+            menu = json.loads(raw)
+        except json.JSONDecodeError:
+            st.error("La IA devolvió un formato raro. Vuelve a generar.")
+            st.code(raw)
+            st.stop()
 
-    # Calcular macros reales con TU base
-    totals = {"calories":0.0,"protein":0.0,"carbs":0.0,"fat":0.0}
-    st.session_state["last_menu"] = menu
+        totals = {"calories": 0.0, "protein": 0.0, "carbs": 0.0, "fat": 0.0}
+        st.session_state["last_menu"] = menu
 
-    for meal in menu.get("meals", []):
-        st.markdown(f"### {meal.get('meal','Comida')}")
-        for item in meal.get("items", []):
-            name = item.get("name")
-            grams = float(item.get("grams", 0))
-            if name not in food_map or grams <= 0:
-                continue
-            macros = scale_macros(food_map[name], grams)
-            totals["calories"] += macros["calories"]
-            totals["protein"] += macros["protein"]
-            totals["carbs"] += macros["carbs"]
-            totals["fat"] += macros["fat"]
-            st.write(f"- **{name}** — {grams:.0f} g · {macros['calories']:.0f} kcal")
+        for meal in menu.get("meals", []):
+            st.markdown(f"### {meal.get('meal','Comida')}")
+            for item in meal.get("items", []):
+                name = item.get("name")
+                grams = float(item.get("grams", 0))
+                if name not in food_map or grams <= 0:
+                    continue
+                macros = scale_macros(food_map[name], grams)
+                totals["calories"] += macros["calories"]
+                totals["protein"] += macros["protein"]
+                totals["carbs"] += macros["carbs"]
+                totals["fat"] += macros["fat"]
+                st.write(f"- **{name}** — {grams:.0f} g · {macros['calories']:.0f} kcal")
 
-    st.success(
-        f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
-    )
-    st.subheader("🧠 Coach IA")
-
+        st.success(
+            f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
+        )
 
 
 
