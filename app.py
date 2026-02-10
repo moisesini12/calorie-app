@@ -388,7 +388,7 @@ with tab3:
 # =========================
 # TAB 3: COACH AI
 # =========================
-with tab5:
+with tab4:
     import json
     import streamlit as st
     from ai_groq import chat_answer, generate_menu_json
@@ -475,6 +475,7 @@ if st.button("✨ Generar menú", type="primary"):
     st.success(
         f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
     )
+
 
 
 
