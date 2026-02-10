@@ -190,7 +190,7 @@ elif page == "🍽 Registro":
     with col1:
         grams = st.number_input("Gramos consumidos", min_value=1.0, step=1.0, value=100.0)
     with col2:
-	    meal = st.selectbox("Comida", ["Desayuno", "Almuerzo", "Merienda", "Cena"], key="meal_add")
+        meal = st.selectbox("Comida", ["Desayuno", "Almuerzo", "Merienda", "Cena"], key="meal_add")
     with col3:
         st.write("")
         st.write("")
@@ -220,20 +220,20 @@ elif page == "🍽 Registro":
     targets_ok = all([target_def, target_p, target_c, target_f])
 
 if not df.empty:
-	st.subheader("Totales")
-	c1, c2, c3, c4 = st.columns(4)
-    	with c1:
-        	st.metric("🔥 Calorías", f"{df['calories'].sum():.0f} kcal")
-    	with c2:
-        	st.metric("🥩 Proteína", f"{df['protein'].sum():.1f} g")
-    	with c3:
-        	st.metric("🍚 Carbohidratos", f"{df['carbs'].sum():.1f} g")
-    	with c4:
-        	st.metric("🥑 Grasas", f"{df['fat'].sum():.1f} g")
+    st.subheader("Totales")
+    c1, c2, c3, c4 = st.columns(4)
+    with c1:
+            st.metric("🔥 Calorías", f"{df['calories'].sum():.0f} kcal")
+    with c2:
+            st.metric("🥩 Proteína", f"{df['protein'].sum():.1f} g")
+    with c3:
+            st.metric("🍚 Carbohidratos", f"{df['carbs'].sum():.1f} g")
+    with c4:
+            st.metric("🥑 Grasas", f"{df['fat'].sum():.1f} g")
 
 # --- Objetivos vs Consumo ---
-	if not df.empty:
-		st.subheader("🎯 Objetivos vs Consumo")
+    if not df.empty:
+        st.subheader("🎯 Objetivos vs Consumo")
 
     if not targets_ok:
         st.info("Calcula y guarda objetivos en la pestaña 🧮 Objetivos para ver esta comparación.")
@@ -529,7 +529,7 @@ elif page == "➕ Añadir alimento":
 # TAB 3: COACH AI
 # =========================
 elif page == "🧠 Coach IA":
-	
+    
     import json
     import streamlit as st
     from ai_groq import chat_answer, generate_menu_json
@@ -616,6 +616,7 @@ if st.button("✨ Generar menú", type="primary"):
     st.success(
         f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
     )
+
 
 
 
