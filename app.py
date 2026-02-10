@@ -105,17 +105,28 @@ target_f = float(get_setting("target_fat", 60))
 def ratio(v, t):
     return 0.0 if t <= 0 else min(v / t, 1.0)
 
-st.write(f"Calorías: {total_kcal:.0f} / {target_kcal:.0f}")
+# Calorías
+st.markdown(f"**🔥 Calorías:** {total_kcal:.0f} / {target_kcal:.0f}")
 st.progress(ratio(total_kcal, target_kcal))
+st.caption(f"{ratio(total_kcal, target_kcal)*100:.1f}% del objetivo")
+st.write("")
 
-st.write(f"Proteína: {total_protein:.1f} / {target_p:.1f} g")
+# Proteína
+st.markdown(f"**🥩 Proteína:** {total_protein:.1f} / {target_p:.1f} g")
 st.progress(ratio(total_protein, target_p))
+st.caption(f"{ratio(total_protein, target_p)*100:.1f}% del objetivo")
+st.write("")
 
-st.write(f"Carbs: {total_carbs:.1f} / {target_c:.1f} g")
+# Carbs
+st.markdown(f"**🍚 Carbs:** {total_carbs:.1f} / {target_c:.1f} g")
 st.progress(ratio(total_carbs, target_c))
+st.caption(f"{ratio(total_carbs, target_c)*100:.1f}% del objetivo")
+st.write("")
 
-st.write(f"Grasas: {total_fat:.1f} / {target_f:.1f} g")
+# Grasas
+st.markdown(f"**🥑 Grasas:** {total_fat:.1f} / {target_f:.1f} g")
 st.progress(ratio(total_fat, target_f))
+st.caption(f"{ratio(total_fat, target_f)*100:.1f}% del objetivo")
 
 
 # =========================
@@ -566,6 +577,7 @@ if st.button("✨ Generar menú", type="primary"):
     st.success(
         f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
     )
+
 
 
 
