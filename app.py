@@ -58,6 +58,10 @@ seed_foods_if_empty(FOODS)
 
 st.title("Calculadora de calorías y macros")
 
+selected_date = st.sidebar.date_input("📅 Día", value=date.today())
+selected_date_str = selected_date.isoformat()
+
+
 tab1, tab2, tab3, tab4 = st.tabs([
 	"🍽️ Registro",
 	"🧮 Objetivos",
@@ -94,8 +98,6 @@ with tab0:
 # TAB 1: REGISTRO
 # =========================
 with tab1:
-    selected_date = st.sidebar.date_input("📅 Día", value=date.today())
-	selected_date_str = selected_date.isoformat()
 
     categories = list_categories()
     if not categories:
