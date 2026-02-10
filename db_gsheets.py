@@ -19,6 +19,12 @@ SCOPES = [
     "https://www.googleapis.com/auth/drive",
 ]
 
+DEBUG = bool(st.secrets.get("DEBUG", False))
+
+def _dbg(*args, **kwargs):
+    if DEBUG:
+        st.caption(" ".join(str(a) for a in args))
+
 
 # ---------- Helpers ----------
 @st.cache_resource
@@ -26,10 +32,10 @@ def _client() -> gspread.Client:
     sa_info = dict(st.secrets["gcp_service_account"])
 
     # DEBUG rápido (quita luego)
-    st.write("Service account:", sa_info.get("client_email"))
+    _dbg("Service account:", sa_info.get("client_email"))
     pk = sa_info.get("private_key", "")
-    st.write("private_key first line:", pk.splitlines()[0] if pk else "MISSING")
-    st.write("private_key last line:", pk.splitlines()[-1] if pk else "MISSING")
+    _dbg("private_key first line:", pk.splitlines()[0] if pk else "MISSING")
+    _dbg("private_key last line:", pk.splitlines()[-1] if pk else "MISSING")
 
     creds = Credentials.from_service_account_info(sa_info, scopes=SCOPES)
     return gspread.authorize(creds)
@@ -104,23 +110,20 @@ def init_db() -> None:
 
         # 1) Listar pestañas que ve realmente
         tabs = [ws.title for ws in sh.worksheets()]
-        st.info(f"✅ Tabs detectadas en el Sheet: {tabs}")
+        _dbg("✅ Tabs detectadas en el Sheet:", tabs)
 
         # 2) Comprobar que existen las 3 exactas
         for name in [TAB_FOODS, TAB_ENTRIES, TAB_SETTINGS]:
             sh.worksheet(name)
 
     except Exception as e:
-        st.error(
-            "❌ No puedo abrir el Google Sheet o no encuentro las pestañas.\n\n"
-            f"- SHEET_ID: {SHEET_ID}\n"
-            f"- Esperadas: {TAB_FOODS}, {TAB_ENTRIES}, {TAB_SETTINGS}\n"
-            f"- Error real: {type(e).__name__}: {e}\n\n"
-            "✅ Revisa:\n"
-            "1) Que compartiste el Sheet con el service account como Editor.\n"
-            "2) Que los nombres de pestaña sean EXACTOS: foods, entries, settings (minúsculas, sin espacios).\n"
-        )
-        st.stop()
+        raise RuntimeError(
+            "No puedo abrir el Google Sheet o no encuentro las pestañas.\n"
+            f"SHEET_ID: {SHEET_ID}\n"
+            f"Esperadas: {TAB_FOODS}, {TAB_ENTRIES}, {TAB_SETTINGS}\n"
+            f"Error real: {type(e).__name__}: {e}"
+        ) from e
+
 
 
 
@@ -367,6 +370,7 @@ def set_setting(key: str, value: str) -> None:
             ws.update(f"A{i}:B{i}", [[key, value]], value_input_option="USER_ENTERED")
             return
     ws.append_row([key, value], value_input_option="USER_ENTERED")
+
 
 
 
