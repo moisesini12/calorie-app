@@ -213,12 +213,12 @@ elif page == "🍽 Registro":
     df = pd.DataFrame(rows, columns=["id","meal","name","grams","calories","protein","carbs","fat"])
     st.dataframe(df.drop(columns=["id"]), use_container_width=True)
 
-target_def = get_setting("target_deficit_calories")
-target_p = get_setting("target_protein")
-target_c = get_setting("target_carbs")
-target_f = get_setting("target_fat")
+	target_def = get_setting("target_deficit_calories")
+	target_p = get_setting("target_protein")
+	target_c = get_setting("target_carbs")
+	target_f = get_setting("target_fat")
 
-targets_ok = all([target_def, target_p, target_c, target_f])
+	targets_ok = all([target_def, target_p, target_c, target_f])
 
 
 if not df.empty:
@@ -618,5 +618,6 @@ if st.button("✨ Generar menú", type="primary"):
     st.success(
         f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
     )
+
 
 
