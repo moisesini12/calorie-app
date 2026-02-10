@@ -8,21 +8,6 @@ import streamlit as st
 import gspread
 from google.oauth2.service_account import Credentials
 
-def get_client():
-    creds_info = dict(st.secrets["gcp_service_account"])
-
-    scopes = [
-        "https://www.googleapis.com/auth/spreadsheets",
-        "https://www.googleapis.com/auth/drive",
-    ]
-
-    creds = Credentials.from_service_account_info(creds_info, scopes=scopes)
-
-    return gspread.authorize(creds)
-
-
-SPREADSHEET_ID = st.secrets["SPREADSHEET_ID"]
-
 
 SHEET_ID = "15AVD-ANgYxe_7tMDbhdnp1NWLyqL5IQxAH6B4AiMcxk"
 TAB_FOODS = "foods"
@@ -355,4 +340,5 @@ def set_setting(key: str, value: str) -> None:
             ws.update(f"A{i}:B{i}", [[key, value]], value_input_option="USER_ENTERED")
             return
     ws.append_row([key, value], value_input_option="USER_ENTERED")
+
 
