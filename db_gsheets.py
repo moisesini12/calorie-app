@@ -87,15 +87,23 @@ def _find_row_index_by_id(tab_name: str, id_value: int) -> Optional[int]:
 
 # ---------- Public API (mismo "contrato" que tu db.py) ----------
 def init_db() -> None:
-    # En Sheets no “creamos” nada, solo verificamos tabs
     try:
-        _ws(TAB_FOODS)
-        _ws(TAB_ENTRIES)
-        _ws(TAB_SETTINGS)
+        sh = _sh()
+        tabs = [ws.title for ws in sh.worksheets()]
+        st.write("✅ Tabs detectadas en el Sheet:", tabs)
+
+        # comprobación dura
+        for name in [TAB_FOODS, TAB_ENTRIES, TAB_SETTINGS]:
+            sh.worksheet(name)
+
     except Exception as e:
         raise RuntimeError(
-            "No encuentro alguna pestaña. Asegúrate que existan: foods, entries, settings."
+            f"No encuentro alguna pestaña. "
+            f"Esperaba: {TAB_FOODS}, {TAB_ENTRIES}, {TAB_SETTINGS}. "
+            f"Si el Sheet abre, tabs detectadas arriba. "
+            f"Error real: {type(e).__name__}: {e}"
         ) from e
+
 
 
 def seed_foods_if_empty(foods: List[Dict[str, Any]]) -> None:
@@ -340,6 +348,7 @@ def set_setting(key: str, value: str) -> None:
             ws.update(f"A{i}:B{i}", [[key, value]], value_input_option="USER_ENTERED")
             return
     ws.append_row([key, value], value_input_option="USER_ENTERED")
+
 
 
 
