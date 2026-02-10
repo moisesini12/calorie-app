@@ -175,7 +175,7 @@ if page == "📊 Dashboard":
 # TAB 1: REGISTRO
 # =========================
 elif page == "🍽 Registro":
-
+    # --- TODO: aquí va TODO lo del registro (incluye df, totales, editar/borrar...) ---
     categories = list_categories()
     if not categories:
         st.error("No hay categorías. Revisa la tabla foods.")
@@ -357,6 +357,7 @@ if not df.empty:
             delete_entry_by_id(selected_id)
             st.success("Entrada borrada ✅")
             st.rerun()
+    st.subheader("🍽 Registro")
 
 
 # =========================
@@ -618,6 +619,7 @@ if st.button("✨ Generar menú", type="primary"):
     st.success(
         f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
     )
+
 
 
 
