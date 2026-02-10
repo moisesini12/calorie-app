@@ -565,7 +565,7 @@ elif page == "➕ Añadir alimento":
 elif page == "🧠 Coach IA":
     import json
     from ai_groq import chat_answer, generate_menu_json
-    from db import list_categories, list_foods_by_category, get_setting
+    from db_gsheets import list_categories, list_foods_by_category, get_setting, list_entries_by_date
     from core import scale_macros
 
     def send_coach():
@@ -669,6 +669,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
