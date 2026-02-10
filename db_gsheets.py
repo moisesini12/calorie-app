@@ -97,11 +97,8 @@ def init_db() -> None:
     try:
         sh = _sh()
 
-        # 1) Listar pestañas que ve realmente
         tabs = [ws.title for ws in sh.worksheets()]
-        _dbg("✅ Tabs detectadas en el Sheet:", tabs)
 
-        # 2) Comprobar que existen las 3 exactas
         for name in [TAB_FOODS, TAB_ENTRIES, TAB_SETTINGS]:
             sh.worksheet(name)
 
@@ -359,6 +356,7 @@ def set_setting(key: str, value: str) -> None:
             ws.update(f"A{i}:B{i}", [[key, value]], value_input_option="USER_ENTERED")
             return
     ws.append_row([key, value], value_input_option="USER_ENTERED")
+
 
 
 
