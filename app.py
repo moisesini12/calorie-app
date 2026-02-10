@@ -576,20 +576,20 @@ elif page == "🧠 Coach IA":
         with st.chat_message(m["role"]):
             st.write(m["content"])
 
-st.divider()
+    st.divider()
 
-colA, colB = st.columns([6, 1])
-with colA:
-    prompt = st.text_input("Escribe tu pregunta de nutrición…", key="coach_prompt")
-with colB:
-    send = st.button("Enviar", type="primary")
+    colA, colB = st.columns([6, 1])
+    with colA:
+        prompt = st.text_input("Escribe tu pregunta de nutrición…", key="coach_prompt")
+    with colB:
+        send = st.button("Enviar", type="primary")
 
-if send and prompt.strip():
-    st.session_state.chat_history.append({"role": "user", "content": prompt})
-    answer = chat_answer(st.session_state.chat_history)
-    st.session_state.chat_history.append({"role": "assistant", "content": answer})
-    st.session_state["coach_prompt"] = ""
-    st.rerun()
+    if send and prompt.strip():
+        st.session_state.chat_history.append({"role": "user", "content": prompt})
+        answer = chat_answer(st.session_state.chat_history)
+        st.session_state.chat_history.append({"role": "assistant", "content": answer})
+        st.session_state["coach_prompt"] = ""
+        st.rerun()
 
 
     # ✅ TODO lo de menú VA DENTRO de Coach IA
@@ -650,6 +650,7 @@ if send and prompt.strip():
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
