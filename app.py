@@ -386,7 +386,62 @@ elif page == "🍽 Registro":
 # TAB 2: OBJETIVOS
 # =========================
 elif page == "🎯 Objetivos":
+    st.subheader("🎯 Objetivos")
+    st.caption("Calcula y guarda tus objetivos diarios.")
+    st.divider()
 
+    saved_deficit = float(get_setting("deficit_pct", "15"))
+    saved_activity = float(get_setting("activity", "1.55"))
+
+    col1, col2 = st.columns(2)
+    with col1:
+        sex = st.selectbox("Sexo", ["M", "F"])
+        age = st.number_input("Edad (años)", min_value=1.0, max_value=120.0, value=25.0, step=1.0)
+        weight = st.number_input("Peso (kg)", min_value=1.0, max_value=400.0, value=70.0, step=0.5)
+        height = st.number_input("Altura (cm)", min_value=50.0, max_value=250.0, value=175.0, step=1.0)
+
+    with col2:
+        activity_label = st.selectbox(
+            "Actividad física",
+            ["Sedentaria (1.2)", "Ligera (1.375)", "Moderada (1.55)", "Alta (1.725)", "Muy alta (1.9)"],
+            index=2
+        )
+        activity = float(activity_label.split("(")[-1].strip(")"))
+        deficit_pct = st.slider("% Déficit (0-30)", 0, 30, int(saved_deficit))
+
+    if st.button("Calcular y guardar objetivos", type="primary"):
+        maintenance, deficit_kcal, protein_g, carbs_g, fat_g = calculate_goals(
+            sex=sex, age=age, weight=weight, height=height, activity=activity, deficit_pct=deficit_pct
+        )
+
+        set_setting("target_calories", str(maintenance))
+        set_setting("target_deficit_calories", str(deficit_kcal))
+        set_setting("target_protein", str(protein_g))
+        set_setting("target_carbs", str(carbs_g))
+        set_setting("target_fat", str(fat_g))
+        set_setting("deficit_pct", str(deficit_pct))
+        set_setting("activity", str(activity))
+
+        st.success("Objetivos guardados ✅")
+        st.rerun()
+
+    st.divider()
+    target_cal = get_setting("target_calories")
+    target_def = get_setting("target_deficit_calories")
+    target_p = get_setting("target_protein")
+    target_c = get_setting("target_carbs")
+    target_f = get_setting("target_fat")
+
+    if all([target_cal, target_def, target_p, target_c, target_f]):
+        st.subheader("📌 Tus objetivos guardados")
+        a, b, c, d, e = st.columns(5)
+        a.metric("⚡ Mantenimiento", f"{float(target_cal):.0f} kcal")
+        b.metric("🎯 Déficit", f"{float(target_def):.0f} kcal")
+        c.metric("🥩 Proteína", f"{float(target_p):.0f} g")
+        d.metric("🍚 Carbs", f"{float(target_c):.0f} g")
+        e.metric("🥑 Grasas", f"{float(target_f):.0f} g")
+    else:
+        st.info("Aún no has guardado objetivos. Rellena los datos y pulsa el botón.")
 
 # =========================
 # TAB 2: OBJETIVOS
@@ -591,6 +646,7 @@ if st.button("✨ Generar menú", type="primary"):
         f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
     )
     st.subheader("🧠 Coach IA")
+
 
 
 
