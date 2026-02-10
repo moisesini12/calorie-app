@@ -99,8 +99,13 @@ from your_foods import FOODS  # tu lista gigante original para cargar la BD la p
 
 st.set_page_config(page_title="Calculadora de calorías y macros", layout="wide")
 
-init_db()
-seed_foods_if_empty(FOODS)
+@st.cache_resource
+def _bootstrap():
+    init_db()
+    seed_foods_if_empty(FOODS)
+
+_bootstrap()
+
 
 st.title("Calculadora de calorías y macros")
 
@@ -664,6 +669,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
