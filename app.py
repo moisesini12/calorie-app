@@ -105,18 +105,17 @@ st.title("Calculadora de calorías y macros")
 selected_date = st.sidebar.date_input("📅 Día", value=date.today())
 selected_date_str = selected_date.isoformat()
 
+page = st.sidebar.radio(
+    "",
+    ["📊 Dashboard", "🍽️ Registro", "🎯 Objetivos", "➕ Añadir alimento", "🧠 Coach IA"],
+    index=0
+)
 
-tab0, tab1, tab2, tab3, tab4 = st.tabs([
-	"📊 Dashboard",
-	"🍽️ Registro",
-	"🧮 Objetivos",
-	"➕ Añadir alimento",
-	"🤖 Coach IA"
-])
+
 # ======================
 # TAB 0: DASHBOARD
 # ======================
-with tab0:
+if page == "📊 Dashboard":
    st.title("📊 Dashboard")
 st.caption(f"Día: {selected_date_str}")
 st.divider()
@@ -176,7 +175,7 @@ st.caption(f"{ratio(total_fat, target_f)*100:.1f}% del objetivo")
 # =========================
 # TAB 1: REGISTRO
 # =========================
-with tab1:
+elif page == "🍽️ Registro":
 
     categories = list_categories()
     if not categories:
@@ -366,7 +365,7 @@ if not df.empty:
 # =========================
 # TAB 2: OBJETIVOS
 # =========================
-with tab2:
+elif page == "🎯 Objetivos":
     st.subheader("Calculadora de objetivos")
 
     # Cargar últimos objetivos guardados (si existen)
@@ -425,7 +424,7 @@ with tab2:
 # =========================
 # TAB 3: AÑADIR ALIMENTO
 # =========================
-with tab3:
+elif page == "➕ Añadir alimento":
     st.subheader("Gestión de alimentos")
 
     st.caption("Aquí puedes añadir alimentos nuevos, editar los existentes o borrarlos de la base de datos.")
@@ -534,7 +533,7 @@ with tab3:
 # =========================
 # TAB 3: COACH AI
 # =========================
-with tab4:
+elif page == "🧠 Coach IA":
     import json
     import streamlit as st
     from ai_groq import chat_answer, generate_menu_json
@@ -621,6 +620,7 @@ if st.button("✨ Generar menú", type="primary"):
     st.success(
         f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
     )
+
 
 
 
