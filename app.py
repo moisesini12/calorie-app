@@ -364,6 +364,7 @@ elif page == "🍽 Registro":
 # TAB 2: OBJETIVOS
 # =========================
 elif page == "🎯 Objetivos":
+    # --- TODO: aquí va tu calculadora/guardado de objetivos ---
     st.subheader("Calculadora de objetivos")
 
     # Cargar últimos objetivos guardados (si existen)
@@ -418,6 +419,8 @@ elif page == "🎯 Objetivos":
         e.metric("🥑 Grasas", f"{float(target_f):.0f} g")
     else:
         st.info("Aún no has calculado objetivos. Rellena los datos y guarda.")
+
+    st.subheader("🎯 Objetivos")
 
 # =========================
 # TAB 3: AÑADIR ALIMENTO
@@ -619,6 +622,7 @@ if st.button("✨ Generar menú", type="primary"):
     st.success(
         f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
     )
+
 
 
 
