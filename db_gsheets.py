@@ -31,6 +31,7 @@ def _client() -> gspread.Client:
 
 
 
+
 @st.cache_resource
 def _sh():
     return _client().open_by_key(SHEET_ID)
@@ -99,20 +100,9 @@ def init_db() -> None:
         for name in [TAB_FOODS, TAB_ENTRIES, TAB_SETTINGS]:
             sh.worksheet(name)
     except Exception as e:
-        st.error(
-            "❌ No puedo abrir el Google Sheet o no encuentro las pestañas.\n\n"
-            f"- SHEET_ID: {SHEET_ID}\n"
-            f"- Esperadas: {TAB_FOODS}, {TAB_ENTRIES}, {TAB_SETTINGS}\n"
-            f"- Error real: {type(e).__name__}: {e}\n\n"
-            "✅ Revisa:\n"
-            "1) Que compartiste el Sheet con el service account como Editor.\n"
-            "2) Que los nombres de pestaña sean EXACTOS: foods, entries, settings (minúsculas, sin espacios).\n"
-        )
-        st.stop()
-
-
-
-
+        raise RuntimeError(
+            "No puedo abrir el Google Sheet o no encuentro las pestañas: foods, entries, settings."
+        ) from e
 
 
 def seed_foods_if_empty(foods):
@@ -357,6 +347,7 @@ def set_setting(key: str, value: str) -> None:
             ws.update(f"A{i}:B{i}", [[key, value]], value_input_option="USER_ENTERED")
             return
     ws.append_row([key, value], value_input_option="USER_ENTERED")
+
 
 
 
