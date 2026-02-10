@@ -19,11 +19,6 @@ SCOPES = [
     "https://www.googleapis.com/auth/drive",
 ]
 
-DEBUG = bool(st.secrets.get("DEBUG", False))
-
-def _dbg(*args, **kwargs):
-    if DEBUG:
-        st.caption(" ".join(str(a) for a in args))
 
 
 # ---------- Helpers ----------
@@ -367,6 +362,7 @@ def set_setting(key: str, value: str) -> None:
             ws.update(f"A{i}:B{i}", [[key, value]], value_input_option="USER_ENTERED")
             return
     ws.append_row([key, value], value_input_option="USER_ENTERED")
+
 
 
 
