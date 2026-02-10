@@ -9,7 +9,7 @@ import gspread
 from google.oauth2.service_account import Credentials
 
 
-SHEET_ID = "15AVD-ANgYxe_7tMDbhdnp1NWLyqL5IQxAH6B4AiMcxk"
+SHEET_ID = st.secrets["SPREADSHEET_ID"]
 TAB_FOODS = "foods"
 TAB_ENTRIES = "entries"
 TAB_SETTINGS = "settings"
@@ -340,5 +340,6 @@ def set_setting(key: str, value: str) -> None:
             ws.update(f"A{i}:B{i}", [[key, value]], value_input_option="USER_ENTERED")
             return
     ws.append_row([key, value], value_input_option="USER_ENTERED")
+
 
 
