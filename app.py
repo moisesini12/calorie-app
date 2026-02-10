@@ -217,9 +217,9 @@ elif page == "🍽 Registro":
     target_def = get_setting("target_deficit_calories")
     target_p = get_setting("target_protein")
     target_c = get_setting("target_carbs")
-    Target_f = get_setting("target_fat")
+    target_f = get_setting("target_fat")
 
-targets_ok = all(x not in (None, "") for x in [target_def, target_p, target_c, target_f])
+    targets_ok = all(x not in (None, "") for x in [target_def, target_p, target_c, target_f])
 
 
     if not df.empty:
@@ -564,6 +564,7 @@ if st.button("✨ Generar menú", type="primary"):
         f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
     )
     st.subheader("🧠 Coach IA")
+
 
 
 
