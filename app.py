@@ -94,8 +94,8 @@ with tab0:
 # TAB 1: REGISTRO
 # =========================
 with tab1:
-    selected_date = st.date_input("📅 Día", value=date.today())
-    selected_date_str = selected_date.isoformat()
+    selected_date = st.sidebar.date_input("📅 Día", value=date.today())
+	selected_date_str = selected_date.isoformat()
 
     categories = list_categories()
     if not categories:
@@ -540,6 +540,7 @@ if st.button("✨ Generar menú", type="primary"):
     st.success(
         f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
     )
+
 
 
 
