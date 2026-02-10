@@ -113,100 +113,70 @@ page = st.sidebar.radio(
     label_visibility="collapsed"
 )
 
-def page_dashboard(selected_date_str):
-    st.title("📊 Dashboard")
-    st.caption(f"Día: {selected_date_str}")
-    # TODO: pega aquí tu código del Dashboard
-
-def page_registro(selected_date_str):
-    st.subheader("🍽 Registro")
-    # TODO: pega aquí tu código del Registro
-
-def page_objetivos(selected_date_str):
-    st.subheader("🎯 Objetivos")
-    # TODO: pega aquí tu código de Objetivos
-
-def page_add_food(selected_date_str):
-    st.subheader("➕ Añadir alimento")
-    # TODO: pega aquí tu código de Añadir alimento
-
-def page_coach(selected_date_str):
-    st.subheader("🧠 Coach IA")
-    # TODO: pega aquí tu código del Coach IA
-PAGES = {
-    "📊 Dashboard": page_dashboard,
-    "🍽 Registro": page_registro,
-    "🎯 Objetivos": page_objetivos,
-    "➕ Añadir alimento": page_add_food,
-    "🧠 Coach IA": page_coach,
-}
-
-PAGES[page](selected_date_str)
-
+# ======================
+# TAB 0: DASHBOARD
+# ======================
 # ======================
 # TAB 0: DASHBOARD
 # ======================
 if page == "📊 Dashboard":
-   st.title("📊 Dashboard")
-   st.caption(f"Día: {selected_date_str}")
-   st.divider()
+    st.title("📊 Dashboard")
+    st.caption(f"Día: {selected_date_str}")
+    st.divider()
 
-rows = list_entries_by_date(selected_date_str)
+    rows = list_entries_by_date(selected_date_str)
 
-total_kcal = sum(r["calories"] for r in rows) if rows else 0
-total_protein = sum(r["protein"] for r in rows) if rows else 0
-total_carbs = sum(r["carbs"] for r in rows) if rows else 0
-total_fat = sum(r["fat"] for r in rows) if rows else 0
+    total_kcal = sum(r["calories"] for r in rows) if rows else 0
+    total_protein = sum(r["protein"] for r in rows) if rows else 0
+    total_carbs = sum(r["carbs"] for r in rows) if rows else 0
+    total_fat = sum(r["fat"] for r in rows) if rows else 0
 
-col1, col2, col3, col4 = st.columns(4)
-with col1:
-    st.metric("🔥 Calorías", f"{total_kcal:.0f} kcal")
-with col2:
-    st.metric("🥩 Proteína", f"{total_protein:.1f} g")
-with col3:
-    st.metric("🍚 Carbs", f"{total_carbs:.1f} g")
-with col4:
-    st.metric("🥑 Grasas", f"{total_fat:.1f} g")
+    col1, col2, col3, col4 = st.columns(4)
+    with col1:
+        st.metric("🔥 Calorías", f"{total_kcal:.0f} kcal")
+    with col2:
+        st.metric("🥩 Proteína", f"{total_protein:.1f} g")
+    with col3:
+        st.metric("🍚 Carbs", f"{total_carbs:.1f} g")
+    with col4:
+        st.metric("🥑 Grasas", f"{total_fat:.1f} g")
 
-st.divider()
-st.subheader("🎯 Progreso de objetivos")
+    st.divider()
+    st.subheader("🎯 Progreso de objetivos")
 
-target_kcal = float(get_setting("target_deficit_calories", 1800))
-target_p = float(get_setting("target_protein", 120))
-target_c = float(get_setting("target_carbs", 250))
-target_f = float(get_setting("target_fat", 60))
+    target_kcal = float(get_setting("target_deficit_calories", 1800))
+    target_p = float(get_setting("target_protein", 120))
+    target_c = float(get_setting("target_carbs", 250))
+    target_f = float(get_setting("target_fat", 60))
 
-def ratio(v, t):
-    return 0.0 if t <= 0 else min(v / t, 1.0)
+    def ratio(v, t):
+        return 0.0 if t <= 0 else min(v / t, 1.0)
 
-# Calorías
-st.markdown(f"**🔥 Calorías:** {total_kcal:.0f} / {target_kcal:.0f}")
-st.progress(ratio(total_kcal, target_kcal))
-st.caption(f"{ratio(total_kcal, target_kcal)*100:.1f}% del objetivo")
-st.write("")
+    st.markdown(f"**🔥 Calorías:** {total_kcal:.0f} / {target_kcal:.0f}")
+    st.progress(ratio(total_kcal, target_kcal))
+    st.caption(f"{ratio(total_kcal, target_kcal)*100:.1f}% del objetivo")
+    st.write("")
 
-# Proteína
-st.markdown(f"**🥩 Proteína:** {total_protein:.1f} / {target_p:.1f} g")
-st.progress(ratio(total_protein, target_p))
-st.caption(f"{ratio(total_protein, target_p)*100:.1f}% del objetivo")
-st.write("")
+    st.markdown(f"**🥩 Proteína:** {total_protein:.1f} / {target_p:.1f} g")
+    st.progress(ratio(total_protein, target_p))
+    st.caption(f"{ratio(total_protein, target_p)*100:.1f}% del objetivo")
+    st.write("")
 
-# Carbs
-st.markdown(f"**🍚 Carbs:** {total_carbs:.1f} / {target_c:.1f} g")
-st.progress(ratio(total_carbs, target_c))
-st.caption(f"{ratio(total_carbs, target_c)*100:.1f}% del objetivo")
-st.write("")
+    st.markdown(f"**🍚 Carbs:** {total_carbs:.1f} / {target_c:.1f} g")
+    st.progress(ratio(total_carbs, target_c))
+    st.caption(f"{ratio(total_carbs, target_c)*100:.1f}% del objetivo")
+    st.write("")
 
-# Grasas
-st.markdown(f"**🥑 Grasas:** {total_fat:.1f} / {target_f:.1f} g")
-st.progress(ratio(total_fat, target_f))
-st.caption(f"{ratio(total_fat, target_f)*100:.1f}% del objetivo")
+    st.markdown(f"**🥑 Grasas:** {total_fat:.1f} / {target_f:.1f} g")
+    st.progress(ratio(total_fat, target_f))
+    st.caption(f"{ratio(total_fat, target_f)*100:.1f}% del objetivo")
 
 
 # =========================
 # TAB 1: REGISTRO
 # =========================
-elif page == "Registro":
+elif page == "🍽 Registro":
+
     categories = list_categories()
     if not categories:
         st.error("No hay categorías. Revisa la tabla foods.")
@@ -651,3 +621,4 @@ if st.button("✨ Generar menú", type="primary"):
     st.success(
         f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
     )
+
