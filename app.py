@@ -107,10 +107,39 @@ selected_date_str = selected_date.isoformat()
 
 page = st.sidebar.radio(
     "",
-    ["📊 Dashboard", "Registro", "🎯 Objetivos", "➕ Añadir alimento", "🧠 Coach IA"],
-    index=0
+    ["📊 Dashboard", "🍽 Registro", "🎯 Objetivos", "➕ Añadir alimento", "🧠 Coach IA"],
+    label_visibility="collapsed"
 )
 
+def page_dashboard(selected_date_str):
+    st.title("📊 Dashboard")
+    st.caption(f"Día: {selected_date_str}")
+    # TODO: pega aquí tu código del Dashboard
+
+def page_registro(selected_date_str):
+    st.subheader("🍽 Registro")
+    # TODO: pega aquí tu código del Registro
+
+def page_objetivos(selected_date_str):
+    st.subheader("🎯 Objetivos")
+    # TODO: pega aquí tu código de Objetivos
+
+def page_add_food(selected_date_str):
+    st.subheader("➕ Añadir alimento")
+    # TODO: pega aquí tu código de Añadir alimento
+
+def page_coach(selected_date_str):
+    st.subheader("🧠 Coach IA")
+    # TODO: pega aquí tu código del Coach IA
+PAGES = {
+    "📊 Dashboard": page_dashboard,
+    "🍽 Registro": page_registro,
+    "🎯 Objetivos": page_objetivos,
+    "➕ Añadir alimento": page_add_food,
+    "🧠 Coach IA": page_coach,
+}
+
+PAGES[page](selected_date_str)
 
 # ======================
 # TAB 0: DASHBOARD
@@ -620,6 +649,7 @@ if st.button("✨ Generar menú", type="primary"):
     st.success(
         f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
     )
+
 
 
 
