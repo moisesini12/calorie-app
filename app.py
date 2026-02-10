@@ -3,38 +3,82 @@
 import streamlit as st
 st.markdown("""
 <style>
-/* Fondo general */
+
+/* Fondo principal */
 .main {
     background-color: #0F172A;
 }
 
-/* Títulos */
-h1, h2, h3, h4 {
-    color: #F8FAFC;
+/* Sidebar */
+section[data-testid="stSidebar"] {
+    background-color: #0B1221;
 }
 
-/* Tarjetas */
-div.stMetric {
+/* Tarjetas métricas */
+div[data-testid="stMetric"] {
     background-color: #1E293B;
-    padding: 16px;
-    border-radius: 12px;
+    padding: 18px;
+    border-radius: 14px;
+    border: 1px solid #2D3748;
+}
+
+/* Inputs y selectores */
+div.stTextInput input,
+div.stNumberInput input,
+div.stSelectbox div[data-baseweb="select"] {
+    background-color: #1E293B !important;
+    color: white !important;
+    border-radius: 10px !important;
+    border: 1px solid #2D3748 !important;
 }
 
 /* Botones principales */
 div.stButton > button {
-    background-color: #22C55E;
+    background-color: #16A34A;
     color: white;
-    border-radius: 10px;
+    border-radius: 12px;
+    border: none;
+    padding: 10px 18px;
     font-weight: bold;
+    transition: all 0.3s ease;
 }
 
-/* Inputs */
-div.stTextInput > div > div > input {
-    background-color: #1E293B;
-    color: white;
+div.stButton > button:hover {
+    background-color: #22C55E;
 }
+
+/* Expander */
+div[data-testid="stExpander"] {
+    background-color: #1E293B;
+    border-radius: 12px;
+    border: 1px solid #2D3748;
+}
+
+/* Tablas */
+div[data-testid="stDataFrame"] {
+    background-color: #1E293B;
+    border-radius: 12px;
+    padding: 10px;
+}
+
+/* Barras de progreso */
+div[data-testid="stProgress"] > div > div {
+    background-color: #16A34A;
+}
+
+/* Títulos */
+h1, h2, h3, h4 {
+    color: #F1F5F9;
+}
+
+/* Texto normal */
+p, label {
+    color: #CBD5E1;
+}
+
 </style>
 """, unsafe_allow_html=True)
+
 
 import pandas as pd
 from datetime import date
@@ -577,6 +621,7 @@ if st.button("✨ Generar menú", type="primary"):
     st.success(
         f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
     )
+
 
 
 
