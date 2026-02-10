@@ -1,6 +1,41 @@
 # app.py
 # app.py
 import streamlit as st
+st.markdown("""
+<style>
+/* Fondo general */
+.main {
+    background-color: #0F172A;
+}
+
+/* Títulos */
+h1, h2, h3, h4 {
+    color: #F8FAFC;
+}
+
+/* Tarjetas */
+div.stMetric {
+    background-color: #1E293B;
+    padding: 16px;
+    border-radius: 12px;
+}
+
+/* Botones principales */
+div.stButton > button {
+    background-color: #22C55E;
+    color: white;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+/* Inputs */
+div.stTextInput > div > div > input {
+    background-color: #1E293B;
+    color: white;
+}
+</style>
+""", unsafe_allow_html=True)
+
 import pandas as pd
 from datetime import date
 
@@ -475,6 +510,7 @@ if st.button("✨ Generar menú", type="primary"):
     st.success(
         f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
     )
+
 
 
 
