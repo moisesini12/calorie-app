@@ -287,46 +287,65 @@ elif page == "🍽 Registro":
 # --- Gestión de entradas del día ---
     if not df.empty:
         st.subheader("✏️ Editar / 🗑️ Borrar entrada")
+    if df.empty:
+        st.info("No hay entradas hoy para editar o borrar.")
+        st.stop()
 
-    # Creamos una lista de opciones legibles
+# Creamos opciones seguras (dict con id + label)
     options = []
-    for _, row in df.iterrows():
+    for _, r in df.iterrows():
         options.append({
-            "id": int(row["id"]),
-            "label": f"{row['meal']} — {row['name']} — {row['grams']:.0f} g"
-        })
+            "id": int(r["id"]),
+            "label": f"{r['meal']} — {r['name']} — {float(r['grams']):.0f} g"
+    })
+
+    if not options:
+        st.info("No hay entradas hoy para editar o borrar.")
+        st.stop()
 
     selected_opt = st.selectbox(
         "Selecciona una entrada",
         options,
-        format_func=lambda x: x["label"]
-    )
+        format_func=lambda x: x["label"],
+        key="entry_select_edit"
+)
+
+# Si por cualquier motivo no hay selección aún
+    if not selected_opt or "id" not in selected_opt:
+        st.info("Selecciona una entrada para continuar.")
+        st.stop()
 
     selected_id = selected_opt["id"]
     row = df[df["id"] == selected_id].iloc[0]
 
+# ---- Editor ----
     colE1, colE2, colE3 = st.columns([2, 1, 1])
+
     with colE1:
+        meals = ["Desayuno", "Almuerzo", "Merienda", "Cena"]
+        current_meal = row["meal"] if row["meal"] in meals else meals[0]
         new_meal = st.selectbox(
-    "Comida",
-    ["Desayuno", "Almuerzo", "Merienda", "Cena"],
-    index=["Desayuno","Almuerzo","Merienda","Cena"].index(row["meal"]),
-    key=f"meal_edit_{selected_id}"
-)
+            "Comida",
+            meals,
+            index=meals.index(current_meal),
+            key=f"meal_edit_{selected_id}"
+    )
 
     with colE2:
-        new_grams = st.number_input("Gramos", min_value=1.0, step=1.0, value=float(row["grams"]))
+        new_grams = st.number_input(
+            "Gramos",
+            min_value=1.0,
+            step=1.0,
+            value=float(row["grams"]),
+            key=f"grams_edit_{selected_id}"
+    )
+
     with colE3:
         st.write("")
+        st.write("")
 
-    # Necesitamos recalcular macros con los nuevos gramos
-    # OJO: buscamos el alimento en BD (foods_in_cat solo tiene la categoría actual)
-    # Solución: guardamos un diccionario rápido de alimentos por nombre:
-    # (pon esto una vez cerca del inicio de tab1, después de cargar categorías)
-    # food_map = {f["name"]: f for cat in categories for f in list_foods_by_category(cat)}
-
+# Construir food_map una vez (para recalcular macros)
     if "food_map" not in st.session_state:
-        # build una vez por sesión
         cats = list_categories()
         m = {}
         for c in cats:
@@ -335,11 +354,12 @@ elif page == "🍽 Registro":
         st.session_state["food_map"] = m
 
     base_food = st.session_state["food_map"].get(row["name"])
+
     if base_food is None:
         st.error("No encuentro este alimento en la base de datos (quizá lo borraste).")
     else:
-        if st.button("Guardar cambios", type="primary"):
-            macros = scale_macros(base_food, new_grams)
+        if st.button("Guardar cambios", type="primary", key=f"save_entry_{selected_id}"):
+            macros = scale_macros(base_food, float(new_grams))
             update_entry(
                 selected_id,
                 grams=float(new_grams),
@@ -348,17 +368,18 @@ elif page == "🍽 Registro":
                 carbs=float(macros["carbs"]),
                 fat=float(macros["fat"]),
                 meal=new_meal
-            )
+        )
             st.success("Entrada actualizada ✅")
             st.rerun()
 
         st.warning("⚠️ Borrar elimina la entrada del día (no se puede deshacer).")
-        confirm_del = st.checkbox("Confirmo que quiero borrar esta entrada")
-        if st.button("Borrar entrada", disabled=not confirm_del):
+        confirm_del = st.checkbox("Confirmo que quiero borrar esta entrada", key=f"confirm_del_{selected_id}")
+
+        if st.button("Borrar entrada", disabled=not confirm_del, key=f"del_entry_{selected_id}"):
             delete_entry_by_id(selected_id)
             st.success("Entrada borrada ✅")
             st.rerun()
-    st.subheader("🍽 Registro")
+        st.subheader("🍽 Registro")
 
 
 # =========================
