@@ -1,3 +1,5 @@
+gspread
 streamlit
 pandas
 groq
+google-auth
