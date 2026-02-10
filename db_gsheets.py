@@ -32,11 +32,8 @@ def _client() -> gspread.Client:
     sa_info = dict(st.secrets["gcp_service_account"])
 
     # DEBUG rápido (quita luego)
-    _dbg("Service account:", sa_info.get("client_email"))
     pk = sa_info.get("private_key", "")
-    _dbg("private_key first line:", pk.splitlines()[0] if pk else "MISSING")
-    _dbg("private_key last line:", pk.splitlines()[-1] if pk else "MISSING")
-
+    
     creds = Credentials.from_service_account_info(sa_info, scopes=SCOPES)
     return gspread.authorize(creds)
 
@@ -370,6 +367,7 @@ def set_setting(key: str, value: str) -> None:
             ws.update(f"A{i}:B{i}", [[key, value]], value_input_option="USER_ENTERED")
             return
     ws.append_row([key, value], value_input_option="USER_ENTERED")
+
 
 
 
