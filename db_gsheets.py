@@ -125,14 +125,13 @@ def init_db() -> None:
 
 
 
-def seed_foods_if_empty(foods: List[Dict[str, Any]]) -> None:
+def seed_foods_if_empty(foods):
     ws = _ws(TAB_FOODS)
-    existing = ws.get_all_records()
-    if existing:
+
+    # ✅ check barato: si hay algo en la fila 2, ya está sembrado
+    if ws.acell("A2").value or ws.acell("B2").value:
         return
 
-    # Inserta todos los foods de tu lista inicial
-    # Asegura orden columnas: id,name,category,calories,protein,carbs,fat
     rows_to_add = []
     next_id = 1
     for f in foods:
@@ -148,6 +147,7 @@ def seed_foods_if_empty(foods: List[Dict[str, Any]]) -> None:
         next_id += 1
 
     ws.append_rows(rows_to_add, value_input_option="USER_ENTERED")
+    st.cache_data.clear()
 
 
 def list_categories() -> List[str]:
@@ -367,6 +367,7 @@ def set_setting(key: str, value: str) -> None:
             ws.update(f"A{i}:B{i}", [[key, value]], value_input_option="USER_ENTERED")
             return
     ws.append_row([key, value], value_input_option="USER_ENTERED")
+
 
 
 
