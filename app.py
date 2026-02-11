@@ -411,44 +411,92 @@ elif page == "🍽 Registro":
 # TAB 2: OBJETIVOS
 # =========================
 elif page == "🎯 Objetivos":
+
+    # 1) Defaults desde settings
+    saved_sex = str(get_setting("sex", "M")).upper().strip()
+    saved_age = float(get_setting("age", 25))
+    saved_weight = float(get_setting("weight", 70))
+    saved_height = float(get_setting("height", 175))
+    saved_activity = float(get_setting("activity", 1.55))
+    saved_deficit = float(get_setting("deficit_pct", 20))
+
     st.subheader("🎯 Objetivos")
     st.caption("Calcula y guarda tus objetivos diarios.")
     st.divider()
 
-    saved_deficit = float(get_setting("deficit_pct", "15"))
-    saved_activity = float(get_setting("activity", "1.55"))
-
     col1, col2 = st.columns(2)
+
     with col1:
-        sex = st.selectbox("Sexo", ["M", "F"])
-        age = st.number_input("Edad (años)", min_value=1.0, max_value=120.0, value=25.0, step=1.0)
-        weight = st.number_input("Peso (kg)", min_value=1.0, max_value=400.0, value=70.0, step=0.5)
-        height = st.number_input("Altura (cm)", min_value=50.0, max_value=250.0, value=175.0, step=1.0)
+        sex = st.selectbox("Sexo", ["M", "F"], index=0 if saved_sex == "M" else 1)
+
+        age = st.number_input(
+            "Edad (años)", min_value=1.0, max_value=120.0,
+            value=float(saved_age), step=1.0
+        )
+
+        weight = st.number_input(
+            "Peso (kg)", min_value=1.0, max_value=400.0,
+            value=float(saved_weight), step=0.5
+        )
+
+        height = st.number_input(
+            "Altura (cm)", min_value=50.0, max_value=250.0,
+            value=float(saved_height), step=1.0
+        )
 
     with col2:
+        activity_options = [
+            "Sedentaria (1.2)",
+            "Ligera (1.375)",
+            "Moderada (1.55)",
+            "Alta (1.725)",
+            "Muy alta (1.9)",
+        ]
+        activity_values = [1.2, 1.375, 1.55, 1.725, 1.9]
+
+        # Elegir índice según saved_activity (si no coincide exacto, cae en 1.55)
+        try:
+            activity_index = activity_values.index(saved_activity)
+        except ValueError:
+            activity_index = activity_values.index(1.55)
+
         activity_label = st.selectbox(
             "Actividad física",
-            ["Sedentaria (1.2)", "Ligera (1.375)", "Moderada (1.55)", "Alta (1.725)", "Muy alta (1.9)"],
-            index=2
+            activity_options,
+            index=activity_index
         )
         activity = float(activity_label.split("(")[-1].strip(")"))
+
         deficit_pct = st.slider("% Déficit (0-30)", 0, 30, int(saved_deficit))
 
     if st.button("Calcular y guardar objetivos", type="primary"):
         maintenance, deficit_kcal, protein_g, carbs_g, fat_g = calculate_goals(
-            sex=sex, age=age, weight=weight, height=height, activity=activity, deficit_pct=deficit_pct
+            sex=sex,
+            age=float(age),
+            weight=float(weight),
+            height=float(height),
+            activity=float(activity),
+            deficit_pct=float(deficit_pct),
         )
 
-        set_setting("target_calories", str(maintenance))
+        # 2) Guardar PERFIL
+        set_setting("sex", str(sex))
+        set_setting("age", str(age))
+        set_setting("weight", str(weight))
+        set_setting("height", str(height))
+        set_setting("activity", str(activity))
+        set_setting("deficit_pct", str(deficit_pct))
+
+        # 3) Guardar OBJETIVOS (usa estas mismas keys en toda la app)
+        set_setting("target_maintenance", str(maintenance))
         set_setting("target_deficit_calories", str(deficit_kcal))
         set_setting("target_protein", str(protein_g))
         set_setting("target_carbs", str(carbs_g))
         set_setting("target_fat", str(fat_g))
-        set_setting("deficit_pct", str(deficit_pct))
-        set_setting("activity", str(activity))
 
-        st.success("Objetivos guardados ✅")
+        st.success("Perfil y objetivos guardados ✅")
         st.rerun()
+
 
     st.divider()
     target_cal = get_setting("target_calories")
@@ -689,6 +737,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
