@@ -183,6 +183,7 @@ def add_food(food: Dict[str, Any]) -> int:
         _to_float(food.get("carbs", 0)),
         _to_float(food.get("fat", 0)),
     ], value_input_option="USER_ENTERED")
+    st.cache_data.clear()
     return new_id
 
 
@@ -236,6 +237,7 @@ def add_entry(entry: Dict[str, Any]) -> int:
         _to_float(entry.get("carbs", 0)),
         _to_float(entry.get("fat", 0)),
     ], value_input_option="USER_ENTERED")
+    st.cache_data.clear()
     return new_id
 
 
@@ -284,6 +286,7 @@ def update_entry(entry_id: int, **updates) -> None:
         pick(7, "carbs"),
         pick(8, "fat"),
     ]
+    st.cache_data.clear()
     ws.update(f"A{row_idx}:I{row_idx}", [merged], value_input_option="USER_ENTERED")
 
 
@@ -291,6 +294,7 @@ def delete_entry_by_id(entry_id: int) -> None:
     row_idx = _find_row_index_by_id(TAB_ENTRIES, entry_id)
     if row_idx is None:
         return
+        st.cache_data.clear()
     _ws(TAB_ENTRIES).delete_rows(row_idx)
 
 
@@ -346,7 +350,9 @@ def set_setting(key: str, value: str) -> None:
         if str(r.get("key", "")).strip() == key:
             ws.update(f"A{i}:B{i}", [[key, value]], value_input_option="USER_ENTERED")
             return
+            st.cache_data.clear()
     ws.append_row([key, value], value_input_option="USER_ENTERED")
+
 
 
 
