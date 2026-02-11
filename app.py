@@ -349,7 +349,7 @@ elif page == "🍽 Registro":
 
 
     st.subheader("📊 Tendencia (últimos 30 días)")
-    history = daily_totals_last_days(30)
+    history = daily_totals_last_days(30, USER_ID)
     hist_df = pd.DataFrame(history, columns=["date","calories","protein","carbs","fat"])
     if not hist_df.empty:
         hist_df["date"] = pd.to_datetime(hist_df["date"])
@@ -547,13 +547,14 @@ elif page == "🎯 Objetivos":
 
 
     st.divider()
-    target_cal = get_setting("target_calories")
+    target_maint = get_setting("target_maintenance")
     target_def = get_setting("target_deficit_calories")
     target_p = get_setting("target_protein")
     target_c = get_setting("target_carbs")
     target_f = get_setting("target_fat")
 
-    if all([target_cal, target_def, target_p, target_c, target_f]):
+    if all([target_maint, target_def, target_p, target_c, target_f]):
+
         st.subheader("📌 Tus objetivos guardados")
         a, b, c, d, e = st.columns(5)
         a.metric("⚡ Mantenimiento", f"{float(target_cal):.0f} kcal")
@@ -785,6 +786,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
