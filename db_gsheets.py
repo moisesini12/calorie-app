@@ -261,23 +261,24 @@ def list_entries_by_date(user_id: str, entry_date: str) -> List[Dict[str, Any]]:
     rows = _get_all_records(TAB_ENTRIES)
     out = []
     for r in rows:
-        if str(r.get("user_id", "")).strip() != user_id:
-            continue
-        if str(r.get("entry_date", "")).strip() != entry_date:
-            continue
+        r_uid = str(r.get("user_id", "")).strip()
+        r_date = str(r.get("entry_date", "")).strip()
 
-        out.append({
-            "id": _to_int(r.get("id")),
-            "entry_date": str(r.get("entry_date", "")).strip(),
-            "meal": str(r.get("meal", "")).strip(),
-            "name": str(r.get("name", "")).strip(),
-            "grams": _to_float(r.get("grams")),
-            "calories": _to_float(r.get("calories")),
-            "protein": _to_float(r.get("protein")),
-            "carbs": _to_float(r.get("carbs")),
-            "fat": _to_float(r.get("fat")),
-        })
+        if r_uid == str(user_id).strip() and r_date == str(entry_date).strip():
+            out.append({
+                "id": _to_int(r.get("id")),
+                "user_id": r_uid,
+                "entry_date": r_date,
+                "meal": str(r.get("meal", "")).strip(),
+                "name": str(r.get("name", "")).strip(),
+                "grams": _to_float(r.get("grams")),
+                "calories": _to_float(r.get("calories")),
+                "protein": _to_float(r.get("protein")),
+                "carbs": _to_float(r.get("carbs")),
+                "fat": _to_float(r.get("fat")),
+            })
     return out
+
 
 
 
@@ -373,6 +374,7 @@ def set_setting(key: str, value: str) -> None:
             return
     ws.append_row([key, value], value_input_option="USER_ENTERED")
     st.cache_data.clear()
+
 
 
 
