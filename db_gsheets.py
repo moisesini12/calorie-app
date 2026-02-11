@@ -92,12 +92,12 @@ def _find_row_index_by_id(tab_name: str, id_value: int) -> Optional[int]:
             return i
     return None
 
-def _append_row_by_headers(ws, row_dict: Dict[str, Any]) -> None:
+def _append_row_by_headers(ws, row_dict: dict):
     headers = ws.row_values(1)
-    row = []
+    values = []
     for h in headers:
-        row.append(row_dict.get(h, ""))
-    ws.append_row(row, value_input_option="USER_ENTERED")
+        values.append(row_dict.get(h, ""))  # si falta algo, vacío
+    ws.append_row(values, value_input_option="RAW")
 
 
 # ---------- Public API (mismo "contrato" que tu db.py) ----------
@@ -230,6 +230,8 @@ def delete_food_by_id(food_id: int) -> None:
         return
     _ws(TAB_FOODS).delete_rows(row_idx)
     st.cache_data.clear()
+
+
 
 def add_entry(user_id: str, entry: Dict[str, Any]) -> int:
     ws = _ws(TAB_ENTRIES)
@@ -371,6 +373,7 @@ def set_setting(key: str, value: str) -> None:
             return
     ws.append_row([key, value], value_input_option="USER_ENTERED")
     st.cache_data.clear()
+
 
 
 
