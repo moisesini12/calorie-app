@@ -209,9 +209,13 @@ elif page == "🍽 Registro":
             "entry_date": selected_date_str,
             "meal": meal,
             "name": food["name"],
-            "grams": grams,
-            **macros
-        }
+            "grams": float(grams),
+            "calories": float(macros["calories"]),
+            "protein": float(macros["protein"]),
+            "carbs": float(macros["carbs"]),
+            "fat": float(macros["fat"]),
+}
+
         add_entry(entry)
         st.success("Añadido ✅")
         st.rerun()
@@ -671,6 +675,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
