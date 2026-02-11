@@ -92,6 +92,13 @@ def _find_row_index_by_id(tab_name: str, id_value: int) -> Optional[int]:
             return i
     return None
 
+def _append_row_by_headers(ws, row_dict: Dict[str, Any]) -> None:
+    headers = ws.row_values(1)
+    row = []
+    for h in headers:
+        row.append(row_dict.get(h, ""))
+    ws.append_row(row, value_input_option="USER_ENTERED")
+
 
 # ---------- Public API (mismo "contrato" que tu db.py) ----------
 def init_db() -> None:
@@ -224,49 +231,52 @@ def delete_food_by_id(food_id: int) -> None:
     _ws(TAB_FOODS).delete_rows(row_idx)
     st.cache_data.clear()
 
-def add_entry(entry: Dict[str, Any]) -> int:
+def add_entry(user_id: str, entry: Dict[str, Any]) -> int:
     ws = _ws(TAB_ENTRIES)
     new_id = _next_id(TAB_ENTRIES)
 
-    # 👇 fuerza texto "YYYY-MM-DD" para que Sheets NO lo convierta a fecha
-    entry_date_text = "'" + str(entry["entry_date"]).strip()
+    row_dict = {
+        "id": new_id,
+        "user_id": user_id,
+        "entry_date": entry["entry_date"],
+        "meal": entry["meal"],
+        "name": entry["name"],
+        "grams": _to_float(entry.get("grams", 0)),
+        "calories": _to_float(entry.get("calories", 0)),
+        "protein": _to_float(entry.get("protein", 0)),
+        "carbs": _to_float(entry.get("carbs", 0)),
+        "fat": _to_float(entry.get("fat", 0)),
+    }
 
-    ws.append_row([
-        new_id,
-        entry_date_text,
-        entry["meal"],
-        entry["name"],
-        _to_float(entry.get("grams", 0)),
-        _to_float(entry.get("calories", 0)),
-        _to_float(entry.get("protein", 0)),
-        _to_float(entry.get("carbs", 0)),
-        _to_float(entry.get("fat", 0)),
-    ], value_input_option="USER_ENTERED")
-
+    _append_row_by_headers(ws, row_dict)
     st.cache_data.clear()
     return new_id
 
 
 
-def list_entries_by_date(entry_date: str) -> List[Dict[str, Any]]:
+
+def list_entries_by_date(user_id: str, entry_date: str) -> List[Dict[str, Any]]:
     rows = _get_all_records(TAB_ENTRIES)
     out = []
     for r in rows:
-        if str(r.get("entry_date", "")).strip() == entry_date:
-            out.append({
-                "id": _to_int(r.get("id")),
-                "entry_date": str(r.get("entry_date", "")).strip(),
-                "meal": str(r.get("meal", "")).strip(),
-                "name": str(r.get("name", "")).strip(),
-                "grams": _to_float(r.get("grams")),
-                # 🔧 CORRECCIÓN TEMPORAL DE ESCALA
-                "calories": _to_float(r.get("calories")) / 100,
-                "protein": _to_float(r.get("protein")) / 100,
-                "carbs": _to_float(r.get("carbs")) / 100,
-                "fat": _to_float(r.get("fat")) / 100,
+        if str(r.get("user_id", "")).strip() != user_id:
+            continue
+        if str(r.get("entry_date", "")).strip() != entry_date:
+            continue
 
-            })
+        out.append({
+            "id": _to_int(r.get("id")),
+            "entry_date": str(r.get("entry_date", "")).strip(),
+            "meal": str(r.get("meal", "")).strip(),
+            "name": str(r.get("name", "")).strip(),
+            "grams": _to_float(r.get("grams")),
+            "calories": _to_float(r.get("calories")),
+            "protein": _to_float(r.get("protein")),
+            "carbs": _to_float(r.get("carbs")),
+            "fat": _to_float(r.get("fat")),
+        })
     return out
+
 
 
 def update_entry(entry_id: int, **updates) -> None:
@@ -361,6 +371,7 @@ def set_setting(key: str, value: str) -> None:
             return
     ws.append_row([key, value], value_input_option="USER_ENTERED")
     st.cache_data.clear()
+
 
 
 
