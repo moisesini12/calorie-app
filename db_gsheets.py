@@ -259,10 +259,12 @@ def list_entries_by_date(entry_date: str) -> List[Dict[str, Any]]:
                 "meal": str(r.get("meal", "")).strip(),
                 "name": str(r.get("name", "")).strip(),
                 "grams": _to_float(r.get("grams")),
-                "calories": _to_float(r.get("calories")),
-                "protein": _to_float(r.get("protein")),
-                "carbs": _to_float(r.get("carbs")),
-                "fat": _to_float(r.get("fat")),
+                # 🔧 CORRECCIÓN TEMPORAL DE ESCALA
+                "calories": _to_float(r.get("calories")) / 100,
+                "protein": _to_float(r.get("protein")) / 100,
+                "carbs": _to_float(r.get("carbs")) / 100,
+                "fat": _to_float(r.get("fat")) / 100,
+
             })
     return out
 
@@ -327,10 +329,11 @@ def daily_totals_last_days(days: int = 30) -> List[Tuple[str, float, float, floa
 
         if d not in agg:
             agg[d] = {"calories": 0.0, "protein": 0.0, "carbs": 0.0, "fat": 0.0}
-        agg[d]["calories"] += _to_float(r.get("calories"))
-        agg[d]["protein"] += _to_float(r.get("protein"))
-        agg[d]["carbs"] += _to_float(r.get("carbs"))
-        agg[d]["fat"] += _to_float(r.get("fat"))
+        agg[d]["calories"] += _to_float(r.get("calories")) / 100
+        agg[d]["protein"] += _to_float(r.get("protein")) / 100
+        agg[d]["carbs"] += _to_float(r.get("carbs")) / 100
+        agg[d]["fat"] += _to_float(r.get("fat")) / 100
+
 
     out = []
     for d in sorted(agg.keys()):
@@ -358,6 +361,7 @@ def set_setting(key: str, value: str) -> None:
             return
     ws.append_row([key, value], value_input_option="USER_ENTERED")
     st.cache_data.clear()
+
 
 
 
