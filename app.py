@@ -1,6 +1,10 @@
 # app.py
 # app.py
 import streamlit as st
+import pandas as pd
+USER_ID = "default_user"
+
+
 st.set_page_config(page_title="Calculadora de calorías y macros", layout="wide")
 
 def inject_black_theme():
@@ -123,7 +127,6 @@ inject_black_theme()
 
 
 
-import pandas as pd
 from datetime import date
 
 from db_gsheets import (
@@ -255,15 +258,17 @@ elif page == "🍽 Registro":
             "protein": float(macros["protein"]),
             "carbs": float(macros["carbs"]),
             "fat": float(macros["fat"]),
-}
+    }
 
-        add_entry(entry)
+        add_entry(USER_ID, entry)
         st.success("Añadido ✅")
         st.rerun()
 
 
+
     st.subheader("Registro")
-    rows = list_entries_by_date(selected_date_str)
+    rows = list_entries_by_date(USER_ID, selected_date_str)
+
 
     df = pd.DataFrame(rows, columns=["id","meal","name","grams","calories","protein","carbs","fat"])
 
@@ -778,6 +783,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
