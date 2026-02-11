@@ -5,8 +5,6 @@ import pandas as pd
 USER_ID = "default_user"
 
 
-st.set_page_config(page_title="Calculadora de calorías y macros", layout="wide")
-
 def inject_black_theme():
     st.markdown("""
     <style>
@@ -143,6 +141,10 @@ from your_foods import FOODS  # tu lista gigante original para cargar la BD la p
 
 st.set_page_config(page_title="Calculadora de calorías y macros", layout="wide")
 
+USER_ID = st.sidebar.text_input("👤 Usuario", value=st.session_state.get("user_id", "moi"))
+st.session_state["user_id"] = USER_ID
+
+
 @st.cache_resource
 def _bootstrap():
     init_db()
@@ -171,7 +173,8 @@ if page == "📊 Dashboard":
     st.caption(f"Día: {selected_date_str}")
     st.divider()
 
-    rows = list_entries_by_date(selected_date_str)
+    rows = list_entries_by_date(selected_date_str, USER_ID)
+
 
     total_kcal = sum(r["calories"] for r in rows) if rows else 0
     total_protein = sum(r["protein"] for r in rows) if rows else 0
@@ -250,24 +253,23 @@ elif page == "🍽 Registro":
     if add_btn:
         macros = scale_macros(food, grams)
         entry = {
+            "user_id": USER_ID,   # 👈 NUEVO
             "entry_date": selected_date_str,
             "meal": meal,
             "name": food["name"],
             "grams": float(grams),
-            "calories": float(macros["calories"]),
-            "protein": float(macros["protein"]),
-            "carbs": float(macros["carbs"]),
-            "fat": float(macros["fat"]),
-    }
-
-        add_entry(USER_ID, entry)
+            **macros
+}
+        add_entry(entry)
         st.success("Añadido ✅")
         st.rerun()
 
 
 
+
     st.subheader("Registro")
-    rows = list_entries_by_date(USER_ID, selected_date_str)
+    rows = list_entries_by_date(selected_date_str, USER_ID)
+
 
 
     df = pd.DataFrame(rows, columns=["id","meal","name","grams","calories","protein","carbs","fat"])
@@ -783,6 +785,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
