@@ -214,6 +214,8 @@ elif page == "🍽 Registro":
         }
         add_entry(entry)
         st.success("Añadido ✅")
+        st.rerun()
+
 
     st.subheader("Registro")
     rows = list_entries_by_date(selected_date_str)
@@ -229,7 +231,7 @@ elif page == "🍽 Registro":
 
     if not df.empty:
         st.subheader("Totales")
-    c1, c2, c3, c4 = st.columns(4)
+        c1, c2, c3, c4 = st.columns(4)
     with c1:
             st.metric("🔥 Calorías", f"{df['calories'].sum():.0f} kcal")
     with c2:
@@ -669,6 +671,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
