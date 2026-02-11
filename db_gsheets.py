@@ -227,9 +227,13 @@ def delete_food_by_id(food_id: int) -> None:
 def add_entry(entry: Dict[str, Any]) -> int:
     ws = _ws(TAB_ENTRIES)
     new_id = _next_id(TAB_ENTRIES)
+
+    # 👇 fuerza texto "YYYY-MM-DD" para que Sheets NO lo convierta a fecha
+    entry_date_text = "'" + str(entry["entry_date"]).strip()
+
     ws.append_row([
         new_id,
-        entry["entry_date"],
+        entry_date_text,
         entry["meal"],
         entry["name"],
         _to_float(entry.get("grams", 0)),
@@ -238,8 +242,10 @@ def add_entry(entry: Dict[str, Any]) -> int:
         _to_float(entry.get("carbs", 0)),
         _to_float(entry.get("fat", 0)),
     ], value_input_option="USER_ENTERED")
+
     st.cache_data.clear()
     return new_id
+
 
 
 def list_entries_by_date(entry_date: str) -> List[Dict[str, Any]]:
@@ -352,6 +358,7 @@ def set_setting(key: str, value: str) -> None:
             return
     ws.append_row([key, value], value_input_option="USER_ENTERED")
     st.cache_data.clear()
+
 
 
 
