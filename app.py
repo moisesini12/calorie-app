@@ -226,7 +226,15 @@ elif page == "🍽 Registro":
 
     df = pd.DataFrame(rows, columns=["id","meal","name","grams","calories","protein","carbs","fat"])
 
-# 🔧 CORRECCIÓN TEMPORAL DE ESCALA
+    df_view = df.drop(columns=["id"]).rename(columns={
+        "meal": "Comida",
+        "name": "Alimento",
+        "grams": "Gramos",
+        "calories": "Calorías",
+        "protein": "Proteínas",
+        "carbs": "Carbohidratos",
+        "fat": "Grasas"
+})
  
 
     st.dataframe(df.drop(columns=["id"]), use_container_width=True)
@@ -680,6 +688,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
