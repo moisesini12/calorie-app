@@ -1,11 +1,11 @@
 # core.py
-def scale_macros(per100: dict, grams: float) -> dict:
+def scale_macros(food, grams):
     factor = grams / 100.0
     return {
-        "calories": per100["calories"] * factor,
-        "protein":  per100["protein"]  * factor,
-        "carbs":    per100["carbs"]    * factor,
-        "fat":      per100["fat"]      * factor,
+        "calories": float(food["calories"]) * factor,
+        "protein": float(food["protein"]) * factor,
+        "carbs": float(food["carbs"]) * factor,
+        "fat": float(food["fat"]) * factor,
     }
 
 def calculate_goals(sex: str, age: float, weight: float, height: float, activity: float, deficit_pct: float):
@@ -29,3 +29,4 @@ def calculate_goals(sex: str, age: float, weight: float, height: float, activity
     carbs_target = remaining_calories / 4
 
     return round(maintenance), round(deficit_calories), round(protein_target), round(carbs_target), round(fat_target)
+
