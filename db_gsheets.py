@@ -221,9 +221,8 @@ def delete_food_by_id(food_id: int) -> None:
     row_idx = _find_row_index_by_id(TAB_FOODS, food_id)
     if row_idx is None:
         return
-        st.cache_data.clear()
     _ws(TAB_FOODS).delete_rows(row_idx)
-
+    st.cache_data.clear()
 
 def add_entry(entry: Dict[str, Any]) -> int:
     ws = _ws(TAB_ENTRIES)
@@ -296,9 +295,8 @@ def delete_entry_by_id(entry_id: int) -> None:
     row_idx = _find_row_index_by_id(TAB_ENTRIES, entry_id)
     if row_idx is None:
         return
-        st.cache_data.clear()
     _ws(TAB_ENTRIES).delete_rows(row_idx)
-
+    st.cache_data.clear()
 
 def daily_totals_last_days(days: int = 30) -> List[Tuple[str, float, float, float, float]]:
     """
@@ -352,8 +350,8 @@ def set_setting(key: str, value: str) -> None:
         if str(r.get("key", "")).strip() == key:
             ws.update(f"A{i}:B{i}", [[key, value]], value_input_option="USER_ENTERED")
             return
-            st.cache_data.clear()
     ws.append_row([key, value], value_input_option="USER_ENTERED")
+    st.cache_data.clear()
 
 
 
