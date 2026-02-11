@@ -220,7 +220,7 @@ if page == "📊 Dashboard":
     st.markdown(f"**🥑 Grasas:** {total_fat:.1f} / {target_f:.1f} g")
     st.progress(ratio(total_fat, target_f))
     st.caption(f"{ratio(total_fat, target_f)*100:.1f}% del objetivo")
-    st.subheader("📊 Dashboard")
+
 
 
 # =========================
@@ -452,7 +452,6 @@ elif page == "🍽 Registro":
             delete_entry_by_id(selected_id)
             st.success("Entrada borrada ✅")
             st.rerun()
-        st.subheader("🍽 Registro")
 
 
 # =========================
@@ -786,6 +785,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
