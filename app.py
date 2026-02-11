@@ -3,83 +3,124 @@
 import streamlit as st
 st.set_page_config(page_title="Calculadora de calorías y macros", layout="wide")
 
-st.markdown("""
-<style>
+def inject_black_theme():
+    st.markdown("""
+    <style>
 
-/* Fondo principal */
-.main {
-    background-color: #0F172A;
-}
+    /* FONDO GLOBAL NEGRO PURO */
+    html, body, [data-testid="stAppViewContainer"] {
+        background-color: #000000 !important;
+        color: #ffffff !important;
+    }
 
-/* Sidebar */
-section[data-testid="stSidebar"] {
-    background-color: #0B1221;
-}
+    /* SIDEBAR NEGRO PURO */
+    [data-testid="stSidebar"] {
+        background-color: #000000 !important;
+        border-right: 1px solid #111111;
+    }
 
-/* Tarjetas métricas */
-div[data-testid="stMetric"] {
-    background-color: #1E293B;
-    padding: 18px;
-    border-radius: 14px;
-    border: 1px solid #2D3748;
-}
+    /* HEADER Y CONTENEDORES */
+    header, .block-container {
+        background-color: #000000 !important;
+    }
 
-/* Inputs y selectores */
-div.stTextInput input,
-div.stNumberInput input,
-div.stSelectbox div[data-baseweb="select"] {
-    background-color: #1E293B !important;
-    color: white !important;
-    border-radius: 10px !important;
-    border: 1px solid #2D3748 !important;
-}
+    /* TITULOS */
+    h1, h2, h3, h4 {
+        color: #ffffff !important;
+        letter-spacing: -0.02em;
+    }
 
-/* Botones principales */
-div.stButton > button {
-    background-color: #16A34A;
-    color: white;
-    border-radius: 12px;
-    border: none;
-    padding: 10px 18px;
-    font-weight: bold;
-    transition: all 0.3s ease;
-}
+    /* TARJETAS METRIC */
+    div[data-testid="stMetric"] {
+        background: #050505 !important;
+        border: 1px solid #0f0f0f !important;
+        border-radius: 14px;
+        padding: 16px;
+        color: white;
+    }
 
-div.stButton > button:hover {
-    background-color: #22C55E;
-}
+    /* DATAFRAMES */
+    div[data-testid="stDataFrame"] {
+        background-color: #000000 !important;
+        border: 1px solid #0f0f0f !important;
+        border-radius: 14px;
+        overflow: hidden;
+    }
 
-/* Expander */
-div[data-testid="stExpander"] {
-    background-color: #1E293B;
-    border-radius: 12px;
-    border: 1px solid #2D3748;
-}
+    /* TABLAS INTERNAS */
+    table {
+        background-color: #000000 !important;
+    }
 
-/* Tablas */
-div[data-testid="stDataFrame"] {
-    background-color: #1E293B;
-    border-radius: 12px;
-    padding: 10px;
-}
+    /* BOTONES */
+    .stButton > button {
+        background-color: #080808 !important;
+        border: 1px solid #151515 !important;
+        border-radius: 12px;
+        color: white !important;
+    }
 
-/* Barras de progreso */
-div[data-testid="stProgress"] > div > div {
-    background-color: #16A34A;
-}
+    .stButton > button:hover {
+        border: 1px solid #222222 !important;
+        background-color: #0f0f0f !important;
+    }
 
-/* Títulos */
-h1, h2, h3, h4 {
-    color: #F1F5F9;
-}
+    /* INPUTS */
+    input, textarea, select {
+        background-color: #050505 !important;
+        border: 1px solid #151515 !important;
+        border-radius: 12px !important;
+        color: white !important;
+    }
 
-/* Texto normal */
-p, label {
-    color: #CBD5E1;
-}
+    /* SELECTBOX */
+    div[data-baseweb="select"] > div {
+        background-color: #050505 !important;
+        border: 1px solid #151515 !important;
+    }
 
-</style>
-""", unsafe_allow_html=True)
+    /* SLIDERS */
+    .stSlider > div {
+        background-color: #000000 !important;
+    }
+
+    /* SEPARADORES */
+    hr {
+        border: 1px solid #0f0f0f !important;
+    }
+
+    /* MENSAJES */
+    .stAlert {
+        background-color: #050505 !important;
+        border: 1px solid #0f0f0f !important;
+        color: white !important;
+    }
+
+    /* TABS */
+    div[role="tablist"] button {
+        background-color: #050505 !important;
+        border: 1px solid #0f0f0f !important;
+        color: white !important;
+        border-radius: 10px;
+    }
+
+    /* SCROLL */
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+        background: #000000;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: #111111;
+        border-radius: 10px;
+    }
+
+    </style>
+    """, unsafe_allow_html=True)
+
+inject_black_theme()
+
 
 
 import pandas as pd
@@ -737,6 +778,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
