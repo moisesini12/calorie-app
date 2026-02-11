@@ -213,6 +213,7 @@ def update_food(food_id: int, updates: Dict[str, Any]) -> None:
         str(values[i]) if values[i] is not None else current[i]
         for i in range(7)
     ]
+    st.cache_data.clear()
     ws.update(f"A{row_idx}:G{row_idx}", [merged], value_input_option="USER_ENTERED")
 
 
@@ -220,6 +221,7 @@ def delete_food_by_id(food_id: int) -> None:
     row_idx = _find_row_index_by_id(TAB_FOODS, food_id)
     if row_idx is None:
         return
+        st.cache_data.clear()
     _ws(TAB_FOODS).delete_rows(row_idx)
 
 
@@ -352,6 +354,7 @@ def set_setting(key: str, value: str) -> None:
             return
             st.cache_data.clear()
     ws.append_row([key, value], value_input_option="USER_ENTERED")
+
 
 
 
