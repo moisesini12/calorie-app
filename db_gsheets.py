@@ -270,10 +270,10 @@ def add_entry(entry: Dict[str, Any]) -> int:
         entry["meal"],                     # col D
         entry["name"],                     # col E
         _to_float(entry.get("grams", 0)),  # col F
-        _to_float(entry.get("calories", 0)),
-        _to_float(entry.get("protein", 0)),
-        _to_float(entry.get("carbs", 0)),
-        _to_float(entry.get("fat", 0)),
+        _to_float(entry.get("calories", 0)) / 100,
+        _to_float(entry.get("protein", 0)) / 100,
+        _to_float(entry.get("carbs", 0)) / 100,
+        _to_float(entry.get("fat", 0)) / 100,
     ], value_input_option="USER_ENTERED")
 
     st.cache_data.clear()
@@ -411,6 +411,7 @@ def set_setting(key: str, value: str) -> None:
             return
     ws.append_row([key, value], value_input_option="USER_ENTERED")
     st.cache_data.clear()
+
 
 
 
