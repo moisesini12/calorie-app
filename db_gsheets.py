@@ -270,10 +270,10 @@ def add_entry(entry: Dict[str, Any]) -> int:
         entry["meal"],                     # col D
         entry["name"],                     # col E
         _to_float(entry.get("grams", 0)),  # col F
-        _to_float(entry.get("calories", 0)) / 100,
-        _to_float(entry.get("protein", 0)) / 100,
-        _to_float(entry.get("carbs", 0)) / 100,
-        _to_float(entry.get("fat", 0)) / 100,
+        _to_float(entry.get("calories", 0)),
+        _to_float(entry.get("protein", 0)),
+        _to_float(entry.get("carbs", 0)),
+        _to_float(entry.get("fat", 0)),
     ], value_input_option="USER_ENTERED")
 
     st.cache_data.clear()
@@ -379,10 +379,10 @@ def daily_totals_last_days(days: int = 30) -> List[Tuple[str, float, float, floa
 
         if d not in agg:
             agg[d] = {"calories": 0.0, "protein": 0.0, "carbs": 0.0, "fat": 0.0}
-        agg[d]["calories"] += _to_float(r.get("calories")) / 100
-        agg[d]["protein"] += _to_float(r.get("protein")) / 100
-        agg[d]["carbs"] += _to_float(r.get("carbs")) / 100
-        agg[d]["fat"] += _to_float(r.get("fat")) / 100
+        agg[d]["calories"] += _to_float(r.get("calories"))
+        agg[d]["protein"] += _to_float(r.get("protein"))
+        agg[d]["carbs"] += _to_float(r.get("carbs"))
+        agg[d]["fat"] += _to_float(r.get("fat"))
 
 
     out = []
@@ -404,13 +404,18 @@ def get_setting(key: str, default: Any = None) -> Any:
 def set_setting(key: str, value: str) -> None:
     ws = _ws(TAB_SETTINGS)
     rows = ws.get_all_records()
+
     # buscamos fila
     for i, r in enumerate(rows, start=2):  # fila real en sheet
         if str(r.get("key", "")).strip() == key:
             ws.update(f"A{i}:B{i}", [[key, value]], value_input_option="USER_ENTERED")
+            st.cache_data.clear()  # ✅ IMPORTANTÍSIMO
             return
+
     ws.append_row([key, value], value_input_option="USER_ENTERED")
-    st.cache_data.clear()
+    st.cache_data.clear()  # ✅ también aquí
+
+
 
 
 
