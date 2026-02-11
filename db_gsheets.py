@@ -233,51 +233,56 @@ def delete_food_by_id(food_id: int) -> None:
 
 
 
-def add_entry(user_id: str, entry: Dict[str, Any]) -> int:
+def add_entry(entry: Dict[str, Any]) -> int:
     ws = _ws(TAB_ENTRIES)
     new_id = _next_id(TAB_ENTRIES)
 
-    row_dict = {
-        "id": new_id,
-        "user_id": user_id,
-        "entry_date": entry["entry_date"],
-        "meal": entry["meal"],
-        "name": entry["name"],
-        "grams": _to_float(entry.get("grams", 0)),
-        "calories": _to_float(entry.get("calories", 0)),
-        "protein": _to_float(entry.get("protein", 0)),
-        "carbs": _to_float(entry.get("carbs", 0)),
-        "fat": _to_float(entry.get("fat", 0)),
-    }
+    ws.append_row([
+        new_id,
+        entry.get("user_id", ""),          # 👈 NUEVO (col B)
+        entry["entry_date"],               # col C
+        entry["meal"],                     # col D
+        entry["name"],                     # col E
+        _to_float(entry.get("grams", 0)),  # col F
+        _to_float(entry.get("calories", 0)),
+        _to_float(entry.get("protein", 0)),
+        _to_float(entry.get("carbs", 0)),
+        _to_float(entry.get("fat", 0)),
+    ], value_input_option="USER_ENTERED")
 
-    _append_row_by_headers(ws, row_dict)
     st.cache_data.clear()
     return new_id
 
 
 
 
-def list_entries_by_date(user_id: str, entry_date: str) -> List[Dict[str, Any]]:
+
+def list_entries_by_date(entry_date: str, user_id: Optional[str] = None) -> List[Dict[str, Any]]:
     rows = _get_all_records(TAB_ENTRIES)
     out = []
     for r in rows:
-        r_uid = str(r.get("user_id", "")).strip()
-        r_date = str(r.get("entry_date", "")).strip()
+        d = str(r.get("entry_date", "")).strip()
+        if d != entry_date:
+            continue
 
-        if r_uid == str(user_id).strip() and r_date == str(entry_date).strip():
-            out.append({
-                "id": _to_int(r.get("id")),
-                "user_id": r_uid,
-                "entry_date": r_date,
-                "meal": str(r.get("meal", "")).strip(),
-                "name": str(r.get("name", "")).strip(),
-                "grams": _to_float(r.get("grams")),
-                "calories": _to_float(r.get("calories")),
-                "protein": _to_float(r.get("protein")),
-                "carbs": _to_float(r.get("carbs")),
-                "fat": _to_float(r.get("fat")),
-            })
+        if user_id is not None:
+            if str(r.get("user_id", "")).strip() != str(user_id).strip():
+                continue
+
+        out.append({
+            "id": _to_int(r.get("id")),
+            "user_id": str(r.get("user_id", "")).strip(),
+            "entry_date": d,
+            "meal": str(r.get("meal", "")).strip(),
+            "name": str(r.get("name", "")).strip(),
+            "grams": _to_float(r.get("grams")),
+            "calories": _to_float(r.get("calories")),
+            "protein": _to_float(r.get("protein")),
+            "carbs": _to_float(r.get("carbs")),
+            "fat": _to_float(r.get("fat")),
+        })
     return out
+
 
 
 
@@ -288,28 +293,30 @@ def update_entry(entry_id: int, **updates) -> None:
         raise ValueError(f"No existe entry id={entry_id}")
 
     ws = _ws(TAB_ENTRIES)
-    # A id, B entry_date, C meal, D name, E grams, F calories, G protein, H carbs, I fat
     current = ws.row_values(row_idx)
-    while len(current) < 9:
+    while len(current) < 10:
         current.append("")
 
-    def pick(col_index_0based: int, key: str):
+    def pick(col0: int, key: str):
         v = updates.get(key, None)
-        return str(v) if v is not None else current[col_index_0based]
+        return str(v) if v is not None else current[col0]
 
     merged = [
-        str(entry_id),                       # id siempre
-        pick(1, "entry_date"),
-        pick(2, "meal"),
-        pick(3, "name"),
-        pick(4, "grams"),
-        pick(5, "calories"),
-        pick(6, "protein"),
-        pick(7, "carbs"),
-        pick(8, "fat"),
+        str(entry_id),             # A id
+        pick(1, "user_id"),        # B user_id
+        pick(2, "entry_date"),     # C entry_date
+        pick(3, "meal"),           # D meal
+        pick(4, "name"),           # E name
+        pick(5, "grams"),          # F grams
+        pick(6, "calories"),       # G calories
+        pick(7, "protein"),        # H protein
+        pick(8, "carbs"),          # I carbs
+        pick(9, "fat"),            # J fat
     ]
+
+    ws.update(f"A{row_idx}:J{row_idx}", [merged], value_input_option="USER_ENTERED")
     st.cache_data.clear()
-    ws.update(f"A{row_idx}:I{row_idx}", [merged], value_input_option="USER_ENTERED")
+
 
 
 def delete_entry_by_id(entry_id: int) -> None:
@@ -374,6 +381,7 @@ def set_setting(key: str, value: str) -> None:
             return
     ws.append_row([key, value], value_input_option="USER_ENTERED")
     st.cache_data.clear()
+
 
 
 
