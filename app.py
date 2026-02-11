@@ -223,7 +223,15 @@ elif page == "🍽 Registro":
 
     st.subheader("Registro")
     rows = list_entries_by_date(selected_date_str)
+
     df = pd.DataFrame(rows, columns=["id","meal","name","grams","calories","protein","carbs","fat"])
+
+# 🔧 CORRECCIÓN TEMPORAL DE ESCALA
+    df["calories"] = df["calories"] / 100
+    df["protein"] = df["protein"] / 100
+    df["carbs"] = df["carbs"] / 100
+    df["fat"] = df["fat"] / 100
+
     st.dataframe(df.drop(columns=["id"]), use_container_width=True)
     target_def = get_setting("target_deficit_calories")
     target_p = get_setting("target_protein")
@@ -675,6 +683,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
