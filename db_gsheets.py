@@ -59,6 +59,32 @@ def _to_int(x: Any, default: int = 0) -> int:
     except Exception:
         return default
 
+def _norm_date(d: Any) -> str:
+    """
+    Normaliza fechas de Sheets a 'YYYY-MM-DD'
+    Soporta: 'YYYY-MM-DD', 'DD/MM/YYYY', y valores raros tipo datetime/date.
+    """
+    if d is None:
+        return ""
+    s = str(d).strip()
+    if not s:
+        return ""
+
+    # Caso ISO
+    try:
+        return dt.date.fromisoformat(s).isoformat()
+    except Exception:
+        pass
+
+    # Caso típico España: 11/02/2026
+    for fmt in ("%d/%m/%Y", "%d/%m/%y", "%Y/%m/%d"):
+        try:
+            return dt.datetime.strptime(s, fmt).date().isoformat()
+        except Exception:
+            pass
+
+    return s  # fallback
+
 
 @st.cache_data(ttl=15)
 def _get_all_records(tab_name: str):
@@ -259,10 +285,12 @@ def add_entry(entry: Dict[str, Any]) -> int:
 
 def list_entries_by_date(entry_date: str, user_id: Optional[str] = None) -> List[Dict[str, Any]]:
     rows = _get_all_records(TAB_ENTRIES)
+    target = _norm_date(entry_date)
+
     out = []
     for r in rows:
-        d = str(r.get("entry_date", "")).strip()
-        if d != entry_date:
+        d = _norm_date(r.get("entry_date", ""))
+        if d != target:
             continue
 
         if user_id is not None:
@@ -282,6 +310,7 @@ def list_entries_by_date(entry_date: str, user_id: Optional[str] = None) -> List
             "fat": _to_float(r.get("fat")),
         })
     return out
+
 
 
 
@@ -337,7 +366,8 @@ def daily_totals_last_days(days: int = 30) -> List[Tuple[str, float, float, floa
 
     agg: Dict[str, Dict[str, float]] = {}
     for r in rows:
-        d = str(r.get("entry_date", "")).strip()
+        d = _norm_date(r.get("entry_date", ""))
+
         if not d:
             continue
         try:
@@ -381,6 +411,7 @@ def set_setting(key: str, value: str) -> None:
             return
     ws.append_row([key, value], value_input_option="USER_ENTERED")
     st.cache_data.clear()
+
 
 
 
