@@ -553,16 +553,16 @@ elif page == "🎯 Objetivos":
     target_f = get_setting("target_fat")
 
     if all([target_maint, target_def, target_p, target_c, target_f]):
-
         st.subheader("📌 Tus objetivos guardados")
         a, b, c, d, e = st.columns(5)
-        a.metric("⚡ Mantenimiento", f"{float(target_cal):.0f} kcal")
+        a.metric("⚡ Mantenimiento", f"{float(target_maint):.0f} kcal")
         b.metric("🎯 Déficit", f"{float(target_def):.0f} kcal")
         c.metric("🥩 Proteína", f"{float(target_p):.0f} g")
         d.metric("🍚 Carbs", f"{float(target_c):.0f} g")
         e.metric("🥑 Grasas", f"{float(target_f):.0f} g")
     else:
         st.info("Aún no has guardado objetivos. Rellena los datos y pulsa el botón.")
+
 
 # =========================
 # TAB 2: OBJETIVOS
@@ -785,6 +785,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
