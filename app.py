@@ -212,17 +212,25 @@ if page == "📊 Dashboard":
     total_carbs = sum(r["carbs"] for r in rows) if rows else 0
     total_fat = sum(r["fat"] for r in rows) if rows else 0
 
-    col1, col2, col3, col4 = st.columns(4)
-    with col1:
-        st.metric("🔥 Calorías", f"{total_kcal:.0f} kcal")
-    with col2:
-        st.metric("🥩 Proteína", f"{total_protein:.1f} g")
-    with col3:
-        st.metric("🍚 Carbs", f"{total_carbs:.1f} g")
-    with col4:
-        st.metric("🥑 Grasas", f"{total_fat:.1f} g")
-
+    # 🔥 BLOQUE PRINCIPAL — CALORÍAS (grande)
+    st.metric("🔥 Calorías del día", f"{total_kcal:.0f} kcal")
+    
     st.divider()
+    
+    # 🥩🍚🥑 BLOQUE MACROS
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.metric("🥩 Proteína", f"{total_protein:.1f} g")
+    
+    with col2:
+        st.metric("🍚 Carbs", f"{total_carbs:.1f} g")
+    
+    with col3:
+        st.metric("🥑 Grasas", f"{total_fat:.1f} g")
+    
+    st.divider()
+
     st.subheader("🎯 Progreso de objetivos")
 
     target_kcal = float(get_setting("target_deficit_calories", 1800))
@@ -816,6 +824,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
