@@ -316,7 +316,11 @@ elif page == "🍽 Registro":
         add_btn = st.button("Añadir al registro")
 
     if add_btn:
+        st.write("DEBUG grams(raw) =", grams, type(grams))
+
         macros = scale_macros(food, grams)
+        st.write("DEBUG macros =", macros)
+
         entry = {
             "user_id": USER_ID,
             "entry_date": selected_date_str,
@@ -850,6 +854,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
