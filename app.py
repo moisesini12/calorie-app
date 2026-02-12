@@ -314,6 +314,8 @@ elif page == "🍽 Registro":
         st.write("")
         st.write("")
         add_btn = st.button("Añadir al registro")
+    
+        st.write("DEBUG grams =", grams)
 
     if add_btn:
         macros = scale_macros(food, grams)
@@ -324,11 +326,7 @@ elif page == "🍽 Registro":
             "name": food["name"],
             "grams": float(grams),
             **macros
-    
-
 }
-  
-
         add_entry(entry)
         st.session_state["grams_add"] = 100.0  # 👈 AQUI
         st.success("Añadido ✅")
@@ -855,6 +853,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
