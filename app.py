@@ -349,7 +349,7 @@ elif page == "🍽 Registro":
 
 
     st.subheader("📊 Tendencia (últimos 30 días)")
-    history = daily_totals_last_days(30)
+    history = daily_totals_last_days(30, USER_ID)
     hist_df = pd.DataFrame(history, columns=["date","calories","protein","carbs","fat"])
     if not hist_df.empty:
         hist_df["date"] = pd.to_datetime(hist_df["date"])
@@ -785,6 +785,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
