@@ -272,6 +272,19 @@ if page == "📊 Dashboard":
     progress_row("🍚 Carbs", total_carbs, target_c, " g")
     progress_row("🥑 Grasas", total_fat, target_f, " g")
 
+    st.divider()
+    st.subheader("🍽 Distribución por comida")
+    
+    if rows:
+        import pandas as pd
+    
+        df_day = pd.DataFrame(rows)
+        by_meal = df_day.groupby("meal")["calories"].sum().reset_index()
+    
+        st.bar_chart(by_meal.set_index("meal"))
+    else:
+        st.caption("No hay datos suficientes para mostrar distribución.")
+
 
 
 # =========================
@@ -842,6 +855,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
