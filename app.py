@@ -317,22 +317,22 @@ elif page == "🍽 Registro":
     
         st.write("DEBUG grams =", grams)
 
-    if add_btn:
-        macros = scale_macros(food, grams)
-        entry = {
-            "user_id": USER_ID,   # 👈 NUEVO
-            "entry_date": selected_date_str,
-            "meal": meal,
-            "name": food["name"],
-            "grams": float(grams),
-            **macros
-}
-        add_entry(entry)
-        st.session_state["grams_add"] = 100.0  # 👈 AQUI
-        st.success("Añadido ✅")
-        st.rerun()
+    def add_to_log():
+    macros = scale_macros(food, st.session_state["grams_add"])
+    entry = {
+        "user_id": USER_ID,
+        "entry_date": selected_date_str,
+        "meal": st.session_state["meal_add"],
+        "name": food["name"],
+        "grams": float(st.session_state["grams_add"]),
+        **macros
+    }
+    add_entry(entry)
+    st.session_state["grams_add"] = 100.0
 
+    add_btn = st.button("Añadir al registro", on_click=add_to_log)
 
+   
 
 
     st.subheader("Registro")
@@ -853,6 +853,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
