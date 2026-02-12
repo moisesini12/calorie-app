@@ -9,114 +9,144 @@ def inject_black_theme():
     st.markdown("""
     <style>
 
-    /* FONDO GLOBAL NEGRO PURO */
-    html, body, [data-testid="stAppViewContainer"] {
-        background-color: #000000 !important;
-        color: #ffffff !important;
+    /* ===== FITNESS PRO MINIMAL (BLACK) ===== */
+    :root{
+      --bg: #000000;
+      --panel: rgba(255,255,255,0.04);
+      --panel-2: rgba(255,255,255,0.06);
+      --stroke: rgba(255,255,255,0.08);
+      --stroke-2: rgba(255,255,255,0.12);
+      --txt: rgba(255,255,255,0.92);
+      --muted: rgba(255,255,255,0.60);
+      --muted2: rgba(255,255,255,0.40);
+      --accent: #39ff14; /* verde gym: cambia si quieres */
+      --radius: 18px;
+    }
+    
+    /* Fondo total negro */
+    html, body, [data-testid="stAppViewContainer"]{
+      background: var(--bg) !important;
+      color: var(--txt) !important;
+    }
+    
+    /* Contenedor principal: menos ancho para “app” y no web random */
+    .block-container{
+      max-width: 1100px;
+      padding-top: 28px;
+      padding-bottom: 60px;
+    }
+    
+    /* Sidebar */
+    [data-testid="stSidebar"]{
+      background: var(--bg) !important;
+      border-right: 1px solid var(--stroke) !important;
+    }
+    
+    /* Tipografía: más pro */
+    h1{
+      font-size: 44px !important;
+      letter-spacing: -0.03em;
+    }
+    h2, h3{
+      letter-spacing: -0.02em;
+    }
+    p, label, .stCaption, .stMarkdown{
+      color: var(--muted) !important;
+    }
+    
+    /* “Tarjetas” estilo glass */
+    div[data-testid="stMetric"]{
+      background: var(--panel) !important;
+      border: 1px solid var(--stroke) !important;
+      border-radius: var(--radius) !important;
+      padding: 18px 18px !important;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.35);
+      backdrop-filter: blur(10px);
+    }
+    
+    /* Metric label y value más limpios */
+    div[data-testid="stMetric"] label{
+      color: var(--muted) !important;
+      font-size: 13px !important;
+    }
+    div[data-testid="stMetric"] [data-testid="stMetricValue"]{
+      font-size: 34px !important;
+      font-weight: 700 !important;
+      color: var(--txt) !important;
+    }
+    
+    /* Botones: “pill” pro + borde sutil */
+    .stButton > button{
+      background: var(--panel) !important;
+      border: 1px solid var(--stroke-2) !important;
+      border-radius: 999px !important;
+      color: var(--txt) !important;
+      padding: 10px 16px !important;
+      transition: all .15s ease;
+    }
+    .stButton > button:hover{
+      transform: translateY(-1px);
+      border-color: rgba(57,255,20,0.35) !important;
+      box-shadow: 0 8px 26px rgba(57,255,20,0.08);
+    }
+    .stButton > button:active{
+      transform: translateY(0px);
+    }
+    
+    /* Inputs y select: panel oscuro */
+    input, textarea{
+      background: var(--panel) !important;
+      border: 1px solid var(--stroke) !important;
+      border-radius: 14px !important;
+      color: var(--txt) !important;
+    }
+    div[data-baseweb="select"] > div{
+      background: var(--panel) !important;
+      border: 1px solid var(--stroke) !important;
+      border-radius: 14px !important;
+    }
+    
+    /* Divider / HR */
+    hr{
+      border: none !important;
+      height: 1px !important;
+      background: var(--stroke) !important;
+    }
+    
+    /* Dataframe “card” */
+    div[data-testid="stDataFrame"]{
+      background: var(--panel) !important;
+      border: 1px solid var(--stroke) !important;
+      border-radius: var(--radius) !important;
+      overflow: hidden;
+    }
+    
+    /* Tabs más pro */
+    div[role="tablist"] button{
+      background: var(--panel) !important;
+      border: 1px solid var(--stroke) !important;
+      color: var(--muted) !important;
+      border-radius: 999px !important;
+      padding: 8px 14px !important;
+    }
+    div[role="tablist"] button[aria-selected="true"]{
+      color: var(--txt) !important;
+      border-color: rgba(57,255,20,0.35) !important;
+    }
+    
+    /* Progress bar (verde accent) */
+    div[data-testid="stProgress"] > div > div{
+      background-color: var(--accent) !important;
+    }
+    
+    /* Scrollbar */
+    ::-webkit-scrollbar{ width: 8px; }
+    ::-webkit-scrollbar-track{ background: var(--bg); }
+    ::-webkit-scrollbar-thumb{
+      background: rgba(255,255,255,0.12);
+      border-radius: 999px;
     }
 
-    /* SIDEBAR NEGRO PURO */
-    [data-testid="stSidebar"] {
-        background-color: #000000 !important;
-        border-right: 1px solid #111111;
-    }
-
-    /* HEADER Y CONTENEDORES */
-    header, .block-container {
-        background-color: #000000 !important;
-    }
-
-    /* TITULOS */
-    h1, h2, h3, h4 {
-        color: #ffffff !important;
-        letter-spacing: -0.02em;
-    }
-
-    /* TARJETAS METRIC */
-    div[data-testid="stMetric"] {
-        background: #050505 !important;
-        border: 1px solid #0f0f0f !important;
-        border-radius: 14px;
-        padding: 16px;
-        color: white;
-    }
-
-    /* DATAFRAMES */
-    div[data-testid="stDataFrame"] {
-        background-color: #000000 !important;
-        border: 1px solid #0f0f0f !important;
-        border-radius: 14px;
-        overflow: hidden;
-    }
-
-    /* TABLAS INTERNAS */
-    table {
-        background-color: #000000 !important;
-    }
-
-    /* BOTONES */
-    .stButton > button {
-        background-color: #080808 !important;
-        border: 1px solid #151515 !important;
-        border-radius: 12px;
-        color: white !important;
-    }
-
-    .stButton > button:hover {
-        border: 1px solid #222222 !important;
-        background-color: #0f0f0f !important;
-    }
-
-    /* INPUTS */
-    input, textarea, select {
-        background-color: #050505 !important;
-        border: 1px solid #151515 !important;
-        border-radius: 12px !important;
-        color: white !important;
-    }
-
-    /* SELECTBOX */
-    div[data-baseweb="select"] > div {
-        background-color: #050505 !important;
-        border: 1px solid #151515 !important;
-    }
-
-    /* SLIDERS */
-    .stSlider > div {
-        background-color: #000000 !important;
-    }
-
-    /* SEPARADORES */
-    hr {
-        border: 1px solid #0f0f0f !important;
-    }
-
-    /* MENSAJES */
-    .stAlert {
-        background-color: #050505 !important;
-        border: 1px solid #0f0f0f !important;
-        color: white !important;
-    }
-
-    /* TABS */
-    div[role="tablist"] button {
-        background-color: #050505 !important;
-        border: 1px solid #0f0f0f !important;
-        color: white !important;
-        border-radius: 10px;
-    }
-
-    /* SCROLL */
-    ::-webkit-scrollbar {
-        width: 8px;
-    }
-    ::-webkit-scrollbar-track {
-        background: #000000;
-    }
-    ::-webkit-scrollbar-thumb {
-        background: #111111;
-        border-radius: 10px;
-    }
 
     </style>
     """, unsafe_allow_html=True)
@@ -785,6 +815,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
