@@ -147,7 +147,17 @@ def inject_black_theme():
       border-radius: 999px;
     }
 
+    /* TARJETAS METRIC ESTILO FITNESS PRO */
+    div[data-testid="stMetric"] {
+        background: #0b0b0b !important;
+        border: 1px solid #1a1a1a !important;
+        border-radius: 16px;
+        padding: 18px;
+        box-shadow: 0 0 0 1px #111 inset;
+    }
 
+
+    
     </style>
     """, unsafe_allow_html=True)
 
@@ -831,6 +841,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
