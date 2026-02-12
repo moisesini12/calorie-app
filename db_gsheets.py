@@ -171,7 +171,6 @@ def list_categories() -> List[str]:
 
 def list_foods_by_category(category: str) -> List[Dict[str, Any]]:
     foods = _get_all_records(TAB_FOODS)
-    st.write("DEBUG foods raw first rows:", foods[:5])
 
     out = []
     for f in foods:
@@ -428,6 +427,7 @@ def set_setting(key: str, value: str) -> None:
 
     ws.append_row([key, value], value_input_option="USER_ENTERED")
     st.cache_data.clear()  # ✅ también aquí
+
 
 
 
