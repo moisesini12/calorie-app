@@ -208,41 +208,43 @@ page = st.sidebar.radio(
 # ======================
 # TAB 0: DASHBOARD
 # ======================
-st.subheader("🎯 Progreso del día")
-st.caption("Objetivo vs consumido y cuánto te queda.")
+if page == "📊 Dashboard":
 
-target_kcal = float(get_setting("target_deficit_calories", 1800))
-target_p = float(get_setting("target_protein", 120))
-target_c = float(get_setting("target_carbs", 250))
-target_f = float(get_setting("target_fat", 60))
-
-def clamp01(x: float) -> float:
-    return 0.0 if x < 0 else 1.0 if x > 1 else x
-
-def progress_row(label: str, value: float, goal: float, unit: str = ""):
-    goal = float(goal) if goal else 0.0
-    value = float(value) if value else 0.0
-
-    ratio = 0.0 if goal <= 0 else clamp01(value / goal)
-    remaining = goal - value
-
-    left, right = st.columns([5, 2])
-    with left:
-        st.markdown(f"**{label}**  ·  {value:.0f}{unit} / {goal:.0f}{unit}")
-        st.progress(ratio)
-    with right:
-        if goal <= 0:
-            st.caption("sin objetivo")
-        else:
-            if remaining >= 0:
-                st.metric("Restante", f"{remaining:.0f}{unit}")
+    st.subheader("🎯 Progreso del día")
+    st.caption("Objetivo vs consumido y cuánto te queda.")
+    
+    target_kcal = float(get_setting("target_deficit_calories", 1800))
+    target_p = float(get_setting("target_protein", 120))
+    target_c = float(get_setting("target_carbs", 250))
+    target_f = float(get_setting("target_fat", 60))
+    
+    def clamp01(x: float) -> float:
+        return 0.0 if x < 0 else 1.0 if x > 1 else x
+    
+    def progress_row(label: str, value: float, goal: float, unit: str = ""):
+        goal = float(goal) if goal else 0.0
+        value = float(value) if value else 0.0
+    
+        ratio = 0.0 if goal <= 0 else clamp01(value / goal)
+        remaining = goal - value
+    
+        left, right = st.columns([5, 2])
+        with left:
+            st.markdown(f"**{label}**  ·  {value:.0f}{unit} / {goal:.0f}{unit}")
+            st.progress(ratio)
+        with right:
+            if goal <= 0:
+                st.caption("sin objetivo")
             else:
-                st.metric("Exceso", f"{abs(remaining):.0f}{unit}")
-
-progress_row("🔥 Calorías", total_kcal, target_kcal, " kcal")
-progress_row("🥩 Proteína", total_protein, target_p, " g")
-progress_row("🍚 Carbs", total_carbs, target_c, " g")
-progress_row("🥑 Grasas", total_fat, target_f, " g")
+                if remaining >= 0:
+                    st.metric("Restante", f"{remaining:.0f}{unit}")
+                else:
+                    st.metric("Exceso", f"{abs(remaining):.0f}{unit}")
+    
+    progress_row("🔥 Calorías", total_kcal, target_kcal, " kcal")
+    progress_row("🥩 Proteína", total_protein, target_p, " g")
+    progress_row("🍚 Carbs", total_carbs, target_c, " g")
+    progress_row("🥑 Grasas", total_fat, target_f, " g")
 
 
 
