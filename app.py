@@ -239,6 +239,7 @@ elif page == "🍽 Registro":
     with colB:
         foods_in_cat = list_foods_by_category(category)
         food = st.selectbox("Alimento", foods_in_cat, format_func=lambda x: x["name"])
+        st.write("DEBUG food:", food)
 
     col1, col2, col3 = st.columns(3)
     with col1:
@@ -785,6 +786,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
