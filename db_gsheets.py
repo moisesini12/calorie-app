@@ -46,9 +46,23 @@ def _to_float(x: Any, default: float = 0.0) -> float:
     try:
         if x is None or x == "":
             return default
-        return float(str(x).replace(",", "."))
+        s = str(x).strip()
+
+        # Si viene tipo "2.255" (miles ES) => 2255
+        # Si viene tipo "2.255,5" => 2255.5
+        if "," in s:
+            s = s.replace(".", "").replace(",", ".")
+        else:
+            # si no hay coma, pero hay puntos, pueden ser miles
+            # "2.255" => 2255
+            # "2.5" (decimal) es ambiguo, pero en tu app casi todo son enteros de kcal
+            if s.count(".") >= 1 and s.replace(".", "").isdigit():
+                s = s.replace(".", "")
+
+        return float(s)
     except Exception:
         return default
+
 
 
 def _to_int(x: Any, default: int = 0) -> int:
@@ -427,6 +441,7 @@ def set_setting(key: str, value: str) -> None:
 
     ws.append_row([key, value], value_input_option="USER_ENTERED")
     st.cache_data.clear()  # ✅ también aquí
+
 
 
 
