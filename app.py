@@ -294,7 +294,14 @@ elif page == "🍽 Registro":
 
     col1, col2, col3 = st.columns(3)
     with col1:
-        grams = st.number_input("Gramos consumidos", min_value=1.0, step=1.0, value=100.0)
+        grams = st.number_input(
+            "Gramos consumidos",
+            min_value=1.0,
+            step=1.0,
+            value=st.session_state.get("grams_add", 100.0),
+            key="grams_add"
+)
+
     with col2:
         meal = st.radio(
             "Comida",
@@ -319,6 +326,7 @@ elif page == "🍽 Registro":
             **macros
 }
         add_entry(entry)
+        st.session_state["grams_add"] = 100.0  # 👈 AQUI
         st.success("Añadido ✅")
         st.rerun()
 
@@ -843,6 +851,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
