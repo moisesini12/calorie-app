@@ -355,7 +355,15 @@ def delete_entry_by_id(entry_id: int) -> None:
     _ws(TAB_ENTRIES).delete_rows(row_idx)
     st.cache_data.clear()
 
-def daily_totals_last_days(days: int = 30, user_id: Optional[str] = None) -> List[Tuple[str, float, float, float, float]]:
+def daily_totals_last_days(
+    days: int = 30,
+    user_id: Optional[str] = None
+) -> List[Tuple[str, float, float, float, float]]:
+    """
+    Devuelve lista de tuplas:
+    (date, calories, protein, carbs, fat)
+    Filtra por user_id si se proporciona.
+    """
     rows = _get_all_records(TAB_ENTRIES)
     today = dt.date.today()
     start = today - dt.timedelta(days=days - 1)
@@ -363,16 +371,20 @@ def daily_totals_last_days(days: int = 30, user_id: Optional[str] = None) -> Lis
     agg: Dict[str, Dict[str, float]] = {}
 
     for r in rows:
-        if user_id is not None and str(r.get("user_id", "")).strip() != str(user_id).strip():
-            continue
+        # ✅ filtro multiusuario
+        if user_id is not None:
+            if str(r.get("user_id", "")).strip() != str(user_id).strip():
+                continue
 
         d = _norm_date(r.get("entry_date", ""))
         if not d:
             continue
+
         try:
             dd = dt.date.fromisoformat(d)
         except Exception:
             continue
+
         if dd < start or dd > today:
             continue
 
@@ -384,7 +396,12 @@ def daily_totals_last_days(days: int = 30, user_id: Optional[str] = None) -> Lis
         agg[d]["carbs"] += _to_float(r.get("carbs"))
         agg[d]["fat"] += _to_float(r.get("fat"))
 
-    return [(d, a["calories"], a["protein"], a["carbs"], a["fat"]) for d, a in sorted(agg.items())]
+    out = []
+    for d in sorted(agg.keys()):
+        a = agg[d]
+        out.append((d, a["calories"], a["protein"], a["carbs"], a["fat"]))
+    return out
+
 
 
 def get_setting(key: str, default: Any = None) -> Any:
@@ -409,6 +426,7 @@ def set_setting(key: str, value: str) -> None:
 
     ws.append_row([key, value], value_input_option="USER_ENTERED")
     st.cache_data.clear()  # ✅ también aquí
+
 
 
 
