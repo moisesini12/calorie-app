@@ -199,7 +199,8 @@ page = st.sidebar.radio(
 # ======================
 if page == "📊 Dashboard":
     # --- TODO: aquí va tu código del dashboard ---
-    st.title("📊 Dashboard")
+    st.subheader("📊 Dashboard")
+
     st.caption(f"Día: {selected_date_str}")
     st.divider()
 
@@ -815,6 +816,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
