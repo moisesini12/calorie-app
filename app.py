@@ -327,10 +327,7 @@ elif page == "🍽 Registro":
     
 
 }
-    if grams > 600:
-        st.warning(f"⚠️ Vas a añadir {grams:.0f} g. ¿Seguro?")
-    if not st.checkbox("Sí, confirmar", key="confirm_big_grams"):
-        st.stop()
+  
 
         add_entry(entry)
         st.session_state["grams_add"] = 100.0  # 👈 AQUI
@@ -858,6 +855,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
