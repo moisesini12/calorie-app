@@ -284,7 +284,13 @@ elif page == "🍽 Registro":
     with col1:
         grams = st.number_input("Gramos consumidos", min_value=1.0, step=1.0, value=100.0)
     with col2:
-        meal = st.selectbox("Comida", ["Desayuno", "Almuerzo", "Merienda", "Cena"], key="meal_add")
+        meal = st.radio(
+            "Comida",
+            ["Desayuno", "Almuerzo", "Merienda", "Cena"],
+            horizontal=True,
+            key="meal_add"
+)
+
     with col3:
         st.write("")
         st.write("")
@@ -825,6 +831,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
