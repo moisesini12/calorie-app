@@ -208,68 +208,41 @@ page = st.sidebar.radio(
 # ======================
 # TAB 0: DASHBOARD
 # ======================
-if page == "📊 Dashboard":
-    # --- TODO: aquí va tu código del dashboard ---
-    st.subheader("📊 Dashboard")
+st.subheader("🎯 Progreso del día")
+st.caption("Objetivo vs consumido y cuánto te queda.")
 
-    st.caption(f"Día: {selected_date_str}")
-    st.divider()
+target_kcal = float(get_setting("target_deficit_calories", 1800))
+target_p = float(get_setting("target_protein", 120))
+target_c = float(get_setting("target_carbs", 250))
+target_f = float(get_setting("target_fat", 60))
 
-    rows = list_entries_by_date(selected_date_str, USER_ID)
+def clamp01(x: float) -> float:
+    return 0.0 if x < 0 else 1.0 if x > 1 else x
 
+def progress_row(label: str, value: float, goal: float, unit: str = ""):
+    goal = float(goal) if goal else 0.0
+    value = float(value) if value else 0.0
 
-    total_kcal = sum(r["calories"] for r in rows) if rows else 0
-    total_protein = sum(r["protein"] for r in rows) if rows else 0
-    total_carbs = sum(r["carbs"] for r in rows) if rows else 0
-    total_fat = sum(r["fat"] for r in rows) if rows else 0
+    ratio = 0.0 if goal <= 0 else clamp01(value / goal)
+    remaining = goal - value
 
-    # 🔥 BLOQUE PRINCIPAL — CALORÍAS (grande)
-    st.metric("🔥 Calorías del día", f"{total_kcal:.0f} kcal")
-    
-    st.divider()
-    
-    # 🥩🍚🥑 BLOQUE MACROS
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        st.metric("🥩 Proteína", f"{total_protein:.1f} g")
-    
-    with col2:
-        st.metric("🍚 Carbs", f"{total_carbs:.1f} g")
-    
-    with col3:
-        st.metric("🥑 Grasas", f"{total_fat:.1f} g")
-    
-    st.divider()
+    left, right = st.columns([5, 2])
+    with left:
+        st.markdown(f"**{label}**  ·  {value:.0f}{unit} / {goal:.0f}{unit}")
+        st.progress(ratio)
+    with right:
+        if goal <= 0:
+            st.caption("sin objetivo")
+        else:
+            if remaining >= 0:
+                st.metric("Restante", f"{remaining:.0f}{unit}")
+            else:
+                st.metric("Exceso", f"{abs(remaining):.0f}{unit}")
 
-    st.subheader("🎯 Progreso de objetivos")
-
-    target_kcal = float(get_setting("target_deficit_calories", 1800))
-    target_p = float(get_setting("target_protein", 120))
-    target_c = float(get_setting("target_carbs", 250))
-    target_f = float(get_setting("target_fat", 60))
-
-    def ratio(v, t):
-        return 0.0 if t <= 0 else min(v / t, 1.0)
-
-    st.markdown(f"**🔥 Calorías:** {total_kcal:.0f} / {target_kcal:.0f}")
-    st.progress(ratio(total_kcal, target_kcal))
-    st.caption(f"{ratio(total_kcal, target_kcal)*100:.1f}% del objetivo")
-    st.write("")
-
-    st.markdown(f"**🥩 Proteína:** {total_protein:.1f} / {target_p:.1f} g")
-    st.progress(ratio(total_protein, target_p))
-    st.caption(f"{ratio(total_protein, target_p)*100:.1f}% del objetivo")
-    st.write("")
-
-    st.markdown(f"**🍚 Carbs:** {total_carbs:.1f} / {target_c:.1f} g")
-    st.progress(ratio(total_carbs, target_c))
-    st.caption(f"{ratio(total_carbs, target_c)*100:.1f}% del objetivo")
-    st.write("")
-
-    st.markdown(f"**🥑 Grasas:** {total_fat:.1f} / {target_f:.1f} g")
-    st.progress(ratio(total_fat, target_f))
-    st.caption(f"{ratio(total_fat, target_f)*100:.1f}% del objetivo")
+progress_row("🔥 Calorías", total_kcal, target_kcal, " kcal")
+progress_row("🥩 Proteína", total_protein, target_p, " g")
+progress_row("🍚 Carbs", total_carbs, target_c, " g")
+progress_row("🥑 Grasas", total_fat, target_f, " g")
 
 
 
@@ -841,6 +814,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
