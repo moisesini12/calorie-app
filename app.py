@@ -328,8 +328,8 @@ elif page == "🍽 Registro":
         **macros
     }
     add_entry(entry)
-    st.session_state["grams_add"] = 100.0
-    st.rerun()
+        st.session_state["grams_add"] = 100.0
+        st.rerun()
 
     add_btn = st.button("Añadir al registro", on_click=add_to_log)
 
@@ -854,6 +854,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
