@@ -181,12 +181,19 @@ def _append_row_by_headers(ws, row_dict: dict):
 # ---------- Public API (mismo "contrato" que tu db.py) ----------
 def init_db() -> None:
     try:
-        sh = _sh()
-        for name in [TAB_FOODS, TAB_ENTRIES, TAB_SETTINGS]:
-            sh.worksheet(name)
+        sh = _sh()  # abre el spreadsheet
+        existing = [ws.title for ws in sh.worksheets()]
+
+        required = [TAB_FOODS, TAB_ENTRIES, TAB_SETTINGS]
+        missing = [t for t in required if t not in existing]
+        if missing:
+            raise RuntimeError(f"Faltan pestañas en el Sheet: {missing}. Tengo: {existing}")
+
     except Exception as e:
+        # Esto hace que veas el fallo real (permisos / id / cuota / etc.)
         raise RuntimeError(
-            "No puedo abrir el Google Sheet o no encuentro las pestañas: foods, entries, settings."
+            f"No puedo abrir el Google Sheet (id={SHEET_ID}) o no encuentro pestañas "
+            f"foods/entries/settings. Error real: {repr(e)}"
         ) from e
 
 
@@ -494,6 +501,7 @@ def set_setting(key: str, value: str) -> None:
     ws.append_row([key, value], value_input_option="USER_ENTERED")
     st.cache_data.clear()  # ✅ también aquí
     _cache_bump(TAB_SETTINGS)
+
 
 
 
