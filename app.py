@@ -744,25 +744,25 @@ elif mode == "✏️ Editar":
     # =========================
     # 🗑️ BORRAR
     # =========================
+else:
+    if not all_foods:
+        st.info("No hay alimentos para borrar.")
     else:
-        if not all_foods:
-            st.info("No hay alimentos para borrar.")
-        else:
-            selected = st.selectbox(
-                "Selecciona alimento a borrar",
-                all_foods,
-                format_func=lambda f: f"{f['category']} — {f['name']}"
-            )
+        selected = st.selectbox(
+            "Selecciona alimento a borrar",
+            all_foods,
+            format_func=lambda f: f"{f['category']} — {f['name']}"
+        )
 
-            st.warning("⚠️ Esto lo borra de la base de datos. No se puede deshacer.")
+        st.warning("⚠️ Esto lo borra de la base de datos. No se puede deshacer.")
 
-            confirm = st.checkbox(f"Confirmo que quiero borrar: {selected['name']}")
+        confirm = st.checkbox(f"Confirmo que quiero borrar: {selected['name']}")
 
-            if st.button("Borrar alimento", disabled=not confirm):
-                delete_food_by_id(selected["id"])
-                st.success("Alimento borrado ✅")
-                st.rerun()
-    st.subheader("➕ Añadir alimento")
+        if st.button("Borrar alimento", disabled=not confirm):
+            delete_food_by_id(selected["id"])
+            st.success("Alimento borrado ✅")
+            st.rerun()
+            st.subheader("➕ Añadir alimento")
 
 # =========================
 # TAB 3: COACH AI
@@ -874,6 +874,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
