@@ -103,7 +103,41 @@ def _norm_date(d: Any) -> str:
 @st.cache_data(ttl=15)
 def _get_all_records(tab_name: str):
     ws = _ws(tab_name)
-    return ws.get_all_records()
+    values = ws.get_all_values()
+
+    if not values:
+        return []
+
+    # Primera fila = headers
+    raw_headers = values[0]
+    headers = []
+    seen = set()
+
+    for i, h in enumerate(raw_headers):
+        h = str(h).strip()
+        if not h:
+            # si header vacío → lo ignoramos
+            headers.append(f"_col_{i}")
+        elif h in seen:
+            # si header duplicado → lo renombramos
+            headers.append(f"{h}_{i}")
+        else:
+            headers.append(h)
+            seen.add(h)
+
+    records = []
+    for row in values[1:]:
+        # rellenar filas cortas
+        while len(row) < len(headers):
+            row.append("")
+
+        record = {}
+        for i, h in enumerate(headers):
+            record[h] = row[i] if i < len(row) else ""
+        records.append(record)
+
+    return records
+
 
 
 
@@ -441,6 +475,7 @@ def set_setting(key: str, value: str) -> None:
 
     ws.append_row([key, value], value_input_option="USER_ENTERED")
     st.cache_data.clear()  # ✅ también aquí
+
 
 
 
