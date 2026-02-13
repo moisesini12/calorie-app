@@ -292,7 +292,10 @@ elif page == "🍽 Registro":
         foods_in_cat = list_foods_by_category(category)
         food = st.selectbox("Alimento", foods_in_cat, format_func=lambda x: x["name"])
 
+# ---- FORM: Añadir entrada (evita reruns y 429) ----
+with st.form("add_entry_form", clear_on_submit=False):
     col1, col2, col3 = st.columns(3)
+
     with col1:
         grams = float(st.number_input(
             "Gramos consumidos",
@@ -300,8 +303,7 @@ elif page == "🍽 Registro":
             step=1.0,
             value=100.0,
             format="%.0f"
-))
-
+        ))
 
     with col2:
         meal = st.radio(
@@ -309,17 +311,17 @@ elif page == "🍽 Registro":
             ["Desayuno", "Almuerzo", "Merienda", "Cena"],
             horizontal=True,
             key="meal_add"
-)
+        )
 
     with col3:
         st.write("")
         st.write("")
-        add_btn = st.button("Añadir al registro")
+        add_btn = st.form_submit_button("Añadir al registro")
 
     if add_btn:
         try:
             macros = scale_macros(food, grams)
-    
+
             entry = {
                 "user_id": st.session_state["user_id"],
                 "entry_date": selected_date_str,
@@ -328,16 +330,14 @@ elif page == "🍽 Registro":
                 "grams": float(grams),
                 **macros
             }
-    
+
             new_id = add_entry(entry)
-            st.success(f"✅ Guardado en Sheets con id={new_id}")
+            st.success(f"✅ Entrada guardada (id={new_id})")
             st.rerun()
-    
+
         except Exception as e:
-            st.error("❌ Error guardando en Google Sheets")
+            st.error("❌ Error guardando la entrada en Google Sheets")
             st.exception(e)
-
-
 
 
 
@@ -642,7 +642,7 @@ elif page == "🎯 Objetivos":
 
 
 # =========================
-# TAB 2: OBJETIVOS
+# TAB 2: AÑADIR
 # =========================
 elif page == "➕ Añadir alimento":
     # --- TODO: aquí va gestión de alimentos ---
@@ -658,19 +658,26 @@ elif page == "➕ Añadir alimento":
     # ➕ AÑADIR
     # =========================
     if mode == "➕ Añadir":
-        col1, col2 = st.columns(2)
-        with col1:
-            name = st.text_input("Nombre del alimento")
-            category = st.text_input("Categoría", value="Carbohidratos")
-        with col2:
-            calories = st.number_input("Kcal por 100g", min_value=0.0, value=100.0, step=1.0)
-            protein = st.number_input("Proteína por 100g", min_value=0.0, value=0.0, step=0.1)
-            carbs = st.number_input("Carbs por 100g", min_value=0.0, value=0.0, step=0.1)
-            fat = st.number_input("Grasas por 100g", min_value=0.0, value=0.0, step=0.1)
+with st.form("add_food_form", clear_on_submit=False):
+    col1, col2 = st.columns(2)
 
-        if st.button("Guardar alimento", type="primary"):
+    with col1:
+        name = st.text_input("Nombre del alimento")
+        category = st.text_input("Categoría", value="Carbohidratos")
+
+    with col2:
+        calories = st.number_input("Kcal por 100g", min_value=0.0, value=100.0, step=1.0)
+        protein = st.number_input("Proteína por 100g", min_value=0.0, value=0.0, step=0.1)
+        carbs = st.number_input("Carbs por 100g", min_value=0.0, value=0.0, step=0.1)
+        fat = st.number_input("Grasas por 100g", min_value=0.0, value=0.0, step=0.1)
+
+    save_food_btn = st.form_submit_button("Guardar alimento")
+
+    if save_food_btn:
+        try:
             clean_name = name.strip()
             clean_cat = category.strip()
+
             if not clean_name:
                 st.error("Falta el nombre del alimento.")
             elif not clean_cat:
@@ -686,6 +693,11 @@ elif page == "➕ Añadir alimento":
                 })
                 st.success("Alimento guardado ✅")
                 st.rerun()
+
+        except Exception as e:
+            st.error("❌ Error guardando el alimento en Google Sheets")
+            st.exception(e)
+
 
     # =========================
     # ✏️ EDITAR
@@ -862,6 +874,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
