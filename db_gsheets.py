@@ -20,29 +20,30 @@ SCOPES = [
 ]
 
 # ---- Cache versioning helpers ----
-def _cache_bump(key: str):
-    k = f"_v_{key}"
+# ---- Cache versioning helpers (evita 429 y refresca al escribir) ----
+def _cache_bump(tab_name: str) -> None:
+    k = f"_v_{tab_name}"
     st.session_state[k] = st.session_state.get(k, 0) + 1
 
-def _cache_ver(key: str) -> int:
-    return st.session_state.get(f"_v_{key}", 0)
+def _cache_ver(tab_name: str) -> int:
+    return st.session_state.get(f"_v_{tab_name}", 0)
 
 
 # ---------- Helpers ----------
+@st.cache_resource
 def _client() -> gspread.Client:
     sa_info = dict(st.secrets["gcp_service_account"])
     creds = Credentials.from_service_account_info(sa_info, scopes=SCOPES)
     return gspread.authorize(creds)
 
-
-
-
-
+@st.cache_resource
 def _sh():
     return _client().open_by_key(SHEET_ID)
 
+@st.cache_resource
 def _ws(tab_name: str):
     return _sh().worksheet(tab_name)
+
 
 
 
@@ -105,22 +106,40 @@ def _norm_date(d: Any) -> str:
 
 
 @st.cache_data(ttl=300)
+@st.cache_data(ttl=300)
 def _get_all_records_cached(tab_name: str, version: int):
     ws = _ws(tab_name)
     values = ws.get_all_values()
+
     if not values:
         return []
 
     raw_headers = values[0]
-    headers = [str(h).strip() for h in raw_headers]
+    headers = []
+    seen = set()
+
+    for i, h in enumerate(raw_headers):
+        h = str(h).strip()
+        if not h:
+            headers.append(f"_col_{i}")
+        elif h in seen:
+            headers.append(f"{h}_{i}")
+        else:
+            headers.append(h)
+            seen.add(h)
+
     records = []
     for row in values[1:]:
         while len(row) < len(headers):
             row.append("")
-        records.append({headers[i]: row[i] for i in range(len(headers))})
+        record = {headers[i]: row[i] for i in range(len(headers))}
+        records.append(record)
+
     return records
 
+
 def _get_all_records(tab_name: str):
+    # version cambia cuando escribimos -> cache se invalida SOLO para esa pestaña
     return _get_all_records_cached(tab_name, _cache_ver(tab_name))
 
 
@@ -251,6 +270,8 @@ def add_food(food: Dict[str, Any]) -> int:
         _to_float(food.get("fat", 0)),
     ], value_input_option="USER_ENTERED")
     st.cache_data.clear()
+    _cache_bump(TAB_FOODS)
+
     return new_id
 
 
@@ -282,6 +303,8 @@ def update_food(food_id: int, updates: Dict[str, Any]) -> None:
     ]
     st.cache_data.clear()
     ws.update(f"A{row_idx}:G{row_idx}", [merged], value_input_option="USER_ENTERED")
+    _cache_bump(TAB_FOODS)
+
 
 
 def delete_food_by_id(food_id: int) -> None:
@@ -290,6 +313,7 @@ def delete_food_by_id(food_id: int) -> None:
         return
     _ws(TAB_FOODS).delete_rows(row_idx)
     st.cache_data.clear()
+    _cache_bump(TAB_FOODS)
 
 
 
@@ -315,6 +339,8 @@ def add_entry(entry: Dict[str, Any]) -> int:
         _to_float(entry.get("carbs", 0)),
         _to_float(entry.get("fat", 0)),
     ], value_input_option="USER_ENTERED", insert_data_option="INSERT_ROWS")
+
+    _cache_bump(TAB_ENTRIES)
 
     return new_id
 
@@ -384,7 +410,7 @@ def update_entry(entry_id: int, **updates) -> None:
 
     ws.update(f"A{row_idx}:J{row_idx}", [merged], value_input_option="USER_ENTERED")
     st.cache_data.clear()
-
+    _cache_bump(TAB_ENTRIES)
 
 
 def delete_entry_by_id(entry_id: int) -> None:
@@ -393,6 +419,8 @@ def delete_entry_by_id(entry_id: int) -> None:
         return
     _ws(TAB_ENTRIES).delete_rows(row_idx)
     st.cache_data.clear()
+    _cache_bump(TAB_ENTRIES)
+
 
 def daily_totals_last_days(
     days: int = 30,
@@ -465,6 +493,8 @@ def set_setting(key: str, value: str) -> None:
 
     ws.append_row([key, value], value_input_option="USER_ENTERED")
     st.cache_data.clear()  # ✅ también aquí
+    _cache_bump(TAB_SETTINGS)
+
 
 
 
