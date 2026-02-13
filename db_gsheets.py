@@ -22,7 +22,6 @@ SCOPES = [
 
 
 # ---------- Helpers ----------
-@st.cache_resource
 def _client() -> gspread.Client:
     sa_info = dict(st.secrets["gcp_service_account"])
     creds = Credentials.from_service_account_info(sa_info, scopes=SCOPES)
@@ -32,11 +31,9 @@ def _client() -> gspread.Client:
 
 
 
-@st.cache_resource
 def _sh():
     return _client().open_by_key(SHEET_ID)
 
-@st.cache_resource
 def _ws(tab_name: str):
     return _sh().worksheet(tab_name)
 
@@ -134,7 +131,6 @@ def _get_all_records_uncached(tab_name: str):
     return records
 
 
-@st.cache_data(ttl=60)
 def _get_all_records_cached(tab_name: str):
     return _get_all_records_uncached(tab_name)
 
@@ -319,22 +315,29 @@ def delete_food_by_id(food_id: int) -> None:
 
 def add_entry(entry: Dict[str, Any]) -> int:
     ws = _ws(TAB_ENTRIES)
-    new_id = _next_id(TAB_ENTRIES)
+
+    # calcular id leyendo REAL (sin cache)
+    rows_now = ws.get_all_values()
+    new_id = 1 if len(rows_now) <= 1 else _to_int(rows_now[-1][0], 0) + 1
 
     ws.append_row([
         new_id,
-        entry.get("user_id", ""),          # 👈 NUEVO (col B)
-        entry["entry_date"],               # col C
-        entry["meal"],                     # col D
-        entry["name"],                     # col E
-        _to_float(entry.get("grams", 0)),  # col F
+        entry.get("user_id", ""),
+        entry["entry_date"],
+        entry["meal"],
+        entry["name"],
+        _to_float(entry.get("grams", 0)),
         _to_float(entry.get("calories", 0)),
         _to_float(entry.get("protein", 0)),
         _to_float(entry.get("carbs", 0)),
         _to_float(entry.get("fat", 0)),
-    ], value_input_option="USER_ENTERED")
+    ], value_input_option="USER_ENTERED", insert_data_option="INSERT_ROWS")
 
-    st.cache_data.clear()
+    # ✅ confirmación inmediata: última fila del sheet
+    last = ws.get_all_values()[-1]
+    if not last or str(last[0]).strip() != str(new_id):
+        raise RuntimeError("He intentado escribir en entries pero la fila no aparece al leer inmediatamente.")
+
     return new_id
 
 
@@ -484,6 +487,7 @@ def set_setting(key: str, value: str) -> None:
 
     ws.append_row([key, value], value_input_option="USER_ENTERED")
     st.cache_data.clear()  # ✅ también aquí
+
 
 
 
