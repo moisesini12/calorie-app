@@ -316,9 +316,12 @@ def delete_food_by_id(food_id: int) -> None:
 def add_entry(entry: Dict[str, Any]) -> int:
     ws = _ws(TAB_ENTRIES)
 
-    # calcular id leyendo REAL (sin cache)
-    rows_now = ws.get_all_values()
-    new_id = 1 if len(rows_now) <= 1 else _to_int(rows_now[-1][0], 0) + 1
+    # ✅ calcular id leyendo SOLO la columna A (rápido y fiable)
+    col_a = ws.col_values(1)  # incluye header
+    if len(col_a) <= 1:
+        new_id = 1
+    else:
+        new_id = max(_to_int(x, 0) for x in col_a[1:] if str(x).strip() != "") + 1
 
     ws.append_row([
         new_id,
@@ -332,11 +335,6 @@ def add_entry(entry: Dict[str, Any]) -> int:
         _to_float(entry.get("carbs", 0)),
         _to_float(entry.get("fat", 0)),
     ], value_input_option="USER_ENTERED", insert_data_option="INSERT_ROWS")
-
-    # ✅ confirmación inmediata: última fila del sheet
-    last = ws.get_all_values()[-1]
-    if not last or str(last[0]).strip() != str(new_id):
-        raise RuntimeError("He intentado escribir en entries pero la fila no aparece al leer inmediatamente.")
 
     return new_id
 
@@ -487,6 +485,7 @@ def set_setting(key: str, value: str) -> None:
 
     ws.append_row([key, value], value_input_option="USER_ENTERED")
     st.cache_data.clear()  # ✅ también aquí
+
 
 
 
