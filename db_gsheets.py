@@ -19,6 +19,13 @@ SCOPES = [
     "https://www.googleapis.com/auth/drive",
 ]
 
+# ---- Cache versioning helpers ----
+def _cache_bump(key: str):
+    k = f"_v_{key}"
+    st.session_state[k] = st.session_state.get(k, 0) + 1
+
+def _cache_ver(key: str) -> int:
+    return st.session_state.get(f"_v_{key}", 0)
 
 
 # ---------- Helpers ----------
@@ -97,51 +104,24 @@ def _norm_date(d: Any) -> str:
     return s  # fallback
 
 
-def _get_all_records_uncached(tab_name: str):
+@st.cache_data(ttl=300)
+def _get_all_records_cached(tab_name: str, version: int):
     ws = _ws(tab_name)
     values = ws.get_all_values()
-
     if not values:
         return []
 
     raw_headers = values[0]
-    headers = []
-    seen = set()
-
-    for i, h in enumerate(raw_headers):
-        h = str(h).strip()
-        if not h:
-            headers.append(f"_col_{i}")
-        elif h in seen:
-            headers.append(f"{h}_{i}")
-        else:
-            headers.append(h)
-            seen.add(h)
-
+    headers = [str(h).strip() for h in raw_headers]
     records = []
     for row in values[1:]:
         while len(row) < len(headers):
             row.append("")
-
-        record = {}
-        for i, h in enumerate(headers):
-            record[h] = row[i] if i < len(row) else ""
-        records.append(record)
-
+        records.append({headers[i]: row[i] for i in range(len(headers))})
     return records
 
-
-def _get_all_records_cached(tab_name: str):
-    return _get_all_records_uncached(tab_name)
-
-
 def _get_all_records(tab_name: str):
-    if tab_name == TAB_ENTRIES:
-        # entries SIEMPRE lectura fresca
-        return _get_all_records_uncached(tab_name)
-
-    # foods y settings pueden ir cacheados
-    return _get_all_records_cached(tab_name)
+    return _get_all_records_cached(tab_name, _cache_ver(tab_name))
 
 
 
@@ -485,6 +465,7 @@ def set_setting(key: str, value: str) -> None:
 
     ws.append_row([key, value], value_input_option="USER_ENTERED")
     st.cache_data.clear()  # ✅ también aquí
+
 
 
 
