@@ -702,44 +702,44 @@ if mode == "➕ Añadir":
     # =========================
     # ✏️ EDITAR
     # =========================
-    elif mode == "✏️ Editar":
-        if not all_foods:
-            st.info("No hay alimentos para editar.")
-        else:
-            selected = st.selectbox(
-                "Selecciona alimento",
-                all_foods,
-                format_func=lambda f: f"{f['category']} — {f['name']}"
-            )
+elif mode == "✏️ Editar":
+    if not all_foods:
+        st.info("No hay alimentos para editar.")
+    else:
+        selected = st.selectbox(
+            "Selecciona alimento",
+            all_foods,
+            format_func=lambda f: f"{f['category']} — {f['name']}"
+        )
 
-            col1, col2 = st.columns(2)
-            with col1:
-                new_name = st.text_input("Nombre", value=selected["name"])
-                new_category = st.text_input("Categoría", value=selected["category"])
-            with col2:
-                new_calories = st.number_input("Kcal por 100g", min_value=0.0, value=float(selected["calories"]), step=1.0)
-                new_protein = st.number_input("Proteína por 100g", min_value=0.0, value=float(selected["protein"]), step=0.1)
-                new_carbs = st.number_input("Carbs por 100g", min_value=0.0, value=float(selected["carbs"]), step=0.1)
-                new_fat = st.number_input("Grasas por 100g", min_value=0.0, value=float(selected["fat"]), step=0.1)
+        col1, col2 = st.columns(2)
+        with col1:
+            new_name = st.text_input("Nombre", value=selected["name"])
+            new_category = st.text_input("Categoría", value=selected["category"])
+        with col2:
+            new_calories = st.number_input("Kcal por 100g", min_value=0.0, value=float(selected["calories"]), step=1.0)
+            new_protein = st.number_input("Proteína por 100g", min_value=0.0, value=float(selected["protein"]), step=0.1)
+            new_carbs = st.number_input("Carbs por 100g", min_value=0.0, value=float(selected["carbs"]), step=0.1)
+            new_fat = st.number_input("Grasas por 100g", min_value=0.0, value=float(selected["fat"]), step=0.1)
 
-            if st.button("Guardar cambios", type="primary"):
-                nn = new_name.strip()
-                nc = new_category.strip()
-                if not nn:
-                    st.error("El nombre no puede estar vacío.")
-                elif not nc:
-                    st.error("La categoría no puede estar vacía.")
-                else:
-                    update_food(selected["id"], {
-                        "name": nn,
-                        "category": nc,
-                        "calories": float(new_calories),
-                        "protein": float(new_protein),
-                        "carbs": float(new_carbs),
-                        "fat": float(new_fat),
-                    })
-                    st.success("Cambios guardados ✅")
-                    st.rerun()
+        if st.button("Guardar cambios", type="primary"):
+            nn = new_name.strip()
+            nc = new_category.strip()
+            if not nn:
+                st.error("El nombre no puede estar vacío.")
+            elif not nc:
+                st.error("La categoría no puede estar vacía.")
+            else:
+                update_food(selected["id"], {
+                    "name": nn,
+                    "category": nc,
+                    "calories": float(new_calories),
+                    "protein": float(new_protein),
+                    "carbs": float(new_carbs),
+                    "fat": float(new_fat),
+                })
+                st.success("Cambios guardados ✅")
+                st.rerun()
 
     # =========================
     # 🗑️ BORRAR
@@ -874,6 +874,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
