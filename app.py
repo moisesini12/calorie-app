@@ -2,7 +2,6 @@
 # app.py
 import streamlit as st
 import pandas as pd
-USER_ID = "default_user"
 
 
 def inject_black_theme():
@@ -326,7 +325,7 @@ elif page == "🍽 Registro":
             macros = scale_macros(food, grams)
     
             entry = {
-                "user_id": USER_ID,
+                "user_id": st.session_state["user_id"],
                 "entry_date": selected_date_str,
                 "meal": meal,
                 "name": food["name"],
@@ -873,6 +872,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
