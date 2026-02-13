@@ -100,15 +100,13 @@ def _norm_date(d: Any) -> str:
     return s  # fallback
 
 
-@st.cache_data(ttl=15)
-def _get_all_records(tab_name: str):
+def _get_all_records_uncached(tab_name: str):
     ws = _ws(tab_name)
     values = ws.get_all_values()
 
     if not values:
         return []
 
-    # Primera fila = headers
     raw_headers = values[0]
     headers = []
     seen = set()
@@ -116,10 +114,8 @@ def _get_all_records(tab_name: str):
     for i, h in enumerate(raw_headers):
         h = str(h).strip()
         if not h:
-            # si header vacío → lo ignoramos
             headers.append(f"_col_{i}")
         elif h in seen:
-            # si header duplicado → lo renombramos
             headers.append(f"{h}_{i}")
         else:
             headers.append(h)
@@ -127,7 +123,6 @@ def _get_all_records(tab_name: str):
 
     records = []
     for row in values[1:]:
-        # rellenar filas cortas
         while len(row) < len(headers):
             row.append("")
 
@@ -137,6 +132,20 @@ def _get_all_records(tab_name: str):
         records.append(record)
 
     return records
+
+
+@st.cache_data(ttl=60)
+def _get_all_records_cached(tab_name: str):
+    return _get_all_records_uncached(tab_name)
+
+
+def _get_all_records(tab_name: str):
+    if tab_name == TAB_ENTRIES:
+        # entries SIEMPRE lectura fresca
+        return _get_all_records_uncached(tab_name)
+
+    # foods y settings pueden ir cacheados
+    return _get_all_records_cached(tab_name)
 
 
 
@@ -475,6 +484,7 @@ def set_setting(key: str, value: str) -> None:
 
     ws.append_row([key, value], value_input_option="USER_ENTERED")
     st.cache_data.clear()  # ✅ también aquí
+
 
 
 
