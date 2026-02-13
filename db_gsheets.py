@@ -292,4 +292,131 @@ def add_entry(entry: Dict[str, Any]) -> int:
     return new_id
 
 
-def list_entries_by_date(entry_date: str, user_id: Optional_
+def list_entries_by_date(entry_date: str, user_id: Optional[str] = None) -> List[Dict[str, Any]]:
+    rows = _get_all_records(TAB_ENTRIES)
+    target = _norm_date(entry_date)
+
+    out = []
+    for r in rows:
+        d = _norm_date(r.get("entry_date", ""))
+        if d != target:
+            continue
+
+        if user_id is not None:
+            if str(r.get("user_id", "")).strip() != str(user_id).strip():
+                continue
+
+        out.append({
+            "id": _to_int(r.get("id")),
+            "user_id": str(r.get("user_id", "")).strip(),
+            "entry_date": d,
+            "meal": str(r.get("meal", "")).strip(),
+            "name": str(r.get("name", "")).strip(),
+            "grams": _to_float(r.get("grams")),
+            "calories": _to_float(r.get("calories")),
+            "protein": _to_float(r.get("protein")),
+            "carbs": _to_float(r.get("carbs")),
+            "fat": _to_float(r.get("fat")),
+        })
+    return out
+
+
+def update_entry(entry_id: int, **updates) -> None:
+    row_idx = _find_row_index_by_id(TAB_ENTRIES, entry_id)
+    if row_idx is None:
+        raise ValueError(f"No existe entry id={entry_id}")
+
+    ws = _ws(TAB_ENTRIES)
+    current = ws.row_values(row_idx)
+    while len(current) < 10:
+        current.append("")
+
+    def pick(col0: int, key: str):
+        v = updates.get(key, None)
+        return str(v) if v is not None else current[col0]
+
+    merged = [
+        str(entry_id),
+        pick(1, "user_id"),
+        pick(2, "entry_date"),
+        pick(3, "meal"),
+        pick(4, "name"),
+        pick(5, "grams"),
+        pick(6, "calories"),
+        pick(7, "protein"),
+        pick(8, "carbs"),
+        pick(9, "fat"),
+    ]
+
+    ws.update(f"A{row_idx}:J{row_idx}", [merged], value_input_option="USER_ENTERED")
+    _cache_bump(TAB_ENTRIES)
+
+
+def delete_entry_by_id(entry_id: int) -> None:
+    row_idx = _find_row_index_by_id(TAB_ENTRIES, entry_id)
+    if row_idx is None:
+        return
+    _ws(TAB_ENTRIES).delete_rows(row_idx)
+    _cache_bump(TAB_ENTRIES)
+
+
+def daily_totals_last_days(days: int = 30, user_id: Optional[str] = None) -> List[Tuple[str, float, float, float, float]]:
+    rows = _get_all_records(TAB_ENTRIES)
+    today = dt.date.today()
+    start = today - dt.timedelta(days=days - 1)
+
+    agg: Dict[str, Dict[str, float]] = {}
+
+    for r in rows:
+        if user_id is not None:
+            if str(r.get("user_id", "")).strip() != str(user_id).strip():
+                continue
+
+        d = _norm_date(r.get("entry_date", ""))
+        if not d:
+            continue
+
+        try:
+            dd = dt.date.fromisoformat(d)
+        except Exception:
+            continue
+
+        if dd < start or dd > today:
+            continue
+
+        if d not in agg:
+            agg[d] = {"calories": 0.0, "protein": 0.0, "carbs": 0.0, "fat": 0.0}
+
+        agg[d]["calories"] += _to_float(r.get("calories"))
+        agg[d]["protein"] += _to_float(r.get("protein"))
+        agg[d]["carbs"] += _to_float(r.get("carbs"))
+        agg[d]["fat"] += _to_float(r.get("fat"))
+
+    out = []
+    for d in sorted(agg.keys()):
+        a = agg[d]
+        out.append((d, a["calories"], a["protein"], a["carbs"], a["fat"]))
+    return out
+
+
+def get_setting(key: str, default: Any = None) -> Any:
+    rows = _get_all_records(TAB_SETTINGS)
+    for r in rows:
+        if str(r.get("key", "")).strip() == key:
+            v = r.get("value", "")
+            return v if v != "" else default
+    return default
+
+
+def set_setting(key: str, value: str) -> None:
+    ws = _ws(TAB_SETTINGS)
+    rows = ws.get_all_records()
+
+    for i, r in enumerate(rows, start=2):
+        if str(r.get("key", "")).strip() == key:
+            ws.update(f"A{i}:B{i}", [[key, value]], value_input_option="USER_ENTERED")
+            _cache_bump(TAB_SETTINGS)
+            return
+
+    ws.append_row([key, value], value_input_option="USER_ENTERED", insert_data_option="INSERT_ROWS")
+    _cache_bump(TAB_SETTINGS)
