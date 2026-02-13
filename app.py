@@ -322,21 +322,29 @@ elif page == "🍽 Registro":
         add_btn = st.button("Añadir al registro")
 
     if add_btn:
-        st.write("DEBUG grams(raw) =", grams, type(grams))
+        try:
+            macros = scale_macros(food, grams)
+    
+            entry = {
+                "user_id": USER_ID,
+                "entry_date": selected_date_str,
+                "meal": meal,
+                "name": food["name"],
+                "grams": float(grams),
+                **macros
+            }
+    
+            new_id = add_entry(entry)
+    
+            st.success(f"✅ Guardado en Sheets con id={new_id}")
+            st.write("Entry enviado:", entry)
+    
+            st.rerun()
+    
+        except Exception as e:
+            st.error("❌ Error guardando en Google Sheets")
+            st.exception(e)
 
-        macros = scale_macros(food, grams)
-        st.write("DEBUG macros =", macros)
-
-        entry = {
-            "user_id": USER_ID,
-            "entry_date": selected_date_str,
-            "meal": meal,
-            "name": food["name"],
-            "grams": float(grams),
-            **macros
-        }
-        add_entry(entry)
-        st.rerun()
 
 
    
@@ -860,6 +868,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
