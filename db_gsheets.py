@@ -348,6 +348,7 @@ def add_entry(entry: Dict[str, Any]) -> int:
     ], value_input_option="USER_ENTERED", insert_data_option="INSERT_ROWS")
 
     _cache_bump(TAB_ENTRIES)
+    st.cache_data.clear()
 
     return new_id
 
@@ -501,6 +502,7 @@ def set_setting(key: str, value: str) -> None:
     ws.append_row([key, value], value_input_option="USER_ENTERED")
     st.cache_data.clear()  # ✅ también aquí
     _cache_bump(TAB_SETTINGS)
+
 
 
 
