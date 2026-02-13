@@ -339,11 +339,16 @@ elif page == "🍽 Registro":
             st.success(f"✅ Guardado en Sheets con id={new_id}")
             st.write("Entry enviado:", entry)
     
-            st.rerun()
+            # 🔍 Leer inmediatamente desde Sheets para confirmar
+            rows_now = list_entries_by_date(selected_date_str, USER_ID)
+            st.info(f"📌 Entradas hoy (según lectura inmediata): {len(rows_now)}")
+            if rows_now:
+                st.write("Última entrada leída:", rows_now[-1])
     
         except Exception as e:
             st.error("❌ Error guardando en Google Sheets")
             st.exception(e)
+
 
 
 
@@ -868,6 +873,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
