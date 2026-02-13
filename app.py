@@ -192,6 +192,11 @@ def _bootstrap():
 
 _bootstrap()
 
+from db_gsheets import _sh  # solo temporal para debug
+
+st.sidebar.caption(f"📄 Sheet usado: {_sh().title}")
+st.sidebar.caption(f"🆔 ID: {st.secrets['SPREADSHEET_ID']}")
+
 
 st.title("Calculadora de calorías y macros")
 
@@ -855,6 +860,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
