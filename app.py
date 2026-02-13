@@ -534,7 +534,7 @@ with st.form("add_entry_form", clear_on_submit=False):
 # =========================
 # TAB 2: OBJETIVOS
 # =========================
-elif page == "🎯 Objetivos":
+if page == "🎯 Objetivos":
 
     # 1) Defaults desde settings
     saved_sex = str(get_setting("sex", "M")).upper().strip()
@@ -874,6 +874,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
