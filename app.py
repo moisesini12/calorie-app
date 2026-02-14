@@ -1301,9 +1301,8 @@ elif page == "👨‍🍳 Chef IA":
             food_map[f["name"]] = f
     allowed = list(food_map.keys())
 
-    if mode == "none":
-        st.info("Elige qué quieres usar: 🥘 Platos o 🍽️ Menús.")
-        st.stop()
+    mode = st.session_state.get("chef_mode", "Menus")
+
 
 
     # ==========================================================
@@ -1765,6 +1764,7 @@ elif page == "🏋️ Rutina IA":
         st.subheader("🛡️ Notas de seguridad")
         for s in plan.get("safety_notes", []):
             st.write(f"- {s}")
+
 
 
 
