@@ -218,6 +218,36 @@ elif page == "🍽 Registro":
     st.caption(f"Día: {selected_date_str}")
     st.divider()
 
+with st.expander("🛠️ DEBUG Sheets (solo para ti)", expanded=True):
+    import db_gsheets
+
+    try:
+        sh = db_gsheets._sh()
+        ws = db_gsheets._ws(db_gsheets.TAB_ENTRIES)
+
+        st.write("**Sheet ID (secrets):**", db_gsheets.SHEET_ID)
+        st.write("**Spreadsheet title:**", sh.title)
+        st.write("**Worksheet title:**", ws.title)
+        st.write("**Worksheets disponibles:**", [w.title for w in sh.worksheets()])
+
+        # lee headers y última fila real
+        header = ws.row_values(1)
+        st.write("**Header entries:**", header)
+
+        last_row_idx = len(ws.get_all_values())
+        st.write("**Filas totales (get_all_values):**", last_row_idx)
+
+        if last_row_idx >= 2:
+            last = ws.row_values(last_row_idx)
+            st.write("**Última fila (row_values):**", last)
+        else:
+            st.write("**Última fila:** (vacío, solo headers)")
+
+    except Exception as e:
+        st.error("Fallo leyendo debug de Sheets")
+        st.exception(e)
+
+    
     # Mensaje persistente post-rerun (para que no “parpadee”)
     if st.session_state.get("_just_added", False):
         last_id = st.session_state.get("_last_add_id", "")
@@ -683,3 +713,4 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
