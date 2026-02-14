@@ -114,26 +114,6 @@ def inject_black_theme():
         color: #000000 !important;
     }
 
-    .stButton > button,
-    div[data-testid="stFormSubmitButton"] button,
-    button[kind="primary"]{
-        background: linear-gradient(
-            135deg,
-            var(--green) 0%,
-            var(--green2) 45%,
-            var(--blue) 100%
-        ) !important;
-
-        color: #ffffff !important;
-        border: none !important;
-        border-radius: 999px !important;
-        padding: 10px 20px !important;
-        font-weight: 700 !important;
-        letter-spacing: 0.3px;
-
-        box-shadow: 0 12px 28px rgba(37,99,235,0.25);
-        transition: all 0.15s ease-in-out;
-    }
 
     .stButton > button:hover,
     div[data-testid="stFormSubmitButton"] button:hover{
@@ -645,6 +625,57 @@ def inject_black_theme():
       border-radius: 18px !important;
       padding: 10px !important;
       margin-top: 10px !important;
+    }
+
+
+    /* =========================
+       SIDEBAR: SECCIONES + ITEMS
+       ========================= */
+    
+    /* Header del expander (la “pestaña” Principal/Nutrición/etc.) */
+    [data-testid="stSidebar"] details > summary{
+      background: linear-gradient(135deg, rgba(22,163,74,0.92), rgba(37,99,235,0.92)) !important;
+      border-radius: 999px !important;
+      padding: 10px 14px !important;
+      color: #fff !important;
+      font-weight: 850 !important;
+      margin: 10px 6px 6px 6px !important;
+      list-style: none !important;
+      border: none !important;
+    }
+    [data-testid="stSidebar"] summary::-webkit-details-marker{ display:none; }
+    
+    /* Caja interior (donde van los botones del menú) */
+    [data-testid="stSidebar"] details > div{
+      background: rgba(255,255,255,0.55) !important;
+      border: 1px solid rgba(15,23,42,0.08) !important;
+      border-radius: 18px !important;
+      padding: 10px !important;
+      margin: 6px 10px 12px 10px !important;
+    }
+    
+    /* Botones DENTRO de la caja: look “item” */
+    [data-testid="stSidebar"] details > div .stButton > button{
+      background: rgba(255,255,255,0.90) !important;
+      color: #0f172a !important;
+      border: 1px solid rgba(15,23,42,0.10) !important;
+      border-radius: 14px !important;
+      padding: 10px 12px !important;
+      font-weight: 750 !important;
+      box-shadow: none !important;
+      margin: 6px 0 !important;
+    }
+    
+    /* Item activo (cuando type="primary" en nav_btn) */
+    [data-testid="stSidebar"] details > div .stButton > button[kind="primary"]{
+      background: linear-gradient(135deg, rgba(22,163,74,0.20), rgba(37,99,235,0.18)) !important;
+      border: 1px solid rgba(15,23,42,0.12) !important;
+    }
+    
+    /* Hover */
+    [data-testid="stSidebar"] details > div .stButton > button:hover{
+      transform: translateY(-1px);
+      filter: brightness(1.02);
     }
 
 
@@ -2087,6 +2118,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
