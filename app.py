@@ -706,15 +706,7 @@ elif page == "🍽 Registro":
             st.metric("🥑 Grasas", f"{df['fat'].sum():.1f} g")
 
     # Tendencia (aunque el día esté vacío, puede haber histórico)
-        st.subheader("📊 Tendencia (últimos 30 días)")
-        history = daily_totals_last_days(30, st.session_state["user_id"])
-        hist_df = pd.DataFrame(history, columns=["date", "calories", "protein", "carbs", "fat"])
-        if not hist_df.empty:
-            hist_df["date"] = pd.to_datetime(hist_df["date"])
-            hist_df = hist_df.sort_values("date").set_index("date")
-            st.line_chart(hist_df[["calories"]])
-        else:
-            st.info("Aún no hay datos suficientes para la tendencia.")
+        
     
         # Editor/Borrado (solo si hay filas)
         if not df.empty:
@@ -1066,6 +1058,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
