@@ -517,12 +517,12 @@ def inject_black_theme():
     }
     
     .sb-section-box{
-      margin: 0 8px 10px 8px !important; /* <- aquí está el hueco principal */
-      padding: 8px 10px !important;
-      border-radius: 18px;
-      background: rgba(255,255,255,0.55);
-      border: 1px solid rgba(15,23,42,0.08);
+      margin: 0 0 6px 0 !important;
+      padding: 0 !important;
+      background: transparent !important;
+      border: none !important;
     }
+
     
     .sb-section-box [data-testid="stRadio"]{
       margin-top: -6px !important; /* quita aire extra */
@@ -2004,6 +2004,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
