@@ -195,7 +195,7 @@ def inject_black_theme():
     .hero-banner{
         display: flex;
         align-items: center;
-        gap: 18px;
+        gap: 14px;
 
         background: linear-gradient(
             135deg,
@@ -203,9 +203,9 @@ def inject_black_theme():
             rgba(37,99,235,0.22) 100%
         );
 
-        padding: 22px 26px;
-        border-radius: 20px;
-        margin-bottom: 14px;
+        padding: 14px 20px;
+        border-radius: 18px;
+        margin-bottom: 16px;
 
         box-shadow: 0 20px 50px rgba(15,23,42,0.15);
     }
@@ -295,6 +295,12 @@ def inject_black_theme():
       border: 1px solid rgba(15,23,42,0.18) !important;
       border-radius: 14px !important;
     }
+
+    section.main > div:first-child {
+        padding-top: 0px !important;
+    }
+
+
 
     [data-testid="stSidebar"] div[role="radiogroup"]{
       margin: 8px 6px 0 6px;
@@ -1900,6 +1906,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
