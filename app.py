@@ -275,15 +275,15 @@ elif page == "🍽 Registro":
                     "grams": float(grams),
                     **macros
                 }
+                                
                 new_id = add_entry(entry)
                 
+                # ✅ invalida cache de lecturas y refresca UI
+                st.cache_data.clear()
+                
                 st.success(f"✅ Entrada guardada (id={new_id})")
-                # ⛔ NO rerun: dejamos que siga el código y lea rows abajo en esta misma ejecución
+                st.rerun()
 
-
-            except Exception as e:
-                st.error("❌ Error guardando la entrada en Google Sheets")
-                st.exception(e)
 
     st.subheader("Registro")
     rows = list_entries_by_date(selected_date_str, st.session_state["user_id"])
@@ -653,6 +653,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
