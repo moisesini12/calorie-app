@@ -48,19 +48,27 @@ def _ws(tab_name: str):
 
 def _to_float(x: Any, default: float = 0.0) -> float:
     try:
-        if x is None or x == "":
+        if x is None:
             return default
         s = str(x).strip()
+        if s == "":
+            return default
 
-        if "," in s:
+        # Formatos típicos:
+        #  - "1.234,56" -> 1234.56
+        #  - "1234,56"  -> 1234.56
+        #  - "1234.56"  -> 1234.56
+        if "," in s and "." in s:
+            # asumimos miles con '.' y decimales con ','
             s = s.replace(".", "").replace(",", ".")
-        else:
-            if s.count(".") >= 1 and s.replace(".", "").isdigit():
-                s = s.replace(".", "")
+        elif "," in s:
+            # decimales con coma
+            s = s.replace(",", ".")
 
         return float(s)
     except Exception:
         return default
+
 
 def _to_int(x: Any, default: int = 0) -> int:
     try:
@@ -448,6 +456,7 @@ def set_setting(key: str, value: str) -> None:
 
     ws.append_row([key, value], value_input_option="USER_ENTERED", insert_data_option="INSERT_ROWS")
     _cache_bump(TAB_SETTINGS)
+
 
 
 
