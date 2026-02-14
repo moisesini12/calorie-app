@@ -446,32 +446,19 @@ def _get_users() -> dict:
     return dict(users)
 
 
-def require_login():
-        if "auth_ok" not in st.session_state:
-            st.session_state["auth_ok"] = False
-        if "user_id" not in st.session_state:
-            st.session_state["user_id"] = ""
-    
-        if st.session_state["auth_ok"]:
-            return
-    
-        users = _get_users()
-        if not users:
-            st.error("No hay usuarios configurados en secrets.toml ([users]).")
-            st.stop()
-    
-        has_dialog = hasattr(st, "dialog")
-    
-        def login_form():
-        # contador para "resetear" el input sin tocar el valor del widget
+    def login_form():
+        st.markdown("### 🔐 Iniciar sesión")
+        st.caption("Selecciona usuario e introduce contraseña.")
+
+        # contador para resetear input sin tocar el state del widget
         if "_login_pwd_n" not in st.session_state:
             st.session_state["_login_pwd_n"] = 0
-    
+
         user = st.selectbox("Usuario", list(users.keys()), key="_login_user")
-    
+
         pwd_key = f"_login_pwd_{st.session_state['_login_pwd_n']}"
         pwd = st.text_input("Contraseña", type="password", key=pwd_key)
-    
+
         c1, c2 = st.columns([1, 1])
         with c1:
             ok = st.button("Entrar", type="primary", use_container_width=True)
@@ -479,20 +466,18 @@ def require_login():
             if st.button("Limpiar", use_container_width=True):
                 st.session_state["_login_pwd_n"] += 1
                 st.rerun()
-    
+
         if ok:
             if _verify_password(pwd, users.get(user, "")):
                 st.session_state["auth_ok"] = True
                 st.session_state["user_id"] = user
-    
-                # reset del campo contraseña (recrea widget con otra key)
                 st.session_state["_login_pwd_n"] += 1
                 st.rerun()
             else:
                 st.error("❌ Contraseña incorrecta. Inténtalo de nuevo.")
-                # opcional: limpiar también cuando falla
                 st.session_state["_login_pwd_n"] += 1
                 st.rerun()
+
         
 
     if has_dialog:
@@ -1197,6 +1182,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
