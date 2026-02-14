@@ -1272,6 +1272,136 @@ elif page == "🧠 Chef IA":
             food_map[f["name"]] = f
     allowed = list(food_map.keys())
 
+    # ==========================================================
+    # 🥘 PLATO COMBINADO (crea recetas usando tu BD)
+    # ==========================================================
+    st.subheader("🥘 Plato combinado")
+    st.caption("Combina alimentos de tu base, calcula macros automáticamente y guarda el plato como nuevo alimento.")
+
+    # Estado para ir añadiendo filas (móvil friendly)
+    if "dish_items" not in st.session_state:
+        st.session_state["dish_items"] = [{"name": allowed[0] if allowed else "", "grams": 100.0}]
+
+    if not allowed:
+        st.info("No hay alimentos disponibles en tu base para crear un plato.")
+    else:
+        with st.expander("➕ Construir plato", expanded=True):
+
+            # Nombre + categoría del plato
+            dish_name = st.text_input("Nombre del plato", value=st.session_state.get("dish_name", "Plato casero"), key="dish_name")
+            dish_category = st.text_input("Categoría (para guardarlo)", value=st.session_state.get("dish_category", "Platos"), key="dish_category")
+
+            st.divider()
+
+            # Botones para añadir/quitar ingredientes
+            c_add, c_del = st.columns(2)
+            with c_add:
+                if st.button("➕ Añadir ingrediente", use_container_width=True):
+                    st.session_state["dish_items"].append({"name": allowed[0], "grams": 100.0})
+                    st.rerun()
+            with c_del:
+                if st.button("➖ Quitar último", use_container_width=True, disabled=len(st.session_state["dish_items"]) <= 1):
+                    st.session_state["dish_items"].pop()
+                    st.rerun()
+
+            st.divider()
+
+            # Render ingredientes (vertical, móvil)
+            total_grams = 0.0
+            totals = {"calories": 0.0, "protein": 0.0, "carbs": 0.0, "fat": 0.0}
+
+            for i, it in enumerate(st.session_state["dish_items"]):
+                st.markdown(f"**Ingrediente {i+1}**")
+
+                name_key = f"dish_food_{i}"
+                grams_key = f"dish_grams_{i}"
+
+                # Defaults coherentes
+                if it.get("name") not in allowed:
+                    it["name"] = allowed[0]
+
+                sel_name = st.selectbox("Alimento", allowed, index=allowed.index(it["name"]), key=name_key)
+                sel_grams = float(st.number_input("Gramos", min_value=1.0, step=1.0, value=float(it.get("grams", 100.0)), key=grams_key))
+
+                # Guardar cambios en session_state
+                it["name"] = sel_name
+                it["grams"] = sel_grams
+
+                # Calcular macros ingrediente
+                macros = scale_macros(food_map[sel_name], sel_grams)
+                total_grams += sel_grams
+                totals["calories"] += float(macros["calories"])
+                totals["protein"] += float(macros["protein"])
+                totals["carbs"] += float(macros["carbs"])
+                totals["fat"] += float(macros["fat"])
+
+                # Mini resumen ingrediente
+                st.caption(
+                    f"{sel_grams:.0f} g · {macros['calories']:.0f} kcal · "
+                    f"P {macros['protein']:.1f} · C {macros['carbs']:.1f} · G {macros['fat']:.1f}"
+                )
+                st.divider()
+
+            # Totales del plato
+            st.markdown("### Totales del plato")
+            m1, m2 = st.columns(2)
+            with m1:
+                st.metric("🔥 kcal", f"{totals['calories']:.0f}")
+                st.metric("🥩 Proteína", f"{totals['protein']:.1f} g")
+            with m2:
+                st.metric("🍚 Carbs", f"{totals['carbs']:.1f} g")
+                st.metric("🥑 Grasas", f"{totals['fat']:.1f} g")
+
+            st.caption(f"Peso total: **{total_grams:.0f} g**")
+
+            # Cálculo por 100g (para guardar como alimento)
+            if total_grams > 0:
+                per100 = {
+                    "calories": totals["calories"] / total_grams * 100.0,
+                    "protein": totals["protein"] / total_grams * 100.0,
+                    "carbs": totals["carbs"] / total_grams * 100.0,
+                    "fat": totals["fat"] / total_grams * 100.0,
+                }
+            else:
+                per100 = {"calories": 0.0, "protein": 0.0, "carbs": 0.0, "fat": 0.0}
+
+            st.markdown("### Por 100g (lo que se guardará en la base)")
+            p1, p2 = st.columns(2)
+            with p1:
+                st.metric("🔥 kcal/100g", f"{per100['calories']:.0f}")
+                st.metric("🥩 P/100g", f"{per100['protein']:.1f} g")
+            with p2:
+                st.metric("🍚 C/100g", f"{per100['carbs']:.1f} g")
+                st.metric("🥑 G/100g", f"{per100['fat']:.1f} g")
+
+            st.divider()
+
+            # Guardar como alimento
+            if st.button("💾 Guardar plato como alimento", type="primary", use_container_width=True):
+                nn = dish_name.strip()
+                nc = dish_category.strip() or "Platos"
+
+                if not nn:
+                    st.error("Pon un nombre al plato.")
+                elif total_grams <= 0:
+                    st.error("El plato debe tener gramos totales > 0.")
+                else:
+                    add_food({
+                        "name": nn,
+                        "category": nc,
+                        "calories": float(per100["calories"]),
+                        "protein": float(per100["protein"]),
+                        "carbs": float(per100["carbs"]),
+                        "fat": float(per100["fat"]),
+                    })
+                    st.cache_data.clear()
+                    st.success("Plato guardado como alimento ✅")
+                    # Reset rápido para crear otro plato
+                    st.session_state["dish_items"] = [{"name": allowed[0], "grams": 100.0}]
+                    st.rerun()
+
+
+    
     uid = st.session_state["user_id"]
     target_def = float(get_setting("target_deficit_calories", 2000, user_id=uid))
     target_p = float(get_setting("target_protein", 120, user_id=uid))
@@ -1589,6 +1719,7 @@ elif page == "🏋️ Rutina IA":
         st.subheader("🛡️ Notas de seguridad")
         for s in plan.get("safety_notes", []):
             st.write(f"- {s}")
+
 
 
 
