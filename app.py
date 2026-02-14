@@ -461,6 +461,78 @@ def inject_black_theme():
         transition: background 0.15s ease;
     }
 
+    /* =========================
+       FIT TABLE CARD + MOBILE SCROLL
+       ========================= */
+    
+    .fit-table-card{
+      background: linear-gradient(
+        135deg,
+        rgba(22,163,74,0.14) 0%,
+        rgba(37,99,235,0.12) 100%
+      );
+      border: 1px solid rgba(15,23,42,0.10);
+      border-radius: 18px;
+      padding: 10px;
+      box-shadow: 0 18px 40px rgba(15,23,42,0.12);
+    }
+    
+    /* Scroll horizontal SOLO para la tabla (móvil friendly) */
+    .fit-table-scroll{
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      border-radius: 14px;
+    }
+    
+    /* Scrollbar más discreto */
+    .fit-table-scroll::-webkit-scrollbar{ height: 10px; }
+    .fit-table-scroll::-webkit-scrollbar-track{ background: rgba(15,23,42,0.06); border-radius: 999px; }
+    .fit-table-scroll::-webkit-scrollbar-thumb{ background: rgba(15,23,42,0.18); border-radius: 999px; }
+    
+    /* Asegura que la tabla no “rompa” el layout */
+    .fit-table-scroll table{
+      min-width: 720px;            /* fuerza scroll en móvil si hay muchas columnas */
+      width: 100%;
+    }
+    
+    /* Header coherente con el tema */
+    .fit-table-scroll thead th{
+      background: linear-gradient(135deg, rgba(22,163,74,0.92), rgba(37,99,235,0.92)) !important;
+      color: #fff !important;
+      font-weight: 850 !important;
+      border: none !important;
+      padding: 12px 14px !important;
+    }
+    
+    /* Celdas: claras, limpias, con bordes suaves */
+    .fit-table-scroll tbody td{
+      background: rgba(255,255,255,0.78) !important;
+      color: #0f172a !important;
+      font-weight: 650 !important;
+      border: none !important;
+      padding: 12px 14px !important;
+    }
+    
+    /* Zebra suave */
+    .fit-table-scroll tbody tr:nth-child(even) td{
+      background: rgba(255,255,255,0.66) !important;
+    }
+    
+    /* Hover */
+    .fit-table-scroll tbody tr:hover td{
+      background: rgba(37,99,235,0.14) !important;
+      transition: background 0.12s ease;
+    }
+    
+    /* Redondeo real: esquinas tabla */
+    .fit-table-scroll table{
+      border-collapse: separate !important;
+      border-spacing: 0 !important;
+      border-radius: 14px !important;
+      overflow: hidden !important;
+    }
+
 
     </style>
     """, unsafe_allow_html=True)
@@ -789,7 +861,19 @@ elif page == "🍽 Registro":
         )
 
         
-        st.markdown(styler.to_html(), unsafe_allow_html=True)
+        table_html = styler.to_html()
+        
+        st.markdown(
+            f"""
+            <div class="fit-table-card">
+              <div class="fit-table-scroll">
+                {table_html}
+              </div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
 
 
 
@@ -1157,6 +1241,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
