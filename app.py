@@ -463,26 +463,37 @@ def require_login():
     has_dialog = hasattr(st, "dialog")
 
     def login_form():
-        st.markdown("### 🔐 Iniciar sesión")
-        st.caption("Selecciona usuario e introduce contraseña.")
+    # contador para "resetear" el input sin tocar el valor del widget
+    if "_login_pwd_n" not in st.session_state:
+        st.session_state["_login_pwd_n"] = 0
 
-        user = st.selectbox("Usuario", list(users.keys()), key="_login_user")
-        pwd = st.text_input("Contraseña", type="password", key="_login_pwd")
+    user = st.selectbox("Usuario", list(users.keys()), key="_login_user")
 
-        c1, c2 = st.columns([1, 1])
-        with c1:
-            ok = st.button("Entrar", type="primary", use_container_width=True)
-        with c2:
-            st.button("Limpiar", use_container_width=True, on_click=lambda: st.session_state.update({"_login_pwd": ""}))
+    pwd_key = f"_login_pwd_{st.session_state['_login_pwd_n']}"
+    pwd = st.text_input("Contraseña", type="password", key=pwd_key)
 
-        if ok:
-            if _verify_password(pwd, users.get(user, "")):
-                st.session_state["auth_ok"] = True
-                st.session_state["user_id"] = user
-                st.session_state["_login_pwd"] = ""
-                st.rerun()
-            else:
-                st.error("❌ Contraseña incorrecta. Inténtalo de nuevo.")
+    c1, c2 = st.columns([1, 1])
+    with c1:
+        ok = st.button("Entrar", type="primary", use_container_width=True)
+    with c2:
+        if st.button("Limpiar", use_container_width=True):
+            st.session_state["_login_pwd_n"] += 1
+            st.rerun()
+
+    if ok:
+        if _verify_password(pwd, users.get(user, "")):
+            st.session_state["auth_ok"] = True
+            st.session_state["user_id"] = user
+
+            # reset del campo contraseña (recrea widget con otra key)
+            st.session_state["_login_pwd_n"] += 1
+            st.rerun()
+        else:
+            st.error("❌ Contraseña incorrecta. Inténtalo de nuevo.")
+            # opcional: limpiar también cuando falla
+            st.session_state["_login_pwd_n"] += 1
+            st.rerun()
+        
 
     if has_dialog:
         @st.dialog("Acceso a FitMacro", width="small")
@@ -1186,6 +1197,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
