@@ -620,6 +620,34 @@ def inject_black_theme():
     }
 
 
+    /* Sidebar expander compact */
+    [data-testid="stSidebar"] details {
+      border: none !important;
+      background: transparent !important;
+      padding: 0 !important;
+      margin: 6px 6px !important;
+    }
+    
+    [data-testid="stSidebar"] summary {
+      background: linear-gradient(135deg, rgba(22,163,74,0.92), rgba(37,99,235,0.92)) !important;
+      border-radius: 999px !important;
+      padding: 10px 14px !important;
+      color: #fff !important;
+      font-weight: 850 !important;
+      list-style: none !important;
+    }
+    
+    [data-testid="stSidebar"] summary::-webkit-details-marker { display: none; }
+    
+    [data-testid="stSidebar"] details > div {
+      background: rgba(255,255,255,0.65) !important;
+      border: 1px solid rgba(15,23,42,0.08) !important;
+      border-radius: 18px !important;
+      padding: 10px !important;
+      margin-top: 10px !important;
+    }
+
+
 
 
     </style>
@@ -760,6 +788,45 @@ selected_date = st.sidebar.date_input(
 
 selected_date_str = selected_date.isoformat()
 
+# =========================
+# SIDEBAR NAV (UNA SOLA SELECCIÓN)
+# =========================
+if "nav" not in st.session_state:
+    st.session_state["nav"] = "📊 Dashboard"
+
+def _set_nav(v: str):
+    st.session_state["nav"] = v
+
+def nav_btn(label: str, value: str, key: str):
+    active = (st.session_state.get("nav") == value)
+    st.sidebar.button(
+        label,
+        key=key,
+        use_container_width=True,
+        type="primary" if active else "secondary",
+        on_click=_set_nav,
+        args=(value,),
+    )
+
+# Desplegables nativos (bonitos, estables, sin radios)
+with st.sidebar.expander("📊 Principal", expanded=True):
+    nav_btn("📊 Dashboard", "📊 Dashboard", "nav_dash")
+
+with st.sidebar.expander("🍽️ Nutrición", expanded=True):
+    nav_btn("🍽 Registro", "🍽 Registro", "nav_reg")
+    nav_btn("👨‍🍳 Chef IA", "👨‍🍳 Chef IA", "nav_chef")
+    nav_btn("➕ Añadir alimento", "➕ Añadir alimento", "nav_foods")
+
+with st.sidebar.expander("🏋️ Entrenamiento", expanded=False):
+    nav_btn("🏋️ Rutina IA", "🏋️ Rutina IA", "nav_rutina")
+
+with st.sidebar.expander("⚙️ Perfil", expanded=False):
+    nav_btn("🎯 Objetivos", "🎯 Objetivos", "🎯 Objetivos_btn")
+
+page = st.session_state["nav"]
+
+
+
 # --- Navegación controlada (sin romper widgets) ---
 if "goto_page" not in st.session_state:
     st.session_state["goto_page"] = None
@@ -770,74 +837,7 @@ if st.session_state["goto_page"]:
     st.session_state["goto_page"] = None
 
 
-# =========================
-# SIDEBAR: MENÚ EN DESPLEGABLES (SIN DUPLICADOS)
-# =========================
 
-if "nav" not in st.session_state:
-    st.session_state["nav"] = "📊 Dashboard"
-
-def _set_nav_from(widget_key: str):
-    st.session_state["nav"] = st.session_state.get(widget_key, st.session_state["nav"])
-
-# Listas de páginas
-P_MAIN = ["📊 Dashboard"]
-P_NUTRI = ["🍽 Registro", "👨‍🍳 Chef IA", "➕ Añadir alimento"]
-P_TRAIN = ["🏋️ Rutina IA"]
-P_PROFILE = ["🎯 Objetivos"]
-
-# Expansiones: abre por defecto el grupo donde estés ahora
-nav_now = st.session_state["nav"]
-exp_main = nav_now in P_MAIN
-exp_nutri = nav_now in P_NUTRI
-exp_train = nav_now in P_TRAIN
-exp_profile = nav_now in P_PROFILE
-
-with st.sidebar.expander("📊 Principal", expanded=exp_main):
-    st.sidebar.radio(
-        "",
-        P_MAIN,
-        index=P_MAIN.index(nav_now) if nav_now in P_MAIN else 0,
-        key="nav_main",
-        label_visibility="collapsed",
-        on_change=_set_nav_from,
-        args=("nav_main",),
-    )
-
-with st.sidebar.expander("🍽️ Nutrición", expanded=exp_nutri):
-    st.sidebar.radio(
-        "",
-        P_NUTRI,
-        index=P_NUTRI.index(nav_now) if nav_now in P_NUTRI else 0,
-        key="nav_nutri",
-        label_visibility="collapsed",
-        on_change=_set_nav_from,
-        args=("nav_nutri",),
-    )
-
-with st.sidebar.expander("🏋️ Entrenamiento", expanded=exp_train):
-    st.sidebar.radio(
-        "",
-        P_TRAIN,
-        index=P_TRAIN.index(nav_now) if nav_now in P_TRAIN else 0,
-        key="nav_train",
-        label_visibility="collapsed",
-        on_change=_set_nav_from,
-        args=("nav_train",),
-    )
-
-with st.sidebar.expander("⚙️ Perfil", expanded=exp_profile):
-    st.sidebar.radio(
-        "",
-        P_PROFILE,
-        index=P_PROFILE.index(nav_now) if nav_now in P_PROFILE else 0,
-        key="nav_profile",
-        label_visibility="collapsed",
-        on_change=_set_nav_from,
-        args=("nav_profile",),
-    )
-
-page = st.session_state["nav"]
 
 
 
@@ -2087,6 +2087,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
