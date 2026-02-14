@@ -663,11 +663,17 @@ def require_login() -> None:
     if "user_id" not in st.session_state:
         st.session_state["user_id"] = ""
 
+    users = _get_users()
+
+    # 🔒 Limpia user_id inválido (evita "****" o users que ya no existen)
+    if st.session_state.get("user_id") and st.session_state["user_id"] not in users:
+        st.session_state["auth_ok"] = False
+        st.session_state["user_id"] = ""
+
     # Ya logueado
     if st.session_state["auth_ok"]:
         return
 
-    users = _get_users()
     if not users:
         st.error("No hay usuarios configurados en secrets.toml ([users]).")
         st.stop()
@@ -706,47 +712,6 @@ def require_login() -> None:
                 st.session_state["_login_pwd_n"] += 1
                 st.rerun()
 
-def sidebar_section(title: str, icon: str, key: str, default_open: bool = False) -> bool:
-    """
-    Crea un 'desplegable' elegante en sidebar usando estado y botones.
-    Devuelve True si está abierto.
-    """
-    state_key = f"_sb_open_{key}"
-    if state_key not in st.session_state:
-        st.session_state[state_key] = default_open
-
-    # Botón "invisible" (Streamlit) para manejar click
-    clicked = st.sidebar.button(
-        f"{icon} {title}",
-        key=f"_btn_{key}",
-        use_container_width=True
-    )
-
-    # Si haces click, toggle
-    if clicked:
-        st.session_state[state_key] = not st.session_state[state_key]
-
-    # Estilo del botón (lo “convertimos” en nuestro header visual)
-    # Truco: el botón existe, pero lo decoramos con CSS extra mediante markdown
-    open_now = st.session_state[state_key]
-    chevron = "▾" if open_now else "▸"
-
-    st.sidebar.markdown(
-        f"""
-        <div class="sb-acc">
-          <div class="sb-acc-btn">
-            <div class="sb-acc-icon">{icon}</div>
-            <div class="sb-acc-title">{title}</div>
-            <div class="sb-acc-chevron">{chevron}</div>
-          </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    return open_now
-
-    
     if has_dialog:
         @st.dialog("Acceso a FitMacro", width="small")
         def _dlg():
@@ -759,6 +724,42 @@ def sidebar_section(title: str, icon: str, key: str, default_open: bool = False)
         login_form()
         st.markdown("</div>", unsafe_allow_html=True)
         st.stop()
+
+
+# ---------------------------
+# Sidebar helpers
+# ---------------------------
+def sidebar_section(title: str, icon: str, key: str, default_open: bool = False) -> bool:
+    """
+    Crea un 'desplegable' elegante en sidebar usando estado y botones.
+    Devuelve True si está abierto.
+    """
+    state_key = f"_sb_open_{key}"
+    if state_key not in st.session_state:
+        st.session_state[state_key] = default_open
+
+    # click = toggle
+    if st.sidebar.button(f"{icon} {title}", key=f"_btn_{key}", use_container_width=True):
+        st.session_state[state_key] = not st.session_state[state_key]
+
+    open_now = st.session_state[state_key]
+    chevron = "▾" if open_now else "▸"
+
+    # header visual
+    st.sidebar.markdown(
+        f"""
+        <div class="sb-acc">
+          <div class="sb-acc-btn">
+            <div class="sb-acc-icon">{icon}</div>
+            <div class="sb-acc-title">{title}</div>
+            <div class="sb-acc-chevron">{chevron}</div>
+          </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+    return open_now
+
 
 
 
@@ -2126,6 +2127,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
