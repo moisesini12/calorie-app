@@ -281,6 +281,118 @@ def inject_black_theme():
         opacity: 0.8;
     }
 
+    /* =========================
+       SIDEBAR PREMIUM
+       ========================= */
+    
+    [data-testid="stSidebar"] > div{
+      padding-top: 18px !important;
+      padding-bottom: 18px !important;
+    }
+    
+    /* Header brand */
+    .sb-brand{
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 12px;
+      margin: 6px 8px 14px 8px;
+      border-radius: 18px;
+      background: linear-gradient(
+          135deg,
+          rgba(34,197,94,0.18) 0%,
+          rgba(37,99,235,0.16) 100%
+      );
+      border: 1px solid rgba(15,23,42,0.08);
+      box-shadow: 0 14px 30px rgba(15,23,42,0.10);
+    }
+    
+    .sb-logo{
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: linear-gradient(135deg,#16a34a,#2563eb);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: 0.5px;
+    }
+    
+    .sb-title .sb-name{
+      font-size: 18px;
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.05;
+    }
+    .sb-title .sb-sub{
+      font-size: 12px;
+      font-weight: 650;
+      color: rgba(15,23,42,0.60);
+      margin-top: 2px;
+    }
+    
+    /* Inputs en sidebar: más “card” */
+    [data-testid="stSidebar"] input,
+    [data-testid="stSidebar"] textarea,
+    [data-testid="stSidebar"] div[data-baseweb="select"] > div{
+      background: rgba(255,255,255,0.96) !important;
+      border: 1px solid rgba(15,23,42,0.18) !important;
+      border-radius: 14px !important;
+    }
+    
+    /* Radio nav como pills */
+    [data-testid="stSidebar"] div[role="radiogroup"]{
+      margin: 8px 6px 0 6px;
+      padding: 10px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.60);
+      border: 1px solid rgba(15,23,42,0.08);
+    }
+    
+    /* Cada opción */
+    [data-testid="stSidebar"] div[role="radiogroup"] label{
+      border-radius: 14px !important;
+      padding: 10px 12px !important;
+      margin: 6px 0 !important;
+      transition: all .15s ease;
+    }
+    
+    /* Hover */
+    [data-testid="stSidebar"] div[role="radiogroup"] label:hover{
+      background: rgba(37,99,235,0.10) !important;
+      transform: translateY(-1px);
+    }
+    
+    /* Texto de opciones */
+    [data-testid="stSidebar"] div[role="radiogroup"] label p{
+      font-weight: 750 !important;
+      color: #0f172a !important;
+    }
+    
+    /* “seleccionado”: Streamlit marca con input checked, lo estilizamos */
+    [data-testid="stSidebar"] div[role="radiogroup"] input:checked + div{
+      background: linear-gradient(
+          135deg,
+          rgba(22,163,74,0.18) 0%,
+          rgba(37,99,235,0.14) 100%
+      ) !important;
+      border-radius: 14px !important;
+      border: 1px solid rgba(15,23,42,0.08) !important;
+    }
+    
+    /* Tip al fondo */
+    .sb-tip{
+      margin: 14px 10px 0 10px;
+      padding: 12px 12px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.60);
+      border: 1px solid rgba(15,23,42,0.08);
+      color: rgba(15,23,42,0.65);
+      font-weight: 650;
+      font-size: 12px;
+    }
 
 
     </style>
@@ -299,7 +411,16 @@ inject_black_theme()
 
 # ===== SIDEBAR APP STYLE =====
 
-st.sidebar.markdown("## 🟢 FitMacro")
+st.sidebar.markdown("""
+<div class="sb-brand">
+  <div class="sb-logo">FM</div>
+  <div class="sb-title">
+    <div class="sb-name">FitMacro</div>
+    <div class="sb-sub">Fitness macros tracker</div>
+  </div>
+</div>
+""", unsafe_allow_html=True)
+
 
 USER_ID = st.sidebar.text_input(
     "👤 Usuario",
@@ -320,7 +441,8 @@ selected_date_str = selected_date.isoformat()
 page = st.sidebar.radio(
     "",
     ["📊 Dashboard", "🍽 Registro", "🎯 Objetivos", "➕ Añadir alimento", "🧠 Coach IA"],
-    label_visibility="collapsed"
+    label_visibility="collapsed",
+    key="nav"
 )
 
 st.sidebar.markdown("---")
@@ -941,6 +1063,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
