@@ -552,7 +552,7 @@ selected_date_str = selected_date.isoformat()
 
 page = st.sidebar.radio(
     "",
-    ["📊 Dashboard", "🍽 Registro", "➕ Añadir alimento", "🎯 Objetivos", "🧠 Coach IA"],
+    ["📊 Dashboard", "🍽 Registro", "➕ Añadir alimento", "🎯 Objetivos", "🧠 Coach IA", "🏋️ Rutina IA"],
     label_visibility="collapsed",
     key="nav"
 )
@@ -1321,6 +1321,274 @@ elif page == "🧠 Coach IA":
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
 
+
+# ==========================================================
+# PÁGINA: RUTINA IA
+# ==========================================================
+elif page == "🏋️ Rutina IA":
+    import json
+    from ai_groq import generate_workout_plan_json
+
+    st.subheader("🏋️ Rutina IA")
+    st.caption("Crea una rutina personalizada según tu material, nivel y objetivos. Optimizado para móvil 📱")
+    st.divider()
+
+    uid = st.session_state["user_id"]
+
+    # --- Cargar perfil guardado (si existe) ---
+    saved_profile_raw = get_setting("workout_profile_json", default="{}", user_id=uid)
+    try:
+        saved_profile = json.loads(saved_profile_raw) if saved_profile_raw else {}
+    except Exception:
+        saved_profile = {}
+
+    # --- Objetivos nutrición (de tu app) ---
+    target_kcal = float(get_setting("target_deficit_calories", 1800, user_id=uid))
+    target_p = float(get_setting("target_protein", 120, user_id=uid))
+    target_c = float(get_setting("target_carbs", 250, user_id=uid))
+    target_f = float(get_setting("target_fat", 60, user_id=uid))
+
+    # ====== UI MOBILE-FIRST: inputs en vertical ======
+    with st.expander("🧬 Tu perfil (guardar)", expanded=True):
+        equipment = st.text_area(
+            "Material disponible (separa por comas)",
+            value=saved_profile.get("equipment", "mancuernas ajustables, banda elástica"),
+            height=70,
+            key="wk_equipment"
+        )
+
+        col1, col2 = st.columns(2)
+        with col1:
+            level = st.selectbox(
+                "Nivel",
+                ["Principiante", "Intermedio", "Avanzado"],
+                index=["Principiante", "Intermedio", "Avanzado"].index(saved_profile.get("level", "Principiante")),
+                key="wk_level"
+            )
+            days = st.selectbox(
+                "Días/semana",
+                [2, 3, 4, 5, 6],
+                index=[2, 3, 4, 5, 6].index(int(saved_profile.get("days", 3))),
+                key="wk_days"
+            )
+        with col2:
+            minutes = st.selectbox(
+                "Minutos por sesión",
+                [20, 30, 40, 45, 60, 75],
+                index=[20, 30, 40, 45, 60, 75].index(int(saved_profile.get("minutes", 45))),
+                key="wk_minutes"
+            )
+            goal = st.selectbox(
+                "Objetivo principal",
+                ["Perder grasa", "Ganar músculo", "Recomposición", "Mejorar rendimiento", "Salud general"],
+                index=["Perder grasa", "Ganar músculo", "Recomposición", "Mejorar rendimiento", "Salud general"].index(saved_profile.get("goal", "Recomposición")),
+                key="wk_goal"
+            )
+
+        st.markdown("**Capacidades (aprox.)**")
+        c1, c2, c3 = st.columns(3)
+        with c1:
+            pushups = st.number_input("Flexiones seguidas", min_value=0, max_value=200, value=int(saved_profile.get("pushups", 10)), step=1, key="wk_pushups")
+        with c2:
+            squats = st.number_input("Sentadillas seguidas", min_value=0, max_value=300, value=int(saved_profile.get("squats", 25)), step=1, key="wk_squats")
+        with c3:
+            plank_sec = st.number_input("Plancha (segundos)", min_value=0, max_value=600, value=int(saved_profile.get("plank_sec", 30)), step=5, key="wk_plank")
+
+        focus = st.text_input(
+            "Foco (opcional): ej. glúteos, abs, espalda…",
+            value=saved_profile.get("focus", "glúteos y abs"),
+            key="wk_focus"
+        )
+
+        limitations = st.text_input(
+            "Lesiones/limitaciones (opcional)",
+            value=saved_profile.get("limitations", ""),
+            key="wk_limits"
+        )
+
+        colS1, colS2 = st.columns(2)
+        with colS1:
+            if st.button("💾 Guardar perfil", type="primary", use_container_width=True):
+                profile = {
+                    "equipment": equipment.strip(),
+                    "level": level,
+                    "days": int(days),
+                    "minutes": int(minutes),
+                    "goal": goal,
+                    "pushups": int(pushups),
+                    "squats": int(squats),
+                    "plank_sec": int(plank_sec),
+                    "focus": focus.strip(),
+                    "limitations": limitations.strip(),
+                }
+                set_setting("workout_profile_json", json.dumps(profile, ensure_ascii=False), user_id=uid)
+                st.success("Perfil guardado ✅")
+                st.rerun()
+        with colS2:
+            if st.button("🧹 Reset perfil", use_container_width=True):
+                set_setting("workout_profile_json", "{}", user_id=uid)
+                st.success("Perfil reseteado ✅")
+                st.rerun()
+
+    st.divider()
+
+    # ====== Generación rutina ======
+    st.subheader("✨ Generar rutina")
+    st.caption("La rutina se adapta a tu perfil y se alinea con tus objetivos de nutrición.")
+
+    # Botón grande (móvil)
+    if st.button("⚡ Generar rutina personalizada", type="primary", use_container_width=True):
+        # Recolectar contexto
+        profile = {
+            "equipment": st.session_state.get("wk_equipment", "").strip(),
+            "level": st.session_state.get("wk_level", "Principiante"),
+            "days": int(st.session_state.get("wk_days", 3)),
+            "minutes": int(st.session_state.get("wk_minutes", 45)),
+            "goal": st.session_state.get("wk_goal", "Recomposición"),
+            "pushups": int(st.session_state.get("wk_pushups", 10)),
+            "squats": int(st.session_state.get("wk_squats", 25)),
+            "plank_sec": int(st.session_state.get("wk_plank", 30)),
+            "focus": st.session_state.get("wk_focus", "").strip(),
+            "limitations": st.session_state.get("wk_limits", "").strip(),
+        }
+
+        nutrition_context = (
+            f"Objetivos nutrición (diarios): {target_kcal} kcal; "
+            f"Proteína {target_p}g; Carbs {target_c}g; Grasas {target_f}g."
+        )
+
+        ctx = (
+            f"Perfil entrenamiento:\n"
+            f"- Nivel: {profile['level']}\n"
+            f"- Días/semana: {profile['days']}\n"
+            f"- Duración: {profile['minutes']} min\n"
+            f"- Material: {profile['equipment'] or 'ninguno'}\n"
+            f"- Capacidades: flexiones {profile['pushups']}, sentadillas {profile['squats']}, plancha {profile['plank_sec']}s\n"
+            f"- Objetivo: {profile['goal']}\n"
+            f"- Foco: {profile['focus'] or 'equilibrado'}\n"
+            f"- Limitaciones: {profile['limitations'] or 'ninguna'}\n\n"
+            f"{nutrition_context}\n\n"
+            f"Preferencias: rutina razonable, progresiva, segura. Formato claro para móvil."
+        )
+
+        raw = generate_workout_plan_json(ctx)
+
+        try:
+            plan = json.loads(raw)
+        except json.JSONDecodeError:
+            st.error("La IA devolvió un formato raro. Reintenta.")
+            st.code(raw)
+            st.stop()
+
+        # Guardar temporal en session (para botón Guardar)
+        st.session_state["last_workout_plan"] = plan
+        st.success("Rutina generada ✅ (revisa abajo)")
+        st.rerun()
+
+    st.divider()
+
+    # ====== Mostrar rutina generada o guardada ======
+    saved_plan_raw = get_setting("workout_plan_json", default="", user_id=uid)
+    plan = st.session_state.get("last_workout_plan")
+
+    if plan is None and saved_plan_raw:
+        try:
+            plan = json.loads(saved_plan_raw)
+        except Exception:
+            plan = None
+
+    if not plan:
+        st.info("Aún no hay rutina. Genera una y guarda la que te guste.")
+    else:
+        # Cabecera
+        st.markdown(f"## 🗓️ {plan.get('plan_name','Rutina personalizada')}")
+        st.caption(plan.get("summary", ""))
+
+        # Guardar / borrar
+        cA, cB = st.columns(2)
+        with cA:
+            if st.button("💾 Guardar rutina", type="primary", use_container_width=True):
+                set_setting("workout_plan_json", json.dumps(plan, ensure_ascii=False), user_id=uid)
+                st.success("Rutina guardada ✅")
+                st.rerun()
+        with cB:
+            if st.button("🗑️ Borrar rutina guardada", use_container_width=True):
+                set_setting("workout_plan_json", "", user_id=uid)
+                st.success("Rutina borrada ✅")
+                st.rerun()
+
+        st.divider()
+
+        # Calendario semanal (mobile friendly: expander por día)
+        st.subheader("📅 Plan semanal")
+        for d in plan.get("weekly_schedule", []):
+            day = d.get("day", "Día")
+            focus = d.get("focus", "")
+            dur = d.get("duration_min", "")
+            title = f"{day} — {focus} ({dur} min)" if focus else f"{day} ({dur} min)"
+
+            with st.expander(title, expanded=False):
+                sess = d.get("session", {}) or {}
+
+                st.markdown("**Calentamiento**")
+                for x in sess.get("warmup", []):
+                    st.write(f"- {x}")
+
+                st.markdown("**Principal**")
+                for ex in sess.get("main", []):
+                    st.write(
+                        f"- **{ex.get('exercise','Ejercicio')}** · "
+                        f"{ex.get('sets',3)}x{ex.get('reps','8-12')} · "
+                        f"descanso {ex.get('rest_sec',90)}s"
+                    )
+                    note = str(ex.get("notes", "")).strip()
+                    if note:
+                        st.caption(note)
+
+                fin = sess.get("finisher_optional", [])
+                if fin:
+                    st.markdown("**Finisher (opcional)**")
+                    for x in fin:
+                        st.write(f"- {x}")
+
+                st.markdown("**Vuelta a la calma**")
+                for x in sess.get("cooldown", []):
+                    st.write(f"- {x}")
+
+        st.divider()
+
+        # Progresión
+        st.subheader("📈 Progresión (4 semanas)")
+        for w in plan.get("progression_4_weeks", []):
+            st.write(f"**Semana {w.get('week','?')}** — {w.get('notes','')}")
+            rule = str(w.get("rule", "")).strip()
+            if rule:
+                st.caption(rule)
+
+        st.divider()
+
+        # Nutrición vinculada
+        nt = plan.get("nutrition_ties", {}) or {}
+        st.subheader("🍽️ Nutrición (alineada con tu FitMacro)")
+
+        td = nt.get("training_days", {}) or {}
+        rd = nt.get("rest_days", {}) or {}
+
+        st.markdown("**Días de entreno**")
+        st.write(f"- Proteína sugerida: **{td.get('protein_g_hint', int(target_p))} g** (objetivo actual: {int(target_p)} g)")
+        st.write(f"- Pre: {td.get('preworkout_hint','')}")
+        st.write(f"- Post: {td.get('postworkout_hint','')}")
+
+        st.markdown("**Días de descanso**")
+        st.write(f"- Proteína sugerida: **{rd.get('protein_g_hint', int(target_p))} g**")
+        st.write(f"- {rd.get('hint','')}")
+
+        st.divider()
+
+        # Seguridad
+        st.subheader("🛡️ Notas de seguridad")
+        for s in plan.get("safety_notes", []):
+            st.write(f"- {s}")
 
 
 
