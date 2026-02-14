@@ -706,80 +706,7 @@ elif page == "🍽 Registro":
             st.metric("🥑 Grasas", f"{df['fat'].sum():.1f} g")
 
     # Tendencia (aunque el día esté vacío, puede haber histórico)
-    st.subheader("📊 Tendencia (últimos 30 días)")
-    history = daily_totals_last_days(30, st.session_state["user_id"])
-    hist_df = pd.DataFrame(history, columns=["date", "calories", "protein", "carbs", "fat"])
-    if not hist_df.empty:
-        hist_df["date"] = pd.to_datetime(hist_df["date"])
-        hist_df = hist_df.sort_values("date").set_index("date")
-        st.line_chart(hist_df[["calories"]])
-    else:
-        st.info("Aún no hay datos suficientes para la tendencia.")
-
-    # Editor/Borrado (solo si hay filas)
-    if not df.empty:
-        st.subheader("✏️ Editar / 🗑️ Borrar entrada")
-
-        options = [{
-            "id": int(r["id"]),
-            "label": f"{r['meal']} — {r['name']} — {float(r['grams']):.0f} g"
-        } for _, r in df.iterrows()]
-
-        selected_opt = st.selectbox(
-            "Selecciona una entrada",
-            options,
-            format_func=lambda x: x["label"],
-            key="entry_select_edit"
-        )
-
-        selected_id = int(selected_opt["id"])
-        row = df[df["id"] == selected_id].iloc[0]
-
-        colE1, colE2, colE3 = st.columns([2, 1, 1])
-        with colE1:
-            meals = ["Desayuno", "Almuerzo", "Merienda", "Cena"]
-            current_meal = row["meal"] if row["meal"] in meals else meals[0]
-            new_meal = st.selectbox("Comida", meals, index=meals.index(current_meal), key=f"meal_edit_{selected_id}")
-        with colE2:
-            new_grams = st.number_input("Gramos", min_value=1.0, step=1.0, value=float(row["grams"]), key=f"grams_edit_{selected_id}")
-        with colE3:
-            st.write("")
-            st.write("")
-
-        # Mapa de alimentos para recalcular macros
-        if "food_map" not in st.session_state:
-            m = {}
-            for c in list_categories():
-                for f in list_foods_by_category(c):
-                    m[f["name"]] = f
-            st.session_state["food_map"] = m
-
-        base_food = st.session_state["food_map"].get(row["name"])
-        if base_food is None:
-            st.error("No encuentro este alimento en la base de datos (quizá lo borraste).")
-        else:
-            if st.button("Guardar cambios", type="primary", key=f"save_entry_{selected_id}"):
-                macros = scale_macros(base_food, float(new_grams))
-                update_entry(
-                    selected_id,
-                    grams=float(new_grams),
-                    calories=float(macros["calories"]),
-                    protein=float(macros["protein"]),
-                    carbs=float(macros["carbs"]),
-                    fat=float(macros["fat"]),
-                    meal=new_meal
-                )
-                st.cache_data.clear()
-                st.success("Entrada actualizada ✅")
-                st.rerun()
-
-            st.warning("⚠️ Borrar elimina la entrada (no se puede deshacer).")
-            confirm_del = st.checkbox("Confirmo que quiero borrar esta entrada", key=f"confirm_del_{selected_id}")
-            if st.button("Borrar entrada", disabled=not confirm_del, key=f"del_entry_{selected_id}"):
-                delete_entry_by_id(selected_id)
-                st.cache_data.clear()
-                st.success("Entrada borrada ✅")
-                st.rerun()
+    
 
 
 # ==========================================================
@@ -1066,6 +993,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
