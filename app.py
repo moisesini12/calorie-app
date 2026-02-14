@@ -203,9 +203,9 @@ def inject_black_theme():
             rgba(37,99,235,0.22) 100%
         );
 
-        padding: 50px 60px;
+        padding: 35px 45px;
         border-radius: 18px;
-        margin-bottom: 16px;
+        margin-bottom: 30px;
 
         box-shadow: 0 20px 50px rgba(15,23,42,0.15);
     }
@@ -1906,6 +1906,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
