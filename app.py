@@ -67,9 +67,10 @@ def inject_black_theme():
 
     .block-container{
         max-width: 1180px;
-        padding-top: 18px;
-        padding-bottom: 60px;
+        padding-top: 6px;
+        padding-bottom: 50px;
     }
+
 
     [data-testid="stSidebar"] > div{
         background: rgba(255,255,255,0.92) !important;
@@ -204,7 +205,7 @@ def inject_black_theme():
 
         padding: 22px 26px;
         border-radius: 20px;
-        margin-bottom: 28px;
+        margin-bottom: 14px;
 
         box-shadow: 0 20px 50px rgba(15,23,42,0.15);
     }
@@ -1214,6 +1215,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
