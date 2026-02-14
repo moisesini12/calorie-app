@@ -1,4 +1,8 @@
 # app.py
+
+
+import hashlib, hmac, base64
+
 import streamlit as st
 import pandas as pd
 from datetime import date
@@ -538,6 +542,91 @@ def inject_black_theme():
     """, unsafe_allow_html=True)
 
 
+st.set_page_config(...)
+inject_black_theme()
+
+require_login()
+
+
+# ---------------------------
+# Auth
+# ---------------------------
+def _verify_password(password: str, stored: str) -> bool:
+    """
+    stored format: pbkdf2_sha256$iterations$salt_b64$hash_b64
+    """
+    try:
+        algo, iters_s, salt_b64, hash_b64 = stored.split("$")
+        if algo != "pbkdf2_sha256":
+            return False
+        iters = int(iters_s)
+        salt = base64.b64decode(salt_b64.encode())
+        expected = base64.b64decode(hash_b64.encode())
+        dk = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), salt, iters, dklen=len(expected))
+        return hmac.compare_digest(dk, expected)
+    except Exception:
+        return False
+
+
+def _get_users() -> dict:
+    # secrets.toml -> [users]
+    users = st.secrets.get("users", {})
+    return dict(users)
+
+
+def require_login():
+    # Estado
+    if "auth_ok" not in st.session_state:
+        st.session_state["auth_ok"] = False
+    if "user_id" not in st.session_state:
+        st.session_state["user_id"] = ""
+
+    if st.session_state["auth_ok"]:
+        return
+
+    users = _get_users()
+    if not users:
+        st.error("No hay usuarios configurados en secrets.toml ([users]).")
+        st.stop()
+
+    # “Popup” login: si st.dialog existe, lo usamos; si no, fallback a pantalla
+    has_dialog = hasattr(st, "dialog")
+
+    def login_form():
+        st.markdown("### 🔐 Iniciar sesión")
+        st.caption("Selecciona usuario e introduce contraseña.")
+
+        user = st.selectbox("Usuario", list(users.keys()), key="_login_user")
+        pwd = st.text_input("Contraseña", type="password", key="_login_pwd")
+
+        c1, c2 = st.columns([1, 1])
+        with c1:
+            ok = st.button("Entrar", type="primary", use_container_width=True)
+        with c2:
+            st.button("Limpiar", use_container_width=True, on_click=lambda: st.session_state.update({"_login_pwd": ""}))
+
+        if ok:
+            if _verify_password(pwd, users.get(user, "")):
+                st.session_state["auth_ok"] = True
+                st.session_state["user_id"] = user
+                st.session_state["_login_pwd"] = ""
+                st.rerun()
+            else:
+                st.error("❌ Contraseña incorrecta. Inténtalo de nuevo.")
+
+    if has_dialog:
+        @st.dialog("Acceso a FitMacro", width="small")
+        def _dlg():
+            login_form()
+
+        _dlg()
+        st.stop()
+    else:
+        # Fallback: pantalla centrada (bloquea app)
+        st.markdown("<div style='max-width:420px;margin:60px auto;'>", unsafe_allow_html=True)
+        login_form()
+        st.markdown("</div>", unsafe_allow_html=True)
+        st.stop()
 
 
 
@@ -561,14 +650,13 @@ st.sidebar.markdown("""
 """, unsafe_allow_html=True)
 
 
-USER_ID = st.sidebar.text_input(
-    "👤 Usuario",
-    value=st.session_state.get("user_id", "moi")
-)
+st.sidebar.caption(f"👤 Sesión: **{st.session_state['user_id']}**")
 
-st.session_state["user_id"] = (
-    USER_ID.strip() if USER_ID else "default_user"
-)
+if st.sidebar.button("🚪 Cerrar sesión"):
+    st.session_state["auth_ok"] = False
+    st.session_state["user_id"] = ""
+    st.rerun()
+
 
 selected_date = st.sidebar.date_input(
     "📅 Día",
@@ -1235,6 +1323,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
