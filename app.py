@@ -421,6 +421,46 @@ def inject_black_theme():
         cursor: pointer;
     }
 
+    /* =========================
+       DATAFRAME FIT STYLE
+       ========================= */
+    
+    /* Contenedor general */
+    div[data-testid="stDataFrame"]{
+        background: linear-gradient(
+            180deg,
+            rgba(34,197,94,0.18) 0%,
+            rgba(37,99,235,0.15) 100%
+        ) !important;
+    
+        border-radius: 18px !important;
+        border: 1px solid rgba(15,23,42,0.10) !important;
+        box-shadow: 0 20px 40px rgba(15,23,42,0.12);
+        padding: 6px;
+    }
+    
+    /* Header */
+    div[data-testid="stDataFrame"] th{
+        background: rgba(15,23,42,0.85) !important;
+        color: #ffffff !important;
+        font-weight: 800 !important;
+        border: none !important;
+    }
+    
+    /* Celdas */
+    div[data-testid="stDataFrame"] td{
+        background: rgba(255,255,255,0.65) !important;
+        color: #0f172a !important;
+        font-weight: 600 !important;
+        border: none !important;
+    }
+    
+    /* Hover fila */
+    div[data-testid="stDataFrame"] tr:hover td{
+        background: rgba(37,99,235,0.15) !important;
+        transition: background 0.15s ease;
+    }
+
 
     </style>
     """, unsafe_allow_html=True)
@@ -1058,6 +1098,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
