@@ -33,34 +33,27 @@ def inject_black_theme():
     st.markdown("""
     <style>
 
-    /* =========================
-       FITMACRO PRO THEME
-       ========================= */
-
     :root{
         --bg: #dce3ed;
-        --bg2: #d4efe3;
-
         --panel: #ffffff;
         --panel-soft: #f4f7fb;
-
         --stroke: rgba(15,23,42,0.18);
         --stroke-soft: rgba(15,23,42,0.08);
-
         --txt: #0f172a;
         --muted: #334155;
-
         --green: #16a34a;
-        --green2: #22c55e;
         --blue: #2563eb;
-
         --radius: 18px;
     }
 
+    /* =========================
+       GLOBAL
+       ========================= */
+
     html, body, [data-testid="stAppViewContainer"]{
         background:
-            radial-gradient(1000px 700px at 10% 10%, rgba(34,197,94,0.18) 0%, transparent 60%),
-            radial-gradient(900px 600px at 90% 15%, rgba(37,99,235,0.16) 0%, transparent 60%),
+            radial-gradient(900px 600px at 10% 10%, rgba(34,197,94,0.15) 0%, transparent 60%),
+            radial-gradient(900px 600px at 90% 10%, rgba(37,99,235,0.15) 0%, transparent 60%),
             linear-gradient(180deg, var(--bg) 0%, #eef2f9 100%) !important;
         color: var(--txt) !important;
     }
@@ -71,618 +64,187 @@ def inject_black_theme():
         padding-bottom: 50px;
     }
 
+    h1{ font-size: 42px !important; font-weight: 900 !important; }
+    h2,h3{ font-weight: 800 !important; }
 
-    [data-testid="stSidebar"] > div{
-        background: rgba(255,255,255,0.92) !important;
-        backdrop-filter: blur(12px);
-        border-right: 1px solid var(--stroke-soft) !important;
-    }
-
-    h1{
-        font-size: 44px !important;
-        font-weight: 900 !important;
-        letter-spacing: -0.04em;
-        color: var(--txt) !important;
-    }
-
-    h2, h3{
-        font-weight: 800 !important;
-        color: var(--txt) !important;
-    }
-
-    p, label, .stCaption, .stMarkdown{
+    p,label,.stCaption,.stMarkdown{
         color: var(--muted) !important;
     }
 
-    input, textarea{
+    input, textarea, div[data-baseweb="select"] > div{
         background: var(--panel-soft) !important;
         border: 1px solid var(--stroke) !important;
         border-radius: 14px !important;
-        color: #000000 !important;
+        color: #000 !important;
         font-weight: 600 !important;
     }
 
-    div[data-baseweb="select"] > div{
-        background: var(--panel-soft) !important;
-        border: 1px solid var(--stroke) !important;
-        border-radius: 14px !important;
-        color: #000000 !important;
-        font-weight: 600 !important;
+    /* =========================
+       BUTTONS (MAIN CONTENT ONLY)
+       ========================= */
+
+    [data-testid="stAppViewContainer"] .stButton > button,
+    [data-testid="stAppViewContainer"] div[data-testid="stFormSubmitButton"] button{
+        background: linear-gradient(135deg,var(--green),var(--blue)) !important;
+        color: #fff !important;
+        border: none !important;
+        border-radius: 999px !important;
+        padding: 10px 18px !important;
+        font-weight: 800 !important;
+        box-shadow: 0 14px 30px rgba(15,23,42,0.25);
+        transition: all .15s ease;
     }
 
-    div[data-baseweb="select"] span{
-        color: #000000 !important;
-    }
-
-
-    .stButton > button:hover,
-    div[data-testid="stFormSubmitButton"] button:hover{
+    [data-testid="stAppViewContainer"] .stButton > button:hover{
         transform: translateY(-1px);
         filter: brightness(1.05);
-        box-shadow: 0 16px 36px rgba(22,163,74,0.28);
     }
 
     button:disabled{
-        background: linear-gradient(135deg,#94a3b8 0%,#cbd5e1 100%) !important;
+        background: #94a3b8 !important;
         box-shadow: none !important;
-        cursor: not-allowed !important;
-    }
-
-    div[data-testid="stMetric"]{
-        background: var(--panel);
-        border: 1px solid var(--stroke-soft);
-        border-radius: var(--radius);
-        padding: 18px;
-        box-shadow: 0 18px 46px rgba(15,23,42,0.12);
-        position: relative;
-        overflow: hidden;
-    }
-
-    div[data-testid="stMetric"]::before{
-        content: "";
-        position: absolute;
-        inset: 0;
-        background:
-            radial-gradient(900px 220px at 15% 0%, rgba(34,197,94,0.28) 0%, transparent 65%),
-            radial-gradient(900px 220px at 85% 0%, rgba(37,99,235,0.22) 0%, transparent 65%);
-        pointer-events: none;
-    }
-
-    div[data-testid="stMetric"] label{
-        color: #000000 !important;
-        font-weight: 800 !important;
-        font-size: 13px !important;
-    }
-
-    div[data-testid="stMetricValue"]{
-        color: #000000 !important;
-        font-weight: 900 !important;
-        font-size: 36px !important;
-    }
-
-    .fit-card{
-        background: linear-gradient(
-            180deg,
-            rgba(34,197,94,0.18) 0%,
-            rgba(37,99,235,0.15) 100%
-        );
-        padding: 18px;
-        border-radius: var(--radius);
-        border: 1px solid var(--stroke-soft);
-        box-shadow: 0 18px 40px rgba(15,23,42,0.12);
-    }
-
-    .hero-banner{
-        display: flex;
-        align-items: center;
-        gap: 50px;
-
-        background: linear-gradient(
-            135deg,
-            rgba(34,197,94,0.25) 0%,
-            rgba(37,99,235,0.22) 100%
-        );
-
-        padding: 35px 45px;
-        border-radius: 18px;
-        margin-bottom: 30px;
-
-        box-shadow: 0 20px 50px rgba(15,23,42,0.15);
-    }
-
-    .hero-logo{
-        width: 50px;
-        height: 50px;
-
-        border-radius: 50%;
-        background: linear-gradient(135deg,#16a34a,#2563eb);
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        font-weight: 900;
-        font-size: 22px;
-        color: white;
-    }
-
-    .hero-text h1{
-        margin: 0;
-        font-size: 40px !important;
-    }
-
-    .hero-text p{
-        margin: 0;
-        font-size: 14px;
-        opacity: 0.8;
     }
 
     /* =========================
-       SIDEBAR PREMIUM
+       SIDEBAR
        ========================= */
 
     [data-testid="stSidebar"] > div{
-      padding-top: 18px !important;
-      padding-bottom: 18px !important;
+        background: rgba(255,255,255,0.95) !important;
+        border-right: 1px solid var(--stroke-soft);
+        padding-top: 18px !important;
     }
 
+    /* BRAND */
     .sb-brand{
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 12px;
-      margin: 6px 8px 14px 8px;
-      border-radius: 18px;
-      background: linear-gradient(
-          135deg,
-          rgba(34,197,94,0.18) 0%,
-          rgba(37,99,235,0.16) 100%
-      );
-      border: 1px solid rgba(15,23,42,0.08);
-      box-shadow: 0 14px 30px rgba(15,23,42,0.10);
+        display:flex;
+        align-items:center;
+        gap:12px;
+        padding:12px;
+        margin:6px 8px 14px 8px;
+        border-radius:18px;
+        background: linear-gradient(
+            135deg,
+            rgba(34,197,94,0.18),
+            rgba(37,99,235,0.16)
+        );
+        border:1px solid var(--stroke-soft);
+        box-shadow:0 14px 30px rgba(15,23,42,0.10);
     }
 
     .sb-logo{
-      width: 44px;
-      height: 44px;
-      border-radius: 14px;
-      background: linear-gradient(135deg,#16a34a,#2563eb);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 900;
-      color: #fff;
-      letter-spacing: 0.5px;
+        width:44px;
+        height:44px;
+        border-radius:14px;
+        background:linear-gradient(135deg,#16a34a,#2563eb);
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-weight:900;
+        color:#fff;
     }
 
     .sb-title .sb-name{
-      font-size: 18px;
-      font-weight: 900;
-      color: #0f172a;
-      line-height: 1.05;
+        font-size:18px;
+        font-weight:900;
+        color:#0f172a;
     }
+
     .sb-title .sb-sub{
-      font-size: 12px;
-      font-weight: 650;
-      color: rgba(15,23,42,0.60);
-      margin-top: 2px;
-    }
-
-    [data-testid="stSidebar"] input,
-    [data-testid="stSidebar"] textarea,
-    [data-testid="stSidebar"] div[data-baseweb="select"] > div{
-      background: rgba(255,255,255,0.96) !important;
-      border: 1px solid rgba(15,23,42,0.18) !important;
-      border-radius: 14px !important;
-    }
-
-    section.main > div:first-child {
-        padding-top: 0px !important;
-    }
-
-
-
-    [data-testid="stSidebar"] div[role="radiogroup"]{
-      margin: 8px 6px 0 6px;
-      padding: 10px;
-      border-radius: 18px;
-      background: rgba(255,255,255,0.60);
-      border: 1px solid rgba(15,23,42,0.08);
-    }
-
-    [data-testid="stSidebar"] div[role="radiogroup"] label{
-      border-radius: 14px !important;
-      padding: 10px 12px !important;
-      margin: 6px 0 !important;
-      transition: all .15s ease;
-    }
-
-    [data-testid="stSidebar"] div[role="radiogroup"] label:hover{
-      background: rgba(37,99,235,0.10) !important;
-      transform: translateY(-1px);
-    }
-
-    [data-testid="stSidebar"] div[role="radiogroup"] label p{
-      font-weight: 750 !important;
-      color: #0f172a !important;
-    }
-
-    [data-testid="stSidebar"] div[role="radiogroup"] input:checked + div{
-      background: linear-gradient(
-          135deg,
-          rgba(22,163,74,0.18) 0%,
-          rgba(37,99,235,0.14) 100%
-      ) !important;
-      border-radius: 14px !important;
-      border: 1px solid rgba(15,23,42,0.08) !important;
-    }
-
-    .sb-tip{
-      margin: 14px 10px 0 10px;
-      padding: 12px 12px;
-      border-radius: 16px;
-      background: rgba(255,255,255,0.60);
-      border: 1px solid rgba(15,23,42,0.08);
-      color: rgba(15,23,42,0.65);
-      font-weight: 650;
-      font-size: 12px;
-    }
-
-    .fit-fab{
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        width: 60px;
-        height: 60px;
-        border-radius: 20px;
-        background: linear-gradient(135deg,#16a34a,#2563eb);
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 26px;
-        font-weight: 900;
-        box-shadow: 0 18px 40px rgba(15,23,42,0.25);
-        z-index: 9999;
-        cursor: pointer;
-    }
-
-    .fit-table-card{
-      background: linear-gradient(
-        135deg,
-        rgba(22,163,74,0.14) 0%,
-        rgba(37,99,235,0.12) 100%
-      );
-      border: 1px solid rgba(15,23,42,0.10);
-      border-radius: 18px;
-      padding: 10px;
-      box-shadow: 0 18px 40px rgba(15,23,42,0.12);
-    }
-
-    .fit-table-scroll{
-      overflow-x: auto;
-      overflow-y: hidden;
-      -webkit-overflow-scrolling: touch;
-      border-radius: 14px;
-    }
-
-    .fit-table-scroll::-webkit-scrollbar{ height: 10px; }
-    .fit-table-scroll::-webkit-scrollbar-track{ background: rgba(15,23,42,0.06); border-radius: 999px; }
-    .fit-table-scroll::-webkit-scrollbar-thumb{ background: rgba(15,23,42,0.18); border-radius: 999px; }
-
-    .fit-table-scroll table{
-      min-width: 720px;
-      width: 100%;
-      border-collapse: separate !important;
-      border-spacing: 0 !important;
-      border-radius: 14px !important;
-      overflow: hidden !important;
-    }
-
-    .fit-table-scroll thead th{
-      background: linear-gradient(135deg, rgba(22,163,74,0.92), rgba(37,99,235,0.92)) !important;
-      color: #fff !important;
-      font-weight: 850 !important;
-      border: none !important;
-      padding: 12px 14px !important;
-    }
-
-    .fit-table-scroll tbody td{
-      background: rgba(255,255,255,0.78) !important;
-      color: #0f172a !important;
-      font-weight: 650 !important;
-      border: none !important;
-      padding: 12px 14px !important;
-    }
-
-    .fit-table-scroll tbody tr:nth-child(even) td{
-      background: rgba(255,255,255,0.66) !important;
-    }
-
-    .fit-table-scroll tbody tr:hover td{
-      background: rgba(37,99,235,0.14) !important;
-      transition: background 0.12s ease;
-    }
-
-    /* ===== WORKOUT UI (Rutina IA) ===== */
-    .wk-card{
-      background: rgba(255,255,255,0.78);
-      border: 1px solid rgba(15,23,42,0.10);
-      border-radius: 18px;
-      padding: 14px 14px;
-      box-shadow: 0 16px 36px rgba(15,23,42,0.10);
-      margin-bottom: 12px;
-    }
-    
-    .wk-title{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-    }
-    
-    .wk-title h4{
-      margin:0;
-      font-size: 16px;
-      font-weight: 900;
-      color:#0f172a;
-    }
-    
-    .wk-chip{
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 800;
-      background: linear-gradient(135deg, rgba(22,163,74,0.18), rgba(37,99,235,0.14));
-      border: 1px solid rgba(15,23,42,0.10);
-      color:#0f172a;
-      white-space: nowrap;
-    }
-    
-    .wk-sec{
-      margin-top: 10px;
-      padding-top: 10px;
-      border-top: 1px dashed rgba(15,23,42,0.14);
-    }
-    
-    .wk-sec-title{
-      font-weight: 900;
-      color:#0f172a;
-      margin: 0 0 8px 0;
-      font-size: 13px;
-    }
-    
-    .wk-list{
-      margin: 0;
-      padding-left: 18px;
-      color: rgba(15,23,42,0.75);
-      font-weight: 650;
-    }
-    
-    .wk-ex{
-      margin: 0 0 10px 0;
-      padding: 10px 12px;
-      border-radius: 14px;
-      background: rgba(244,247,251,0.85);
-      border: 1px solid rgba(15,23,42,0.08);
-    }
-    
-    .wk-ex b{
-      color:#0f172a;
-    }
-    
-    .wk-note{
-      margin-top: 6px;
-      font-size: 12px;
-      color: rgba(15,23,42,0.65);
-    }
-
-
-    /* =========================
-       SIDEBAR COMPACT (menos huecos)
-       ========================= */
-    
-    .sb-section-title{
-      margin: 10px 10px 6px 10px !important;
-      padding: 0 !important;
-      font-weight: 900 !important;
-      font-size: 16px !important;
-      color: #0f172a !important;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    
-    .sb-section-box{
-      margin: 0 0 6px 0 !important;
-      padding: 0 !important;
-      background: transparent !important;
-      border: none !important;
-    }
-
-    
-    .sb-section-box [data-testid="stRadio"]{
-      margin-top: -6px !important; /* quita aire extra */
-    }
-    
-    .sb-section-box label{
-      padding: 8px 10px !important;
-      margin: 4px 0 !important;
-    }
-
-
-    /* =========================
-       SIDEBAR ACCORDION (desplegables)
-       ========================= */
-    
-    .sb-acc{
-      margin: 10px 8px 8px 8px !important;
-    }
-    
-    .sb-acc-btn{
-      width: 100%;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 12px;
-      border-radius: 16px;
-      background: rgba(255,255,255,0.55);
-      border: 1px solid rgba(15,23,42,0.08);
-      box-shadow: 0 10px 24px rgba(15,23,42,0.08);
-      cursor: pointer;
-      user-select: none;
-      transition: all .12s ease;
-    }
-    
-    .sb-acc-btn:hover{
-      transform: translateY(-1px);
-      background: rgba(255,255,255,0.72);
-    }
-    
-    .sb-acc-icon{
-      font-size: 18px;
-      width: 22px;
-      text-align: center;
-    }
-    
-    .sb-acc-title{
-      font-weight: 900;
-      color: #0f172a;
-      flex: 1;
-    }
-    
-    .sb-acc-chevron{
-      opacity: 0.65;
-      font-weight: 900;
-    }
-    
-    /* contenedor de contenido */
-    .sb-acc-body{
-      margin-top: 8px;
-      padding: 10px 10px;
-      border-radius: 18px;
-      background: rgba(255,255,255,0.50);
-      border: 1px solid rgba(15,23,42,0.08);
-    }
-    
-    /* compacta radios */
-    .sb-acc-body [data-testid="stRadio"]{
-      margin-top: -6px !important;
-    }
-    .sb-acc-body label{
-      padding: 8px 10px !important;
-      margin: 4px 0 !important;
+        font-size:12px;
+        color:rgba(15,23,42,0.60);
     }
 
     /* =========================
-       SIDEBAR COMPACT ACCORDION
+       SIDEBAR EXPANDERS
        ========================= */
-    
-    [data-testid="stSidebar"] .stButton > button{
-      padding: 10px 12px !important;
-      border-radius: 14px !important;
-      box-shadow: none !important;
-      margin: 4px 0 !important; /* 🔥 menos hueco */
-    }
-    
-    [data-testid="stSidebar"] .stRadio{
-      margin-top: 0px !important;
-      margin-bottom: 6px !important; /* 🔥 menos hueco */
-    }
-    
-    [data-testid="stSidebar"] div[role="radiogroup"]{
-      margin: 6px 0 10px 0 !important; /* 🔥 pegado al título */
-      padding: 6px !important;
-      border-radius: 14px !important;
+
+    [data-testid="stSidebar"] details{
+        border:none !important;
+        background:transparent !important;
+        margin:10px 8px !important;
     }
 
-
-    /* Sidebar expander compact */
-    [data-testid="stSidebar"] details {
-      border: none !important;
-      background: transparent !important;
-      padding: 0 !important;
-      margin: 6px 6px !important;
-    }
-    
-    [data-testid="stSidebar"] summary {
-      background: linear-gradient(135deg, rgba(22,163,74,0.92), rgba(37,99,235,0.92)) !important;
-      border-radius: 999px !important;
-      padding: 10px 14px !important;
-      color: #fff !important;
-      font-weight: 850 !important;
-      list-style: none !important;
-    }
-    
-    [data-testid="stSidebar"] summary::-webkit-details-marker { display: none; }
-    
-    [data-testid="stSidebar"] details > div {
-      background: rgba(255,255,255,0.65) !important;
-      border: 1px solid rgba(15,23,42,0.08) !important;
-      border-radius: 18px !important;
-      padding: 10px !important;
-      margin-top: 10px !important;
+    /* Header */
+    [data-testid="stSidebar"] summary{
+        background: linear-gradient(135deg,var(--green),var(--blue)) !important;
+        border-radius:999px !important;
+        padding:10px 14px !important;
+        color:#fff !important;
+        font-weight:900 !important;
+        list-style:none !important;
+        cursor:pointer !important;
     }
 
-
-    /* =========================
-       SIDEBAR: SECCIONES + ITEMS
-       ========================= */
-    
-    /* Header del expander (la “pestaña” Principal/Nutrición/etc.) */
-    [data-testid="stSidebar"] details > summary{
-      background: linear-gradient(135deg, rgba(22,163,74,0.92), rgba(37,99,235,0.92)) !important;
-      border-radius: 999px !important;
-      padding: 10px 14px !important;
-      color: #fff !important;
-      font-weight: 850 !important;
-      margin: 10px 6px 6px 6px !important;
-      list-style: none !important;
-      border: none !important;
+    [data-testid="stSidebar"] summary::-webkit-details-marker{
+        display:none;
     }
-    [data-testid="stSidebar"] summary::-webkit-details-marker{ display:none; }
-    
-    /* Caja interior (donde van los botones del menú) */
+
+    /* Body */
     [data-testid="stSidebar"] details > div{
-      background: rgba(255,255,255,0.55) !important;
-      border: 1px solid rgba(15,23,42,0.08) !important;
-      border-radius: 18px !important;
-      padding: 10px !important;
-      margin: 6px 10px 12px 10px !important;
+        background: rgba(255,255,255,0.65) !important;
+        border:1px solid var(--stroke-soft) !important;
+        border-radius:18px !important;
+        padding:10px !important;
+        margin-top:10px !important;
     }
-    
-    /* Botones DENTRO de la caja: look “item” */
+
+    /* Sidebar item buttons */
     [data-testid="stSidebar"] details > div .stButton > button{
-      background: rgba(255,255,255,0.90) !important;
-      color: #0f172a !important;
-      border: 1px solid rgba(15,23,42,0.10) !important;
-      border-radius: 14px !important;
-      padding: 10px 12px !important;
-      font-weight: 750 !important;
-      box-shadow: none !important;
-      margin: 6px 0 !important;
+        background: rgba(255,255,255,0.92) !important;
+        color:#0f172a !important;
+        border:1px solid rgba(15,23,42,0.12) !important;
+        border-radius:14px !important;
+        padding:10px 12px !important;
+        font-weight:750 !important;
+        margin:6px 0 !important;
+        box-shadow:none !important;
+        transition: all .12s ease;
     }
-    
-    /* Item activo (cuando type="primary" en nav_btn) */
+
     [data-testid="stSidebar"] details > div .stButton > button[kind="primary"]{
-      background: linear-gradient(135deg, rgba(22,163,74,0.20), rgba(37,99,235,0.18)) !important;
-      border: 1px solid rgba(15,23,42,0.12) !important;
+        background: linear-gradient(135deg, rgba(22,163,74,0.25), rgba(37,99,235,0.20)) !important;
     }
-    
-    /* Hover */
+
     [data-testid="stSidebar"] details > div .stButton > button:hover{
-      transform: translateY(-1px);
-      filter: brightness(1.02);
+        transform:translateY(-1px);
+        filter:brightness(1.03);
     }
 
+    /* =========================
+       HERO
+       ========================= */
 
+    .hero-banner{
+        display:flex;
+        align-items:center;
+        gap:30px;
+        background: linear-gradient(
+            135deg,
+            rgba(34,197,94,0.25),
+            rgba(37,99,235,0.22)
+        );
+        padding:35px 45px;
+        border-radius:18px;
+        margin-bottom:30px;
+        box-shadow:0 20px 50px rgba(15,23,42,0.15);
+    }
 
+    .hero-logo{
+        width:50px;
+        height:50px;
+        border-radius:50%;
+        background:linear-gradient(135deg,#16a34a,#2563eb);
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-weight:900;
+        color:white;
+    }
 
     </style>
     """, unsafe_allow_html=True)
+
 
 
 # ---------------------------
@@ -2118,6 +1680,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
