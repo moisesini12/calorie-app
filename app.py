@@ -418,6 +418,84 @@ def inject_black_theme():
       transition: background 0.12s ease;
     }
 
+    /* ===== WORKOUT UI (Rutina IA) ===== */
+    .wk-card{
+      background: rgba(255,255,255,0.78);
+      border: 1px solid rgba(15,23,42,0.10);
+      border-radius: 18px;
+      padding: 14px 14px;
+      box-shadow: 0 16px 36px rgba(15,23,42,0.10);
+      margin-bottom: 12px;
+    }
+    
+    .wk-title{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    
+    .wk-title h4{
+      margin:0;
+      font-size: 16px;
+      font-weight: 900;
+      color:#0f172a;
+    }
+    
+    .wk-chip{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      background: linear-gradient(135deg, rgba(22,163,74,0.18), rgba(37,99,235,0.14));
+      border: 1px solid rgba(15,23,42,0.10);
+      color:#0f172a;
+      white-space: nowrap;
+    }
+    
+    .wk-sec{
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px dashed rgba(15,23,42,0.14);
+    }
+    
+    .wk-sec-title{
+      font-weight: 900;
+      color:#0f172a;
+      margin: 0 0 8px 0;
+      font-size: 13px;
+    }
+    
+    .wk-list{
+      margin: 0;
+      padding-left: 18px;
+      color: rgba(15,23,42,0.75);
+      font-weight: 650;
+    }
+    
+    .wk-ex{
+      margin: 0 0 10px 0;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(244,247,251,0.85);
+      border: 1px solid rgba(15,23,42,0.08);
+    }
+    
+    .wk-ex b{
+      color:#0f172a;
+    }
+    
+    .wk-note{
+      margin-top: 6px;
+      font-size: 12px;
+      color: rgba(15,23,42,0.65);
+    }
+
+
+
     </style>
     """, unsafe_allow_html=True)
 
@@ -1696,76 +1774,132 @@ elif page == "🏋️ Rutina IA":
 
         # Calendario semanal (mobile friendly: expander por día)
         st.subheader("📅 Plan semanal")
+
         for d in plan.get("weekly_schedule", []):
             day = d.get("day", "Día")
             focus = d.get("focus", "")
             dur = d.get("duration_min", "")
-            title = f"{day} — {focus} ({dur} min)" if focus else f"{day} ({dur} min)"
+            title = f"{day} — {focus}" if focus else day
 
-            with st.expander(title, expanded=False):
-                sess = d.get("session", {}) or {}
+            sess = d.get("session", {}) or {}
 
-                st.markdown("**Calentamiento**")
-                for x in sess.get("warmup", []):
-                    st.write(f"- {x}")
+            # Card + expander para móvil
+            st.markdown('<div class="wk-card">', unsafe_allow_html=True)
+            with st.expander(f"▶️ {title}", expanded=False):
+                st.markdown(
+                    f"""
+                    <div class="wk-title">
+                      <h4>{title}</h4>
+                      <span class="wk-chip">⏱️ {dur} min</span>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
 
-                st.markdown("**Principal**")
-                for ex in sess.get("main", []):
-                    st.write(
-                        f"- **{ex.get('exercise','Ejercicio')}** · "
-                        f"{ex.get('sets',3)}x{ex.get('reps','8-12')} · "
-                        f"descanso {ex.get('rest_sec',90)}s"
-                    )
-                    note = str(ex.get("notes", "")).strip()
-                    if note:
-                        st.caption(note)
+                # Warmup
+                warm = sess.get("warmup", []) or []
+                if warm:
+                    st.markdown('<div class="wk-sec">', unsafe_allow_html=True)
+                    st.markdown('<div class="wk-sec-title">🔥 Calentamiento</div>', unsafe_allow_html=True)
+                    st.markdown("<ul class='wk-list'>" + "".join([f"<li>{x}</li>" for x in warm]) + "</ul>", unsafe_allow_html=True)
+                    st.markdown("</div>", unsafe_allow_html=True)
 
-                fin = sess.get("finisher_optional", [])
+                # Main
+                main = sess.get("main", []) or []
+                if main:
+                    st.markdown('<div class="wk-sec">', unsafe_allow_html=True)
+                    st.markdown('<div class="wk-sec-title">🏋️ Principal</div>', unsafe_allow_html=True)
+
+                    for ex in main:
+                        ex_name = ex.get("exercise", "Ejercicio")
+                        sets = ex.get("sets", 3)
+                        reps = ex.get("reps", "8-12")
+                        rest = ex.get("rest_sec", 90)
+                        note = str(ex.get("notes", "")).strip()
+
+                        st.markdown(
+                            f"""
+                            <div class="wk-ex">
+                              <b>{ex_name}</b><br>
+                              <span class="wk-chip">Series: {sets}</span>
+                              <span class="wk-chip">Reps: {reps}</span>
+                              <span class="wk-chip">Descanso: {rest}s</span>
+                              {"<div class='wk-note'>📝 " + note + "</div>" if note else ""}
+                            </div>
+                            """,
+                            unsafe_allow_html=True
+                        )
+
+                    st.markdown("</div>", unsafe_allow_html=True)
+
+                # Finisher
+                fin = sess.get("finisher_optional", []) or []
                 if fin:
-                    st.markdown("**Finisher (opcional)**")
-                    for x in fin:
-                        st.write(f"- {x}")
+                    st.markdown('<div class="wk-sec">', unsafe_allow_html=True)
+                    st.markdown('<div class="wk-sec-title">⚡ Finisher (opcional)</div>', unsafe_allow_html=True)
+                    st.markdown("<ul class='wk-list'>" + "".join([f"<li>{x}</li>" for x in fin]) + "</ul>", unsafe_allow_html=True)
+                    st.markdown("</div>", unsafe_allow_html=True)
 
-                st.markdown("**Vuelta a la calma**")
-                for x in sess.get("cooldown", []):
-                    st.write(f"- {x}")
+                # Cooldown
+                cool = sess.get("cooldown", []) or []
+                if cool:
+                    st.markdown('<div class="wk-sec">', unsafe_allow_html=True)
+                    st.markdown('<div class="wk-sec-title">🧘 Vuelta a la calma</div>', unsafe_allow_html=True)
+                    st.markdown("<ul class='wk-list'>" + "".join([f"<li>{x}</li>" for x in cool]) + "</ul>", unsafe_allow_html=True)
+                    st.markdown("</div>", unsafe_allow_html=True)
+
+            st.markdown("</div>", unsafe_allow_html=True)
 
         st.divider()
 
         # Progresión
         st.subheader("📈 Progresión (4 semanas)")
         for w in plan.get("progression_4_weeks", []):
-            st.write(f"**Semana {w.get('week','?')}** — {w.get('notes','')}")
+            st.markdown('<div class="wk-card">', unsafe_allow_html=True)
+            st.markdown(
+                f"""
+                <div class="wk-title">
+                  <h4>Semana {w.get('week','?')}</h4>
+                  <span class="wk-chip">📌 Progresión</span>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+            notes = str(w.get("notes", "")).strip()
             rule = str(w.get("rule", "")).strip()
+
+            if notes:
+                st.markdown(f"- {notes}")
             if rule:
                 st.caption(rule)
 
-        st.divider()
+            st.markdown("</div>", unsafe_allow_html=True)
 
-        # Nutrición vinculada
+
         nt = plan.get("nutrition_ties", {}) or {}
         st.subheader("🍽️ Nutrición (alineada con tu FitMacro)")
 
         td = nt.get("training_days", {}) or {}
         rd = nt.get("rest_days", {}) or {}
 
-        st.markdown("**Días de entreno**")
-        st.write(f"- Proteína sugerida: **{td.get('protein_g_hint', int(target_p))} g** (objetivo actual: {int(target_p)} g)")
-        st.write(f"- Pre: {td.get('preworkout_hint','')}")
-        st.write(f"- Post: {td.get('postworkout_hint','')}")
+        # Entreno
+        st.markdown('<div class="wk-card">', unsafe_allow_html=True)
+        st.markdown("<div class='wk-title'><h4>🏋️ Días de entreno</h4><span class='wk-chip'>Fuel</span></div>", unsafe_allow_html=True)
+        st.markdown(f"- Proteína sugerida: **{td.get('protein_g_hint', int(target_p))} g** (objetivo actual: {int(target_p)} g)")
+        pre = str(td.get("preworkout_hint","")).strip()
+        post = str(td.get("postworkout_hint","")).strip()
+        if pre: st.markdown(f"- Pre: {pre}")
+        if post: st.markdown(f"- Post: {post}")
+        st.markdown("</div>", unsafe_allow_html=True)
 
-        st.markdown("**Días de descanso**")
-        st.write(f"- Proteína sugerida: **{rd.get('protein_g_hint', int(target_p))} g**")
-        st.write(f"- {rd.get('hint','')}")
-
-        st.divider()
-
-        # Seguridad
-        st.subheader("🛡️ Notas de seguridad")
-        for s in plan.get("safety_notes", []):
-            st.write(f"- {s}")
-
-
+        # Descanso
+        st.markdown('<div class="wk-card">', unsafe_allow_html=True)
+        st.markdown("<div class='wk-title'><h4>🛌 Días de descanso</h4><span class='wk-chip'>Recovery</span></div>", unsafe_allow_html=True)
+        st.markdown(f"- Proteína sugerida: **{rd.get('protein_g_hint', int(target_p))} g**")
+        hint = str(rd.get("hint","")).strip()
+        if hint: st.markdown(f"- {hint}")
+        st.markdown("</div>", unsafe_allow_html=True)
 
 
 
