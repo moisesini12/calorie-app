@@ -21,12 +21,10 @@ def inject_black_theme():
     :root{
       --bg: #000000;
       --panel: rgba(255,255,255,0.04);
-      --panel-2: rgba(255,255,255,0.06);
       --stroke: rgba(255,255,255,0.08);
       --stroke-2: rgba(255,255,255,0.12);
       --txt: rgba(255,255,255,0.92);
       --muted: rgba(255,255,255,0.60);
-      --muted2: rgba(255,255,255,0.40);
       --accent: #39ff14;
       --radius: 18px;
     }
@@ -105,18 +103,6 @@ def inject_black_theme():
       overflow: hidden;
     }
 
-    div[role="tablist"] button{
-      background: var(--panel) !important;
-      border: 1px solid var(--stroke) !important;
-      color: var(--muted) !important;
-      border-radius: 999px !important;
-      padding: 8px 14px !important;
-    }
-    div[role="tablist"] button[aria-selected="true"]{
-      color: var(--txt) !important;
-      border-color: rgba(57,255,20,0.35) !important;
-    }
-
     div[data-testid="stProgress"] > div > div{
       background-color: var(--accent) !important;
     }
@@ -137,9 +123,22 @@ def inject_black_theme():
 st.set_page_config(page_title="Calculadora de calorías y macros", layout="wide")
 inject_black_theme()
 
+# USER
 USER_ID = st.sidebar.text_input("👤 Usuario", value=st.session_state.get("user_id", "moi"))
-st.session_state["user_id"] = USER_ID
+st.session_state["user_id"] = USER_ID.strip() if USER_ID else "default_user"
 
+# Fecha
+selected_date = st.sidebar.date_input("📅 Día", value=date.today())
+selected_date_str = selected_date.isoformat()
+
+# Nav
+page = st.sidebar.radio(
+    "",
+    ["📊 Dashboard", "🍽 Registro", "🎯 Objetivos", "➕ Añadir alimento", "🧠 Coach IA"],
+    label_visibility="collapsed"
+)
+
+# Bootstrap BD (una vez)
 @st.cache_resource
 def _bootstrap():
     init_db()
@@ -147,20 +146,8 @@ def _bootstrap():
 
 _bootstrap()
 
-import db_gsheets
-st.sidebar.caption(f"Sheet ID: {db_gsheets.SHEET_ID}")
-
-
 st.title("Calculadora de calorías y macros")
 
-selected_date = st.sidebar.date_input("📅 Día", value=date.today())
-selected_date_str = selected_date.isoformat()
-
-page = st.sidebar.radio(
-    "",
-    ["📊 Dashboard", "🍽 Registro", "🎯 Objetivos", "➕ Añadir alimento", "🧠 Coach IA"],
-    label_visibility="collapsed"
-)
 
 # ==========================================================
 # PÁGINA: DASHBOARD
@@ -215,15 +202,13 @@ if page == "📊 Dashboard":
             if goal <= 0:
                 st.caption("sin objetivo")
             else:
-                if remaining >= 0:
-                    st.metric("Restante", f"{remaining:.0f}{unit}")
-                else:
-                    st.metric("Exceso", f"{abs(remaining):.0f}{unit}")
+                st.metric("Restante" if remaining >= 0 else "Exceso", f"{abs(remaining):.0f}{unit}")
 
     progress_row("🔥 Calorías", total_kcal, target_kcal, " kcal")
     progress_row("🥩 Proteína", total_protein, target_p, " g")
     progress_row("🍚 Carbs", total_carbs, target_c, " g")
     progress_row("🥑 Grasas", total_fat, target_f, " g")
+
 
 # ==========================================================
 # PÁGINA: REGISTRO
@@ -233,9 +218,15 @@ elif page == "🍽 Registro":
     st.caption(f"Día: {selected_date_str}")
     st.divider()
 
+    # Mensaje persistente post-rerun (para que no “parpadee”)
+    if st.session_state.get("_just_added", False):
+        last_id = st.session_state.get("_last_add_id", "")
+        st.success(f"✅ Entrada guardada (id={last_id})")
+        st.session_state["_just_added"] = False
+
     categories = list_categories()
     if not categories:
-        st.error("No hay categorías. Revisa la tabla foods.")
+        st.error("No hay categorías. Revisa la pestaña foods.")
         st.stop()
 
     colA, colB = st.columns([2, 2])
@@ -243,10 +234,15 @@ elif page == "🍽 Registro":
         category = st.selectbox("Categoría", categories, key="reg_category")
     with colB:
         foods_in_cat = list_foods_by_category(category)
+        if not foods_in_cat:
+            st.warning("Esa categoría no tiene alimentos.")
+            st.stop()
         food = st.selectbox("Alimento", foods_in_cat, format_func=lambda x: x["name"], key="reg_food")
 
+    # FORM de alta
     with st.form("add_entry_form", clear_on_submit=False):
         col1, col2, col3 = st.columns(3)
+
         with col1:
             grams = float(st.number_input(
                 "Gramos consumidos",
@@ -256,6 +252,7 @@ elif page == "🍽 Registro":
                 format="%.0f",
                 key="reg_grams"
             ))
+
         with col2:
             meal = st.radio(
                 "Comida",
@@ -263,6 +260,7 @@ elif page == "🍽 Registro":
                 horizontal=True,
                 key="reg_meal"
             )
+
         with col3:
             st.write("")
             st.write("")
@@ -282,19 +280,20 @@ elif page == "🍽 Registro":
 
                 new_id = add_entry(entry)
 
-                # ✅ invalida SOLO cache_data (NO cache_resource)
+                # ✅ cache de lecturas fuera
                 st.cache_data.clear()
 
-                st.success(f"✅ Entrada guardada (id={new_id})")
+                # ✅ mensaje persistente tras rerun
+                st.session_state["_just_added"] = True
+                st.session_state["_last_add_id"] = new_id
+
                 st.rerun()
 
             except Exception as e:
                 st.error("❌ Error guardando la entrada en Google Sheets")
                 st.exception(e)
 
-
-
-
+    # Lectura del día
     st.subheader("Registro")
     rows = list_entries_by_date(selected_date_str, st.session_state["user_id"])
     df = pd.DataFrame(rows, columns=["id", "meal", "name", "grams", "calories", "protein", "carbs", "fat"])
@@ -324,74 +323,81 @@ elif page == "🍽 Registro":
         with c4:
             st.metric("🥑 Grasas", f"{df['fat'].sum():.1f} g")
 
-    st.subheader("📊 Tendencia (últimos 30 días)")
-    history = daily_totals_last_days(30, st.session_state["user_id"])
-    hist_df = pd.DataFrame(history, columns=["date", "calories", "protein", "carbs", "fat"])
-    if not hist_df.empty:
-        hist_df["date"] = pd.to_datetime(hist_df["date"])
-        hist_df = hist_df.sort_values("date").set_index("date")
-        st.line_chart(hist_df[["calories"]])
-    else:
-        st.info("Aún no hay datos suficientes para la tendencia.")
+        # Tendencia
+        st.subheader("📊 Tendencia (últimos 30 días)")
+        history = daily_totals_last_days(30, st.session_state["user_id"])
+        hist_df = pd.DataFrame(history, columns=["date", "calories", "protein", "carbs", "fat"])
+        if not hist_df.empty:
+            hist_df["date"] = pd.to_datetime(hist_df["date"])
+            hist_df = hist_df.sort_values("date").set_index("date")
+            st.line_chart(hist_df[["calories"]])
+        else:
+            st.info("Aún no hay datos suficientes para la tendencia.")
 
-    if df.empty:
-        st.stop()
+        # Editor/Borrado (solo si hay filas)
+        st.subheader("✏️ Editar / 🗑️ Borrar entrada")
 
-    st.subheader("✏️ Editar / 🗑️ Borrar entrada")
-
-    options = []
-    for _, r in df.iterrows():
-        options.append({
+        options = [{
             "id": int(r["id"]),
             "label": f"{r['meal']} — {r['name']} — {float(r['grams']):.0f} g"
-        })
+        } for _, r in df.iterrows()]
 
-    selected_opt = st.selectbox("Selecciona una entrada", options, format_func=lambda x: x["label"], key="entry_select_edit")
-    selected_id = selected_opt["id"]
-    row = df[df["id"] == selected_id].iloc[0]
+        selected_opt = st.selectbox(
+            "Selecciona una entrada",
+            options,
+            format_func=lambda x: x["label"],
+            key="entry_select_edit"
+        )
 
-    colE1, colE2, colE3 = st.columns([2, 1, 1])
-    with colE1:
-        meals = ["Desayuno", "Almuerzo", "Merienda", "Cena"]
-        current_meal = row["meal"] if row["meal"] in meals else meals[0]
-        new_meal = st.selectbox("Comida", meals, index=meals.index(current_meal), key=f"meal_edit_{selected_id}")
-    with colE2:
-        new_grams = st.number_input("Gramos", min_value=1.0, step=1.0, value=float(row["grams"]), key=f"grams_edit_{selected_id}")
-    with colE3:
-        st.write("")
-        st.write("")
+        selected_id = int(selected_opt["id"])
+        row = df[df["id"] == selected_id].iloc[0]
 
-    if "food_map" not in st.session_state:
-        m = {}
-        for c in list_categories():
-            for f in list_foods_by_category(c):
-                m[f["name"]] = f
-        st.session_state["food_map"] = m
+        colE1, colE2, colE3 = st.columns([2, 1, 1])
+        with colE1:
+            meals = ["Desayuno", "Almuerzo", "Merienda", "Cena"]
+            current_meal = row["meal"] if row["meal"] in meals else meals[0]
+            new_meal = st.selectbox("Comida", meals, index=meals.index(current_meal), key=f"meal_edit_{selected_id}")
+        with colE2:
+            new_grams = st.number_input("Gramos", min_value=1.0, step=1.0, value=float(row["grams"]), key=f"grams_edit_{selected_id}")
+        with colE3:
+            st.write("")
+            st.write("")
 
-    base_food = st.session_state["food_map"].get(row["name"])
-    if base_food is None:
-        st.error("No encuentro este alimento en la base de datos (quizá lo borraste).")
-    else:
-        if st.button("Guardar cambios", type="primary", key=f"save_entry_{selected_id}"):
-            macros = scale_macros(base_food, float(new_grams))
-            update_entry(
-                selected_id,
-                grams=float(new_grams),
-                calories=float(macros["calories"]),
-                protein=float(macros["protein"]),
-                carbs=float(macros["carbs"]),
-                fat=float(macros["fat"]),
-                meal=new_meal
-            )
-            st.success("Entrada actualizada ✅")
-            st.rerun()
+        # Mapa de alimentos para recalcular macros
+        if "food_map" not in st.session_state:
+            m = {}
+            for c in list_categories():
+                for f in list_foods_by_category(c):
+                    m[f["name"]] = f
+            st.session_state["food_map"] = m
 
-        st.warning("⚠️ Borrar elimina la entrada del día (no se puede deshacer).")
-        confirm_del = st.checkbox("Confirmo que quiero borrar esta entrada", key=f"confirm_del_{selected_id}")
-        if st.button("Borrar entrada", disabled=not confirm_del, key=f"del_entry_{selected_id}"):
-            delete_entry_by_id(selected_id)
-            st.success("Entrada borrada ✅")
-            st.rerun()
+        base_food = st.session_state["food_map"].get(row["name"])
+        if base_food is None:
+            st.error("No encuentro este alimento en la base de datos (quizá lo borraste).")
+        else:
+            if st.button("Guardar cambios", type="primary", key=f"save_entry_{selected_id}"):
+                macros = scale_macros(base_food, float(new_grams))
+                update_entry(
+                    selected_id,
+                    grams=float(new_grams),
+                    calories=float(macros["calories"]),
+                    protein=float(macros["protein"]),
+                    carbs=float(macros["carbs"]),
+                    fat=float(macros["fat"]),
+                    meal=new_meal
+                )
+                st.cache_data.clear()
+                st.success("Entrada actualizada ✅")
+                st.rerun()
+
+            st.warning("⚠️ Borrar elimina la entrada (no se puede deshacer).")
+            confirm_del = st.checkbox("Confirmo que quiero borrar esta entrada", key=f"confirm_del_{selected_id}")
+            if st.button("Borrar entrada", disabled=not confirm_del, key=f"del_entry_{selected_id}"):
+                delete_entry_by_id(selected_id)
+                st.cache_data.clear()
+                st.success("Entrada borrada ✅")
+                st.rerun()
+
 
 # ==========================================================
 # PÁGINA: OBJETIVOS
@@ -456,6 +462,7 @@ elif page == "🎯 Objetivos":
         set_setting("target_carbs", str(carbs_g))
         set_setting("target_fat", str(fat_g))
 
+        st.cache_data.clear()
         st.success("Perfil y objetivos guardados ✅")
         st.rerun()
 
@@ -478,14 +485,15 @@ elif page == "🎯 Objetivos":
     else:
         st.info("Aún no has guardado objetivos. Rellena los datos y pulsa el botón.")
 
+
 # ==========================================================
 # PÁGINA: AÑADIR ALIMENTO
 # ==========================================================
 elif page == "➕ Añadir alimento":
     st.subheader("Gestión de alimentos")
     st.caption("Aquí puedes añadir alimentos nuevos, editar los existentes o borrarlos de la base de datos.")
-    mode = st.radio("Modo", ["➕ Añadir", "✏️ Editar", "🗑️ Borrar"], horizontal=True, key="food_mode")
 
+    mode = st.radio("Modo", ["➕ Añadir", "✏️ Editar", "🗑️ Borrar"], horizontal=True, key="food_mode")
     all_foods = list_all_foods()
 
     if mode == "➕ Añadir":
@@ -503,22 +511,22 @@ elif page == "➕ Añadir alimento":
             save_food_btn = st.form_submit_button("Guardar alimento")
             if save_food_btn:
                 try:
-                    clean_name = name.strip()
-                    clean_cat = category.strip()
-
-                    if not clean_name:
+                    nn = name.strip()
+                    nc = category.strip()
+                    if not nn:
                         st.error("Falta el nombre del alimento.")
-                    elif not clean_cat:
+                    elif not nc:
                         st.error("Falta la categoría.")
                     else:
                         add_food({
-                            "name": clean_name,
-                            "category": clean_cat,
+                            "name": nn,
+                            "category": nc,
                             "calories": float(calories),
                             "protein": float(protein),
                             "carbs": float(carbs),
                             "fat": float(fat),
                         })
+                        st.cache_data.clear()
                         st.success("Alimento guardado ✅")
                         st.rerun()
                 except Exception as e:
@@ -529,7 +537,12 @@ elif page == "➕ Añadir alimento":
         if not all_foods:
             st.info("No hay alimentos para editar.")
         else:
-            selected = st.selectbox("Selecciona alimento", all_foods, format_func=lambda f: f"{f['category']} — {f['name']}")
+            selected = st.selectbox(
+                "Selecciona alimento",
+                all_foods,
+                format_func=lambda f: f"{f['category']} — {f['name']}"
+            )
+
             col1, col2 = st.columns(2)
             with col1:
                 new_name = st.text_input("Nombre", value=selected["name"])
@@ -556,6 +569,7 @@ elif page == "➕ Añadir alimento":
                         "carbs": float(new_carbs),
                         "fat": float(new_fat),
                     })
+                    st.cache_data.clear()
                     st.success("Cambios guardados ✅")
                     st.rerun()
 
@@ -563,13 +577,19 @@ elif page == "➕ Añadir alimento":
         if not all_foods:
             st.info("No hay alimentos para borrar.")
         else:
-            selected = st.selectbox("Selecciona alimento a borrar", all_foods, format_func=lambda f: f"{f['category']} — {f['name']}")
+            selected = st.selectbox(
+                "Selecciona alimento a borrar",
+                all_foods,
+                format_func=lambda f: f"{f['category']} — {f['name']}"
+            )
             st.warning("⚠️ Esto lo borra de la base de datos. No se puede deshacer.")
             confirm = st.checkbox(f"Confirmo que quiero borrar: {selected['name']}")
             if st.button("Borrar alimento", disabled=not confirm):
                 delete_food_by_id(selected["id"])
+                st.cache_data.clear()
                 st.success("Alimento borrado ✅")
                 st.rerun()
+
 
 # ==========================================================
 # PÁGINA: COACH IA
@@ -663,9 +683,3 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
-
-
-
-
-
-
