@@ -18,214 +18,209 @@ from your_foods import FOODS
 def inject_black_theme():
     st.markdown("""
     <style>
+
     /* =========================
-       FitMacro Dark Light (Balanced)
+       FITMACRO PRO THEME
        ========================= */
 
     :root{
-      /* Fondo más oscuro pero elegante */
-      --bg: #dfe6f1;
-      --bg2: #d6efe3;
+        --bg: #dce3ed;
+        --bg2: #d4efe3;
 
-      /* Cards */
-      --panel: #ffffff;
-      --panel-strong: #f8fafc;
+        --panel: #ffffff;
+        --panel-soft: #f4f7fb;
 
-      /* Bordes */
-      --stroke: rgba(15, 23, 42, 0.18);
-      --stroke-soft: rgba(15, 23, 42, 0.08);
+        --stroke: rgba(15,23,42,0.18);
+        --stroke-soft: rgba(15,23,42,0.08);
 
-      /* Texto */
-      --txt: #0f172a;
-      --muted: #334155;
+        --txt: #0f172a;
+        --muted: #334155;
 
-      /* Acentos */
-      --accent: #16a34a;
-      --accent2: #2563eb;
+        --green: #16a34a;
+        --green2: #22c55e;
+        --blue: #2563eb;
 
-      --radius: 18px;
+        --radius: 18px;
     }
 
-    /* Fondo con más profundidad */
+    /* ===== Fondo ===== */
+
     html, body, [data-testid="stAppViewContainer"]{
-      background:
-        radial-gradient(1000px 700px at 10% 10%, rgba(34,197,94,0.18) 0%, transparent 60%),
-        radial-gradient(900px 600px at 90% 15%, rgba(37,99,235,0.16) 0%, transparent 60%),
-        linear-gradient(180deg, var(--bg) 0%, #eef2f9 100%) !important;
-      color: var(--txt) !important;
+        background:
+            radial-gradient(1000px 700px at 10% 10%, rgba(34,197,94,0.18) 0%, transparent 60%),
+            radial-gradient(900px 600px at 90% 15%, rgba(37,99,235,0.16) 0%, transparent 60%),
+            linear-gradient(180deg, var(--bg) 0%, #eef2f9 100%) !important;
+        color: var(--txt) !important;
     }
 
     .block-container{
-      max-width: 1180px;
-      padding-top: 18px;
-      padding-bottom: 56px;
+        max-width: 1180px;
+        padding-top: 18px;
+        padding-bottom: 60px;
     }
 
-    /* Sidebar */
+    /* ===== Sidebar ===== */
+
     [data-testid="stSidebar"] > div{
-      background: rgba(255,255,255,0.92) !important;
-      backdrop-filter: blur(10px);
-      border-right: 1px solid var(--stroke-soft) !important;
+        background: rgba(255,255,255,0.92) !important;
+        backdrop-filter: blur(12px);
+        border-right: 1px solid var(--stroke-soft) !important;
     }
 
-    /* Títulos */
+    /* ===== Tipografía ===== */
+
     h1{
-      font-size: 44px !important;
-      font-weight: 900 !important;
-      letter-spacing: -0.04em;
-      color: var(--txt) !important;
+        font-size: 44px !important;
+        font-weight: 900 !important;
+        letter-spacing: -0.04em;
+        color: var(--txt) !important;
     }
 
-    h2,h3{
-      font-weight: 800 !important;
-      color: var(--txt) !important;
+    h2, h3{
+        font-weight: 800 !important;
+        color: var(--txt) !important;
     }
 
     p, label, .stCaption, .stMarkdown{
-      color: var(--muted) !important;
+        color: var(--muted) !important;
     }
 
-    /* ===== INPUTS (aquí estaba el problema) ===== */
+    /* ===== Inputs ===== */
 
     input, textarea{
-      background: var(--panel-strong) !important;
-      border: 1px solid var(--stroke) !important;
-      border-radius: 14px !important;
-      color: #000000 !important;   /* FORZAMOS NEGRO */
-      font-weight: 600 !important;
+        background: var(--panel-soft) !important;
+        border: 1px solid var(--stroke) !important;
+        border-radius: 14px !important;
+        color: #000000 !important;
+        font-weight: 600 !important;
     }
 
-    /* Select BaseWeb */
     div[data-baseweb="select"] > div{
-      background: var(--panel-strong) !important;
-      border: 1px solid var(--stroke) !important;
-      border-radius: 14px !important;
-      color: #000000 !important;  /* FORZAMOS NEGRO */
-      font-weight: 600 !important;
+        background: var(--panel-soft) !important;
+        border: 1px solid var(--stroke) !important;
+        border-radius: 14px !important;
+        color: #000000 !important;
+        font-weight: 600 !important;
     }
 
-    /* Texto dentro del select */
     div[data-baseweb="select"] span{
-      color: #000000 !important;
-      font-weight: 600 !important;
+        color: #000000 !important;
     }
 
-    /* Slider */
-    div[data-testid="stSlider"]{
-      color: var(--txt) !important;
+    /* ===== BOTONES UNIFICADOS ===== */
+
+    .stButton > button,
+    div[data-testid="stFormSubmitButton"] button,
+    button[kind="primary"]{
+
+        background: linear-gradient(
+            135deg,
+            var(--green) 0%,
+            var(--green2) 45%,
+            var(--blue) 100%
+        ) !important;
+
+        color: #ffffff !important;
+        border: none !important;
+        border-radius: 999px !important;
+        padding: 10px 20px !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.3px;
+
+        box-shadow: 0 12px 28px rgba(37,99,235,0.25);
+        transition: all 0.15s ease-in-out;
     }
 
-    /* Botones */
-    .stButton > button{
-      background: linear-gradient(135deg, var(--accent) 0%, #22c55e 40%, var(--accent2) 100%) !important;
-      border: 0 !important;
-      border-radius: 999px !important;
-      color: white !important;
-      padding: 10px 16px !important;
-      font-weight: 700 !important;
-      box-shadow: 0 14px 34px rgba(37, 99, 235, 0.22);
+    .stButton > button:hover,
+    div[data-testid="stFormSubmitButton"] button:hover{
+        transform: translateY(-1px);
+        filter: brightness(1.05);
+        box-shadow: 0 16px 36px rgba(22,163,74,0.28);
     }
 
-    .stButton > button:hover{
-      transform: translateY(-1px);
-      filter: brightness(1.05);
+    .stButton > button:active,
+    div[data-testid="stFormSubmitButton"] button:active{
+        transform: translateY(0px);
     }
 
-    /* Métricas */
+    button:disabled{
+        background: linear-gradient(135deg,#94a3b8 0%,#cbd5e1 100%) !important;
+        box-shadow: none !important;
+        cursor: not-allowed !important;
+    }
+
+    /* ===== MÉTRICAS ===== */
+
     div[data-testid="stMetric"]{
-      background: var(--panel) !important;
-      border: 1px solid var(--stroke-soft) !important;
-      border-radius: 18px;
-      padding: 18px;
-      box-shadow: 0 18px 46px rgba(15, 23, 42, 0.12);
-      position: relative;
-      overflow: hidden;
+        background: var(--panel);
+        border: 1px solid var(--stroke-soft);
+        border-radius: var(--radius);
+        padding: 18px;
+        box-shadow: 0 18px 46px rgba(15,23,42,0.12);
+        position: relative;
+        overflow: hidden;
     }
 
     div[data-testid="stMetric"]::before{
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(900px 200px at 15% 0%, rgba(34,197,94,0.28) 0%, transparent 65%),
-        radial-gradient(900px 200px at 85% 0%, rgba(37,99,235,0.22) 0%, transparent 65%);
-      pointer-events: none;
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+            radial-gradient(900px 220px at 15% 0%, rgba(34,197,94,0.28) 0%, transparent 65%),
+            radial-gradient(900px 220px at 85% 0%, rgba(37,99,235,0.22) 0%, transparent 65%);
+        pointer-events: none;
     }
 
-    div[data-testid="stMetric"] label{
-      font-size: 13px !important;
-      font-weight: 700 !important;
-      color: var(--muted) !important;
-    }
-
-    div[data-testid="stMetricValue"]{
-      font-size: 36px !important;
-      font-weight: 900 !important;
-      color: var(--txt) !important;
-    }
-
-    /* Progress */
-    div[data-testid="stProgress"]{
-      background: rgba(15, 23, 42, 0.15) !important;
-      border-radius: 999px !important;
-    }
-
-    div[data-testid="stProgress"] > div > div{
-      background: linear-gradient(90deg, var(--accent) 0%, #22c55e 45%, var(--accent2) 100%) !important;
-    }
-
-    /* Dataframe */
-    div[data-testid="stDataFrame"]{
-      background: var(--panel) !important;
-      border: 1px solid var(--stroke-soft) !important;
-      border-radius: 18px !important;
-      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.12);
-    }
-
-    /* ===== FORZAR TEXTO NEGRO EN MÉTRICAS ===== */
-    
     div[data-testid="stMetric"] label{
         color: #000000 !important;
         font-weight: 800 !important;
-    }
-    
-    div[data-testid="stMetric"] [data-testid="stMetricValue"]{
-        color: #000000 !important;
-        font-weight: 900 !important;
-    }
-    
-    /* Por si Streamlit cambia estructura interna */
-    div[data-testid="stMetric"] *{
-        color: #000000 !important;
+        font-size: 13px !important;
     }
 
-    /* ===== DATAFRAME FITNESS CARD ===== */
-    
+    div[data-testid="stMetricValue"]{
+        color: #000000 !important;
+        font-weight: 900 !important;
+        font-size: 36px !important;
+    }
+
+    /* ===== TABLAS ===== */
+
     div[data-testid="stDataFrame"]{
         background: linear-gradient(
             180deg,
             rgba(34,197,94,0.18) 0%,
             rgba(37,99,235,0.15) 100%
         ) !important;
-    
-        border: 1px solid rgba(15,23,42,0.08) !important;
-        border-radius: 18px !important;
+
+        border: 1px solid var(--stroke-soft) !important;
+        border-radius: var(--radius) !important;
         box-shadow: 0 18px 40px rgba(15,23,42,0.12);
     }
-    
-    /* Encabezado tabla */
-    div[data-testid="stDataFrame"] thead{
-        background: rgba(255,255,255,0.6) !important;
-        color: #000000 !important;
-        font-weight: 800 !important;
-    }
-    
-    /* Celdas */
-    div[data-testid="stDataFrame"] td{
-        background: transparent !important;
+
+    div[data-testid="stDataFrame"] td,
+    div[data-testid="stDataFrame"] th{
         color: #000000 !important;
         font-weight: 600 !important;
+        background: transparent !important;
     }
+
+    /* ===== PROGRESS ===== */
+
+    div[data-testid="stProgress"]{
+        background: rgba(15,23,42,0.12) !important;
+        border-radius: 999px !important;
+    }
+
+    div[data-testid="stProgress"] > div > div{
+        background: linear-gradient(
+            90deg,
+            var(--green) 0%,
+            var(--green2) 45%,
+            var(--blue) 100%
+        ) !important;
+    }
+
+    /* ===== FIT CARD (para gráficos Altair) ===== */
 
     .fit-card{
         background: linear-gradient(
@@ -233,15 +228,15 @@ def inject_black_theme():
             rgba(34,197,94,0.18) 0%,
             rgba(37,99,235,0.15) 100%
         );
-        padding: 16px 18px;
-        border-radius: 18px;
-        border: 1px solid rgba(15,23,42,0.08);
+        padding: 18px;
+        border-radius: var(--radius);
+        border: 1px solid var(--stroke-soft);
         box-shadow: 0 18px 40px rgba(15,23,42,0.12);
     }
 
-    
     </style>
     """, unsafe_allow_html=True)
+
 
 
 
@@ -884,6 +879,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
