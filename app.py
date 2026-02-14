@@ -1227,12 +1227,17 @@ elif page == "➕ Añadir alimento":
 
 
 # ==========================================================
-# PÁGINA: COACH IA
+# PÁGINA: CHEF IA
 # ==========================================================
-elif page == "🧠 Chef IA":
+elif page == "👨‍🍳 Chef IA":
     import json
     from ai_groq import chat_answer, generate_menu_json
 
+    uid = st.session_state["user_id"]
+
+    # ---------------------------
+    # Chat
+    # ---------------------------
     def send_coach():
         prompt = st.session_state.get("coach_prompt", "").strip()
         if not prompt:
@@ -1247,7 +1252,10 @@ elif page == "🧠 Chef IA":
             {"role": "system", "content": "Eres un asistente de nutrición. Sé claro, práctico y breve."}
         ]
 
-    st.subheader("🗨️ Chat de nutrición")
+    st.subheader("👨‍🍳 Chef IA")
+    st.caption("Nutrición + menú + platos con tus alimentos (optimizado para móvil).")
+
+    # Chat arriba (siempre)
     for m in st.session_state.chat_history:
         if m["role"] == "system":
             continue
@@ -1258,13 +1266,33 @@ elif page == "🧠 Chef IA":
 
     colA, colB = st.columns([6, 1])
     with colA:
-        st.text_input("Escribe tu pregunta de nutrición…", key="coach_prompt", on_change=send_coach)
+        st.text_input("Pregúntale al Chef IA…", key="coach_prompt", on_change=send_coach)
     with colB:
         st.button("Enviar", type="primary", on_click=send_coach)
 
     st.divider()
-    st.subheader("🍽️ Generador de menú (según tus alimentos)")
 
+    # ---------------------------
+    # Selector móvil: Menús vs Platos
+    # ---------------------------
+    if "chef_mode" not in st.session_state:
+        st.session_state["chef_mode"] = "menus"  # default
+
+    b1, b2 = st.columns(2)
+    with b1:
+        if st.button("🥘 Generador de platos", use_container_width=True):
+            st.session_state["chef_mode"] = "platos"
+            st.rerun()
+    with b2:
+        if st.button("🍽️ Generador de menús", use_container_width=True):
+            st.session_state["chef_mode"] = "menus"
+            st.rerun()
+
+    st.divider()
+
+    # ---------------------------
+    # Datos comunes para ambos generadores
+    # ---------------------------
     cats = list_categories()
     food_map = {}
     for c in cats:
@@ -1272,28 +1300,88 @@ elif page == "🧠 Chef IA":
             food_map[f["name"]] = f
     allowed = list(food_map.keys())
 
-    # ==========================================================
-    # 🥘 PLATO COMBINADO (crea recetas usando tu BD)
-    # ==========================================================
-    st.subheader("🥘 Plato combinado")
-    st.caption("Combina alimentos de tu base, calcula macros automáticamente y guarda el plato como nuevo alimento.")
+    mode = st.session_state.get("chef_mode", "menus")
 
-    # Estado para ir añadiendo filas (móvil friendly)
-    if "dish_items" not in st.session_state:
-        st.session_state["dish_items"] = [{"name": allowed[0] if allowed else "", "grams": 100.0}]
+    # ==========================================================
+    # 🍽️ GENERADOR DE MENÚS
+    # ==========================================================
+    if mode == "menus":
+        st.subheader("🍽️ Generador de menú")
+        st.caption("Te genera un menú de 4 comidas usando SOLO tus alimentos.")
 
-    if not allowed:
-        st.info("No hay alimentos disponibles en tu base para crear un plato.")
-    else:
+        if not allowed:
+            st.info("No hay alimentos disponibles en tu base de datos.")
+            st.stop()
+
+        target_def = float(get_setting("target_deficit_calories", 2000, user_id=uid))
+        target_p = float(get_setting("target_protein", 120, user_id=uid))
+        target_c = float(get_setting("target_carbs", 250, user_id=uid))
+        target_f = float(get_setting("target_fat", 60, user_id=uid))
+
+        kcal_obj = st.number_input("Objetivo kcal (día)", min_value=800.0, max_value=6000.0, value=target_def, step=50.0, key="menu_kcal")
+        prot_obj = st.number_input("Proteína objetivo (g)", min_value=0.0, max_value=400.0, value=target_p, step=5.0, key="menu_p")
+        carb_obj = st.number_input("Carbs objetivo (g)", min_value=0.0, max_value=800.0, value=target_c, step=10.0, key="menu_c")
+        fat_obj  = st.number_input("Grasas objetivo (g)", min_value=0.0, max_value=300.0, value=target_f, step=5.0, key="menu_f")
+
+        pref = st.selectbox("Preferencia", ["Equilibrado", "Alta proteína", "Baja grasa", "Bajo carb"], key="menu_pref")
+
+        if st.button("✨ Generar menú", type="primary", use_container_width=True):
+            context = (
+                f"Objetivo diario: {kcal_obj} kcal; Proteína {prot_obj}g; Carbs {carb_obj}g; Grasas {fat_obj}g. "
+                f"Preferencia: {pref}. "
+                "Crea un menú de 4 comidas (Desayuno, Almuerzo, Merienda, Cena)."
+            )
+            raw = generate_menu_json(context, allowed_food_names=allowed)
+
+            try:
+                menu = json.loads(raw)
+            except json.JSONDecodeError:
+                st.error("La IA devolvió un formato raro. Vuelve a generar.")
+                st.code(raw)
+                st.stop()
+
+            totals = {"calories": 0.0, "protein": 0.0, "carbs": 0.0, "fat": 0.0}
+
+            for meal in menu.get("meals", []):
+                st.markdown(f"### {meal.get('meal','Comida')}")
+                for item in meal.get("items", []):
+                    name = item.get("name")
+                    grams = float(item.get("grams", 0))
+                    if name not in food_map or grams <= 0:
+                        continue
+                    macros = scale_macros(food_map[name], grams)
+                    totals["calories"] += macros["calories"]
+                    totals["protein"] += macros["protein"]
+                    totals["carbs"] += macros["carbs"]
+                    totals["fat"] += macros["fat"]
+                    st.write(f"- **{name}** — {grams:.0f} g · {macros['calories']:.0f} kcal")
+
+            st.success(
+                f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
+            )
+
+    # ==========================================================
+    # 🥘 GENERADOR DE PLATOS (plato combinado)
+    # ==========================================================
+    elif mode == "platos":
+        st.subheader("🥘 Generador de platos")
+        st.caption("Combina alimentos de tu base, calcula macros automáticamente y guarda el plato como nuevo alimento.")
+
+        if not allowed:
+            st.info("No hay alimentos disponibles en tu base para crear un plato.")
+            st.stop()
+
+        # Estado para ir añadiendo ingredientes
+        if "dish_items" not in st.session_state:
+            st.session_state["dish_items"] = [{"name": allowed[0], "grams": 100.0}]
+
         with st.expander("➕ Construir plato", expanded=True):
 
-            # Nombre + categoría del plato
             dish_name = st.text_input("Nombre del plato", value=st.session_state.get("dish_name", "Plato casero"), key="dish_name")
             dish_category = st.text_input("Categoría (para guardarlo)", value=st.session_state.get("dish_category", "Platos"), key="dish_category")
 
             st.divider()
 
-            # Botones para añadir/quitar ingredientes
             c_add, c_del = st.columns(2)
             with c_add:
                 if st.button("➕ Añadir ingrediente", use_container_width=True):
@@ -1306,28 +1394,35 @@ elif page == "🧠 Chef IA":
 
             st.divider()
 
-            # Render ingredientes (vertical, móvil)
             total_grams = 0.0
             totals = {"calories": 0.0, "protein": 0.0, "carbs": 0.0, "fat": 0.0}
 
             for i, it in enumerate(st.session_state["dish_items"]):
                 st.markdown(f"**Ingrediente {i+1}**")
 
-                name_key = f"dish_food_{i}"
-                grams_key = f"dish_grams_{i}"
-
-                # Defaults coherentes
+                # Asegurar consistencia si cambió allowed
                 if it.get("name") not in allowed:
                     it["name"] = allowed[0]
 
-                sel_name = st.selectbox("Alimento", allowed, index=allowed.index(it["name"]), key=name_key)
-                sel_grams = float(st.number_input("Gramos", min_value=1.0, step=1.0, value=float(it.get("grams", 100.0)), key=grams_key))
+                sel_name = st.selectbox(
+                    "Alimento",
+                    allowed,
+                    index=allowed.index(it["name"]),
+                    key=f"dish_food_{i}"
+                )
+                sel_grams = float(
+                    st.number_input(
+                        "Gramos",
+                        min_value=1.0,
+                        step=1.0,
+                        value=float(it.get("grams", 100.0)),
+                        key=f"dish_grams_{i}"
+                    )
+                )
 
-                # Guardar cambios en session_state
                 it["name"] = sel_name
                 it["grams"] = sel_grams
 
-                # Calcular macros ingrediente
                 macros = scale_macros(food_map[sel_name], sel_grams)
                 total_grams += sel_grams
                 totals["calories"] += float(macros["calories"])
@@ -1335,14 +1430,12 @@ elif page == "🧠 Chef IA":
                 totals["carbs"] += float(macros["carbs"])
                 totals["fat"] += float(macros["fat"])
 
-                # Mini resumen ingrediente
                 st.caption(
                     f"{sel_grams:.0f} g · {macros['calories']:.0f} kcal · "
                     f"P {macros['protein']:.1f} · C {macros['carbs']:.1f} · G {macros['fat']:.1f}"
                 )
                 st.divider()
 
-            # Totales del plato
             st.markdown("### Totales del plato")
             m1, m2 = st.columns(2)
             with m1:
@@ -1354,7 +1447,7 @@ elif page == "🧠 Chef IA":
 
             st.caption(f"Peso total: **{total_grams:.0f} g**")
 
-            # Cálculo por 100g (para guardar como alimento)
+            # Por 100g (para guardar como alimento)
             if total_grams > 0:
                 per100 = {
                     "calories": totals["calories"] / total_grams * 100.0,
@@ -1365,7 +1458,7 @@ elif page == "🧠 Chef IA":
             else:
                 per100 = {"calories": 0.0, "protein": 0.0, "carbs": 0.0, "fat": 0.0}
 
-            st.markdown("### Por 100g (lo que se guardará en la base)")
+            st.markdown("### Por 100g (se guardará así en tu base)")
             p1, p2 = st.columns(2)
             with p1:
                 st.metric("🔥 kcal/100g", f"{per100['calories']:.0f}")
@@ -1376,7 +1469,6 @@ elif page == "🧠 Chef IA":
 
             st.divider()
 
-            # Guardar como alimento
             if st.button("💾 Guardar plato como alimento", type="primary", use_container_width=True):
                 nn = dish_name.strip()
                 nc = dish_category.strip() or "Platos"
@@ -1396,60 +1488,10 @@ elif page == "🧠 Chef IA":
                     })
                     st.cache_data.clear()
                     st.success("Plato guardado como alimento ✅")
-                    # Reset rápido para crear otro plato
+
+                    # Reset rápido
                     st.session_state["dish_items"] = [{"name": allowed[0], "grams": 100.0}]
                     st.rerun()
-
-
-    
-    uid = st.session_state["user_id"]
-    target_def = float(get_setting("target_deficit_calories", 2000, user_id=uid))
-    target_p = float(get_setting("target_protein", 120, user_id=uid))
-    target_c = float(get_setting("target_carbs", 250, user_id=uid))
-    target_f = float(get_setting("target_fat", 60, user_id=uid))
-
-
-    kcal_obj = st.number_input("Objetivo kcal (día)", min_value=800.0, max_value=6000.0, value=target_def, step=50.0, key="menu_kcal")
-    prot_obj = st.number_input("Proteína objetivo (g)", min_value=0.0, max_value=400.0, value=target_p, step=5.0, key="menu_p")
-    carb_obj = st.number_input("Carbs objetivo (g)", min_value=0.0, max_value=800.0, value=target_c, step=10.0, key="menu_c")
-    fat_obj  = st.number_input("Grasas objetivo (g)", min_value=0.0, max_value=300.0, value=target_f, step=5.0, key="menu_f")
-
-    pref = st.selectbox("Preferencia", ["Equilibrado", "Alta proteína", "Baja grasa", "Bajo carb"], key="menu_pref")
-
-    if st.button("✨ Generar menú", type="primary"):
-        context = (
-            f"Objetivo diario: {kcal_obj} kcal; Proteína {prot_obj}g; Carbs {carb_obj}g; Grasas {fat_obj}g. "
-            f"Preferencia: {pref}. "
-            "Crea un menú de 4 comidas (Desayuno, Almuerzo, Merienda, Cena)."
-        )
-        raw = generate_menu_json(context, allowed_food_names=allowed)
-
-        try:
-            menu = json.loads(raw)
-        except json.JSONDecodeError:
-            st.error("La IA devolvió un formato raro. Vuelve a generar.")
-            st.code(raw)
-            st.stop()
-
-        totals = {"calories": 0.0, "protein": 0.0, "carbs": 0.0, "fat": 0.0}
-
-        for meal in menu.get("meals", []):
-            st.markdown(f"### {meal.get('meal','Comida')}")
-            for item in meal.get("items", []):
-                name = item.get("name")
-                grams = float(item.get("grams", 0))
-                if name not in food_map or grams <= 0:
-                    continue
-                macros = scale_macros(food_map[name], grams)
-                totals["calories"] += macros["calories"]
-                totals["protein"] += macros["protein"]
-                totals["carbs"] += macros["carbs"]
-                totals["fat"] += macros["fat"]
-                st.write(f"- **{name}** — {grams:.0f} g · {macros['calories']:.0f} kcal")
-
-        st.success(
-            f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
-        )
 
 
 # ==========================================================
@@ -1719,6 +1761,7 @@ elif page == "🏋️ Rutina IA":
         st.subheader("🛡️ Notas de seguridad")
         for s in plan.get("safety_notes", []):
             st.write(f"- {s}")
+
 
 
 
