@@ -446,37 +446,37 @@ def _get_users() -> dict:
     return dict(users)
 
 
-    def login_form():
-        st.markdown("### 🔐 Iniciar sesión")
-        st.caption("Selecciona usuario e introduce contraseña.")
+def login_form():
+    st.markdown("### 🔐 Iniciar sesión")
+    st.caption("Selecciona usuario e introduce contraseña.")
 
-        # contador para resetear input sin tocar el state del widget
-        if "_login_pwd_n" not in st.session_state:
-            st.session_state["_login_pwd_n"] = 0
+    # contador para resetear input sin tocar el state del widget
+    if "_login_pwd_n" not in st.session_state:
+        st.session_state["_login_pwd_n"] = 0
 
-        user = st.selectbox("Usuario", list(users.keys()), key="_login_user")
+    user = st.selectbox("Usuario", list(users.keys()), key="_login_user")
 
-        pwd_key = f"_login_pwd_{st.session_state['_login_pwd_n']}"
-        pwd = st.text_input("Contraseña", type="password", key=pwd_key)
+    pwd_key = f"_login_pwd_{st.session_state['_login_pwd_n']}"
+    pwd = st.text_input("Contraseña", type="password", key=pwd_key)
 
-        c1, c2 = st.columns([1, 1])
-        with c1:
-            ok = st.button("Entrar", type="primary", use_container_width=True)
-        with c2:
-            if st.button("Limpiar", use_container_width=True):
-                st.session_state["_login_pwd_n"] += 1
-                st.rerun()
+    c1, c2 = st.columns([1, 1])
+    with c1:
+        ok = st.button("Entrar", type="primary", use_container_width=True)
+    with c2:
+        if st.button("Limpiar", use_container_width=True):
+            st.session_state["_login_pwd_n"] += 1
+            st.rerun()
 
-        if ok:
-            if _verify_password(pwd, users.get(user, "")):
-                st.session_state["auth_ok"] = True
-                st.session_state["user_id"] = user
-                st.session_state["_login_pwd_n"] += 1
-                st.rerun()
-            else:
-                st.error("❌ Contraseña incorrecta. Inténtalo de nuevo.")
-                st.session_state["_login_pwd_n"] += 1
-                st.rerun()
+    if ok:
+        if _verify_password(pwd, users.get(user, "")):
+            st.session_state["auth_ok"] = True
+            st.session_state["user_id"] = user
+            st.session_state["_login_pwd_n"] += 1
+            st.rerun()
+        else:
+            st.error("❌ Contraseña incorrecta. Inténtalo de nuevo.")
+            st.session_state["_login_pwd_n"] += 1
+            st.rerun()
 
         
 
