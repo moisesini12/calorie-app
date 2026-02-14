@@ -859,9 +859,6 @@ elif page == "🍽 Registro":
                 ]},
             ])
         )
-
-        
-        table_html = styler.to_html()
         
         table_html = styler.to_html()
         
@@ -1237,6 +1234,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
