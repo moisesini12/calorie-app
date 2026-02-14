@@ -366,7 +366,6 @@ if page == "📊 Dashboard":
 
     # ===== GRID METRICS (fit style) =====
 
-    st.markdown('<div class="fit-card">', unsafe_allow_html=True)
     cL, cR = st.columns(2)
     
     with cL:
@@ -376,8 +375,6 @@ if page == "📊 Dashboard":
     with cR:
         st.metric("🍚 Carbs", f"{total_carbs:.1f} g")
         st.metric("🥑 Grasas", f"{total_fat:.1f} g")
-    st.markdown('</div>', unsafe_allow_html=True)
-
     st.divider()
 
     # ===== PROGRESO =====
@@ -944,6 +941,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
