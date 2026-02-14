@@ -125,7 +125,7 @@ inject_black_theme()
 
 # USER
 USER_ID = st.sidebar.text_input("👤 Usuario", value=st.session_state.get("user_id", "moi"))
-st.session_state["user_id"] = USER_ID.strip() if USER_ID else "default_user"
+st.session_state["user_id"] = (USER_ID.strip() if USER_ID else "default_user")
 
 # Fecha
 selected_date = st.sidebar.date_input("📅 Día", value=date.today())
@@ -218,41 +218,38 @@ elif page == "🍽 Registro":
     st.caption(f"Día: {selected_date_str}")
     st.divider()
 
-with st.expander("🛠️ DEBUG Sheets (solo para ti)", expanded=True):
-    import db_gsheets
-
-    try:
-        sh = db_gsheets._sh()
-        ws = db_gsheets._ws(db_gsheets.TAB_ENTRIES)
-
-        st.write("**Sheet ID (secrets):**", db_gsheets.SHEET_ID)
-        st.write("**Spreadsheet title:**", sh.title)
-        st.write("**Worksheet title:**", ws.title)
-        st.write("**Worksheets disponibles:**", [w.title for w in sh.worksheets()])
-
-        # lee headers y última fila real
-        header = ws.row_values(1)
-        st.write("**Header entries:**", header)
-
-        last_row_idx = len(ws.get_all_values())
-        st.write("**Filas totales (get_all_values):**", last_row_idx)
-
-        if last_row_idx >= 2:
-            last = ws.row_values(last_row_idx)
-            st.write("**Última fila (row_values):**", last)
-        else:
-            st.write("**Última fila:** (vacío, solo headers)")
-
-    except Exception as e:
-        st.error("Fallo leyendo debug de Sheets")
-        st.exception(e)
-
-    
     # Mensaje persistente post-rerun (para que no “parpadee”)
     if st.session_state.get("_just_added", False):
         last_id = st.session_state.get("_last_add_id", "")
         st.success(f"✅ Entrada guardada (id={last_id})")
         st.session_state["_just_added"] = False
+
+    # DEBUG (DENTRO de Registro, con indent correcto)
+    with st.expander("🛠️ DEBUG Sheets (solo para ti)", expanded=False):
+        import db_gsheets
+        try:
+            sh = db_gsheets._sh()
+            ws = db_gsheets._ws(db_gsheets.TAB_ENTRIES)
+
+            st.write("**Sheet ID (secrets):**", db_gsheets.SHEET_ID)
+            st.write("**Spreadsheet title:**", sh.title)
+            st.write("**Worksheet title:**", ws.title)
+            st.write("**Worksheets disponibles:**", [w.title for w in sh.worksheets()])
+
+            header = ws.row_values(1)
+            st.write("**Header entries:**", header)
+
+            all_vals = ws.get_all_values()
+            st.write("**Filas totales (get_all_values):**", len(all_vals))
+
+            if len(all_vals) >= 2:
+                st.write("**Última fila:**", all_vals[-1])
+            else:
+                st.write("**Última fila:** (vacío, solo headers)")
+
+        except Exception as e:
+            st.error("Fallo leyendo debug de Sheets")
+            st.exception(e)
 
     categories = list_categories()
     if not categories:
@@ -310,7 +307,7 @@ with st.expander("🛠️ DEBUG Sheets (solo para ti)", expanded=True):
 
                 new_id = add_entry(entry)
 
-                # ✅ cache de lecturas fuera
+                # ✅ limpia caché de lecturas para que se vea al refrescar
                 st.cache_data.clear()
 
                 # ✅ mensaje persistente tras rerun
@@ -323,7 +320,7 @@ with st.expander("🛠️ DEBUG Sheets (solo para ti)", expanded=True):
                 st.error("❌ Error guardando la entrada en Google Sheets")
                 st.exception(e)
 
-    # Lectura del día
+    # Lectura del día (siempre, después del form)
     st.subheader("Registro")
     rows = list_entries_by_date(selected_date_str, st.session_state["user_id"])
     df = pd.DataFrame(rows, columns=["id", "meal", "name", "grams", "calories", "protein", "carbs", "fat"])
@@ -353,18 +350,19 @@ with st.expander("🛠️ DEBUG Sheets (solo para ti)", expanded=True):
         with c4:
             st.metric("🥑 Grasas", f"{df['fat'].sum():.1f} g")
 
-        # Tendencia
-        st.subheader("📊 Tendencia (últimos 30 días)")
-        history = daily_totals_last_days(30, st.session_state["user_id"])
-        hist_df = pd.DataFrame(history, columns=["date", "calories", "protein", "carbs", "fat"])
-        if not hist_df.empty:
-            hist_df["date"] = pd.to_datetime(hist_df["date"])
-            hist_df = hist_df.sort_values("date").set_index("date")
-            st.line_chart(hist_df[["calories"]])
-        else:
-            st.info("Aún no hay datos suficientes para la tendencia.")
+    # Tendencia (aunque el día esté vacío, puede haber histórico)
+    st.subheader("📊 Tendencia (últimos 30 días)")
+    history = daily_totals_last_days(30, st.session_state["user_id"])
+    hist_df = pd.DataFrame(history, columns=["date", "calories", "protein", "carbs", "fat"])
+    if not hist_df.empty:
+        hist_df["date"] = pd.to_datetime(hist_df["date"])
+        hist_df = hist_df.sort_values("date").set_index("date")
+        st.line_chart(hist_df[["calories"]])
+    else:
+        st.info("Aún no hay datos suficientes para la tendencia.")
 
-        # Editor/Borrado (solo si hay filas)
+    # Editor/Borrado (solo si hay filas)
+    if not df.empty:
         st.subheader("✏️ Editar / 🗑️ Borrar entrada")
 
         options = [{
@@ -713,4 +711,3 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
-
