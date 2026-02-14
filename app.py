@@ -843,7 +843,7 @@ else:
     nav_principal = None
 
 # --- NUTRICIÓN ---
-open_nutri = sidebar_section("Nutrición", "🍽️", "nutri", default_open=True)
+open_nutri = sidebar_section("Nutrición", "🍽️", "nutri", default_open=False)
 if open_nutri:
     nav_nutri = st.sidebar.radio(
         "",
@@ -855,7 +855,7 @@ else:
     nav_nutri = None
 
 # --- ENTRENAMIENTO ---
-open_train = sidebar_section("Entrenamiento", "🏋️", "train", default_open=True)
+open_train = sidebar_section("Entrenamiento", "🏋️", "train", default_open=False)
 if open_train:
     nav_train = st.sidebar.radio(
         "",
@@ -2127,6 +2127,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
