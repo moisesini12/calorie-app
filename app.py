@@ -195,7 +195,7 @@ def inject_black_theme():
     .hero-banner{
         display: flex;
         align-items: center;
-        gap: 30px;
+        gap: 20px;
 
         background: linear-gradient(
             135deg,
@@ -203,7 +203,7 @@ def inject_black_theme():
             rgba(37,99,235,0.22) 100%
         );
 
-        padding: 14px 20px;
+        padding: 30px 40px;
         border-radius: 18px;
         margin-bottom: 16px;
 
@@ -211,8 +211,8 @@ def inject_black_theme():
     }
 
     .hero-logo{
-        width: 48px;
-        height: 48px;
+        width: 70px;
+        height: 70px;
 
         border-radius: 50%;
         background: linear-gradient(135deg,#16a34a,#2563eb);
@@ -228,7 +228,7 @@ def inject_black_theme():
 
     .hero-text h1{
         margin: 0;
-        font-size: 28px !important;
+        font-size: 40px !important;
     }
 
     .hero-text p{
@@ -1906,6 +1906,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
