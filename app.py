@@ -863,16 +863,12 @@ elif page == "🍽 Registro":
         
         table_html = styler.to_html()
         
-        st.markdown(
-            f"""
-            <div class="fit-table-card">
-              <div class="fit-table-scroll">
-                {table_html}
-              </div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+        table_html = styler.to_html()
+        
+        st.markdown('<div class="fit-table-card"><div class="fit-table-scroll">', unsafe_allow_html=True)
+        st.markdown(table_html, unsafe_allow_html=True)
+        st.markdown('</div></div>', unsafe_allow_html=True)
+
 
 
 
@@ -1241,6 +1237,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
