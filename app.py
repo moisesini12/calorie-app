@@ -211,8 +211,8 @@ def inject_black_theme():
     }
 
     .hero-logo{
-        width: 70px;
-        height: 70px;
+        width: 50px;
+        height: 50px;
 
         border-radius: 50%;
         background: linear-gradient(135deg,#16a34a,#2563eb);
@@ -1906,6 +1906,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
