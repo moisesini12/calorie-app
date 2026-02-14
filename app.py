@@ -732,7 +732,43 @@ elif page == "🍽 Registro":
             "carbs": "Carbohidratos",
             "fat": "Grasas"
         })
-        st.dataframe(df_view, use_container_width=True)
+        styler = (
+            df_view.style
+            .set_table_styles([
+                # Contenedor
+                {"selector": "table", "props": [
+                    ("border-collapse", "separate"),
+                    ("border-spacing", "0"),
+                    ("border-radius", "16px"),
+                    ("overflow", "hidden"),
+                    ("width", "100%"),
+                    ("box-shadow", "0 18px 40px rgba(15,23,42,0.12)"),
+                ]},
+                # Header
+                {"selector": "thead th", "props": [
+                    ("background", "linear-gradient(135deg, rgba(22,163,74,0.85), rgba(37,99,235,0.85))"),
+                    ("color", "white"),
+                    ("font-weight", "800"),
+                    ("border", "none"),
+                    ("padding", "12px 12px"),
+                ]},
+                # Celdas
+                {"selector": "tbody td", "props": [
+                    ("background", "rgba(255,255,255,0.72)"),
+                    ("color", "#0f172a"),
+                    ("font-weight", "650"),
+                    ("border", "none"),
+                    ("padding", "12px 12px"),
+                ]},
+                # Hover
+                {"selector": "tbody tr:hover td", "props": [
+                    ("background", "rgba(37,99,235,0.14)"),
+                ]},
+            ])
+        )
+        
+        st.dataframe(styler, use_container_width=True, hide_index=True)
+
 
         st.subheader("Totales")
         c1, c2, c3, c4 = st.columns(4)
@@ -1098,6 +1134,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
