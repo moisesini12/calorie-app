@@ -824,9 +824,10 @@ if page == "📊 Dashboard":
                 st.rerun()
 
         with cB:
-            if st.button("🎯 Ir a Objetivos", use_container_width=True):
-                st.session_state["nav"] = "🎯 Objetivos"
+            if st.button("🎯 Ir a Objetivos", type="primary"):
+                st.session_state["goto_page"] = "🎯 Objetivos"
                 st.rerun()
+
 
     st.markdown("</div>", unsafe_allow_html=True)
 
@@ -1917,6 +1918,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
