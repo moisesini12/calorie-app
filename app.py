@@ -501,6 +501,39 @@ def inject_black_theme():
     }
 
 
+    /* =========================
+       SIDEBAR COMPACT (menos huecos)
+       ========================= */
+    
+    .sb-section-title{
+      margin: 10px 10px 6px 10px !important;
+      padding: 0 !important;
+      font-weight: 900 !important;
+      font-size: 16px !important;
+      color: #0f172a !important;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .sb-section-box{
+      margin: 0 8px 10px 8px !important; /* <- aquí está el hueco principal */
+      padding: 8px 10px !important;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.55);
+      border: 1px solid rgba(15,23,42,0.08);
+    }
+    
+    .sb-section-box [data-testid="stRadio"]{
+      margin-top: -6px !important; /* quita aire extra */
+    }
+    
+    .sb-section-box label{
+      padding: 8px 10px !important;
+      margin: 4px 0 !important;
+    }
+
+
 
     </style>
     """, unsafe_allow_html=True)
@@ -652,42 +685,49 @@ if "nav" not in st.session_state:
     st.session_state["nav"] = "📊 Dashboard"
 
 # --- PRINCIPAL ---
-st.sidebar.markdown("### 📊 Principal")
+st.sidebar.markdown('<div class="sb-section-title">📊 Principal</div>', unsafe_allow_html=True)
+st.sidebar.markdown('<div class="sb-section-box">', unsafe_allow_html=True)
 main_page = st.sidebar.radio(
     "",
     ["📊 Dashboard"],
-    index=0 if st.session_state["nav"] == "📊 Dashboard" else None,
+    label_visibility="collapsed",
     key="nav_main"
 )
+st.sidebar.markdown('</div>', unsafe_allow_html=True)
 
 # --- NUTRICIÓN ---
-st.sidebar.markdown("### 🍽 Nutrición")
+st.sidebar.markdown('<div class="sb-section-title">🍽 Nutrición</div>', unsafe_allow_html=True)
+st.sidebar.markdown('<div class="sb-section-box">', unsafe_allow_html=True)
 nutrition_page = st.sidebar.radio(
     "",
     ["🍽 Registro", "👨‍🍳 Chef IA", "➕ Añadir alimento"],
-    index=["🍽 Registro", "👨‍🍳 Chef IA", "➕ Añadir alimento"].index(st.session_state["nav"])
-    if st.session_state["nav"] in ["🍽 Registro", "👨‍🍳 Chef IA", "➕ Añadir alimento"]
-    else None,
+    label_visibility="collapsed",
     key="nav_nutrition"
 )
+st.sidebar.markdown('</div>', unsafe_allow_html=True)
 
 # --- ENTRENAMIENTO ---
-st.sidebar.markdown("### 🏋️ Entrenamiento")
+st.sidebar.markdown('<div class="sb-section-title">🏋️ Entrenamiento</div>', unsafe_allow_html=True)
+st.sidebar.markdown('<div class="sb-section-box">', unsafe_allow_html=True)
 training_page = st.sidebar.radio(
     "",
     ["🏋️ Rutina IA"],
-    index=0 if st.session_state["nav"] == "🏋️ Rutina IA" else None,
+    label_visibility="collapsed",
     key="nav_training"
 )
+st.sidebar.markdown('</div>', unsafe_allow_html=True)
 
 # --- PERFIL ---
-st.sidebar.markdown("### ⚙️ Perfil")
+st.sidebar.markdown('<div class="sb-section-title">⚙️ Perfil</div>', unsafe_allow_html=True)
+st.sidebar.markdown('<div class="sb-section-box">', unsafe_allow_html=True)
 profile_page = st.sidebar.radio(
     "",
     ["🎯 Objetivos"],
-    index=0 if st.session_state["nav"] == "🎯 Objetivos" else None,
+    label_visibility="collapsed",
     key="nav_profile"
 )
+st.sidebar.markdown('</div>', unsafe_allow_html=True)
+
 
 # Consolidar selección
 for p in [main_page, nutrition_page, training_page, profile_page]:
@@ -1964,6 +2004,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
