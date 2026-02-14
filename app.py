@@ -147,6 +147,10 @@ def _bootstrap():
 
 _bootstrap()
 
+import db_gsheets
+st.sidebar.caption(f"Sheet ID: {db_gsheets.SHEET_ID}")
+
+
 st.title("Calculadora de calorías y macros")
 
 selected_date = st.sidebar.date_input("📅 Día", value=date.today())
@@ -659,6 +663,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
