@@ -568,37 +568,7 @@ if page == "📊 Dashboard":
     st.divider()
 
     # ===== HISTÓRICO EN CARD DEGRADADA =====
-    st.subheader("📈 Tendencia (últimos 30 días)")
-    history = daily_totals_last_days(30, st.session_state["user_id"])
-    hist_df = pd.DataFrame(history, columns=["date", "calories", "protein", "carbs", "fat"])
 
-    if not hist_df.empty:
-        hist_df["date"] = pd.to_datetime(hist_df["date"])
-        hist_df = hist_df.sort_values("date")
-
-        chart = (
-            alt.Chart(hist_df)
-            .mark_line(strokeWidth=3)
-            .encode(
-                x=alt.X("date:T", title=None),
-                y=alt.Y("calories:Q", title=None),
-                tooltip=["date:T", "calories:Q"]
-            )
-            .properties(height=280)
-            .configure_view(fill="transparent", stroke=None)
-            .configure_axis(
-                labelColor="#000000",
-                titleColor="#000000",
-                gridColor="rgba(0,0,0,0.10)"
-            )
-        )
-
-        st.markdown('<div class="fit-card">', unsafe_allow_html=True)
-        st.altair_chart(chart, use_container_width=True)
-        st.markdown("</div>", unsafe_allow_html=True)
-
-    else:
-        st.info("Aún no hay datos suficientes para la tendencia.")
 
 
 
@@ -1096,6 +1066,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
