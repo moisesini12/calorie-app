@@ -271,7 +271,6 @@ elif page == "🍽 Registro":
         if add_btn:
             try:
                 macros = scale_macros(food, grams)
-        
                 entry = {
                     "user_id": st.session_state["user_id"],
                     "entry_date": selected_date_str,
@@ -280,18 +279,19 @@ elif page == "🍽 Registro":
                     "grams": float(grams),
                     **macros
                 }
-        
+
                 new_id = add_entry(entry)
-        
-                # Invalida cache de lecturas
+
+                # ✅ invalida SOLO cache_data (NO cache_resource)
                 st.cache_data.clear()
-        
+
                 st.success(f"✅ Entrada guardada (id={new_id})")
                 st.rerun()
-        
+
             except Exception as e:
                 st.error("❌ Error guardando la entrada en Google Sheets")
                 st.exception(e)
+
 
 
 
@@ -663,6 +663,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
