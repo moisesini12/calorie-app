@@ -297,15 +297,26 @@ def inject_black_theme():
 st.set_page_config(page_title="Calculadora de calorías y macros", layout="wide")
 inject_black_theme()
 
-# USER
-USER_ID = st.sidebar.text_input("👤 Usuario", value=st.session_state.get("user_id", "moi"))
-st.session_state["user_id"] = (USER_ID.strip() if USER_ID else "default_user")
+# ===== SIDEBAR APP STYLE =====
 
-# Fecha
-selected_date = st.sidebar.date_input("📅 Día", value=date.today())
+st.sidebar.markdown("## 🟢 FitMacro")
+
+USER_ID = st.sidebar.text_input(
+    "👤 Usuario",
+    value=st.session_state.get("user_id", "moi")
+)
+
+st.session_state["user_id"] = (
+    USER_ID.strip() if USER_ID else "default_user"
+)
+
+selected_date = st.sidebar.date_input(
+    "📅 Día",
+    value=date.today()
+)
+
 selected_date_str = selected_date.isoformat()
 
-# Nav
 page = st.sidebar.radio(
     "",
     ["📊 Dashboard", "🍽 Registro", "🎯 Objetivos", "➕ Añadir alimento", "🧠 Coach IA"],
@@ -313,7 +324,8 @@ page = st.sidebar.radio(
 )
 
 st.sidebar.markdown("---")
-st.sidebar.caption("⚡ Tip: usa el mismo usuario para que el histórico sea consistente.")
+st.sidebar.caption("⚡ Usa el mismo usuario para mantener el histórico.")
+
 
 # Bootstrap BD (una vez)
 @st.cache_resource
@@ -353,15 +365,16 @@ if page == "📊 Dashboard":
     total_fat = sum(float(r["fat"]) for r in rows) if rows else 0.0
 
     # ===== GRID METRICS (fit style) =====
-    c0, c1, c2, c3 = st.columns(4)
-    with c0:
+    cL, cR = st.columns(2)
+    
+    with cL:
         st.metric("🔥 Calorías", f"{total_kcal:.0f} kcal")
-    with c1:
         st.metric("🥩 Proteína", f"{total_protein:.1f} g")
-    with c2:
+    
+    with cR:
         st.metric("🍚 Carbs", f"{total_carbs:.1f} g")
-    with c3:
         st.metric("🥑 Grasas", f"{total_fat:.1f} g")
+
 
     st.divider()
 
@@ -936,6 +949,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
