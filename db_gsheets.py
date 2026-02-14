@@ -273,7 +273,7 @@ def delete_food_by_id(food_id: int) -> None:
 def add_entry(entry: Dict[str, Any]) -> int:
     ws = _ws(TAB_ENTRIES)
 
-    # ✅ ID estable sin lecturas (evita 429). Milis desde epoch.
+    # ID único basado en timestamp (estable y sin lecturas previas)
     new_id = int(dt.datetime.utcnow().timestamp() * 1000)
 
     row_values = [
@@ -289,29 +289,29 @@ def add_entry(entry: Dict[str, Any]) -> int:
         _to_float(entry.get("fat", 0)),
     ]
 
-    # ✅ Escribimos y pedimos que Google nos devuelva lo escrito (confirmación)
+    # Escribir fila
     ws.append_row(
         row_values,
         value_input_option="USER_ENTERED",
-        insert_data_option="INSERT_ROWS",
-        include_values_in_response=True
+        insert_data_option="INSERT_ROWS"
     )
 
-    # ✅ invalidación de caches de lecturas
+    # Invalidar caches
     _cache_bump(TAB_ENTRIES)
     st.cache_data.clear()
 
-    # ✅ Verificación dura: la última fila DEBE ser la que acabamos de insertar
+    # ✅ Verificación robusta: buscar el ID en columna A
     try:
-        last = ws.get_all_values()[-1]
-        # last[0] es id (col A)
-        if str(last[0]).strip() != str(new_id):
+        cell = ws.find(str(new_id), in_column=1)
+        if cell is None:
             raise RuntimeError(
-                f"Append no visible: esperaba id={new_id} en última fila pero encontré {last[0]!r}. "
-                "Probable: estás mirando otro Sheet/tab o permisos/caché."
+                f"No encuentro el id={new_id} tras escribir. "
+                "Probable: sheet equivocado o permisos."
             )
     except Exception as e:
-        raise RuntimeError(f"No puedo verificar escritura en '{TAB_ENTRIES}'. Error: {repr(e)}") from e
+        raise RuntimeError(
+            f"No puedo verificar escritura en '{TAB_ENTRIES}'. Error: {repr(e)}"
+        ) from e
 
     return new_id
 
@@ -448,6 +448,7 @@ def set_setting(key: str, value: str) -> None:
 
     ws.append_row([key, value], value_input_option="USER_ENTERED", insert_data_option="INSERT_ROWS")
     _cache_bump(TAB_SETTINGS)
+
 
 
 
