@@ -644,12 +644,58 @@ if st.session_state["goto_page"]:
     st.session_state["goto_page"] = None
 
 
-page = st.sidebar.radio(
+# =========================
+# SIDEBAR ORGANIZADO
+# =========================
+
+if "nav" not in st.session_state:
+    st.session_state["nav"] = "📊 Dashboard"
+
+# --- PRINCIPAL ---
+st.sidebar.markdown("### 📊 Principal")
+main_page = st.sidebar.radio(
     "",
-    ["📊 Dashboard", "🍽 Registro", "➕ Añadir alimento", "🎯 Objetivos", "👨‍🍳 Chef IA", "🏋️ Rutina IA"],
-    label_visibility="collapsed",
-    key="nav"
+    ["📊 Dashboard"],
+    index=0 if st.session_state["nav"] == "📊 Dashboard" else None,
+    key="nav_main"
 )
+
+# --- NUTRICIÓN ---
+st.sidebar.markdown("### 🍽 Nutrición")
+nutrition_page = st.sidebar.radio(
+    "",
+    ["🍽 Registro", "👨‍🍳 Chef IA", "➕ Añadir alimento"],
+    index=["🍽 Registro", "👨‍🍳 Chef IA", "➕ Añadir alimento"].index(st.session_state["nav"])
+    if st.session_state["nav"] in ["🍽 Registro", "👨‍🍳 Chef IA", "➕ Añadir alimento"]
+    else None,
+    key="nav_nutrition"
+)
+
+# --- ENTRENAMIENTO ---
+st.sidebar.markdown("### 🏋️ Entrenamiento")
+training_page = st.sidebar.radio(
+    "",
+    ["🏋️ Rutina IA"],
+    index=0 if st.session_state["nav"] == "🏋️ Rutina IA" else None,
+    key="nav_training"
+)
+
+# --- PERFIL ---
+st.sidebar.markdown("### ⚙️ Perfil")
+profile_page = st.sidebar.radio(
+    "",
+    ["🎯 Objetivos"],
+    index=0 if st.session_state["nav"] == "🎯 Objetivos" else None,
+    key="nav_profile"
+)
+
+# Consolidar selección
+for p in [main_page, nutrition_page, training_page, profile_page]:
+    if p:
+        st.session_state["nav"] = p
+
+page = st.session_state["nav"]
+
 
 st.sidebar.markdown("""
 <div class="sb-tip">⚡ Usa el mismo usuario para mantener el histórico.</div>
@@ -1918,6 +1964,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
