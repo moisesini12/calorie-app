@@ -807,79 +807,68 @@ if st.session_state["goto_page"]:
 
 
 # =========================
-# SIDEBAR ORGANIZADO
+# SIDEBAR: SECCIONES + NAVEGACIÓN
 # =========================
 
-# =========================
-# SIDEBAR DESPLEGABLE (COMPACTO)
-# =========================
+if "nav" not in st.session_state:
+    st.session_state["nav"] = "📊 Dashboard"
 
-def sidebar_section(title: str, icon: str, key: str, default_open: bool = False) -> bool:
-    k = f"sb_open_{key}"
-    if k not in st.session_state:
-        st.session_state[k] = bool(default_open)
-
-    # Botón “acordeón” (compacto, sin recuadritos raros)
-    if st.sidebar.button(
-        f"{icon} {title}",
-        key=f"btn_{key}",
-        use_container_width=True
-    ):
-        st.session_state[k] = not st.session_state[k]
-
-    return st.session_state[k]
-
-
-# --- PRINCIPAL ---
+# --- Principal ---
 open_principal = sidebar_section("Principal", "📊", "principal", default_open=True)
+nav_principal = None
 if open_principal:
+    st.sidebar.markdown('<div class="sb-acc-body">', unsafe_allow_html=True)
     nav_principal = st.sidebar.radio(
         "",
         ["📊 Dashboard"],
         label_visibility="collapsed",
         key="nav_principal"
     )
-else:
-    nav_principal = None
+    st.sidebar.markdown("</div>", unsafe_allow_html=True)
 
-# --- NUTRICIÓN ---
+# --- Nutrición ---
 open_nutri = sidebar_section("Nutrición", "🍽️", "nutri", default_open=False)
+nav_nutri = None
 if open_nutri:
+    st.sidebar.markdown('<div class="sb-acc-body">', unsafe_allow_html=True)
     nav_nutri = st.sidebar.radio(
         "",
         ["🍽 Registro", "👨‍🍳 Chef IA", "➕ Añadir alimento"],
         label_visibility="collapsed",
         key="nav_nutri"
     )
-else:
-    nav_nutri = None
+    st.sidebar.markdown("</div>", unsafe_allow_html=True)
 
-# --- ENTRENAMIENTO ---
+# --- Entrenamiento ---
 open_train = sidebar_section("Entrenamiento", "🏋️", "train", default_open=False)
+nav_train = None
 if open_train:
+    st.sidebar.markdown('<div class="sb-acc-body">', unsafe_allow_html=True)
     nav_train = st.sidebar.radio(
         "",
         ["🏋️ Rutina IA"],
         label_visibility="collapsed",
         key="nav_train"
     )
-else:
-    nav_train = None
+    st.sidebar.markdown("</div>", unsafe_allow_html=True)
 
-# --- PERFIL ---
+# --- Perfil ---
 open_profile = sidebar_section("Perfil", "⚙️", "profile", default_open=False)
+nav_profile = None
 if open_profile:
+    st.sidebar.markdown('<div class="sb-acc-body">', unsafe_allow_html=True)
     nav_profile = st.sidebar.radio(
         "",
         ["🎯 Objetivos"],
         label_visibility="collapsed",
         key="nav_profile"
     )
-else:
-    nav_profile = None
+    st.sidebar.markdown("</div>", unsafe_allow_html=True)
 
-# --- Página final ---
-page = nav_principal or nav_nutri or nav_train or nav_profile or "📊 Dashboard"
+# Resolver página activa
+page = nav_principal or nav_nutri or nav_train or nav_profile or st.session_state["nav"]
+st.session_state["nav"] = page
+
 
 
 st.markdown("""
@@ -2127,6 +2116,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
