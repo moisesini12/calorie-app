@@ -19,31 +19,29 @@ def inject_black_theme():
     st.markdown("""
     <style>
     /* =========================
-       FitMacro Pro (High Contrast)
+       FitMacro Dark Light (Balanced)
        ========================= */
 
     :root{
-      /* Fondo: más contraste (aún light) */
-      --bg: #e9eef7;
-      --bg2: #e6f6ee;
+      /* Fondo más oscuro pero elegante */
+      --bg: #dfe6f1;
+      --bg2: #d6efe3;
 
-      /* Tarjetas */
-      --panel: rgba(255,255,255,0.96);
-      --panel-solid: #ffffff;
+      /* Cards */
+      --panel: #ffffff;
+      --panel-strong: #f8fafc;
 
-      /* Bordes y sombras */
-      --stroke: rgba(15, 23, 42, 0.14);
-      --stroke2: rgba(15, 23, 42, 0.08);
+      /* Bordes */
+      --stroke: rgba(15, 23, 42, 0.18);
+      --stroke-soft: rgba(15, 23, 42, 0.08);
 
       /* Texto */
-      --txt: #0b1220;
-      --muted: #475569;       /* más oscuro = más legible */
-      --muted2: #64748b;
+      --txt: #0f172a;
+      --muted: #334155;
 
-      /* Acentos fitness */
-      --accent: #16a34a;      /* verde */
-      --accent2: #2563eb;     /* azul */
-      --accent3: #f97316;     /* naranja */
+      /* Acentos */
+      --accent: #16a34a;
+      --accent2: #2563eb;
 
       --radius: 18px;
     }
@@ -51,9 +49,9 @@ def inject_black_theme():
     /* Fondo con más profundidad */
     html, body, [data-testid="stAppViewContainer"]{
       background:
-        radial-gradient(1200px 850px at 12% 8%, rgba(34,197,94,0.16) 0%, transparent 55%),
-        radial-gradient(900px 700px at 88% 14%, rgba(37,99,235,0.16) 0%, transparent 55%),
-        linear-gradient(180deg, var(--bg) 0%, #ffffff 100%) !important;
+        radial-gradient(1000px 700px at 10% 10%, rgba(34,197,94,0.18) 0%, transparent 60%),
+        radial-gradient(900px 600px at 90% 15%, rgba(37,99,235,0.16) 0%, transparent 60%),
+        linear-gradient(180deg, var(--bg) 0%, #eef2f9 100%) !important;
       color: var(--txt) !important;
     }
 
@@ -63,161 +61,130 @@ def inject_black_theme():
       padding-bottom: 56px;
     }
 
-    /* Sidebar como panel premium */
-    [data-testid="stSidebar"]{
-      background: transparent !important;
-    }
+    /* Sidebar */
     [data-testid="stSidebar"] > div{
-      background: rgba(255,255,255,0.88) !important;
-      backdrop-filter: blur(14px);
-      border-right: 1px solid var(--stroke2) !important;
-      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+      background: rgba(255,255,255,0.92) !important;
+      backdrop-filter: blur(10px);
+      border-right: 1px solid var(--stroke-soft) !important;
     }
 
-    /* Tipografía: más punch */
+    /* Títulos */
     h1{
       font-size: 44px !important;
+      font-weight: 900 !important;
       letter-spacing: -0.04em;
       color: var(--txt) !important;
-      margin-bottom: 0.25rem !important;
-      font-weight: 850 !important;
     }
+
     h2,h3{
-      letter-spacing: -0.03em;
-      color: var(--txt) !important;
       font-weight: 800 !important;
+      color: var(--txt) !important;
     }
+
     p, label, .stCaption, .stMarkdown{
       color: var(--muted) !important;
     }
-    .stCaption{
-      color: var(--muted2) !important;
+
+    /* ===== INPUTS (aquí estaba el problema) ===== */
+
+    input, textarea{
+      background: var(--panel-strong) !important;
+      border: 1px solid var(--stroke) !important;
+      border-radius: 14px !important;
+      color: #000000 !important;   /* FORZAMOS NEGRO */
+      font-weight: 600 !important;
     }
 
-    /* Dividers */
-    hr{
-      border: none !important;
-      height: 1px !important;
-      background: var(--stroke2) !important;
+    /* Select BaseWeb */
+    div[data-baseweb="select"] > div{
+      background: var(--panel-strong) !important;
+      border: 1px solid var(--stroke) !important;
+      border-radius: 14px !important;
+      color: #000000 !important;  /* FORZAMOS NEGRO */
+      font-weight: 600 !important;
     }
 
-    /* ===== Botones: más “app” ===== */
+    /* Texto dentro del select */
+    div[data-baseweb="select"] span{
+      color: #000000 !important;
+      font-weight: 600 !important;
+    }
+
+    /* Slider */
+    div[data-testid="stSlider"]{
+      color: var(--txt) !important;
+    }
+
+    /* Botones */
     .stButton > button{
-      background: linear-gradient(135deg, var(--accent) 0%, #22c55e 35%, var(--accent2) 100%) !important;
+      background: linear-gradient(135deg, var(--accent) 0%, #22c55e 40%, var(--accent2) 100%) !important;
       border: 0 !important;
       border-radius: 999px !important;
       color: white !important;
       padding: 10px 16px !important;
-      font-weight: 750 !important;
-      transition: transform .12s ease, box-shadow .12s ease, filter .12s ease;
-      box-shadow: 0 14px 34px rgba(37, 99, 235, 0.18);
+      font-weight: 700 !important;
+      box-shadow: 0 14px 34px rgba(37, 99, 235, 0.22);
     }
+
     .stButton > button:hover{
       transform: translateY(-1px);
-      filter: brightness(1.04);
-      box-shadow: 0 18px 44px rgba(22, 163, 74, 0.22);
+      filter: brightness(1.05);
     }
 
-    /* ===== Inputs: más contraste ===== */
-    input, textarea{
-      background: rgba(255,255,255,0.96) !important;
-      border: 1px solid var(--stroke) !important;
-      border-radius: 14px !important;
-      color: var(--txt) !important;
-      box-shadow: 0 2px 0 rgba(15,23,42,0.03);
-    }
-    div[data-baseweb="select"] > div{
-      background: rgba(255,255,255,0.96) !important;
-      border: 1px solid var(--stroke) !important;
-      border-radius: 14px !important;
-      box-shadow: 0 2px 0 rgba(15,23,42,0.03);
-    }
-
-    /* ===== Cards Métricas: mantenemos degradado, subimos contraste ===== */
+    /* Métricas */
     div[data-testid="stMetric"]{
-      background: var(--panel-solid) !important;
-      border: 1px solid var(--stroke2) !important;
+      background: var(--panel) !important;
+      border: 1px solid var(--stroke-soft) !important;
       border-radius: 18px;
-      padding: 18px 18px 16px 18px;
+      padding: 18px;
       box-shadow: 0 18px 46px rgba(15, 23, 42, 0.12);
       position: relative;
       overflow: hidden;
     }
-    /* degradado más “definido” */
+
     div[data-testid="stMetric"]::before{
       content: "";
       position: absolute;
       inset: 0;
       background:
-        radial-gradient(900px 240px at 15% 0%, rgba(34,197,94,0.26) 0%, transparent 62%),
-        radial-gradient(900px 240px at 85% 0%, rgba(37,99,235,0.22) 0%, transparent 62%),
-        linear-gradient(180deg, rgba(15,23,42,0.02) 0%, transparent 55%);
-      pointer-events: none;
-    }
-    /* “borde luminoso” sutil */
-    div[data-testid="stMetric"]::after{
-      content: "";
-      position: absolute;
-      inset: 0;
-      border-radius: 18px;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.9),
-                  inset 0 0 0 1px rgba(15,23,42,0.06);
+        radial-gradient(900px 200px at 15% 0%, rgba(34,197,94,0.28) 0%, transparent 65%),
+        radial-gradient(900px 200px at 85% 0%, rgba(37,99,235,0.22) 0%, transparent 65%);
       pointer-events: none;
     }
 
     div[data-testid="stMetric"] label{
+      font-size: 13px !important;
+      font-weight: 700 !important;
       color: var(--muted) !important;
-      font-size: 12.5px !important;
-      z-index: 1;
-      position: relative;
-      font-weight: 650 !important;
     }
-    div[data-testid="stMetric"] [data-testid="stMetricValue"]{
+
+    div[data-testid="stMetricValue"]{
       font-size: 36px !important;
       font-weight: 900 !important;
       color: var(--txt) !important;
-      z-index: 1;
-      position: relative;
     }
 
-    /* ===== Dataframe como card premium ===== */
-    div[data-testid="stDataFrame"]{
-      background: var(--panel-solid) !important;
-      border: 1px solid var(--stroke2) !important;
-      border-radius: var(--radius) !important;
-      overflow: hidden;
-      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.10);
-    }
-
-    /* ===== Progreso: barra más fit ===== */
+    /* Progress */
     div[data-testid="stProgress"]{
-      background: rgba(15, 23, 42, 0.10) !important;
+      background: rgba(15, 23, 42, 0.15) !important;
       border-radius: 999px !important;
-      overflow: hidden;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.8);
     }
+
     div[data-testid="stProgress"] > div > div{
       background: linear-gradient(90deg, var(--accent) 0%, #22c55e 45%, var(--accent2) 100%) !important;
     }
 
-    /* Chat: card con contraste */
-    [data-testid="stChatMessage"]{
-      background: var(--panel-solid) !important;
-      border: 1px solid var(--stroke2) !important;
+    /* Dataframe */
+    div[data-testid="stDataFrame"]{
+      background: var(--panel) !important;
+      border: 1px solid var(--stroke-soft) !important;
       border-radius: 18px !important;
-      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.10);
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.12);
     }
 
-    /* Scrollbar */
-    ::-webkit-scrollbar{ width: 10px; }
-    ::-webkit-scrollbar-track{ background: transparent; }
-    ::-webkit-scrollbar-thumb{
-      background: rgba(15, 23, 42, 0.22);
-      border-radius: 999px;
-      border: 3px solid rgba(255,255,255,0.75);
-    }
     </style>
     """, unsafe_allow_html=True)
+
 
 
 
@@ -823,5 +790,6 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
