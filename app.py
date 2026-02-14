@@ -504,51 +504,51 @@ elif page == "🍽 Registro":
             st.stop()
         food = st.selectbox("Alimento", foods_in_cat, format_func=lambda x: x["name"], key="reg_food")
 
-    # FORM de alta
-with st.form("add_entry_form", clear_on_submit=False):
-
-    grams = float(
-        st.number_input(
-            "Gramos consumidos",
-            min_value=1.0,
-            step=1.0,
-            value=100.0,
-            format="%.0f",
-            key="reg_grams"
+        # FORM de alta
+    with st.form("add_entry_form", clear_on_submit=False):
+    
+        grams = float(
+            st.number_input(
+                "Gramos consumidos",
+                min_value=1.0,
+                step=1.0,
+                value=100.0,
+                format="%.0f",
+                key="reg_grams"
+            )
         )
-    )
-
-    meal = st.radio(
-        "Comida",
-        ["Desayuno", "Almuerzo", "Merienda", "Cena"],
-        horizontal=False,
-        key="reg_meal"
-    )
-
-    add_btn = st.form_submit_button("Añadir al registro")
-
-    if add_btn:
-        try:
-            macros = scale_macros(food, grams)
-            entry = {
-                "user_id": st.session_state["user_id"],
-                "entry_date": selected_date_str,
-                "meal": meal,
-                "name": food["name"],
-                "grams": float(grams),
-                **macros
-            }
-
-            new_id = add_entry(entry)
-
-            st.cache_data.clear()
-            st.session_state["_just_added"] = True
-            st.session_state["_last_add_id"] = new_id
-            st.rerun()
-
-        except Exception as e:
-            st.error("❌ Error guardando la entrada en Google Sheets")
-            st.exception(e)
+    
+        meal = st.radio(
+            "Comida",
+            ["Desayuno", "Almuerzo", "Merienda", "Cena"],
+            horizontal=False,
+            key="reg_meal"
+        )
+    
+        add_btn = st.form_submit_button("Añadir al registro")
+    
+        if add_btn:
+            try:
+                macros = scale_macros(food, grams)
+                entry = {
+                    "user_id": st.session_state["user_id"],
+                    "entry_date": selected_date_str,
+                    "meal": meal,
+                    "name": food["name"],
+                    "grams": float(grams),
+                    **macros
+                }
+    
+                new_id = add_entry(entry)
+    
+                st.cache_data.clear()
+                st.session_state["_just_added"] = True
+                st.session_state["_last_add_id"] = new_id
+                st.rerun()
+    
+            except Exception as e:
+                st.error("❌ Error guardando la entrada en Google Sheets")
+                st.exception(e)
 
 
     # Lectura del día (siempre, después del form)
@@ -942,6 +942,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
