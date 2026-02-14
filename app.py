@@ -5,14 +5,6 @@ import hashlib, hmac, base64
 
 import streamlit as st
 import pandas as pd
-st.set_page_config(
-    page_title="FitMacro",
-    page_icon="💪",
-    layout="wide",
-    initial_sidebar_state="expanded",
-)
-
-
 
 from datetime import date
 
@@ -26,6 +18,15 @@ from db_gsheets import (
 )
 from core import scale_macros, calculate_goals
 from your_foods import FOODS
+
+
+# ✅ SIEMPRE lo primero (y SOLO una vez)
+st.set_page_config(
+    page_title="FitMacro",
+    page_icon="💪",
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
 
 
 def inject_black_theme():
@@ -56,8 +57,6 @@ def inject_black_theme():
         --radius: 18px;
     }
 
-    /* ===== Fondo ===== */
-
     html, body, [data-testid="stAppViewContainer"]{
         background:
             radial-gradient(1000px 700px at 10% 10%, rgba(34,197,94,0.18) 0%, transparent 60%),
@@ -72,15 +71,11 @@ def inject_black_theme():
         padding-bottom: 60px;
     }
 
-    /* ===== Sidebar ===== */
-
     [data-testid="stSidebar"] > div{
         background: rgba(255,255,255,0.92) !important;
         backdrop-filter: blur(12px);
         border-right: 1px solid var(--stroke-soft) !important;
     }
-
-    /* ===== Tipografía ===== */
 
     h1{
         font-size: 44px !important;
@@ -97,8 +92,6 @@ def inject_black_theme():
     p, label, .stCaption, .stMarkdown{
         color: var(--muted) !important;
     }
-
-    /* ===== Inputs ===== */
 
     input, textarea{
         background: var(--panel-soft) !important;
@@ -120,12 +113,9 @@ def inject_black_theme():
         color: #000000 !important;
     }
 
-    /* ===== BOTONES UNIFICADOS ===== */
-
     .stButton > button,
     div[data-testid="stFormSubmitButton"] button,
     button[kind="primary"]{
-
         background: linear-gradient(
             135deg,
             var(--green) 0%,
@@ -151,18 +141,11 @@ def inject_black_theme():
         box-shadow: 0 16px 36px rgba(22,163,74,0.28);
     }
 
-    .stButton > button:active,
-    div[data-testid="stFormSubmitButton"] button:active{
-        transform: translateY(0px);
-    }
-
     button:disabled{
         background: linear-gradient(135deg,#94a3b8 0%,#cbd5e1 100%) !important;
         box-shadow: none !important;
         cursor: not-allowed !important;
     }
-
-    /* ===== MÉTRICAS ===== */
 
     div[data-testid="stMetric"]{
         background: var(--panel);
@@ -196,45 +179,6 @@ def inject_black_theme():
         font-size: 36px !important;
     }
 
-    /* ===== TABLAS ===== */
-
-    div[data-testid="stDataFrame"]{
-        background: linear-gradient(
-            180deg,
-            rgba(34,197,94,0.18) 0%,
-            rgba(37,99,235,0.15) 100%
-        ) !important;
-
-        border: 1px solid var(--stroke-soft) !important;
-        border-radius: var(--radius) !important;
-        box-shadow: 0 18px 40px rgba(15,23,42,0.12);
-    }
-
-    div[data-testid="stDataFrame"] td,
-    div[data-testid="stDataFrame"] th{
-        color: #000000 !important;
-        font-weight: 600 !important;
-        background: transparent !important;
-    }
-
-    /* ===== PROGRESS ===== */
-
-    div[data-testid="stProgress"]{
-        background: rgba(15,23,42,0.12) !important;
-        border-radius: 999px !important;
-    }
-
-    div[data-testid="stProgress"] > div > div{
-        background: linear-gradient(
-            90deg,
-            var(--green) 0%,
-            var(--green2) 45%,
-            var(--blue) 100%
-        ) !important;
-    }
-
-    /* ===== FIT CARD (para gráficos Altair) ===== */
-
     .fit-card{
         background: linear-gradient(
             180deg,
@@ -246,48 +190,46 @@ def inject_black_theme():
         border: 1px solid var(--stroke-soft);
         box-shadow: 0 18px 40px rgba(15,23,42,0.12);
     }
-    
-    /* ===== HERO BANNER ===== */
-    
+
     .hero-banner{
         display: flex;
         align-items: center;
         gap: 18px;
-    
+
         background: linear-gradient(
             135deg,
             rgba(34,197,94,0.25) 0%,
             rgba(37,99,235,0.22) 100%
         );
-    
+
         padding: 22px 26px;
         border-radius: 20px;
         margin-bottom: 28px;
-    
+
         box-shadow: 0 20px 50px rgba(15,23,42,0.15);
     }
-    
+
     .hero-logo{
         width: 60px;
         height: 60px;
-    
+
         border-radius: 50%;
         background: linear-gradient(135deg,#16a34a,#2563eb);
-    
+
         display: flex;
         align-items: center;
         justify-content: center;
-    
+
         font-weight: 900;
         font-size: 22px;
         color: white;
     }
-    
+
     .hero-text h1{
         margin: 0;
         font-size: 34px !important;
     }
-    
+
     .hero-text p{
         margin: 0;
         font-size: 14px;
@@ -297,13 +239,12 @@ def inject_black_theme():
     /* =========================
        SIDEBAR PREMIUM
        ========================= */
-    
+
     [data-testid="stSidebar"] > div{
       padding-top: 18px !important;
       padding-bottom: 18px !important;
     }
-    
-    /* Header brand */
+
     .sb-brand{
       display: flex;
       align-items: center;
@@ -319,7 +260,7 @@ def inject_black_theme():
       border: 1px solid rgba(15,23,42,0.08);
       box-shadow: 0 14px 30px rgba(15,23,42,0.10);
     }
-    
+
     .sb-logo{
       width: 44px;
       height: 44px;
@@ -332,7 +273,7 @@ def inject_black_theme():
       color: #fff;
       letter-spacing: 0.5px;
     }
-    
+
     .sb-title .sb-name{
       font-size: 18px;
       font-weight: 900;
@@ -345,8 +286,7 @@ def inject_black_theme():
       color: rgba(15,23,42,0.60);
       margin-top: 2px;
     }
-    
-    /* Inputs en sidebar: más “card” */
+
     [data-testid="stSidebar"] input,
     [data-testid="stSidebar"] textarea,
     [data-testid="stSidebar"] div[data-baseweb="select"] > div{
@@ -354,8 +294,7 @@ def inject_black_theme():
       border: 1px solid rgba(15,23,42,0.18) !important;
       border-radius: 14px !important;
     }
-    
-    /* Radio nav como pills */
+
     [data-testid="stSidebar"] div[role="radiogroup"]{
       margin: 8px 6px 0 6px;
       padding: 10px;
@@ -363,28 +302,24 @@ def inject_black_theme():
       background: rgba(255,255,255,0.60);
       border: 1px solid rgba(15,23,42,0.08);
     }
-    
-    /* Cada opción */
+
     [data-testid="stSidebar"] div[role="radiogroup"] label{
       border-radius: 14px !important;
       padding: 10px 12px !important;
       margin: 6px 0 !important;
       transition: all .15s ease;
     }
-    
-    /* Hover */
+
     [data-testid="stSidebar"] div[role="radiogroup"] label:hover{
       background: rgba(37,99,235,0.10) !important;
       transform: translateY(-1px);
     }
-    
-    /* Texto de opciones */
+
     [data-testid="stSidebar"] div[role="radiogroup"] label p{
       font-weight: 750 !important;
       color: #0f172a !important;
     }
-    
-    /* “seleccionado”: Streamlit marca con input checked, lo estilizamos */
+
     [data-testid="stSidebar"] div[role="radiogroup"] input:checked + div{
       background: linear-gradient(
           135deg,
@@ -394,8 +329,7 @@ def inject_black_theme():
       border-radius: 14px !important;
       border: 1px solid rgba(15,23,42,0.08) !important;
     }
-    
-    /* Tip al fondo */
+
     .sb-tip{
       margin: 14px 10px 0 10px;
       padding: 12px 12px;
@@ -407,77 +341,25 @@ def inject_black_theme():
       font-size: 12px;
     }
 
-    /* Botón flotante Fit */
-    
     .fit-fab{
         position: fixed;
         bottom: 20px;
         right: 20px;
-    
         width: 60px;
         height: 60px;
-    
         border-radius: 20px;
-    
         background: linear-gradient(135deg,#16a34a,#2563eb);
         color: white;
-    
         display: flex;
         align-items: center;
         justify-content: center;
-    
         font-size: 26px;
         font-weight: 900;
-    
         box-shadow: 0 18px 40px rgba(15,23,42,0.25);
         z-index: 9999;
         cursor: pointer;
     }
 
-    /* =========================
-       DATAFRAME FIT STYLE
-       ========================= */
-    
-    /* Contenedor general */
-    div[data-testid="stDataFrame"]{
-        background: linear-gradient(
-            180deg,
-            rgba(34,197,94,0.18) 0%,
-            rgba(37,99,235,0.15) 100%
-        ) !important;
-    
-        border-radius: 18px !important;
-        border: 1px solid rgba(15,23,42,0.10) !important;
-        box-shadow: 0 20px 40px rgba(15,23,42,0.12);
-        padding: 6px;
-    }
-    
-    /* Header */
-    div[data-testid="stDataFrame"] th{
-        background: rgba(15,23,42,0.85) !important;
-        color: #ffffff !important;
-        font-weight: 800 !important;
-        border: none !important;
-    }
-    
-    /* Celdas */
-    div[data-testid="stDataFrame"] td{
-        background: rgba(255,255,255,0.65) !important;
-        color: #0f172a !important;
-        font-weight: 600 !important;
-        border: none !important;
-    }
-    
-    /* Hover fila */
-    div[data-testid="stDataFrame"] tr:hover td{
-        background: rgba(37,99,235,0.15) !important;
-        transition: background 0.15s ease;
-    }
-
-    /* =========================
-       FIT TABLE CARD + MOBILE SCROLL
-       ========================= */
-    
     .fit-table-card{
       background: linear-gradient(
         135deg,
@@ -489,27 +371,27 @@ def inject_black_theme():
       padding: 10px;
       box-shadow: 0 18px 40px rgba(15,23,42,0.12);
     }
-    
-    /* Scroll horizontal SOLO para la tabla (móvil friendly) */
+
     .fit-table-scroll{
       overflow-x: auto;
       overflow-y: hidden;
       -webkit-overflow-scrolling: touch;
       border-radius: 14px;
     }
-    
-    /* Scrollbar más discreto */
+
     .fit-table-scroll::-webkit-scrollbar{ height: 10px; }
     .fit-table-scroll::-webkit-scrollbar-track{ background: rgba(15,23,42,0.06); border-radius: 999px; }
     .fit-table-scroll::-webkit-scrollbar-thumb{ background: rgba(15,23,42,0.18); border-radius: 999px; }
-    
-    /* Asegura que la tabla no “rompa” el layout */
+
     .fit-table-scroll table{
-      min-width: 720px;            /* fuerza scroll en móvil si hay muchas columnas */
+      min-width: 720px;
       width: 100%;
+      border-collapse: separate !important;
+      border-spacing: 0 !important;
+      border-radius: 14px !important;
+      overflow: hidden !important;
     }
-    
-    /* Header coherente con el tema */
+
     .fit-table-scroll thead th{
       background: linear-gradient(135deg, rgba(22,163,74,0.92), rgba(37,99,235,0.92)) !important;
       color: #fff !important;
@@ -517,8 +399,7 @@ def inject_black_theme():
       border: none !important;
       padding: 12px 14px !important;
     }
-    
-    /* Celdas: claras, limpias, con bordes suaves */
+
     .fit-table-scroll tbody td{
       background: rgba(255,255,255,0.78) !important;
       color: #0f172a !important;
@@ -526,35 +407,18 @@ def inject_black_theme():
       border: none !important;
       padding: 12px 14px !important;
     }
-    
-    /* Zebra suave */
+
     .fit-table-scroll tbody tr:nth-child(even) td{
       background: rgba(255,255,255,0.66) !important;
     }
-    
-    /* Hover */
+
     .fit-table-scroll tbody tr:hover td{
       background: rgba(37,99,235,0.14) !important;
       transition: background 0.12s ease;
     }
-    
-    /* Redondeo real: esquinas tabla */
-    .fit-table-scroll table{
-      border-collapse: separate !important;
-      border-spacing: 0 !important;
-      border-radius: 14px !important;
-      overflow: hidden !important;
-    }
-
 
     </style>
     """, unsafe_allow_html=True)
-
-
-inject_black_theme()
-
-require_login()
-
 
 
 # ---------------------------
@@ -578,13 +442,11 @@ def _verify_password(password: str, stored: str) -> bool:
 
 
 def _get_users() -> dict:
-    # secrets.toml -> [users]
     users = st.secrets.get("users", {})
     return dict(users)
 
 
 def require_login():
-    # Estado
     if "auth_ok" not in st.session_state:
         st.session_state["auth_ok"] = False
     if "user_id" not in st.session_state:
@@ -598,7 +460,6 @@ def require_login():
         st.error("No hay usuarios configurados en secrets.toml ([users]).")
         st.stop()
 
-    # “Popup” login: si st.dialog existe, lo usamos; si no, fallback a pantalla
     has_dialog = hasattr(st, "dialog")
 
     def login_form():
@@ -631,20 +492,17 @@ def require_login():
         _dlg()
         st.stop()
     else:
-        # Fallback: pantalla centrada (bloquea app)
         st.markdown("<div style='max-width:420px;margin:60px auto;'>", unsafe_allow_html=True)
         login_form()
         st.markdown("</div>", unsafe_allow_html=True)
         st.stop()
 
 
-
-
 # ---------------------------
 # App init
 # ---------------------------
-st.set_page_config(page_title="Calculadora de calorías y macros", layout="wide")
 inject_black_theme()
+require_login()
 
 # ===== SIDEBAR APP STYLE =====
 
@@ -658,14 +516,12 @@ st.sidebar.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-
 st.sidebar.caption(f"👤 Sesión: **{st.session_state['user_id']}**")
 
 if st.sidebar.button("🚪 Cerrar sesión"):
     st.session_state["auth_ok"] = False
     st.session_state["user_id"] = ""
     st.rerun()
-
 
 selected_date = st.sidebar.date_input(
     "📅 Día",
@@ -686,8 +542,6 @@ st.sidebar.markdown("""
 """, unsafe_allow_html=True)
 
 
-
-# Bootstrap BD (una vez)
 @st.cache_resource
 def _bootstrap():
     init_db()
@@ -1332,6 +1186,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
