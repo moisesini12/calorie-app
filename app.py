@@ -534,6 +534,93 @@ def inject_black_theme():
     }
 
 
+    /* =========================
+       SIDEBAR ACCORDION (desplegables)
+       ========================= */
+    
+    .sb-acc{
+      margin: 10px 8px 8px 8px !important;
+    }
+    
+    .sb-acc-btn{
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.55);
+      border: 1px solid rgba(15,23,42,0.08);
+      box-shadow: 0 10px 24px rgba(15,23,42,0.08);
+      cursor: pointer;
+      user-select: none;
+      transition: all .12s ease;
+    }
+    
+    .sb-acc-btn:hover{
+      transform: translateY(-1px);
+      background: rgba(255,255,255,0.72);
+    }
+    
+    .sb-acc-icon{
+      font-size: 18px;
+      width: 22px;
+      text-align: center;
+    }
+    
+    .sb-acc-title{
+      font-weight: 900;
+      color: #0f172a;
+      flex: 1;
+    }
+    
+    .sb-acc-chevron{
+      opacity: 0.65;
+      font-weight: 900;
+    }
+    
+    /* contenedor de contenido */
+    .sb-acc-body{
+      margin-top: 8px;
+      padding: 10px 10px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.50);
+      border: 1px solid rgba(15,23,42,0.08);
+    }
+    
+    /* compacta radios */
+    .sb-acc-body [data-testid="stRadio"]{
+      margin-top: -6px !important;
+    }
+    .sb-acc-body label{
+      padding: 8px 10px !important;
+      margin: 4px 0 !important;
+    }
+
+    /* =========================
+       SIDEBAR COMPACT ACCORDION
+       ========================= */
+    
+    [data-testid="stSidebar"] .stButton > button{
+      padding: 10px 12px !important;
+      border-radius: 14px !important;
+      box-shadow: none !important;
+      margin: 4px 0 !important; /* 🔥 menos hueco */
+    }
+    
+    [data-testid="stSidebar"] .stRadio{
+      margin-top: 0px !important;
+      margin-bottom: 6px !important; /* 🔥 menos hueco */
+    }
+    
+    [data-testid="stSidebar"] div[role="radiogroup"]{
+      margin: 6px 0 10px 0 !important; /* 🔥 pegado al título */
+      padding: 6px !important;
+      border-radius: 14px !important;
+    }
+
+
+
 
     </style>
     """, unsafe_allow_html=True)
@@ -619,6 +706,47 @@ def require_login() -> None:
                 st.session_state["_login_pwd_n"] += 1
                 st.rerun()
 
+def sidebar_section(title: str, icon: str, key: str, default_open: bool = False) -> bool:
+    """
+    Crea un 'desplegable' elegante en sidebar usando estado y botones.
+    Devuelve True si está abierto.
+    """
+    state_key = f"_sb_open_{key}"
+    if state_key not in st.session_state:
+        st.session_state[state_key] = default_open
+
+    # Botón "invisible" (Streamlit) para manejar click
+    clicked = st.sidebar.button(
+        f"{icon} {title}",
+        key=f"_btn_{key}",
+        use_container_width=True
+    )
+
+    # Si haces click, toggle
+    if clicked:
+        st.session_state[state_key] = not st.session_state[state_key]
+
+    # Estilo del botón (lo “convertimos” en nuestro header visual)
+    # Truco: el botón existe, pero lo decoramos con CSS extra mediante markdown
+    open_now = st.session_state[state_key]
+    chevron = "▾" if open_now else "▸"
+
+    st.sidebar.markdown(
+        f"""
+        <div class="sb-acc">
+          <div class="sb-acc-btn">
+            <div class="sb-acc-icon">{icon}</div>
+            <div class="sb-acc-title">{title}</div>
+            <div class="sb-acc-chevron">{chevron}</div>
+          </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    return open_now
+
+    
     if has_dialog:
         @st.dialog("Acceso a FitMacro", width="small")
         def _dlg():
@@ -681,83 +809,77 @@ if st.session_state["goto_page"]:
 # SIDEBAR ORGANIZADO
 # =========================
 
-if "nav" not in st.session_state:
-    st.session_state["nav"] = "📊 Dashboard"
+# =========================
+# SIDEBAR DESPLEGABLE (COMPACTO)
+# =========================
+
+def sidebar_section(title: str, icon: str, key: str, default_open: bool = False) -> bool:
+    k = f"sb_open_{key}"
+    if k not in st.session_state:
+        st.session_state[k] = bool(default_open)
+
+    # Botón “acordeón” (compacto, sin recuadritos raros)
+    if st.sidebar.button(
+        f"{icon} {title}",
+        key=f"btn_{key}",
+        use_container_width=True
+    ):
+        st.session_state[k] = not st.session_state[k]
+
+    return st.session_state[k]
+
 
 # --- PRINCIPAL ---
-st.sidebar.markdown('<div class="sb-section-title">📊 Principal</div>', unsafe_allow_html=True)
-st.sidebar.markdown('<div class="sb-section-box">', unsafe_allow_html=True)
-main_page = st.sidebar.radio(
-    "",
-    ["📊 Dashboard"],
-    label_visibility="collapsed",
-    key="nav_main"
-)
-st.sidebar.markdown('</div>', unsafe_allow_html=True)
+open_principal = sidebar_section("Principal", "📊", "principal", default_open=True)
+if open_principal:
+    nav_principal = st.sidebar.radio(
+        "",
+        ["📊 Dashboard"],
+        label_visibility="collapsed",
+        key="nav_principal"
+    )
+else:
+    nav_principal = None
 
 # --- NUTRICIÓN ---
-st.sidebar.markdown('<div class="sb-section-title">🍽 Nutrición</div>', unsafe_allow_html=True)
-st.sidebar.markdown('<div class="sb-section-box">', unsafe_allow_html=True)
-nutrition_page = st.sidebar.radio(
-    "",
-    ["🍽 Registro", "👨‍🍳 Chef IA", "➕ Añadir alimento"],
-    label_visibility="collapsed",
-    key="nav_nutrition"
-)
-st.sidebar.markdown('</div>', unsafe_allow_html=True)
+open_nutri = sidebar_section("Nutrición", "🍽️", "nutri", default_open=True)
+if open_nutri:
+    nav_nutri = st.sidebar.radio(
+        "",
+        ["🍽 Registro", "👨‍🍳 Chef IA", "➕ Añadir alimento"],
+        label_visibility="collapsed",
+        key="nav_nutri"
+    )
+else:
+    nav_nutri = None
 
 # --- ENTRENAMIENTO ---
-st.sidebar.markdown('<div class="sb-section-title">🏋️ Entrenamiento</div>', unsafe_allow_html=True)
-st.sidebar.markdown('<div class="sb-section-box">', unsafe_allow_html=True)
-training_page = st.sidebar.radio(
-    "",
-    ["🏋️ Rutina IA"],
-    label_visibility="collapsed",
-    key="nav_training"
-)
-st.sidebar.markdown('</div>', unsafe_allow_html=True)
+open_train = sidebar_section("Entrenamiento", "🏋️", "train", default_open=True)
+if open_train:
+    nav_train = st.sidebar.radio(
+        "",
+        ["🏋️ Rutina IA"],
+        label_visibility="collapsed",
+        key="nav_train"
+    )
+else:
+    nav_train = None
 
 # --- PERFIL ---
-st.sidebar.markdown('<div class="sb-section-title">⚙️ Perfil</div>', unsafe_allow_html=True)
-st.sidebar.markdown('<div class="sb-section-box">', unsafe_allow_html=True)
-profile_page = st.sidebar.radio(
-    "",
-    ["🎯 Objetivos"],
-    label_visibility="collapsed",
-    key="nav_profile"
-)
-st.sidebar.markdown('</div>', unsafe_allow_html=True)
+open_profile = sidebar_section("Perfil", "⚙️", "profile", default_open=False)
+if open_profile:
+    nav_profile = st.sidebar.radio(
+        "",
+        ["🎯 Objetivos"],
+        label_visibility="collapsed",
+        key="nav_profile"
+    )
+else:
+    nav_profile = None
 
+# --- Página final ---
+page = nav_principal or nav_nutri or nav_train or nav_profile or "📊 Dashboard"
 
-# Consolidar selección
-for p in [main_page, nutrition_page, training_page, profile_page]:
-    if p:
-        st.session_state["nav"] = p
-
-page = st.session_state["nav"]
-
-
-st.sidebar.markdown("""
-<div class="sb-tip">⚡ Usa el mismo usuario para mantener el histórico.</div>
-""", unsafe_allow_html=True)
-
-
-@st.cache_resource
-def _bootstrap():
-    init_db()
-    seed_foods_if_empty(FOODS)
-
-_bootstrap()
-
-st.markdown("""
-<div class="hero-banner">
-    <div class="hero-logo">FM</div>
-    <div class="hero-text">
-        <h1>FitMacro</h1>
-        <p>Controla tus macros. Domina tu progreso.</p>
-    </div>
-</div>
-""", unsafe_allow_html=True)
 
 st.markdown("""
 <div class="fit-fab">+</div>
@@ -2004,6 +2126,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
