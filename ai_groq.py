@@ -62,3 +62,92 @@ Reglas:
         response_format={"type": "json_object"},  # JSON mode (Groq lo soporta en varios modelos)
     )
     return resp.choices[0].message.content
+
+def generate_workout_plan_json(
+    context_text: str,
+    model: str = DEFAULT_MODEL,
+) -> str:
+    """
+    Devuelve un plan de entrenamiento en JSON (texto).
+    """
+    system = (
+        "Eres un entrenador personal y preparador físico. "
+        "Responde SIEMPRE en JSON válido, sin texto extra. "
+        "El plan debe ser realista, progresivo y seguro. "
+        "No recetes cosas médicas. Evita saltos para rodillas si el usuario es principiante. "
+        "Incluye calentamiento y vuelta a la calma. "
+        "Incluye progresión semana a semana (4 semanas) con ajuste de volumen/intensidad."
+    )
+
+    user = f"""
+Contexto del usuario (perfil + objetivos):
+{context_text}
+
+Devuelve un JSON con este esquema EXACTO:
+{{
+  "plan_name": "string",
+  "summary": "string",
+  "weekly_schedule": [
+    {{
+      "day": "Lunes",
+      "focus": "string",
+      "duration_min": 45,
+      "session": {{
+        "warmup": ["..."],
+        "main": [
+          {{
+            "exercise": "string",
+            "sets": 3,
+            "reps": "8-12",
+            "rest_sec": 90,
+            "notes": "string"
+          }}
+        ],
+        "finisher_optional": ["..."],
+        "cooldown": ["..."]
+      }}
+    }}
+  ],
+  "progression_4_weeks": [
+    {{
+      "week": 1,
+      "notes": "string",
+      "rule": "string"
+    }}
+  ],
+  "nutrition_ties": {{
+    "training_days": {{
+      "protein_g_hint": 0,
+      "preworkout_hint": "string",
+      "postworkout_hint": "string"
+    }},
+    "rest_days": {{
+      "protein_g_hint": 0,
+      "hint": "string"
+    }}
+  }},
+  "safety_notes": ["..."]
+}}
+
+Reglas:
+- No inventes equipamiento: usa SOLO el material disponible.
+- Si no hay material, usa ejercicios de peso corporal.
+- Ajusta a capacidades: si dice que hace X flexiones, usa eso como referencia.
+- Si pide foco (glúteos/abs), prioriza ese trabajo, pero mantén rutina equilibrada.
+- Máximo 5-8 ejercicios por sesión para móvil/claridad.
+- No metas 7 días seguidos si es principiante.
+"""
+
+    client = get_client()
+    resp = client.chat.completions.create(
+        model=model,
+        messages=[
+            {"role": "system", "content": system},
+            {"role": "user", "content": user},
+        ],
+        temperature=0.35,
+        response_format={"type": "json_object"},
+    )
+    return resp.choices[0].message.content
+
+
