@@ -40,9 +40,10 @@ def _client() -> gspread.Client:
 def _sh():
     return _client().open_by_key(SHEET_ID)
 
-@st.cache_resource
 def _ws(tab_name: str):
+    # NO cachear worksheet: evita estados raros tras errores de API/cuota
     return _sh().worksheet(tab_name)
+
 
 
 def _to_float(x: Any, default: float = 0.0) -> float:
@@ -272,26 +273,30 @@ def delete_food_by_id(food_id: int) -> None:
 def add_entry(entry: Dict[str, Any]) -> int:
     ws = _ws(TAB_ENTRIES)
 
-    # ✅ ID sin leer la hoja (evita 429). Milisegundos UTC -> int grande único.
-    new_id = int(dt.datetime.utcnow().timestamp() * 1000)
+    # ✅ ID sin lecturas (evita 429). Timestamp en ms.
+    new_id = int(dt.datetime.now().timestamp() * 1000)
 
-    ws.append_row([
+    row = [
         new_id,
-        entry.get("user_id", ""),
-        entry["entry_date"],
-        entry["meal"],
-        entry["name"],
+        str(entry.get("user_id", "")).strip(),
+        str(entry.get("entry_date", "")).strip(),
+        str(entry.get("meal", "")).strip(),
+        str(entry.get("name", "")).strip(),
         _to_float(entry.get("grams", 0)),
         _to_float(entry.get("calories", 0)),
         _to_float(entry.get("protein", 0)),
         _to_float(entry.get("carbs", 0)),
         _to_float(entry.get("fat", 0)),
-    ], value_input_option="USER_ENTERED")
+    ]
 
+    ws.append_row(row, value_input_option="USER_ENTERED", insert_data_option="INSERT_ROWS")
+
+    # ✅ invalida cache solo de entries
     _cache_bump(TAB_ENTRIES)
     st.cache_data.clear()
 
     return new_id
+
 
 
 
@@ -423,4 +428,5 @@ def set_setting(key: str, value: str) -> None:
 
     ws.append_row([key, value], value_input_option="USER_ENTERED", insert_data_option="INSERT_ROWS")
     _cache_bump(TAB_SETTINGS)
+
 
