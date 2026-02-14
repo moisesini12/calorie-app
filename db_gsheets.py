@@ -272,8 +272,8 @@ def delete_food_by_id(food_id: int) -> None:
 def add_entry(entry: Dict[str, Any]) -> int:
     ws = _ws(TAB_ENTRIES)
 
-    # ✅ CLAVE: id SIN LECTURAS (0 reads) para evitar 429
-    new_id = int(time.time_ns() // 1_000_000)
+    # ✅ ID sin leer la hoja (evita 429). Milisegundos UTC -> int grande único.
+    new_id = int(dt.datetime.utcnow().timestamp() * 1000)
 
     ws.append_row([
         new_id,
@@ -286,10 +286,13 @@ def add_entry(entry: Dict[str, Any]) -> int:
         _to_float(entry.get("protein", 0)),
         _to_float(entry.get("carbs", 0)),
         _to_float(entry.get("fat", 0)),
-    ], value_input_option="USER_ENTERED", insert_data_option="INSERT_ROWS")
+    ], value_input_option="USER_ENTERED")
 
     _cache_bump(TAB_ENTRIES)
+    st.cache_data.clear()
+
     return new_id
+
 
 
 def list_entries_by_date(entry_date: str, user_id: Optional[str] = None) -> List[Dict[str, Any]]:
@@ -420,3 +423,4 @@ def set_setting(key: str, value: str) -> None:
 
     ws.append_row([key, value], value_input_option="USER_ENTERED", insert_data_option="INSERT_ROWS")
     _cache_bump(TAB_SETTINGS)
+
