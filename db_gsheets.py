@@ -435,27 +435,65 @@ def daily_totals_last_days(days: int = 30, user_id: Optional[str] = None) -> Lis
     return out
 
 
-def get_setting(key: str, default: Any = None) -> Any:
+def _scoped_setting_key(key: str, user_id: Optional[str]) -> str:
+    """
+    Si user_id está presente, guardamos settings por usuario:
+      "user::key"
+    Si no, usamos key tal cual (modo global).
+    """
+    uid = (str(user_id).strip() if user_id is not None else "")
+    k = str(key).strip()
+    return f"{uid}::{k}" if uid else k
+
+
+def get_setting(
+    key: str,
+    default: Any = None,
+    user_id: Optional[str] = None,
+    fallback_global: bool = True,
+) -> Any:
+    """
+    Lee setting por usuario si user_id != None.
+    Si no existe y fallback_global=True, prueba también la key global (sin user).
+    """
     rows = _get_all_records(TAB_SETTINGS)
+
+    scoped = _scoped_setting_key(key, user_id)
     for r in rows:
-        if str(r.get("key", "")).strip() == key:
+        if str(r.get("key", "")).strip() == scoped:
             v = r.get("value", "")
             return v if v != "" else default
+
+    if fallback_global and user_id is not None:
+        # fallback a key global (por compatibilidad con lo ya guardado)
+        for r in rows:
+            if str(r.get("key", "")).strip() == str(key).strip():
+                v = r.get("value", "")
+                return v if v != "" else default
+
     return default
 
 
-def set_setting(key: str, value: str) -> None:
+def set_setting(key: str, value: str, user_id: Optional[str] = None) -> None:
+    """
+    Escribe setting por usuario si user_id != None.
+    No toca el valor global.
+    """
     ws = _ws(TAB_SETTINGS)
+    scoped = _scoped_setting_key(key, user_id)
+
     rows = ws.get_all_records()
 
     for i, r in enumerate(rows, start=2):
-        if str(r.get("key", "")).strip() == key:
-            ws.update(f"A{i}:B{i}", [[key, value]], value_input_option="USER_ENTERED")
+        if str(r.get("key", "")).strip() == scoped:
+            ws.update(f"A{i}:B{i}", [[scoped, value]], value_input_option="USER_ENTERED")
             _cache_bump(TAB_SETTINGS)
             return
 
-    ws.append_row([key, value], value_input_option="USER_ENTERED", insert_data_option="INSERT_ROWS")
+    ws.append_row([scoped, value], value_input_option="USER_ENTERED", insert_data_option="INSERT_ROWS")
     _cache_bump(TAB_SETTINGS)
+
+
 
 
 
