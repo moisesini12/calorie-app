@@ -5,6 +5,17 @@ import hashlib, hmac, base64
 
 import streamlit as st
 import pandas as pd
+st.set_page_config(
+    page_title="FitMacro",
+    page_icon="💪",
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
+
+inject_black_theme()
+
+require_login()
+
 from datetime import date
 
 from db_gsheets import (
@@ -542,10 +553,8 @@ def inject_black_theme():
     """, unsafe_allow_html=True)
 
 
-st.set_page_config(...)
-inject_black_theme()
 
-require_login()
+
 
 
 # ---------------------------
@@ -1323,6 +1332,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
