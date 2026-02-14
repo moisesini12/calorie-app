@@ -271,17 +271,21 @@ def delete_food_by_id(food_id: int) -> None:
 
 
 def add_entry(entry: Dict[str, Any]) -> int:
+    """
+    Inserta una entrada en la pestaña 'entries' SIN lecturas previas (evita 429).
+    Usa un id tipo timestamp (ms) suficientemente único para una app personal.
+    """
     ws = _ws(TAB_ENTRIES)
 
-    # ✅ ID sin lecturas (evita 429). Timestamp en ms.
-    new_id = int(dt.datetime.now().timestamp() * 1000)
+    # ✅ ID sin lecturas (ms desde epoch)
+    new_id = int(dt.datetime.utcnow().timestamp() * 1000)
 
     row = [
         new_id,
-        str(entry.get("user_id", "")).strip(),
-        str(entry.get("entry_date", "")).strip(),
-        str(entry.get("meal", "")).strip(),
-        str(entry.get("name", "")).strip(),
+        entry.get("user_id", ""),
+        entry.get("entry_date", ""),
+        entry.get("meal", ""),
+        entry.get("name", ""),
         _to_float(entry.get("grams", 0)),
         _to_float(entry.get("calories", 0)),
         _to_float(entry.get("protein", 0)),
@@ -289,13 +293,18 @@ def add_entry(entry: Dict[str, Any]) -> int:
         _to_float(entry.get("fat", 0)),
     ]
 
-    ws.append_row(row, value_input_option="USER_ENTERED", insert_data_option="INSERT_ROWS")
+    # ✅ append con respuesta (no requiere otra lectura)
+    ws.append_row(
+        row,
+        value_input_option="USER_ENTERED",
+        insert_data_option="INSERT_ROWS",
+        include_values_in_response=True,
+    )
 
-    # ✅ invalida cache solo de entries
     _cache_bump(TAB_ENTRIES)
     st.cache_data.clear()
-
     return new_id
+
 
 
 
@@ -428,5 +437,6 @@ def set_setting(key: str, value: str) -> None:
 
     ws.append_row([key, value], value_input_option="USER_ENTERED", insert_data_option="INSERT_ROWS")
     _cache_bump(TAB_SETTINGS)
+
 
 
