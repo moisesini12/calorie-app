@@ -233,6 +233,55 @@ def inject_black_theme():
         border: 1px solid var(--stroke-soft);
         box-shadow: 0 18px 40px rgba(15,23,42,0.12);
     }
+    
+    /* ===== HERO BANNER ===== */
+    
+    .hero-banner{
+        display: flex;
+        align-items: center;
+        gap: 18px;
+    
+        background: linear-gradient(
+            135deg,
+            rgba(34,197,94,0.25) 0%,
+            rgba(37,99,235,0.22) 100%
+        );
+    
+        padding: 22px 26px;
+        border-radius: 20px;
+        margin-bottom: 28px;
+    
+        box-shadow: 0 20px 50px rgba(15,23,42,0.15);
+    }
+    
+    .hero-logo{
+        width: 60px;
+        height: 60px;
+    
+        border-radius: 50%;
+        background: linear-gradient(135deg,#16a34a,#2563eb);
+    
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    
+        font-weight: 900;
+        font-size: 22px;
+        color: white;
+    }
+    
+    .hero-text h1{
+        margin: 0;
+        font-size: 34px !important;
+    }
+    
+    .hero-text p{
+        margin: 0;
+        font-size: 14px;
+        opacity: 0.8;
+    }
+
+
 
     </style>
     """, unsafe_allow_html=True)
@@ -274,8 +323,16 @@ def _bootstrap():
 
 _bootstrap()
 
-st.title("FitMacro")
-st.caption("Registra comidas, controla macros y sigue tu progreso como una app de fitness de verdad.")
+st.markdown("""
+<div class="hero-banner">
+    <div class="hero-logo">FM</div>
+    <div class="hero-text">
+        <h1>FitMacro</h1>
+        <p>Controla tus macros. Domina tu progreso.</p>
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
 
 
 # ==========================================================
@@ -879,6 +936,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
