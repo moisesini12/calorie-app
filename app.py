@@ -394,6 +394,33 @@ def inject_black_theme():
       font-size: 12px;
     }
 
+    /* Botón flotante Fit */
+    
+    .fit-fab{
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+    
+        width: 60px;
+        height: 60px;
+    
+        border-radius: 20px;
+    
+        background: linear-gradient(135deg,#16a34a,#2563eb);
+        color: white;
+    
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    
+        font-size: 26px;
+        font-weight: 900;
+    
+        box-shadow: 0 18px 40px rgba(15,23,42,0.25);
+        z-index: 9999;
+        cursor: pointer;
+    }
+
 
     </style>
     """, unsafe_allow_html=True)
@@ -467,6 +494,10 @@ st.markdown("""
         <p>Controla tus macros. Domina tu progreso.</p>
     </div>
 </div>
+""", unsafe_allow_html=True)
+
+st.markdown("""
+<div class="fit-fab">+</div>
 """, unsafe_allow_html=True)
 
 
@@ -1065,6 +1096,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
