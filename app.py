@@ -552,7 +552,7 @@ selected_date_str = selected_date.isoformat()
 
 page = st.sidebar.radio(
     "",
-    ["📊 Dashboard", "🍽 Registro", "➕ Añadir alimento", "🎯 Objetivos", "🧠 Chef IA", "🏋️ Rutina IA"],
+    ["📊 Dashboard", "🍽 Registro", "➕ Añadir alimento", "🎯 Objetivos", "👨‍🍳 Chef IA", "🏋️ Rutina IA"],
     label_visibility="collapsed",
     key="nav"
 )
@@ -1761,6 +1761,7 @@ elif page == "🏋️ Rutina IA":
         st.subheader("🛡️ Notas de seguridad")
         for s in plan.get("safety_notes", []):
             st.write(f"- {s}")
+
 
 
 
