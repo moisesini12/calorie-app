@@ -467,7 +467,7 @@ selected_date_str = selected_date.isoformat()
 
 page = st.sidebar.radio(
     "",
-    ["📊 Dashboard", "🍽 Registro", "🎯 Objetivos", "➕ Añadir alimento", "🧠 Coach IA"],
+    ["📊 Dashboard", "🍽 Registro", "➕ Añadir alimento", "🎯 Objetivos", "🧠 Coach IA"],
     label_visibility="collapsed",
     key="nav"
 )
@@ -1066,6 +1066,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
