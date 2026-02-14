@@ -271,21 +271,17 @@ def delete_food_by_id(food_id: int) -> None:
 
 
 def add_entry(entry: Dict[str, Any]) -> int:
-    """
-    Inserta una entrada en la pestaña 'entries' SIN lecturas previas (evita 429).
-    Usa un id tipo timestamp (ms) suficientemente único para una app personal.
-    """
     ws = _ws(TAB_ENTRIES)
 
-    # ✅ ID sin lecturas (ms desde epoch)
+    # ✅ ID estable sin lecturas (evita 429). Milis desde epoch.
     new_id = int(dt.datetime.utcnow().timestamp() * 1000)
 
-    row = [
+    row_values = [
         new_id,
         entry.get("user_id", ""),
-        entry.get("entry_date", ""),
-        entry.get("meal", ""),
-        entry.get("name", ""),
+        entry["entry_date"],
+        entry["meal"],
+        entry["name"],
         _to_float(entry.get("grams", 0)),
         _to_float(entry.get("calories", 0)),
         _to_float(entry.get("protein", 0)),
@@ -293,17 +289,32 @@ def add_entry(entry: Dict[str, Any]) -> int:
         _to_float(entry.get("fat", 0)),
     ]
 
-    # ✅ append con respuesta (no requiere otra lectura)
+    # ✅ Escribimos y pedimos que Google nos devuelva lo escrito (confirmación)
     ws.append_row(
-        row,
+        row_values,
         value_input_option="USER_ENTERED",
         insert_data_option="INSERT_ROWS",
-        include_values_in_response=True,
+        include_values_in_response=True
     )
 
+    # ✅ invalidación de caches de lecturas
     _cache_bump(TAB_ENTRIES)
     st.cache_data.clear()
+
+    # ✅ Verificación dura: la última fila DEBE ser la que acabamos de insertar
+    try:
+        last = ws.get_all_values()[-1]
+        # last[0] es id (col A)
+        if str(last[0]).strip() != str(new_id):
+            raise RuntimeError(
+                f"Append no visible: esperaba id={new_id} en última fila pero encontré {last[0]!r}. "
+                "Probable: estás mirando otro Sheet/tab o permisos/caché."
+            )
+    except Exception as e:
+        raise RuntimeError(f"No puedo verificar escritura en '{TAB_ENTRIES}'. Error: {repr(e)}") from e
+
     return new_id
+
 
 
 
@@ -437,6 +448,7 @@ def set_setting(key: str, value: str) -> None:
 
     ws.append_row([key, value], value_input_option="USER_ENTERED", insert_data_option="INSERT_ROWS")
     _cache_bump(TAB_SETTINGS)
+
 
 
 
