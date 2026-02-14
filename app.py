@@ -743,10 +743,17 @@ elif page == "🍽 Registro":
         for col in ["Proteínas", "Carbohidratos", "Grasas"]:
             if col in df_tbl.columns:
                 df_tbl[col] = pd.to_numeric(df_tbl[col], errors="coerce").fillna(0).round(1)
-        
+                
         styler = (
             df_tbl.style
             .hide(axis="index")
+            .format({
+                "Gramos": "{:.0f}",
+                "Calorías": "{:.0f}",
+                "Proteínas": "{:.1f}",
+                "Carbohidratos": "{:.1f}",
+                "Grasas": "{:.1f}",
+            })
             .set_table_styles([
                 {"selector": "table", "props": [
                     ("width", "100%"),
@@ -780,6 +787,7 @@ elif page == "🍽 Registro":
                 ]},
             ])
         )
+
         
         st.markdown(styler.to_html(), unsafe_allow_html=True)
 
@@ -1149,6 +1157,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
