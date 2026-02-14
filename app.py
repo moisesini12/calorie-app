@@ -19,176 +19,206 @@ def inject_black_theme():
     st.markdown("""
     <style>
     /* =========================
-       Fitness Pro (Light + Fresh)
+       FitMacro Pro (High Contrast)
        ========================= */
 
     :root{
-      --bg: #f3f6ff;               /* fondo suave con tinte azul */
-      --bg2: #eefbf3;              /* tinte verde muy sutil */
-      --panel: rgba(255,255,255,0.92);
+      /* Fondo: más contraste (aún light) */
+      --bg: #e9eef7;
+      --bg2: #e6f6ee;
+
+      /* Tarjetas */
+      --panel: rgba(255,255,255,0.96);
       --panel-solid: #ffffff;
-      --stroke: rgba(15, 23, 42, 0.10);
-      --stroke2: rgba(15, 23, 42, 0.06);
 
-      --txt: #0f172a;
-      --muted: #64748b;
+      /* Bordes y sombras */
+      --stroke: rgba(15, 23, 42, 0.14);
+      --stroke2: rgba(15, 23, 42, 0.08);
 
-      --accent: #16a34a;           /* verde fitness */
-      --accent2: #2563eb;          /* azul energía */
-      --accent3: #f97316;          /* naranja motivación */
+      /* Texto */
+      --txt: #0b1220;
+      --muted: #475569;       /* más oscuro = más legible */
+      --muted2: #64748b;
+
+      /* Acentos fitness */
+      --accent: #16a34a;      /* verde */
+      --accent2: #2563eb;     /* azul */
+      --accent3: #f97316;     /* naranja */
+
       --radius: 18px;
     }
 
-    /* Fondo con “wash” suave */
+    /* Fondo con más profundidad */
     html, body, [data-testid="stAppViewContainer"]{
-      background: radial-gradient(1200px 800px at 15% 10%, var(--bg2) 0%, transparent 55%),
-                  radial-gradient(900px 700px at 90% 20%, rgba(37, 99, 235, 0.10) 0%, transparent 55%),
-                  linear-gradient(180deg, var(--bg) 0%, #ffffff 100%) !important;
+      background:
+        radial-gradient(1200px 850px at 12% 8%, rgba(34,197,94,0.16) 0%, transparent 55%),
+        radial-gradient(900px 700px at 88% 14%, rgba(37,99,235,0.16) 0%, transparent 55%),
+        linear-gradient(180deg, var(--bg) 0%, #ffffff 100%) !important;
       color: var(--txt) !important;
     }
 
     .block-container{
-      max-width: 1150px;
-      padding-top: 22px;
+      max-width: 1180px;
+      padding-top: 18px;
       padding-bottom: 56px;
     }
 
-    /* Sidebar: tarjeta flotante */
+    /* Sidebar como panel premium */
     [data-testid="stSidebar"]{
       background: transparent !important;
     }
     [data-testid="stSidebar"] > div{
-      background: rgba(255,255,255,0.80) !important;
-      backdrop-filter: blur(12px);
+      background: rgba(255,255,255,0.88) !important;
+      backdrop-filter: blur(14px);
       border-right: 1px solid var(--stroke2) !important;
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
     }
 
-    /* Tipografía / headers */
+    /* Tipografía: más punch */
     h1{
-      font-size: 42px !important;
-      letter-spacing: -0.03em;
+      font-size: 44px !important;
+      letter-spacing: -0.04em;
       color: var(--txt) !important;
       margin-bottom: 0.25rem !important;
+      font-weight: 850 !important;
     }
     h2,h3{
-      letter-spacing: -0.02em;
+      letter-spacing: -0.03em;
       color: var(--txt) !important;
+      font-weight: 800 !important;
     }
     p, label, .stCaption, .stMarkdown{
       color: var(--muted) !important;
     }
-
-    /* ====== Botones ====== */
-    .stButton > button{
-      background: linear-gradient(135deg, var(--accent) 0%, #22c55e 40%, var(--accent2) 100%) !important;
-      border: 0 !important;
-      border-radius: 999px !important;
-      color: white !important;
-      padding: 10px 16px !important;
-      font-weight: 650 !important;
-      transition: transform .12s ease, box-shadow .12s ease, filter .12s ease;
-      box-shadow: 0 10px 24px rgba(37, 99, 235, 0.14);
-    }
-    .stButton > button:hover{
-      transform: translateY(-1px);
-      filter: brightness(1.03);
-      box-shadow: 0 14px 30px rgba(22, 163, 74, 0.18);
-    }
-    .stButton > button:active{
-      transform: translateY(0px);
+    .stCaption{
+      color: var(--muted2) !important;
     }
 
-    /* ====== Inputs ====== */
-    input, textarea{
-      background: var(--panel) !important;
-      border: 1px solid var(--stroke) !important;
-      border-radius: 14px !important;
-      color: var(--txt) !important;
-      box-shadow: 0 1px 0 rgba(15,23,42,0.03);
-    }
-    div[data-baseweb="select"] > div{
-      background: var(--panel) !important;
-      border: 1px solid var(--stroke) !important;
-      border-radius: 14px !important;
-      box-shadow: 0 1px 0 rgba(15,23,42,0.03);
-    }
-
-    /* ====== Métricas (cards pro) ====== */
-    div[data-testid="stMetric"]{
-      background: var(--panel-solid) !important;
-      border: 1px solid var(--stroke2) !important;
-      border-radius: 18px;
-      padding: 18px 18px 16px 18px;
-      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
-      position: relative;
-      overflow: hidden;
-    }
-    div[data-testid="stMetric"]::before{
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(900px 180px at 10% 0%, rgba(34,197,94,0.18) 0%, transparent 60%),
-                  radial-gradient(900px 180px at 90% 0%, rgba(37,99,235,0.14) 0%, transparent 60%);
-      pointer-events: none;
-    }
-    div[data-testid="stMetric"] label{
-      color: var(--muted) !important;
-      font-size: 12.5px !important;
-      z-index: 1;
-      position: relative;
-    }
-    div[data-testid="stMetric"] [data-testid="stMetricValue"]{
-      font-size: 34px !important;
-      font-weight: 800 !important;
-      color: var(--txt) !important;
-      z-index: 1;
-      position: relative;
-    }
-
-    /* ====== Dataframe como “card” ====== */
-    div[data-testid="stDataFrame"]{
-      background: var(--panel-solid) !important;
-      border: 1px solid var(--stroke2) !important;
-      border-radius: var(--radius) !important;
-      overflow: hidden;
-      box-shadow: 0 14px 36px rgba(15, 23, 42, 0.06);
-    }
-
-    /* ====== Progreso ====== */
-    div[data-testid="stProgress"]{
-      background: rgba(15, 23, 42, 0.06) !important;
-      border-radius: 999px !important;
-      overflow: hidden;
-    }
-    div[data-testid="stProgress"] > div > div{
-      background: linear-gradient(90deg, var(--accent) 0%, #22c55e 45%, var(--accent2) 100%) !important;
-    }
-
-    /* Divider / HR */
+    /* Dividers */
     hr{
       border: none !important;
       height: 1px !important;
       background: var(--stroke2) !important;
     }
 
-    /* Chat bubbles un pelín más “app” */
+    /* ===== Botones: más “app” ===== */
+    .stButton > button{
+      background: linear-gradient(135deg, var(--accent) 0%, #22c55e 35%, var(--accent2) 100%) !important;
+      border: 0 !important;
+      border-radius: 999px !important;
+      color: white !important;
+      padding: 10px 16px !important;
+      font-weight: 750 !important;
+      transition: transform .12s ease, box-shadow .12s ease, filter .12s ease;
+      box-shadow: 0 14px 34px rgba(37, 99, 235, 0.18);
+    }
+    .stButton > button:hover{
+      transform: translateY(-1px);
+      filter: brightness(1.04);
+      box-shadow: 0 18px 44px rgba(22, 163, 74, 0.22);
+    }
+
+    /* ===== Inputs: más contraste ===== */
+    input, textarea{
+      background: rgba(255,255,255,0.96) !important;
+      border: 1px solid var(--stroke) !important;
+      border-radius: 14px !important;
+      color: var(--txt) !important;
+      box-shadow: 0 2px 0 rgba(15,23,42,0.03);
+    }
+    div[data-baseweb="select"] > div{
+      background: rgba(255,255,255,0.96) !important;
+      border: 1px solid var(--stroke) !important;
+      border-radius: 14px !important;
+      box-shadow: 0 2px 0 rgba(15,23,42,0.03);
+    }
+
+    /* ===== Cards Métricas: mantenemos degradado, subimos contraste ===== */
+    div[data-testid="stMetric"]{
+      background: var(--panel-solid) !important;
+      border: 1px solid var(--stroke2) !important;
+      border-radius: 18px;
+      padding: 18px 18px 16px 18px;
+      box-shadow: 0 18px 46px rgba(15, 23, 42, 0.12);
+      position: relative;
+      overflow: hidden;
+    }
+    /* degradado más “definido” */
+    div[data-testid="stMetric"]::before{
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(900px 240px at 15% 0%, rgba(34,197,94,0.26) 0%, transparent 62%),
+        radial-gradient(900px 240px at 85% 0%, rgba(37,99,235,0.22) 0%, transparent 62%),
+        linear-gradient(180deg, rgba(15,23,42,0.02) 0%, transparent 55%);
+      pointer-events: none;
+    }
+    /* “borde luminoso” sutil */
+    div[data-testid="stMetric"]::after{
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 18px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.9),
+                  inset 0 0 0 1px rgba(15,23,42,0.06);
+      pointer-events: none;
+    }
+
+    div[data-testid="stMetric"] label{
+      color: var(--muted) !important;
+      font-size: 12.5px !important;
+      z-index: 1;
+      position: relative;
+      font-weight: 650 !important;
+    }
+    div[data-testid="stMetric"] [data-testid="stMetricValue"]{
+      font-size: 36px !important;
+      font-weight: 900 !important;
+      color: var(--txt) !important;
+      z-index: 1;
+      position: relative;
+    }
+
+    /* ===== Dataframe como card premium ===== */
+    div[data-testid="stDataFrame"]{
+      background: var(--panel-solid) !important;
+      border: 1px solid var(--stroke2) !important;
+      border-radius: var(--radius) !important;
+      overflow: hidden;
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.10);
+    }
+
+    /* ===== Progreso: barra más fit ===== */
+    div[data-testid="stProgress"]{
+      background: rgba(15, 23, 42, 0.10) !important;
+      border-radius: 999px !important;
+      overflow: hidden;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.8);
+    }
+    div[data-testid="stProgress"] > div > div{
+      background: linear-gradient(90deg, var(--accent) 0%, #22c55e 45%, var(--accent2) 100%) !important;
+    }
+
+    /* Chat: card con contraste */
     [data-testid="stChatMessage"]{
       background: var(--panel-solid) !important;
       border: 1px solid var(--stroke2) !important;
       border-radius: 18px !important;
-      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.10);
     }
 
     /* Scrollbar */
     ::-webkit-scrollbar{ width: 10px; }
     ::-webkit-scrollbar-track{ background: transparent; }
     ::-webkit-scrollbar-thumb{
-      background: rgba(15, 23, 42, 0.18);
+      background: rgba(15, 23, 42, 0.22);
       border-radius: 999px;
-      border: 3px solid rgba(255,255,255,0.65);
+      border: 3px solid rgba(255,255,255,0.75);
     }
     </style>
     """, unsafe_allow_html=True)
+
 
 
 
@@ -245,16 +275,19 @@ if page == "📊 Dashboard":
 
     st.metric("🔥 Calorías del día", f"{total_kcal:.0f} kcal")
     st.divider()
-
-    c1, c2, c3 = st.columns(3)
+    
+    c0, c1, c2, c3 = st.columns(4)
+    with c0:
+        st.metric("🔥 Calorías", f"{total_kcal:.0f} kcal")
     with c1:
         st.metric("🥩 Proteína", f"{total_protein:.1f} g")
     with c2:
         st.metric("🍚 Carbs", f"{total_carbs:.1f} g")
     with c3:
         st.metric("🥑 Grasas", f"{total_fat:.1f} g")
-
+    
     st.divider()
+
 
     st.subheader("🎯 Progreso del día")
     st.caption("Objetivo vs consumido y cuánto te queda.")
@@ -790,4 +823,5 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
