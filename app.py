@@ -195,7 +195,7 @@ def inject_black_theme():
     .hero-banner{
         display: flex;
         align-items: center;
-        gap: 14px;
+        gap: 30px;
 
         background: linear-gradient(
             135deg,
@@ -1906,6 +1906,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
