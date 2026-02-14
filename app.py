@@ -18,103 +18,178 @@ from your_foods import FOODS
 def inject_black_theme():
     st.markdown("""
     <style>
+    /* =========================
+       Fitness Pro (Light + Fresh)
+       ========================= */
+
     :root{
-      --bg: #000000;
-      --panel: rgba(255,255,255,0.04);
-      --stroke: rgba(255,255,255,0.08);
-      --stroke-2: rgba(255,255,255,0.12);
-      --txt: rgba(255,255,255,0.92);
-      --muted: rgba(255,255,255,0.60);
-      --accent: #39ff14;
+      --bg: #f3f6ff;               /* fondo suave con tinte azul */
+      --bg2: #eefbf3;              /* tinte verde muy sutil */
+      --panel: rgba(255,255,255,0.92);
+      --panel-solid: #ffffff;
+      --stroke: rgba(15, 23, 42, 0.10);
+      --stroke2: rgba(15, 23, 42, 0.06);
+
+      --txt: #0f172a;
+      --muted: #64748b;
+
+      --accent: #16a34a;           /* verde fitness */
+      --accent2: #2563eb;          /* azul energía */
+      --accent3: #f97316;          /* naranja motivación */
       --radius: 18px;
     }
 
+    /* Fondo con “wash” suave */
     html, body, [data-testid="stAppViewContainer"]{
-      background: var(--bg) !important;
+      background: radial-gradient(1200px 800px at 15% 10%, var(--bg2) 0%, transparent 55%),
+                  radial-gradient(900px 700px at 90% 20%, rgba(37, 99, 235, 0.10) 0%, transparent 55%),
+                  linear-gradient(180deg, var(--bg) 0%, #ffffff 100%) !important;
       color: var(--txt) !important;
     }
 
     .block-container{
-      max-width: 1100px;
-      padding-top: 28px;
-      padding-bottom: 60px;
+      max-width: 1150px;
+      padding-top: 22px;
+      padding-bottom: 56px;
     }
 
+    /* Sidebar: tarjeta flotante */
     [data-testid="stSidebar"]{
-      background: var(--bg) !important;
-      border-right: 1px solid var(--stroke) !important;
+      background: transparent !important;
+    }
+    [data-testid="stSidebar"] > div{
+      background: rgba(255,255,255,0.80) !important;
+      backdrop-filter: blur(12px);
+      border-right: 1px solid var(--stroke2) !important;
     }
 
-    h1{ font-size: 44px !important; letter-spacing: -0.03em; }
-    h2, h3{ letter-spacing: -0.02em; }
-    p, label, .stCaption, .stMarkdown{ color: var(--muted) !important; }
-
-    div[data-testid="stMetric"]{
-      background: #0b0b0b !important;
-      border: 1px solid #1a1a1a !important;
-      border-radius: 16px;
-      padding: 18px;
-      box-shadow: 0 0 0 1px #111 inset;
+    /* Tipografía / headers */
+    h1{
+      font-size: 42px !important;
+      letter-spacing: -0.03em;
+      color: var(--txt) !important;
+      margin-bottom: 0.25rem !important;
     }
-
-    div[data-testid="stMetric"] label{ color: var(--muted) !important; font-size: 13px !important; }
-    div[data-testid="stMetric"] [data-testid="stMetricValue"]{
-      font-size: 34px !important;
-      font-weight: 700 !important;
+    h2,h3{
+      letter-spacing: -0.02em;
       color: var(--txt) !important;
     }
+    p, label, .stCaption, .stMarkdown{
+      color: var(--muted) !important;
+    }
 
+    /* ====== Botones ====== */
     .stButton > button{
-      background: var(--panel) !important;
-      border: 1px solid var(--stroke-2) !important;
+      background: linear-gradient(135deg, var(--accent) 0%, #22c55e 40%, var(--accent2) 100%) !important;
+      border: 0 !important;
       border-radius: 999px !important;
-      color: var(--txt) !important;
+      color: white !important;
       padding: 10px 16px !important;
-      transition: all .15s ease;
+      font-weight: 650 !important;
+      transition: transform .12s ease, box-shadow .12s ease, filter .12s ease;
+      box-shadow: 0 10px 24px rgba(37, 99, 235, 0.14);
     }
     .stButton > button:hover{
       transform: translateY(-1px);
-      border-color: rgba(57,255,20,0.35) !important;
-      box-shadow: 0 8px 26px rgba(57,255,20,0.08);
+      filter: brightness(1.03);
+      box-shadow: 0 14px 30px rgba(22, 163, 74, 0.18);
+    }
+    .stButton > button:active{
+      transform: translateY(0px);
     }
 
+    /* ====== Inputs ====== */
     input, textarea{
       background: var(--panel) !important;
       border: 1px solid var(--stroke) !important;
       border-radius: 14px !important;
       color: var(--txt) !important;
+      box-shadow: 0 1px 0 rgba(15,23,42,0.03);
     }
     div[data-baseweb="select"] > div{
       background: var(--panel) !important;
       border: 1px solid var(--stroke) !important;
       border-radius: 14px !important;
+      box-shadow: 0 1px 0 rgba(15,23,42,0.03);
     }
 
+    /* ====== Métricas (cards pro) ====== */
+    div[data-testid="stMetric"]{
+      background: var(--panel-solid) !important;
+      border: 1px solid var(--stroke2) !important;
+      border-radius: 18px;
+      padding: 18px 18px 16px 18px;
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+      position: relative;
+      overflow: hidden;
+    }
+    div[data-testid="stMetric"]::before{
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(900px 180px at 10% 0%, rgba(34,197,94,0.18) 0%, transparent 60%),
+                  radial-gradient(900px 180px at 90% 0%, rgba(37,99,235,0.14) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    div[data-testid="stMetric"] label{
+      color: var(--muted) !important;
+      font-size: 12.5px !important;
+      z-index: 1;
+      position: relative;
+    }
+    div[data-testid="stMetric"] [data-testid="stMetricValue"]{
+      font-size: 34px !important;
+      font-weight: 800 !important;
+      color: var(--txt) !important;
+      z-index: 1;
+      position: relative;
+    }
+
+    /* ====== Dataframe como “card” ====== */
+    div[data-testid="stDataFrame"]{
+      background: var(--panel-solid) !important;
+      border: 1px solid var(--stroke2) !important;
+      border-radius: var(--radius) !important;
+      overflow: hidden;
+      box-shadow: 0 14px 36px rgba(15, 23, 42, 0.06);
+    }
+
+    /* ====== Progreso ====== */
+    div[data-testid="stProgress"]{
+      background: rgba(15, 23, 42, 0.06) !important;
+      border-radius: 999px !important;
+      overflow: hidden;
+    }
+    div[data-testid="stProgress"] > div > div{
+      background: linear-gradient(90deg, var(--accent) 0%, #22c55e 45%, var(--accent2) 100%) !important;
+    }
+
+    /* Divider / HR */
     hr{
       border: none !important;
       height: 1px !important;
-      background: var(--stroke) !important;
+      background: var(--stroke2) !important;
     }
 
-    div[data-testid="stDataFrame"]{
-      background: var(--panel) !important;
-      border: 1px solid var(--stroke) !important;
-      border-radius: var(--radius) !important;
-      overflow: hidden;
+    /* Chat bubbles un pelín más “app” */
+    [data-testid="stChatMessage"]{
+      background: var(--panel-solid) !important;
+      border: 1px solid var(--stroke2) !important;
+      border-radius: 18px !important;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
     }
 
-    div[data-testid="stProgress"] > div > div{
-      background-color: var(--accent) !important;
-    }
-
-    ::-webkit-scrollbar{ width: 8px; }
-    ::-webkit-scrollbar-track{ background: var(--bg); }
+    /* Scrollbar */
+    ::-webkit-scrollbar{ width: 10px; }
+    ::-webkit-scrollbar-track{ background: transparent; }
     ::-webkit-scrollbar-thumb{
-      background: rgba(255,255,255,0.12);
+      background: rgba(15, 23, 42, 0.18);
       border-radius: 999px;
+      border: 3px solid rgba(255,255,255,0.65);
     }
     </style>
     """, unsafe_allow_html=True)
+
 
 
 # ---------------------------
@@ -138,6 +213,9 @@ page = st.sidebar.radio(
     label_visibility="collapsed"
 )
 
+st.sidebar.markdown("---")
+st.sidebar.caption("⚡ Tip: usa el mismo usuario para que el histórico sea consistente.")
+
 # Bootstrap BD (una vez)
 @st.cache_resource
 def _bootstrap():
@@ -146,7 +224,8 @@ def _bootstrap():
 
 _bootstrap()
 
-st.title("Calculadora de calorías y macros")
+st.title("FitMacro")
+st.caption("Registra comidas, controla macros y sigue tu progreso como una app de fitness de verdad.")
 
 
 # ==========================================================
@@ -711,3 +790,4 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
