@@ -276,8 +276,9 @@ elif page == "🍽 Registro":
                     **macros
                 }
                 new_id = add_entry(entry)
+                
                 st.success(f"✅ Entrada guardada (id={new_id})")
-                st.rerun()
+                # ⛔ NO rerun: dejamos que siga el código y lea rows abajo en esta misma ejecución
 
 
             except Exception as e:
@@ -652,5 +653,6 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
