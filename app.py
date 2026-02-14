@@ -618,10 +618,12 @@ if page == "📊 Dashboard":
     st.subheader("🎯 Progreso del día")
     st.caption("Objetivo vs consumido y cuánto te queda.")
 
-    target_kcal = float(get_setting("target_deficit_calories", 1800))
-    target_p = float(get_setting("target_protein", 120))
-    target_c = float(get_setting("target_carbs", 250))
-    target_f = float(get_setting("target_fat", 60))
+    uid = st.session_state["user_id"]
+    target_kcal = float(get_setting("target_deficit_calories", 1800, user_id=uid))
+    target_p = float(get_setting("target_protein", 120, user_id=uid))
+    target_c = float(get_setting("target_carbs", 250, user_id=uid))
+    target_f = float(get_setting("target_fat", 60, user_id=uid))
+
 
     def clamp01(x: float) -> float:
         return 0.0 if x < 0 else 1.0 if x > 1 else x
@@ -925,12 +927,15 @@ elif page == "🍽 Registro":
 # PÁGINA: OBJETIVOS
 # ==========================================================
 elif page == "🎯 Objetivos":
-    saved_sex = str(get_setting("sex", "M")).upper().strip()
-    saved_age = float(get_setting("age", 25))
-    saved_weight = float(get_setting("weight", 70))
-    saved_height = float(get_setting("height", 175))
-    saved_activity = float(get_setting("activity", 1.55))
-    saved_deficit = float(get_setting("deficit_pct", 20))
+    uid = st.session_state["user_id"]
+    
+    saved_sex = str(get_setting("sex", "M", user_id=uid)).upper().strip()
+    saved_age = float(get_setting("age", 25, user_id=uid))
+    saved_weight = float(get_setting("weight", 70, user_id=uid))
+    saved_height = float(get_setting("height", 175, user_id=uid))
+    saved_activity = float(get_setting("activity", 1.55, user_id=uid))
+    saved_deficit = float(get_setting("deficit_pct", 20, user_id=uid))
+
 
     st.subheader("🎯 Objetivos")
     st.caption("Calcula y guarda tus objetivos diarios.")
@@ -971,18 +976,19 @@ elif page == "🎯 Objetivos":
             deficit_pct=float(deficit_pct),
         )
 
-        set_setting("sex", str(sex))
-        set_setting("age", str(age))
-        set_setting("weight", str(weight))
-        set_setting("height", str(height))
-        set_setting("activity", str(activity))
-        set_setting("deficit_pct", str(deficit_pct))
+        set_setting("sex", str(sex), user_id=uid)
+        set_setting("age", str(age), user_id=uid)
+        set_setting("weight", str(weight), user_id=uid)
+        set_setting("height", str(height), user_id=uid)
+        set_setting("activity", str(activity), user_id=uid)
+        set_setting("deficit_pct", str(deficit_pct), user_id=uid)
+        
+        set_setting("target_maintenance", str(maintenance), user_id=uid)
+        set_setting("target_deficit_calories", str(deficit_kcal), user_id=uid)
+        set_setting("target_protein", str(protein_g), user_id=uid)
+        set_setting("target_carbs", str(carbs_g), user_id=uid)
+        set_setting("target_fat", str(fat_g), user_id=uid)
 
-        set_setting("target_maintenance", str(maintenance))
-        set_setting("target_deficit_calories", str(deficit_kcal))
-        set_setting("target_protein", str(protein_g))
-        set_setting("target_carbs", str(carbs_g))
-        set_setting("target_fat", str(fat_g))
 
         st.cache_data.clear()
         st.success("Perfil y objetivos guardados ✅")
@@ -990,11 +996,12 @@ elif page == "🎯 Objetivos":
 
     st.divider()
 
-    target_maint = get_setting("target_maintenance")
-    target_def = get_setting("target_deficit_calories")
-    target_p = get_setting("target_protein")
-    target_c = get_setting("target_carbs")
-    target_f = get_setting("target_fat")
+    target_maint = get_setting("target_maintenance", user_id=uid)
+    target_def = get_setting("target_deficit_calories", user_id=uid)
+    target_p = get_setting("target_protein", user_id=uid)
+    target_c = get_setting("target_carbs", user_id=uid)
+    target_f = get_setting("target_fat", user_id=uid)
+
 
     if all([target_maint, target_def, target_p, target_c, target_f]):
         st.subheader("📌 Tus objetivos guardados")
@@ -1159,10 +1166,12 @@ elif page == "🧠 Coach IA":
             food_map[f["name"]] = f
     allowed = list(food_map.keys())
 
-    target_def = float(get_setting("target_deficit_calories", 2000))
-    target_p = float(get_setting("target_protein", 120))
-    target_c = float(get_setting("target_carbs", 250))
-    target_f = float(get_setting("target_fat", 60))
+    uid = st.session_state["user_id"]
+    target_def = float(get_setting("target_deficit_calories", 2000, user_id=uid))
+    target_p = float(get_setting("target_protein", 120, user_id=uid))
+    target_c = float(get_setting("target_carbs", 250, user_id=uid))
+    target_f = float(get_setting("target_fat", 60, user_id=uid))
+
 
     kcal_obj = st.number_input("Objetivo kcal (día)", min_value=800.0, max_value=6000.0, value=target_def, step=50.0, key="menu_kcal")
     prot_obj = st.number_input("Proteína objetivo (g)", min_value=0.0, max_value=400.0, value=target_p, step=5.0, key="menu_p")
@@ -1205,6 +1214,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
