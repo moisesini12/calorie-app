@@ -445,8 +445,10 @@ page = st.sidebar.radio(
     key="nav"
 )
 
-st.sidebar.markdown("---")
-st.sidebar.caption("⚡ Usa el mismo usuario para mantener el histórico.")
+st.sidebar.markdown("""
+<div class="sb-tip">⚡ Usa el mismo usuario para mantener el histórico.</div>
+""", unsafe_allow_html=True)
+
 
 
 # Bootstrap BD (una vez)
@@ -1063,6 +1065,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
