@@ -12,9 +12,7 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-inject_black_theme()
 
-require_login()
 
 from datetime import date
 
@@ -1334,6 +1332,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
