@@ -182,6 +182,24 @@ def inject_black_theme():
       box-shadow: 0 16px 40px rgba(15, 23, 42, 0.12);
     }
 
+    /* ===== FORZAR TEXTO NEGRO EN MÉTRICAS ===== */
+    
+    div[data-testid="stMetric"] label{
+        color: #000000 !important;
+        font-weight: 800 !important;
+    }
+    
+    div[data-testid="stMetric"] [data-testid="stMetricValue"]{
+        color: #000000 !important;
+        font-weight: 900 !important;
+    }
+    
+    /* Por si Streamlit cambia estructura interna */
+    div[data-testid="stMetric"] *{
+        color: #000000 !important;
+    }
+
+    
     </style>
     """, unsafe_allow_html=True)
 
@@ -790,6 +808,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
