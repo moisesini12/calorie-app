@@ -552,7 +552,7 @@ selected_date_str = selected_date.isoformat()
 
 page = st.sidebar.radio(
     "",
-    ["📊 Dashboard", "🍽 Registro", "➕ Añadir alimento", "🎯 Objetivos", "🧠 Coach IA", "🏋️ Rutina IA"],
+    ["📊 Dashboard", "🍽 Registro", "➕ Añadir alimento", "🎯 Objetivos", "🧠 Chef IA", "🏋️ Rutina IA"],
     label_visibility="collapsed",
     key="nav"
 )
@@ -1229,7 +1229,7 @@ elif page == "➕ Añadir alimento":
 # ==========================================================
 # PÁGINA: COACH IA
 # ==========================================================
-elif page == "🧠 Coach IA":
+elif page == "🧠 Chef IA":
     import json
     from ai_groq import chat_answer, generate_menu_json
 
@@ -1589,6 +1589,7 @@ elif page == "🏋️ Rutina IA":
         st.subheader("🛡️ Notas de seguridad")
         for s in plan.get("safety_notes", []):
             st.write(f"- {s}")
+
 
 
 
