@@ -726,42 +726,6 @@ def require_login() -> None:
         st.stop()
 
 
-# ---------------------------
-# Sidebar helpers
-# ---------------------------
-def sidebar_section(title: str, icon: str, key: str, default_open: bool = False) -> bool:
-    """
-    Crea un 'desplegable' elegante en sidebar usando estado y botones.
-    Devuelve True si está abierto.
-    """
-    state_key = f"_sb_open_{key}"
-    if state_key not in st.session_state:
-        st.session_state[state_key] = default_open
-
-    # click = toggle
-    if st.sidebar.button(f"{icon} {title}", key=f"_btn_{key}", use_container_width=True):
-        st.session_state[state_key] = not st.session_state[state_key]
-
-    open_now = st.session_state[state_key]
-    chevron = "▾" if open_now else "▸"
-
-    # header visual
-    st.sidebar.markdown(
-        f"""
-        <div class="sb-acc">
-          <div class="sb-acc-btn">
-            <div class="sb-acc-icon">{icon}</div>
-            <div class="sb-acc-title">{title}</div>
-            <div class="sb-acc-chevron">{chevron}</div>
-          </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-    return open_now
-
-
-
 
 
 # ---------------------------
@@ -807,67 +771,74 @@ if st.session_state["goto_page"]:
 
 
 # =========================
-# SIDEBAR: SECCIONES + NAVEGACIÓN
+# SIDEBAR: MENÚ EN DESPLEGABLES (SIN DUPLICADOS)
 # =========================
 
 if "nav" not in st.session_state:
     st.session_state["nav"] = "📊 Dashboard"
 
-# --- Principal ---
-open_principal = sidebar_section("Principal", "📊", "principal", default_open=True)
-nav_principal = None
-if open_principal:
-    st.sidebar.markdown('<div class="sb-acc-body">', unsafe_allow_html=True)
-    nav_principal = st.sidebar.radio(
-        "",
-        ["📊 Dashboard"],
-        label_visibility="collapsed",
-        key="nav_principal"
-    )
-    st.sidebar.markdown("</div>", unsafe_allow_html=True)
+def _set_nav_from(widget_key: str):
+    st.session_state["nav"] = st.session_state.get(widget_key, st.session_state["nav"])
 
-# --- Nutrición ---
-open_nutri = sidebar_section("Nutrición", "🍽️", "nutri", default_open=False)
-nav_nutri = None
-if open_nutri:
-    st.sidebar.markdown('<div class="sb-acc-body">', unsafe_allow_html=True)
-    nav_nutri = st.sidebar.radio(
-        "",
-        ["🍽 Registro", "👨‍🍳 Chef IA", "➕ Añadir alimento"],
-        label_visibility="collapsed",
-        key="nav_nutri"
-    )
-    st.sidebar.markdown("</div>", unsafe_allow_html=True)
+# Listas de páginas
+P_MAIN = ["📊 Dashboard"]
+P_NUTRI = ["🍽 Registro", "👨‍🍳 Chef IA", "➕ Añadir alimento"]
+P_TRAIN = ["🏋️ Rutina IA"]
+P_PROFILE = ["🎯 Objetivos"]
 
-# --- Entrenamiento ---
-open_train = sidebar_section("Entrenamiento", "🏋️", "train", default_open=False)
-nav_train = None
-if open_train:
-    st.sidebar.markdown('<div class="sb-acc-body">', unsafe_allow_html=True)
-    nav_train = st.sidebar.radio(
-        "",
-        ["🏋️ Rutina IA"],
-        label_visibility="collapsed",
-        key="nav_train"
-    )
-    st.sidebar.markdown("</div>", unsafe_allow_html=True)
+# Expansiones: abre por defecto el grupo donde estés ahora
+nav_now = st.session_state["nav"]
+exp_main = nav_now in P_MAIN
+exp_nutri = nav_now in P_NUTRI
+exp_train = nav_now in P_TRAIN
+exp_profile = nav_now in P_PROFILE
 
-# --- Perfil ---
-open_profile = sidebar_section("Perfil", "⚙️", "profile", default_open=False)
-nav_profile = None
-if open_profile:
-    st.sidebar.markdown('<div class="sb-acc-body">', unsafe_allow_html=True)
-    nav_profile = st.sidebar.radio(
+with st.sidebar.expander("📊 Principal", expanded=exp_main):
+    st.sidebar.radio(
         "",
-        ["🎯 Objetivos"],
+        P_MAIN,
+        index=P_MAIN.index(nav_now) if nav_now in P_MAIN else 0,
+        key="nav_main",
         label_visibility="collapsed",
-        key="nav_profile"
+        on_change=_set_nav_from,
+        args=("nav_main",),
     )
-    st.sidebar.markdown("</div>", unsafe_allow_html=True)
 
-# Resolver página activa
-page = nav_principal or nav_nutri or nav_train or nav_profile or st.session_state["nav"]
-st.session_state["nav"] = page
+with st.sidebar.expander("🍽️ Nutrición", expanded=exp_nutri):
+    st.sidebar.radio(
+        "",
+        P_NUTRI,
+        index=P_NUTRI.index(nav_now) if nav_now in P_NUTRI else 0,
+        key="nav_nutri",
+        label_visibility="collapsed",
+        on_change=_set_nav_from,
+        args=("nav_nutri",),
+    )
+
+with st.sidebar.expander("🏋️ Entrenamiento", expanded=exp_train):
+    st.sidebar.radio(
+        "",
+        P_TRAIN,
+        index=P_TRAIN.index(nav_now) if nav_now in P_TRAIN else 0,
+        key="nav_train",
+        label_visibility="collapsed",
+        on_change=_set_nav_from,
+        args=("nav_train",),
+    )
+
+with st.sidebar.expander("⚙️ Perfil", expanded=exp_profile):
+    st.sidebar.radio(
+        "",
+        P_PROFILE,
+        index=P_PROFILE.index(nav_now) if nav_now in P_PROFILE else 0,
+        key="nav_profile",
+        label_visibility="collapsed",
+        on_change=_set_nav_from,
+        args=("nav_profile",),
+    )
+
+page = st.session_state["nav"]
+
 
 
 
@@ -2116,6 +2087,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
