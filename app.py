@@ -1276,7 +1276,8 @@ elif page == "👨‍🍳 Chef IA":
     # Selector móvil: Menús vs Platos
     # ---------------------------
     if "chef_mode" not in st.session_state:
-        st.session_state["chef_mode"] = "menus"  # default
+        st.session_state["chef_mode"] = "none"  # al entrar: no mostrar nada
+
 
     b1, b2 = st.columns(2)
     with b1:
@@ -1300,7 +1301,10 @@ elif page == "👨‍🍳 Chef IA":
             food_map[f["name"]] = f
     allowed = list(food_map.keys())
 
-    mode = st.session_state.get("chef_mode", "menus")
+    if mode == "none":
+        st.info("Elige qué quieres usar: 🥘 Platos o 🍽️ Menús.")
+        st.stop()
+
 
     # ==========================================================
     # 🍽️ GENERADOR DE MENÚS
@@ -1761,6 +1765,7 @@ elif page == "🏋️ Rutina IA":
         st.subheader("🛡️ Notas de seguridad")
         for s in plan.get("safety_notes", []):
             st.write(f"- {s}")
+
 
 
 
