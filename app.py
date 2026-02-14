@@ -448,8 +448,7 @@ def _verify_password(password: str, stored: str) -> bool:
 
 
 def _get_users() -> dict:
-    users = st.secrets.get("users", {})
-    return dict(users)
+    return dict(st.secrets.get("users", {}))
 
 
 def require_login() -> None:
@@ -514,6 +513,7 @@ def require_login() -> None:
         login_form()
         st.markdown("</div>", unsafe_allow_html=True)
         st.stop()
+
 
 
 
@@ -1205,6 +1205,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
