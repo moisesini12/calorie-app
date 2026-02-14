@@ -199,6 +199,46 @@ def inject_black_theme():
         color: #000000 !important;
     }
 
+    /* ===== DATAFRAME FITNESS CARD ===== */
+    
+    div[data-testid="stDataFrame"]{
+        background: linear-gradient(
+            180deg,
+            rgba(34,197,94,0.18) 0%,
+            rgba(37,99,235,0.15) 100%
+        ) !important;
+    
+        border: 1px solid rgba(15,23,42,0.08) !important;
+        border-radius: 18px !important;
+        box-shadow: 0 18px 40px rgba(15,23,42,0.12);
+    }
+    
+    /* Encabezado tabla */
+    div[data-testid="stDataFrame"] thead{
+        background: rgba(255,255,255,0.6) !important;
+        color: #000000 !important;
+        font-weight: 800 !important;
+    }
+    
+    /* Celdas */
+    div[data-testid="stDataFrame"] td{
+        background: transparent !important;
+        color: #000000 !important;
+        font-weight: 600 !important;
+    }
+
+    .fit-card{
+        background: linear-gradient(
+            180deg,
+            rgba(34,197,94,0.18) 0%,
+            rgba(37,99,235,0.15) 100%
+        );
+        padding: 16px 18px;
+        border-radius: 18px;
+        border: 1px solid rgba(15,23,42,0.08);
+        box-shadow: 0 18px 40px rgba(15,23,42,0.12);
+    }
+
     
     </style>
     """, unsafe_allow_html=True)
@@ -247,6 +287,8 @@ st.caption("Registra comidas, controla macros y sigue tu progreso como una app d
 # PÁGINA: DASHBOARD
 # ==========================================================
 if page == "📊 Dashboard":
+    import altair as alt
+
     st.subheader("📊 Dashboard")
     st.caption(f"Día: {selected_date_str}")
     st.divider()
@@ -258,9 +300,7 @@ if page == "📊 Dashboard":
     total_carbs = sum(float(r["carbs"]) for r in rows) if rows else 0.0
     total_fat = sum(float(r["fat"]) for r in rows) if rows else 0.0
 
-    st.metric("🔥 Calorías del día", f"{total_kcal:.0f} kcal")
-    st.divider()
-    
+    # ===== GRID METRICS (fit style) =====
     c0, c1, c2, c3 = st.columns(4)
     with c0:
         st.metric("🔥 Calorías", f"{total_kcal:.0f} kcal")
@@ -270,10 +310,10 @@ if page == "📊 Dashboard":
         st.metric("🍚 Carbs", f"{total_carbs:.1f} g")
     with c3:
         st.metric("🥑 Grasas", f"{total_fat:.1f} g")
-    
+
     st.divider()
 
-
+    # ===== PROGRESO =====
     st.subheader("🎯 Progreso del día")
     st.caption("Objetivo vs consumido y cuánto te queda.")
 
@@ -305,6 +345,42 @@ if page == "📊 Dashboard":
     progress_row("🥩 Proteína", total_protein, target_p, " g")
     progress_row("🍚 Carbs", total_carbs, target_c, " g")
     progress_row("🥑 Grasas", total_fat, target_f, " g")
+
+    st.divider()
+
+    # ===== HISTÓRICO EN CARD DEGRADADA =====
+    st.subheader("📈 Tendencia (últimos 30 días)")
+    history = daily_totals_last_days(30, st.session_state["user_id"])
+    hist_df = pd.DataFrame(history, columns=["date", "calories", "protein", "carbs", "fat"])
+
+    if not hist_df.empty:
+        hist_df["date"] = pd.to_datetime(hist_df["date"])
+        hist_df = hist_df.sort_values("date")
+
+        chart = (
+            alt.Chart(hist_df)
+            .mark_line(strokeWidth=3)
+            .encode(
+                x=alt.X("date:T", title=None),
+                y=alt.Y("calories:Q", title=None),
+                tooltip=["date:T", "calories:Q"]
+            )
+            .properties(height=280)
+            .configure_view(fill="transparent", stroke=None)
+            .configure_axis(
+                labelColor="#000000",
+                titleColor="#000000",
+                gridColor="rgba(0,0,0,0.10)"
+            )
+        )
+
+        st.markdown('<div class="fit-card">', unsafe_allow_html=True)
+        st.altair_chart(chart, use_container_width=True)
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    else:
+        st.info("Aún no hay datos suficientes para la tendencia.")
+
 
 
 # ==========================================================
@@ -808,6 +884,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
