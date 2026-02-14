@@ -505,58 +505,51 @@ elif page == "🍽 Registro":
         food = st.selectbox("Alimento", foods_in_cat, format_func=lambda x: x["name"], key="reg_food")
 
     # FORM de alta
-    with st.form("add_entry_form", clear_on_submit=False):
-        col1, col2, col3 = st.columns(3)
+with st.form("add_entry_form", clear_on_submit=False):
 
-        with col1:
-            grams = float(st.number_input(
-                "Gramos consumidos",
-                min_value=1.0,
-                step=1.0,
-                value=100.0,
-                format="%.0f",
-                key="reg_grams"
-            ))
+    grams = float(
+        st.number_input(
+            "Gramos consumidos",
+            min_value=1.0,
+            step=1.0,
+            value=100.0,
+            format="%.0f",
+            key="reg_grams"
+        )
+    )
 
-        with col2:
-            meal = st.radio(
-                "Comida",
-                ["Desayuno", "Almuerzo", "Merienda", "Cena"],
-                horizontal=True,
-                key="reg_meal"
-            )
+    meal = st.radio(
+        "Comida",
+        ["Desayuno", "Almuerzo", "Merienda", "Cena"],
+        horizontal=False,
+        key="reg_meal"
+    )
 
-        with col3:
-            st.write("")
-            st.write("")
-            add_btn = st.form_submit_button("Añadir al registro")
+    add_btn = st.form_submit_button("Añadir al registro")
 
-        if add_btn:
-            try:
-                macros = scale_macros(food, grams)
-                entry = {
-                    "user_id": st.session_state["user_id"],
-                    "entry_date": selected_date_str,
-                    "meal": meal,
-                    "name": food["name"],
-                    "grams": float(grams),
-                    **macros
-                }
+    if add_btn:
+        try:
+            macros = scale_macros(food, grams)
+            entry = {
+                "user_id": st.session_state["user_id"],
+                "entry_date": selected_date_str,
+                "meal": meal,
+                "name": food["name"],
+                "grams": float(grams),
+                **macros
+            }
 
-                new_id = add_entry(entry)
+            new_id = add_entry(entry)
 
-                # ✅ limpia caché de lecturas para que se vea al refrescar
-                st.cache_data.clear()
+            st.cache_data.clear()
+            st.session_state["_just_added"] = True
+            st.session_state["_last_add_id"] = new_id
+            st.rerun()
 
-                # ✅ mensaje persistente tras rerun
-                st.session_state["_just_added"] = True
-                st.session_state["_last_add_id"] = new_id
+        except Exception as e:
+            st.error("❌ Error guardando la entrada en Google Sheets")
+            st.exception(e)
 
-                st.rerun()
-
-            except Exception as e:
-                st.error("❌ Error guardando la entrada en Google Sheets")
-                st.exception(e)
 
     # Lectura del día (siempre, después del form)
     st.subheader("Registro")
@@ -949,6 +942,7 @@ elif page == "🧠 Coach IA":
         st.success(
             f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
         )
+
 
 
 
