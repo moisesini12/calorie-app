@@ -634,6 +634,16 @@ selected_date = st.sidebar.date_input(
 
 selected_date_str = selected_date.isoformat()
 
+# --- Navegación controlada (sin romper widgets) ---
+if "goto_page" not in st.session_state:
+    st.session_state["goto_page"] = None
+
+# Si hay petición de cambio de página, la aplicamos ANTES del radio
+if st.session_state["goto_page"]:
+    st.session_state["nav"] = st.session_state["goto_page"]
+    st.session_state["goto_page"] = None
+
+
 page = st.sidebar.radio(
     "",
     ["📊 Dashboard", "🍽 Registro", "➕ Añadir alimento", "🎯 Objetivos", "👨‍🍳 Chef IA", "🏋️ Rutina IA"],
@@ -809,9 +819,10 @@ if page == "📊 Dashboard":
         st.caption("Atajos")
         cA, cB = st.columns(2)
         with cA:
-            if st.button("➕ Ir a Registro", use_container_width=True):
-                st.session_state["nav"] = "🍽 Registro"
+            if st.button("➕ Ir a Registro", type="primary"):
+                st.session_state["goto_page"] = "🍽 Registro"
                 st.rerun()
+
         with cB:
             if st.button("🎯 Ir a Objetivos", use_container_width=True):
                 st.session_state["nav"] = "🎯 Objetivos"
@@ -1906,6 +1917,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
