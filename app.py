@@ -32,232 +32,385 @@ st.set_page_config(
 def inject_black_theme():
     st.markdown("""
     <style>
+    /* =========================================================
+       FITMACRO PRO THEME v2 (Radical / Premium)
+       ========================================================= */
+
     :root{
-        --bg: #dce3ed;
-        --panel: #ffffff;
-        --panel-soft: #f4f7fb;
+        --bg0: #0b1220;
+        --bg1: #0f172a;
+        --glass: rgba(255,255,255,0.08);
+        --glass2: rgba(255,255,255,0.12);
 
-        --stroke: rgba(15,23,42,0.18);
-        --stroke-soft: rgba(15,23,42,0.08);
+        --card: rgba(255,255,255,0.10);
+        --card2: rgba(255,255,255,0.14);
 
-        --txt: #0f172a;
-        --muted: #334155;
+        --stroke: rgba(255,255,255,0.14);
+        --stroke2: rgba(255,255,255,0.10);
 
-        --green: #16a34a;
-        --blue: #2563eb;
+        --txt: rgba(255,255,255,0.92);
+        --muted: rgba(255,255,255,0.68);
+        --faint: rgba(255,255,255,0.52);
 
-        --radius: 18px;
+        --green: #22c55e;
+        --mint: #34d399;
+        --cyan: #22d3ee;
+        --blue: #60a5fa;
+        --violet: #a78bfa;
+
+        --shadow: 0 18px 50px rgba(0,0,0,0.35);
+        --shadow2: 0 12px 28px rgba(0,0,0,0.28);
+
+        --r16: 16px;
+        --r20: 20px;
+        --r24: 24px;
     }
 
-    /* =========================
-       GLOBAL
-       ========================= */
+    /* -------------------------
+       APP BACKGROUND
+       ------------------------- */
     html, body, [data-testid="stAppViewContainer"]{
         background:
-            radial-gradient(900px 600px at 10% 10%, rgba(34,197,94,0.15) 0%, transparent 60%),
-            radial-gradient(900px 600px at 90% 10%, rgba(37,99,235,0.15) 0%, transparent 60%),
-            linear-gradient(180deg, var(--bg) 0%, #eef2f9 100%) !important;
+          radial-gradient(900px 700px at 10% 10%, rgba(34,197,94,0.18) 0%, transparent 55%),
+          radial-gradient(900px 700px at 90% 12%, rgba(96,165,250,0.18) 0%, transparent 55%),
+          radial-gradient(900px 700px at 60% 85%, rgba(167,139,250,0.14) 0%, transparent 55%),
+          linear-gradient(180deg, var(--bg0) 0%, var(--bg1) 100%) !important;
         color: var(--txt) !important;
     }
 
+    /* Container spacing */
     .block-container{
         max-width: 1180px;
-        padding-top: 6px;
-        padding-bottom: 50px;
+        padding-top: 18px !important;
+        padding-bottom: 60px !important;
     }
 
-    h1{ font-size: 42px !important; font-weight: 900 !important; }
-    h2,h3{ font-weight: 800 !important; }
-
-    p,label,.stCaption,.stMarkdown{
+    /* Typography */
+    h1, h2, h3, h4{
+        color: var(--txt) !important;
+        letter-spacing: -0.02em;
+    }
+    h1{ font-weight: 950 !important; font-size: 44px !important; }
+    h2{ font-weight: 900 !important; }
+    h3{ font-weight: 850 !important; }
+    p, label, .stCaption, .stMarkdown{
         color: var(--muted) !important;
+        font-weight: 560 !important;
     }
 
+    /* Inputs */
     input, textarea, div[data-baseweb="select"] > div{
-        background: var(--panel-soft) !important;
+        background: rgba(255,255,255,0.08) !important;
         border: 1px solid var(--stroke) !important;
         border-radius: 14px !important;
-        color: #000 !important;
-        font-weight: 600 !important;
+        color: var(--txt) !important;
+        font-weight: 650 !important;
+        box-shadow: none !important;
+    }
+    div[data-baseweb="select"] span{ color: var(--txt) !important; }
+
+    /* Dividers */
+    hr{
+        border-color: rgba(255,255,255,0.10) !important;
     }
 
-    /* =========================
-       BUTTONS (SOLO MAIN, NO SIDEBAR)
-       ========================= */
+    /* -------------------------
+       MAIN BUTTONS (solo main)
+       ------------------------- */
     section.main .stButton > button,
     section.main div[data-testid="stFormSubmitButton"] button{
-        background: linear-gradient(135deg,var(--green),var(--blue)) !important;
-        color: #fff !important;
+        background: linear-gradient(135deg, rgba(34,197,94,0.95), rgba(96,165,250,0.95)) !important;
+        color: #071018 !important;
         border: none !important;
         border-radius: 999px !important;
         padding: 10px 18px !important;
-        font-weight: 800 !important;
-        box-shadow: 0 14px 30px rgba(15,23,42,0.25);
-        transition: all .15s ease;
+        font-weight: 900 !important;
+        box-shadow: 0 18px 40px rgba(34,197,94,0.18), 0 18px 40px rgba(96,165,250,0.18);
+        transition: transform .14s ease, filter .14s ease;
     }
-
     section.main .stButton > button:hover,
     section.main div[data-testid="stFormSubmitButton"] button:hover{
         transform: translateY(-1px);
-        filter: brightness(1.05);
+        filter: brightness(1.03);
     }
-
     button:disabled{
-        background: #94a3b8 !important;
-        box-shadow: none !important;
+        opacity: 0.55 !important;
+        cursor: not-allowed !important;
     }
 
-    /* =========================
-       SIDEBAR BASE
-       ========================= */
+    /* -------------------------
+       METRICS: Card premium
+       ------------------------- */
+    div[data-testid="stMetric"]{
+        background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.06)) !important;
+        border: 1px solid rgba(255,255,255,0.12) !important;
+        border-radius: var(--r24) !important;
+        padding: 18px !important;
+        box-shadow: var(--shadow2) !important;
+        position: relative;
+        overflow: hidden;
+    }
+    div[data-testid="stMetric"]::before{
+        content: "";
+        position: absolute;
+        inset: -40px;
+        background:
+          radial-gradient(500px 180px at 20% 0%, rgba(34,197,94,0.18) 0%, transparent 60%),
+          radial-gradient(500px 180px at 80% 0%, rgba(96,165,250,0.18) 0%, transparent 60%);
+        pointer-events: none;
+        filter: blur(0px);
+    }
+    div[data-testid="stMetric"] label{
+        color: var(--muted) !important;
+        font-weight: 800 !important;
+        font-size: 12px !important;
+        letter-spacing: 0.02em;
+        text-transform: none;
+    }
+    div[data-testid="stMetricValue"]{
+        color: var(--txt) !important;
+        font-weight: 950 !important;
+        font-size: 34px !important;
+    }
+
+    /* -------------------------
+       PROGRESS BAR styling
+       ------------------------- */
+    div[data-testid="stProgress"] > div{
+        background: rgba(255,255,255,0.10) !important;
+        border-radius: 999px !important;
+        border: 1px solid rgba(255,255,255,0.10) !important;
+    }
+    div[data-testid="stProgress"] > div > div{
+        border-radius: 999px !important;
+        background: linear-gradient(90deg, rgba(34,197,94,0.95), rgba(34,211,238,0.90), rgba(96,165,250,0.90)) !important;
+    }
+
+    /* -------------------------
+       SIDEBAR: App-like
+       ------------------------- */
     [data-testid="stSidebar"] > div{
-        background: rgba(255,255,255,0.95) !important;
-        border-right: 1px solid var(--stroke-soft);
-        padding-top: 18px !important;
-        padding-bottom: 18px !important;
+        background:
+          linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.06)) !important;
+        border-right: 1px solid rgba(255,255,255,0.10) !important;
+        backdrop-filter: blur(14px);
+        padding-top: 16px !important;
+        padding-bottom: 16px !important;
     }
 
-    /* BRAND */
+    /* Brand card */
     .sb-brand{
         display:flex;
         align-items:center;
         gap:12px;
-        padding:12px;
-        margin:6px 8px 14px 8px;
-        border-radius:18px;
-        background: linear-gradient(
-            135deg,
-            rgba(34,197,94,0.18),
-            rgba(37,99,235,0.16)
-        );
-        border:1px solid var(--stroke-soft);
-        box-shadow:0 14px 30px rgba(15,23,42,0.10);
+        padding: 12px 12px;
+        margin: 8px 10px 14px 10px;
+        border-radius: var(--r24);
+        background: linear-gradient(135deg, rgba(34,197,94,0.18), rgba(96,165,250,0.18));
+        border: 1px solid rgba(255,255,255,0.14);
+        box-shadow: var(--shadow2);
     }
     .sb-logo{
-        width:44px; height:44px;
-        border-radius:14px;
-        background:linear-gradient(135deg,#16a34a,#2563eb);
+        width: 44px; height: 44px;
+        border-radius: 16px;
+        background: linear-gradient(135deg, rgba(34,197,94,0.95), rgba(96,165,250,0.95));
         display:flex; align-items:center; justify-content:center;
-        font-weight:900; color:#fff;
+        font-weight: 950;
+        color: #071018;
+        letter-spacing: 0.02em;
     }
     .sb-title .sb-name{
-        font-size:18px; font-weight:900; color:#0f172a;
+        font-size: 18px;
+        font-weight: 950;
+        color: var(--txt);
         line-height: 1.05;
     }
     .sb-title .sb-sub{
-        font-size:12px;
-        color:rgba(15,23,42,0.60);
+        font-size: 12px;
+        font-weight: 650;
+        color: var(--muted);
         margin-top: 2px;
     }
 
-    /* =========================
-       SIDEBAR EXPANDERS PREMIUM
-       ========================= */
+    /* Sidebar inputs */
+    [data-testid="stSidebar"] input,
+    [data-testid="stSidebar"] textarea,
+    [data-testid="stSidebar"] div[data-baseweb="select"] > div{
+        background: rgba(0,0,0,0.22) !important;
+        border: 1px solid rgba(255,255,255,0.14) !important;
+        border-radius: 14px !important;
+        color: var(--txt) !important;
+    }
+
+    /* Sidebar "Cerrar sesión" button (keeps it tidy) */
+    [data-testid="stSidebar"] .stButton > button{
+        border-radius: 999px !important;
+        font-weight: 900 !important;
+    }
+
+    /* -------------------------
+       SIDEBAR EXPANDERS (Premium)
+       ------------------------- */
     [data-testid="stSidebar"] details{
-        border:none !important;
-        background:transparent !important;
-        margin: 10px 8px !important;
+        border: none !important;
+        background: transparent !important;
+        margin: 10px 10px !important;
         padding: 0 !important;
     }
 
-    /* Header del expander */
     [data-testid="stSidebar"] details > summary{
-        background: linear-gradient(135deg,var(--green),var(--blue)) !important;
+        background: linear-gradient(135deg, rgba(34,197,94,0.26), rgba(96,165,250,0.22)) !important;
+        border: 1px solid rgba(255,255,255,0.14) !important;
         border-radius: 999px !important;
         padding: 10px 14px !important;
-        color:#fff !important;
-        font-weight: 900 !important;
-        list-style:none !important;
-        cursor:pointer !important;
-        border: none !important;
+        color: var(--txt) !important;
+        font-weight: 950 !important;
+        list-style: none !important;
+        cursor: pointer !important;
+        box-shadow: 0 10px 24px rgba(0,0,0,0.22);
     }
-
     [data-testid="stSidebar"] summary::-webkit-details-marker{ display:none; }
 
-    /* La “caja” de dentro (la controlamos con nuestra clase sb-exp-body) */
     .sb-exp-body{
         margin-top: 10px;
         padding: 10px;
-        border-radius: 18px;
-        background: rgba(255,255,255,0.65);
-        border: 1px solid var(--stroke-soft);
+        border-radius: var(--r24);
+        background: rgba(0,0,0,0.18);
+        border: 1px solid rgba(255,255,255,0.10);
+        box-shadow: 0 10px 24px rgba(0,0,0,0.22);
     }
 
-    /* Botones/Items dentro del desplegable */
+    /* Sidebar nav items (buttons inside body) */
     .sb-exp-body .stButton > button{
         width: 100%;
-        background: rgba(255,255,255,0.92) !important;
-        color:#0f172a !important;
-        border:1px solid rgba(15,23,42,0.12) !important;
-        border-radius: 14px !important;
+        background: rgba(255,255,255,0.08) !important;
+        color: var(--txt) !important;
+        border: 1px solid rgba(255,255,255,0.12) !important;
+        border-radius: 16px !important;
         padding: 10px 12px !important;
-        font-weight: 800 !important;
-        margin: 6px 0 !important;
+        font-weight: 850 !important;
+        margin: 8px 0 !important;
         box-shadow: none !important;
-        transition: all .12s ease;
+        transition: transform .12s ease, filter .12s ease, background .12s ease;
     }
-
     .sb-exp-body .stButton > button:hover{
         transform: translateY(-1px);
-        background: rgba(37,99,235,0.10) !important;
+        background: rgba(255,255,255,0.12) !important;
+        filter: brightness(1.03);
     }
 
-    /* Item “activo” (type=primary) */
+    /* Active item = primary */
     .sb-exp-body .stButton > button[kind="primary"]{
-        background: linear-gradient(135deg, rgba(22,163,74,0.22), rgba(37,99,235,0.18)) !important;
-        border:1px solid rgba(15,23,42,0.14) !important;
+        background: linear-gradient(135deg, rgba(34,197,94,0.75), rgba(96,165,250,0.70)) !important;
+        color: #071018 !important;
+        border: none !important;
+        box-shadow: 0 14px 30px rgba(34,197,94,0.16), 0 14px 30px rgba(96,165,250,0.16);
     }
 
-    /* Botón cerrar sesión (sidebar) */
-    [data-testid="stSidebar"] .stButton > button{
-        border-radius: 999px !important;
-        font-weight: 850 !important;
+    /* -------------------------
+       FIT-CARDS (your custom containers)
+       ------------------------- */
+    .fit-card{
+        background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.06));
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: var(--r24);
+        padding: 16px;
+        box-shadow: var(--shadow);
     }
 
-    /* =========================
-       TABLA (card + scroll horizontal independiente)
-       ========================= */
-    .fit-table-card{
-        background: linear-gradient(
-            135deg,
-            rgba(22,163,74,0.14) 0%,
-            rgba(37,99,235,0.12) 100%
-        );
-        border: 1px solid rgba(15,23,42,0.10);
+    /* HERO */
+    .hero-banner{
+        display:flex;
+        align-items:center;
+        gap: 18px;
+        padding: 18px 18px;
+        border-radius: var(--r24);
+        background: linear-gradient(135deg, rgba(34,197,94,0.14), rgba(96,165,250,0.14));
+        border: 1px solid rgba(255,255,255,0.12);
+        box-shadow: var(--shadow2);
+        margin-bottom: 16px;
+    }
+    .hero-logo{
+        width: 48px;
+        height: 48px;
         border-radius: 18px;
+        background: linear-gradient(135deg, rgba(34,197,94,0.95), rgba(96,165,250,0.95));
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        color: #071018;
+        font-weight: 950;
+    }
+
+    /* -------------------------
+       TABLE CARD + SCROLL
+       ------------------------- */
+    .fit-table-card{
+        background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.06));
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: var(--r24);
         padding: 10px;
-        box-shadow: 0 18px 40px rgba(15,23,42,0.12);
+        box-shadow: var(--shadow2);
     }
 
     .fit-table-scroll{
         overflow-x: auto;
         overflow-y: hidden;
         -webkit-overflow-scrolling: touch;
-        border-radius: 14px;
+        border-radius: 16px;
     }
 
     .fit-table-scroll::-webkit-scrollbar{ height: 10px; }
-    .fit-table-scroll::-webkit-scrollbar-track{ background: rgba(15,23,42,0.06); border-radius: 999px; }
-    .fit-table-scroll::-webkit-scrollbar-thumb{ background: rgba(15,23,42,0.18); border-radius: 999px; }
+    .fit-table-scroll::-webkit-scrollbar-track{ background: rgba(255,255,255,0.08); border-radius: 999px; }
+    .fit-table-scroll::-webkit-scrollbar-thumb{ background: rgba(255,255,255,0.18); border-radius: 999px; }
 
     .fit-table-scroll table{
         min-width: 720px;
         width: 100%;
         border-collapse: separate !important;
         border-spacing: 0 !important;
-        border-radius: 14px !important;
+        border-radius: 16px !important;
         overflow: hidden !important;
     }
 
-    /* =========================
-       WORKOUT UI (Rutina IA)
-       ========================= */
+    /* Sticky header (si el navegador lo soporta) */
+    .fit-table-scroll thead th{
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        background: linear-gradient(135deg, rgba(34,197,94,0.70), rgba(96,165,250,0.70)) !important;
+        color: #061018 !important;
+        font-weight: 950 !important;
+        border: none !important;
+        padding: 12px 14px !important;
+    }
+
+    .fit-table-scroll tbody td{
+        background: rgba(255,255,255,0.08) !important;
+        color: var(--txt) !important;
+        border: none !important;
+        padding: 12px 14px !important;
+        font-weight: 700 !important;
+    }
+
+    .fit-table-scroll tbody tr:nth-child(even) td{
+        background: rgba(255,255,255,0.06) !important;
+    }
+
+    .fit-table-scroll tbody tr:hover td{
+        background: rgba(34,211,238,0.10) !important;
+        transition: background .12s ease;
+    }
+
+    /* -------------------------
+       WORKOUT CARDS (Rutina IA)
+       ------------------------- */
     .wk-card{
-        background: rgba(255,255,255,0.78);
-        border: 1px solid rgba(15,23,42,0.10);
-        border-radius: 18px;
+        background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.06));
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: var(--r24);
         padding: 14px;
-        box-shadow: 0 16px 36px rgba(15,23,42,0.10);
+        box-shadow: var(--shadow2);
         margin-bottom: 12px;
     }
     .wk-title{
@@ -269,8 +422,8 @@ def inject_black_theme():
     .wk-title h4{
         margin:0;
         font-size: 16px;
-        font-weight: 900;
-        color:#0f172a;
+        font-weight: 950;
+        color: var(--txt);
     }
     .wk-chip{
         display:inline-flex;
@@ -279,44 +432,46 @@ def inject_black_theme():
         padding: 6px 10px;
         border-radius: 999px;
         font-size: 12px;
-        font-weight: 800;
-        background: linear-gradient(135deg, rgba(22,163,74,0.18), rgba(37,99,235,0.14));
-        border: 1px solid rgba(15,23,42,0.10);
-        color:#0f172a;
+        font-weight: 900;
+        background: rgba(255,255,255,0.10);
+        border: 1px solid rgba(255,255,255,0.12);
+        color: var(--txt);
         white-space: nowrap;
     }
     .wk-sec{
         margin-top: 10px;
         padding-top: 10px;
-        border-top: 1px dashed rgba(15,23,42,0.14);
+        border-top: 1px dashed rgba(255,255,255,0.14);
     }
     .wk-sec-title{
-        font-weight: 900;
-        color:#0f172a;
+        font-weight: 950;
+        color: var(--txt);
         margin: 0 0 8px 0;
         font-size: 13px;
     }
     .wk-list{
         margin: 0;
         padding-left: 18px;
-        color: rgba(15,23,42,0.75);
-        font-weight: 650;
+        color: var(--muted);
+        font-weight: 700;
     }
     .wk-ex{
         margin: 0 0 10px 0;
         padding: 10px 12px;
-        border-radius: 14px;
-        background: rgba(244,247,251,0.85);
-        border: 1px solid rgba(15,23,42,0.08);
+        border-radius: 16px;
+        background: rgba(0,0,0,0.18);
+        border: 1px solid rgba(255,255,255,0.10);
     }
     .wk-note{
         margin-top: 6px;
         font-size: 12px;
-        color: rgba(15,23,42,0.65);
+        color: var(--muted);
+        font-weight: 650;
     }
 
     </style>
     """, unsafe_allow_html=True)
+
 
 
 
@@ -1763,6 +1918,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
