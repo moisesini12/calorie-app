@@ -89,7 +89,7 @@ def inject_black_theme():
     st.markdown("""
     <style>
     /* =========================================================
-       FITMACRO — PRO GLASS THEME (más claro + más brillo)
+       FITMACRO PRO GLASS THEME (más claro + más brillo)
        ========================================================= */
 
     :root{
@@ -2029,6 +2029,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
