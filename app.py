@@ -300,6 +300,35 @@ def inject_black_theme():
         filter: brightness(1.03);
     }
 
+    /* =========================
+       REGISTRO TABLE: card + horizontal scroll
+       ========================= */
+    
+    /* Contenedor tarjeta */
+    .fit-table-card{
+      width: 100%;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.06);
+      box-shadow: 0 18px 50px rgba(0,0,0,0.35);
+      overflow: hidden;           /* recorta bordes redondeados */
+      margin: 12px 0 18px 0;
+    }
+    
+    /* Área con scroll HORIZONTAL */
+    .fit-table-scroll{
+      width: 100%;
+      overflow-x: auto !important;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Asegura que el HTML de pandas no se*
+
+
+
+
+
     </style>
     """, unsafe_allow_html=True)
 
@@ -1782,6 +1811,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
