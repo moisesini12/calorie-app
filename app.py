@@ -301,43 +301,56 @@ def inject_black_theme():
     }
 
     /* =========================
-       REGISTRO TABLE: card + horizontal scroll
+       REGISTRO TABLE CARD (scroll + no cortada)
        ========================= */
     
-    /* Contenedor tarjeta */
     .fit-table-card{
-      width: 100%;
-      border-radius: 18px;
-      border: 1px solid rgba(255,255,255,0.10);
-      background: rgba(255,255,255,0.06);
-      box-shadow: 0 18px 50px rgba(0,0,0,0.35);
-      overflow: hidden;           /* recorta bordes redondeados */
-      margin: 12px 0 18px 0;
+      margin-top: 12px;
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.06));
+      box-shadow: 0 18px 46px rgba(0,0,0,0.35);
+      overflow: hidden;                 /* mantiene el radius bonito */
     }
     
-    /* Área con scroll HORIZONTAL */
+    /* IMPORTANTE: padding abajo para que NO “muerda” el borde redondo */
     .fit-table-scroll{
-      width: 100%;
-      overflow-x: auto !important;
-      overflow-y: auto;
+      padding: 14px 14px 18px 14px;     /* 👈 ese padding-bottom arregla el corte */
+      overflow-x: auto;
+      overflow-y: hidden;
       -webkit-overflow-scrolling: touch;
     }
-    .fit-table-scroll table{
-      width: 100% !important;      /* rellena la card */
-      min-width: 900px;            /* si no cabe, aparece scroll */
-      table-layout: auto;
-    }
-
     
-    /* Asegura que el HTML de pandas no se*
-
-    .fit-table-scroll{
-      padding-bottom: 6px; /* deja espacio para la scrollbar */
-    }
+    /* Fuerza a que haya scroll si faltan px */
     .fit-table-scroll table{
+      width: max-content !important;    /* 👈 clave */
+      min-width: 820px;                 /* ajusta si quieres más/menos */
       border-collapse: separate !important;
       border-spacing: 0 !important;
     }
+    
+    /* Evita que el Styler meta cosas raras */
+    .fit-table-scroll thead th,
+    .fit-table-scroll tbody td{
+      white-space: nowrap;
+    }
+    
+    /* Scrollbar (opcional, pro) */
+    .fit-table-scroll::-webkit-scrollbar{
+      height: 10px;
+    }
+    .fit-table-scroll::-webkit-scrollbar-track{
+      background: rgba(255,255,255,0.08);
+      border-radius: 999px;
+    }
+    .fit-table-scroll::-webkit-scrollbar-thumb{
+      background: rgba(255,255,255,0.18);
+      border-radius: 999px;
+    }
+    .fit-table-scroll::-webkit-scrollbar-thumb:hover{
+      background: rgba(255,255,255,0.26);
+    }
+
 
 
 
@@ -1824,6 +1837,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
