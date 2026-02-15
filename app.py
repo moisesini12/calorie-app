@@ -424,6 +424,12 @@ def inject_black_theme():
       margin-top: 4px;
     }
 
+    .block-container{
+      max-width:1180px;
+      padding-top: 64px !important;   /* ⬅️ antes tenías 8/34… aquí está la clave */
+      padding-bottom:56px;
+      overflow: visible !important;
+    }
 
 
 
@@ -1910,6 +1916,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
