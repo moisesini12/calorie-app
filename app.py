@@ -237,6 +237,29 @@ def inject_black_theme():
         opacity:0.75;
     }
 
+    /* =========================
+       FIX: header cortado (overflow)
+    ========================= */
+    
+    /* Deja respirar el contenido y evita recortes */
+    section.main, section.main > div {
+      overflow: visible !important;
+    }
+    
+    [data-testid="stAppViewContainer"]{
+      overflow: visible !important;
+    }
+    
+    /* El contenedor principal no debe recortar sombras */
+    .block-container{
+      overflow: visible !important;
+      padding-top: 18px !important; /* un poco más de margen arriba */
+    }
+    
+    /* Por si el propio header se recorta */
+    .app-header{
+      overflow: visible !important;
+    }
 
 
 
@@ -1701,6 +1724,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
