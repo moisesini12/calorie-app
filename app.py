@@ -116,18 +116,23 @@ def inject_black_theme():
     div[data-testid="stMetric"]{
         background:linear-gradient(
             180deg,
-            rgba(255,255,255,0.18),
+            rgba(255,255,255,0.16),
             rgba(255,255,255,0.10)
         ) !important;
-        border:1px solid rgba(255,255,255,0.22) !important;
+    
+        border:1px solid rgba(255,255,255,0.18) !important;
         border-radius:22px !important;
         padding:18px !important;
-        backdrop-filter:blur(18px);
+    
+        backdrop-filter:blur(14px);
+    
+        /* ✨ Glow reducido elegante */
         box-shadow:
-            0 0 0 1px rgba(255,255,255,0.06),
-            0 20px 60px rgba(34,197,94,0.18),
-            0 20px 60px rgba(96,165,250,0.18) !important;
+            0 0 0 1px rgba(255,255,255,0.04),
+            0 8px 24px rgba(34,197,94,0.10),
+            0 8px 24px rgba(96,165,250,0.10) !important;
     }
+
 
     div[data-testid="stMetricValue"]{
         color:#fff !important;
@@ -1632,6 +1637,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
