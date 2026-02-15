@@ -33,82 +33,71 @@ def inject_black_theme():
     st.markdown(r"""
     <style>
     /* =========================
-       FITMACRO PRO DARK (CLEAN)
-       - Sin duplicados
-       - Expanders estables (Streamlit)
-       - Sidebar con brand card
-       - Glow controlado
+       FITMACRO — DARK PRO (FIX WHITE BANDS)
        ========================= */
 
     :root{
-        --bg0:#0c1220;
-        --bg1:#121b2f;
+        --bg0:#0b1220;
+        --bg1:#0f1b2e;
 
         --glass: rgba(255,255,255,0.10);
-        --glass2: rgba(255,255,255,0.06);
+        --glass2: rgba(255,255,255,0.07);
 
-        --stroke: rgba(255,255,255,0.14);
+        --stroke: rgba(255,255,255,0.16);
         --stroke2: rgba(255,255,255,0.10);
 
-        --txt: rgba(255,255,255,0.94);
-        --muted: rgba(226,232,240,0.76);
+        --txt: rgba(255,255,255,0.92);
+        --muted: rgba(226,232,240,0.72);
 
         --g:#22c55e;
         --b:#60a5fa;
-        --shadow: 0 18px 46px rgba(0,0,0,0.38);
+
         --r16: 16px;
-        --r20: 20px;
-        --r24: 24px;
+        --r18: 18px;
+        --r22: 22px;
     }
 
-    /* ===== GLOBAL BACKDROP ===== */
-    html, body, [data-testid="stAppViewContainer"]{
-        background:
-          radial-gradient(1100px 750px at 10% 10%, rgba(34,197,94,0.18) 0%, transparent 60%),
-          radial-gradient(1000px 700px at 90% 12%, rgba(96,165,250,0.18) 0%, transparent 60%),
-          linear-gradient(180deg, var(--bg0) 0%, var(--bg1) 100%) !important;
+    /* ====== HARD RESET: QUITAR FONDOS BLANCOS EN TODA LA CADENA ====== */
+    html, body{
+        background: transparent !important;
         color: var(--txt) !important;
     }
 
-
-    /* ✅ FIX: Streamlit pinta el fondo en otros wrappers (evita franja blanca) */
     [data-testid="stApp"],
+    [data-testid="stAppViewContainer"],
     [data-testid="stMain"],
     section.main,
     section.main > div,
     .block-container{
         background: transparent !important;
     }
-    
-    /* Aplica el MISMO fondo también a stApp y stMain */
-    [data-testid="stApp"],
-    [data-testid="stMain"],
-    section.main{
+
+    /* Fondo real (aplicado al contenedor grande) */
+    [data-testid="stAppViewContainer"]{
         background:
-          radial-gradient(1100px 750px at 10% 10%, rgba(34,197,94,0.18) 0%, transparent 60%),
-          radial-gradient(1000px 700px at 90% 12%, rgba(96,165,250,0.18) 0%, transparent 60%),
+          radial-gradient(1100px 750px at 12% 12%, rgba(34,197,94,0.18) 0%, transparent 60%),
+          radial-gradient(1000px 700px at 88% 12%, rgba(96,165,250,0.18) 0%, transparent 60%),
+          radial-gradient(900px 650px at 60% 85%, rgba(96,165,250,0.10) 0%, transparent 60%),
           linear-gradient(180deg, var(--bg0) 0%, var(--bg1) 100%) !important;
-        color: var(--txt) !important;
     }
 
-
-
-    /* Evitar recortes raros (header / sombras) */
-    html, body,
+    /* Evita “cortes” raros de sombras */
     [data-testid="stApp"],
     [data-testid="stAppViewContainer"],
     [data-testid="stMain"],
-    section.main, section.main > div,
+    section.main,
+    section.main > div,
     .block-container{
         overflow: visible !important;
     }
 
     .block-container{
         max-width: 1180px;
-        padding-top: 22px !important;
+        padding-top: 18px !important;
         padding-bottom: 56px !important;
     }
 
+    /* ===== TIPOGRAFÍA ===== */
     h1{
         font-size: 44px !important;
         font-weight: 950 !important;
@@ -125,49 +114,54 @@ def inject_black_theme():
 
     /* ===== INPUTS ===== */
     input, textarea, div[data-baseweb="select"] > div{
-        background: var(--glass2) !important;
-        border: 1px solid var(--stroke) !important;
+        background: rgba(255,255,255,0.08) !important;
+        border: 1px solid rgba(255,255,255,0.14) !important;
         border-radius: 14px !important;
         color: var(--txt) !important;
         font-weight: 650 !important;
     }
+    div[data-baseweb="select"] span{
+        color: var(--txt) !important;
+    }
 
-    /* ===== MAIN BUTTONS ===== */
+    /* ===== BOTONES (MAIN) ===== */
     [data-testid="stAppViewContainer"] .stButton > button,
     [data-testid="stAppViewContainer"] div[data-testid="stFormSubmitButton"] button{
         background: linear-gradient(135deg, var(--g), var(--b)) !important;
-        color: #06111f !important;
+        color: #06101c !important;
         border: none !important;
         border-radius: 999px !important;
         padding: 10px 18px !important;
         font-weight: 900 !important;
-        box-shadow: 0 18px 44px rgba(0,0,0,0.30) !important;
+        box-shadow:
+            0 14px 34px rgba(34,197,94,0.14),
+            0 14px 34px rgba(96,165,250,0.12) !important;
         transition: all .15s ease;
     }
     [data-testid="stAppViewContainer"] .stButton > button:hover{
         transform: translateY(-1px);
-        filter: brightness(1.03);
+        filter: brightness(1.04);
     }
     button:disabled{
-        opacity: 0.55 !important;
-        cursor: not-allowed !important;
+        opacity: .55 !important;
         box-shadow: none !important;
     }
 
-    /* ===== METRICS GLASS (glow suave) ===== */
+    /* ===== MÉTRICAS (GLASS PRO, GLOW CONTROLADO) ===== */
     div[data-testid="stMetric"]{
-        background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.07)) !important;
+        background: linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.08)) !important;
         border: 1px solid rgba(255,255,255,0.14) !important;
         border-radius: 22px !important;
         padding: 18px !important;
         backdrop-filter: blur(14px);
         box-shadow:
             0 0 0 1px rgba(255,255,255,0.03),
-            0 14px 40px rgba(0,0,0,0.36) !important;
+            0 10px 28px rgba(0,0,0,0.35) !important;
     }
     div[data-testid="stMetric"] label{
-        color: rgba(226,232,240,0.82) !important;
+        color: rgba(226,232,240,0.78) !important;
         font-weight: 800 !important;
+        font-size: 13px !important;
     }
     div[data-testid="stMetricValue"]{
         color: #fff !important;
@@ -175,92 +169,58 @@ def inject_black_theme():
         font-size: 36px !important;
     }
 
-    /* =========================
-       TOP APP HEADER (tu .app-header)
-       ========================= */
-    .app-header{
-        display:flex;
-        align-items:center;
-        gap: 16px;
-        margin: 8px 0 26px 0;
-        padding: 18px 22px;
-        background: linear-gradient(135deg, rgba(34,197,94,0.12), rgba(96,165,250,0.12));
-        border-radius: var(--r24);
-        border: 1px solid rgba(255,255,255,0.10);
-        box-shadow: 0 18px 50px rgba(0,0,0,0.35);
-        overflow: visible !important;
-    }
-    .app-logo{
-        width: 56px;
-        height: 56px;
-        border-radius: 18px;
-        background: linear-gradient(135deg, var(--g), #3b82f6);
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        font-weight: 950;
-        font-size: 20px;
-        color: #fff;
-        box-shadow: 0 16px 36px rgba(0,0,0,0.35);
-    }
-    .app-name{
-        font-size: 26px;
-        font-weight: 950;
-        letter-spacing: -0.02em;
-        color: var(--txt);
-        margin: 0;
-    }
-    .app-sub{
-        font-size: 13px;
-        opacity: 0.75;
-        margin: 2px 0 0 0;
+    /* ===== PROGRESS ===== */
+    [data-testid="stProgress"] > div{
+        background: rgba(255,255,255,0.10) !important;
+        border-radius: 999px !important;
     }
 
-    /* =========================
-       SIDEBAR (ONE TRUE BLOCK)
-       ========================= */
+    /* ===== VEGA/ALTAIR: quita fondos blancos ===== */
+    .vega-embed, .vega-embed details, .vega-embed summary{
+        background: transparent !important;
+    }
+    .vega-embed .chart-wrapper{
+        background: transparent !important;
+    }
+    /* algunos renders meten un div blanco alrededor */
+    [data-testid="stVegaLiteChart"], 
+    [data-testid="stVegaLiteChart"] > div,
+    [data-testid="stVegaLiteChart"] svg,
+    [data-testid="stVegaLiteChart"] canvas{
+        background: transparent !important;
+    }
+
+    /* ===== SIDEBAR BASE ===== */
     [data-testid="stSidebar"] > div{
-        background: rgba(10,14,22,0.78) !important;
-        backdrop-filter: blur(16px);
-        border-right: 1px solid rgba(255,255,255,0.10) !important;
-        padding-top: 16px !important;
-        padding-bottom: 16px !important;
+        background: rgba(10,14,22,0.72) !important;
+        backdrop-filter: blur(14px);
+        border-right: 1px solid rgba(255,255,255,0.08) !important;
     }
 
-    /* Brand card sidebar */
+    /* Mantén visible el “brand card” que tú pintas con markdown (.sb-brand) */
     .sb-brand{
         display:flex;
         align-items:center;
         gap:12px;
         padding:12px 12px;
-        margin: 6px 10px 14px 10px;
-        border-radius: 18px;
-        background: linear-gradient(135deg, rgba(34,197,94,0.14), rgba(96,165,250,0.14));
+        margin:8px 10px 14px 10px;
+        border-radius:18px;
+        background: linear-gradient(135deg, rgba(34,197,94,0.16), rgba(96,165,250,0.14));
         border: 1px solid rgba(255,255,255,0.10);
-        box-shadow: var(--shadow);
+        box-shadow: 0 18px 46px rgba(0,0,0,0.35);
     }
     .sb-logo{
-        width: 44px;
-        height: 44px;
-        border-radius: 14px;
-        background: linear-gradient(135deg, var(--g), #2563eb);
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        font-weight: 950;
-        color:#fff;
+        width:44px;height:44px;
+        border-radius:14px;
+        background: linear-gradient(135deg, #16a34a, #2563eb);
+        display:flex;align-items:center;justify-content:center;
+        font-weight:900;color:#fff;
     }
     .sb-title .sb-name{
-        font-size: 18px;
-        font-weight: 950;
-        color: rgba(255,255,255,0.92);
-        line-height: 1.05;
+        font-size:18px;font-weight:900;color:#eaf0ff;line-height:1.1;
     }
     .sb-title .sb-sub{
-        font-size: 12px;
-        font-weight: 650;
-        color: rgba(226,232,240,0.70);
-        margin-top: 2px;
+        font-size:12px;font-weight:650;color:rgba(234,240,255,0.70);
     }
 
     /* Inputs sidebar */
@@ -268,41 +228,48 @@ def inject_black_theme():
     [data-testid="stSidebar"] textarea,
     [data-testid="stSidebar"] div[data-baseweb="select"] > div{
         background: rgba(255,255,255,0.06) !important;
+        color: #eaf0ff !important;
         border: 1px solid rgba(255,255,255,0.10) !important;
-        color: rgba(255,255,255,0.90) !important;
         border-radius: 14px !important;
     }
 
-    /* =========================
-       EXPANDERS (Streamlit-safe)
-       ========================= */
+    /* ===== EXPANDERS SIDEBAR (ESTABLES) ===== */
     [data-testid="stSidebar"] [data-testid="stExpander"]{
         margin: 10px 10px !important;
         border: none !important;
         background: transparent !important;
     }
+    [data-testid="stSidebar"] [data-testid="stExpander"] details{
+        border: none !important;
+        background: transparent !important;
+    }
 
+    /* Header del expander */
     [data-testid="stSidebar"] [data-testid="stExpander"] details > summary{
-        background: linear-gradient(135deg, rgba(34,197,94,0.92), rgba(96,165,250,0.92)) !important;
-        color: #06111f !important;
+        background: linear-gradient(135deg, rgba(34,197,94,0.92), rgba(37,99,235,0.92)) !important;
+        color: #07121f !important;
         border-radius: 999px !important;
         padding: 10px 14px !important;
         font-weight: 950 !important;
         border: none !important;
         box-shadow: 0 16px 40px rgba(0,0,0,0.28) !important;
+        list-style: none !important;
     }
-    [data-testid="stSidebar"] summary::-webkit-details-marker{ display:none; }
+    [data-testid="stSidebar"] summary::-webkit-details-marker{
+        display:none !important;
+    }
 
+    /* CUERPO (clave para que NO “salgan” fuera los botones) */
     [data-testid="stSidebar"] [data-testid="stExpanderDetails"]{
         margin-top: 10px !important;
         padding: 10px !important;
-        border-radius: 20px !important;
+        border-radius: 18px !important;
         background: rgba(255,255,255,0.06) !important;
         border: 1px solid rgba(255,255,255,0.10) !important;
-        overflow: visible !important;
+        overflow: hidden !important; /* <- importante: encierra los botones dentro */
     }
 
-    /* Botones dentro de expander */
+    /* Botones nav dentro del expander */
     [data-testid="stSidebar"] [data-testid="stExpanderDetails"] .stButton > button{
         width: 100% !important;
         border-radius: 999px !important;
@@ -310,12 +277,13 @@ def inject_black_theme():
         font-weight: 850 !important;
         border: 1px solid rgba(255,255,255,0.10) !important;
         background: rgba(255,255,255,0.06) !important;
-        color: rgba(255,255,255,0.92) !important;
+        color: #eaf0ff !important;
         box-shadow: none !important;
         margin: 6px 0 !important;
+        transition: all .12s ease;
     }
     [data-testid="stSidebar"] [data-testid="stExpanderDetails"] .stButton > button[kind="primary"]{
-        background: linear-gradient(135deg, rgba(34,197,94,0.22), rgba(96,165,250,0.20)) !important;
+        background: linear-gradient(135deg, rgba(34,197,94,0.28), rgba(37,99,235,0.24)) !important;
         border: 1px solid rgba(255,255,255,0.14) !important;
     }
     [data-testid="stSidebar"] [data-testid="stExpanderDetails"] .stButton > button:hover{
@@ -323,42 +291,9 @@ def inject_black_theme():
         filter: brightness(1.03);
     }
 
-    /* =========================
-       FIX: eliminar “bloques blancos” internos (streamlit)
-       ========================= */
-    
-    /* Cualquier contenedor grande que Streamlit use para bloques/containers */
-    [data-testid="stVerticalBlock"],
-    [data-testid="stVerticalBlock"] > div,
-    [data-testid="stContainer"],
-    [data-testid="stContainer"] > div,
-    [data-testid="stHorizontalBlock"],
-    [data-testid="stHorizontalBlock"] > div,
-    [data-testid="stBlock"],
-    [data-testid="stBlock"] > div,
-    [data-testid="stMarkdownContainer"]{
-      background: transparent !important;
-    }
-    
-    /* A veces Streamlit mete un fondo blanco en elementos “baseweb” */
-    div[data-baseweb],
-    div[data-baseweb] > div{
-      background: transparent !important;
-    }
-    
-    /* Evita que aparezca una “banda” clara al hacer scroll */
-    section.main{
-      background: transparent !important;
-    }
-
-
-
-
-
-
-
     </style>
     """, unsafe_allow_html=True)
+
 
 
 
@@ -1818,6 +1753,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
