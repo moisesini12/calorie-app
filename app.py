@@ -319,7 +319,7 @@ def inject_black_theme():
     .fit-table-scroll{
       width: 100%;
       overflow-x: auto !important;
-      overflow-y: hidden;
+      overflow-y: auto;
       -webkit-overflow-scrolling: touch;
     }
     .fit-table-scroll table{
@@ -1824,6 +1824,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
