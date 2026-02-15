@@ -261,7 +261,39 @@ def inject_black_theme():
       overflow: visible !important;
     }
 
+    /* =========================
+       FIX HARD: nada recorta el header
+    ========================= */
+    
+    /* Cadena completa de contenedores Streamlit */
+    html, body {
+      overflow: visible !important;
+    }
+    
+    [data-testid="stApp"],
+    [data-testid="stAppViewContainer"],
+    [data-testid="stMain"],
+    section.main,
+    section.main > div,
+    .block-container,
+    [data-testid="stHeader"]{
+      overflow: visible !important;
+    }
+    
+    /* Dale espacio arriba real al contenido */
+    .block-container{
+      padding-top: 34px !important;  /* sube esto si quieres aún más */
+    }
+    
+    /* Si tu header usa glow, evita que se vaya demasiado arriba */
+    .app-header{
+      margin-top: 10px !important;
+      overflow: visible !important;
+    }
 
+
+
+2
 
     </style>
     """, unsafe_allow_html=True)
@@ -1724,6 +1756,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
