@@ -32,24 +32,26 @@ st.set_page_config(
 def inject_black_theme():
     st.markdown("""
     <style>
-
     :root{
         --bg: #dce3ed;
         --panel: #ffffff;
         --panel-soft: #f4f7fb;
+
         --stroke: rgba(15,23,42,0.18);
         --stroke-soft: rgba(15,23,42,0.08);
+
         --txt: #0f172a;
         --muted: #334155;
+
         --green: #16a34a;
         --blue: #2563eb;
+
         --radius: 18px;
     }
 
     /* =========================
        GLOBAL
        ========================= */
-
     html, body, [data-testid="stAppViewContainer"]{
         background:
             radial-gradient(900px 600px at 10% 10%, rgba(34,197,94,0.15) 0%, transparent 60%),
@@ -80,11 +82,10 @@ def inject_black_theme():
     }
 
     /* =========================
-       BUTTONS (MAIN CONTENT ONLY)
+       BUTTONS (SOLO MAIN, NO SIDEBAR)
        ========================= */
-
-    [data-testid="stAppViewContainer"] .stButton > button,
-    [data-testid="stAppViewContainer"] div[data-testid="stFormSubmitButton"] button{
+    section.main .stButton > button,
+    section.main div[data-testid="stFormSubmitButton"] button{
         background: linear-gradient(135deg,var(--green),var(--blue)) !important;
         color: #fff !important;
         border: none !important;
@@ -95,7 +96,8 @@ def inject_black_theme():
         transition: all .15s ease;
     }
 
-    [data-testid="stAppViewContainer"] .stButton > button:hover{
+    section.main .stButton > button:hover,
+    section.main div[data-testid="stFormSubmitButton"] button:hover{
         transform: translateY(-1px);
         filter: brightness(1.05);
     }
@@ -106,13 +108,13 @@ def inject_black_theme():
     }
 
     /* =========================
-       SIDEBAR
+       SIDEBAR BASE
        ========================= */
-
     [data-testid="stSidebar"] > div{
         background: rgba(255,255,255,0.95) !important;
         border-right: 1px solid var(--stroke-soft);
         padding-top: 18px !important;
+        padding-bottom: 18px !important;
     }
 
     /* BRAND */
@@ -131,119 +133,191 @@ def inject_black_theme():
         border:1px solid var(--stroke-soft);
         box-shadow:0 14px 30px rgba(15,23,42,0.10);
     }
-
     .sb-logo{
-        width:44px;
-        height:44px;
+        width:44px; height:44px;
         border-radius:14px;
         background:linear-gradient(135deg,#16a34a,#2563eb);
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        font-weight:900;
-        color:#fff;
+        display:flex; align-items:center; justify-content:center;
+        font-weight:900; color:#fff;
     }
-
     .sb-title .sb-name{
-        font-size:18px;
-        font-weight:900;
-        color:#0f172a;
+        font-size:18px; font-weight:900; color:#0f172a;
+        line-height: 1.05;
     }
-
     .sb-title .sb-sub{
         font-size:12px;
         color:rgba(15,23,42,0.60);
+        margin-top: 2px;
     }
 
     /* =========================
-       SIDEBAR EXPANDERS
+       SIDEBAR EXPANDERS PREMIUM
        ========================= */
-
     [data-testid="stSidebar"] details{
         border:none !important;
         background:transparent !important;
-        margin:10px 8px !important;
+        margin: 10px 8px !important;
+        padding: 0 !important;
     }
 
-    /* Header */
-    [data-testid="stSidebar"] summary{
+    /* Header del expander */
+    [data-testid="stSidebar"] details > summary{
         background: linear-gradient(135deg,var(--green),var(--blue)) !important;
-        border-radius:999px !important;
-        padding:10px 14px !important;
+        border-radius: 999px !important;
+        padding: 10px 14px !important;
         color:#fff !important;
-        font-weight:900 !important;
+        font-weight: 900 !important;
         list-style:none !important;
         cursor:pointer !important;
+        border: none !important;
     }
 
-    [data-testid="stSidebar"] summary::-webkit-details-marker{
-        display:none;
+    [data-testid="stSidebar"] summary::-webkit-details-marker{ display:none; }
+
+    /* La “caja” de dentro (la controlamos con nuestra clase sb-exp-body) */
+    .sb-exp-body{
+        margin-top: 10px;
+        padding: 10px;
+        border-radius: 18px;
+        background: rgba(255,255,255,0.65);
+        border: 1px solid var(--stroke-soft);
     }
 
-    /* Body */
-    [data-testid="stSidebar"] details > div{
-        background: rgba(255,255,255,0.65) !important;
-        border:1px solid var(--stroke-soft) !important;
-        border-radius:18px !important;
-        padding:10px !important;
-        margin-top:10px !important;
-    }
-
-    /* Sidebar item buttons */
-    [data-testid="stSidebar"] details > div .stButton > button{
+    /* Botones/Items dentro del desplegable */
+    .sb-exp-body .stButton > button{
+        width: 100%;
         background: rgba(255,255,255,0.92) !important;
         color:#0f172a !important;
         border:1px solid rgba(15,23,42,0.12) !important;
-        border-radius:14px !important;
-        padding:10px 12px !important;
-        font-weight:750 !important;
-        margin:6px 0 !important;
-        box-shadow:none !important;
+        border-radius: 14px !important;
+        padding: 10px 12px !important;
+        font-weight: 800 !important;
+        margin: 6px 0 !important;
+        box-shadow: none !important;
         transition: all .12s ease;
     }
 
-    [data-testid="stSidebar"] details > div .stButton > button[kind="primary"]{
-        background: linear-gradient(135deg, rgba(22,163,74,0.25), rgba(37,99,235,0.20)) !important;
+    .sb-exp-body .stButton > button:hover{
+        transform: translateY(-1px);
+        background: rgba(37,99,235,0.10) !important;
     }
 
-    [data-testid="stSidebar"] details > div .stButton > button:hover{
-        transform:translateY(-1px);
-        filter:brightness(1.03);
+    /* Item “activo” (type=primary) */
+    .sb-exp-body .stButton > button[kind="primary"]{
+        background: linear-gradient(135deg, rgba(22,163,74,0.22), rgba(37,99,235,0.18)) !important;
+        border:1px solid rgba(15,23,42,0.14) !important;
+    }
+
+    /* Botón cerrar sesión (sidebar) */
+    [data-testid="stSidebar"] .stButton > button{
+        border-radius: 999px !important;
+        font-weight: 850 !important;
     }
 
     /* =========================
-       HERO
+       TABLA (card + scroll horizontal independiente)
        ========================= */
-
-    .hero-banner{
-        display:flex;
-        align-items:center;
-        gap:30px;
+    .fit-table-card{
         background: linear-gradient(
             135deg,
-            rgba(34,197,94,0.25),
-            rgba(37,99,235,0.22)
+            rgba(22,163,74,0.14) 0%,
+            rgba(37,99,235,0.12) 100%
         );
-        padding:35px 45px;
-        border-radius:18px;
-        margin-bottom:30px;
-        box-shadow:0 20px 50px rgba(15,23,42,0.15);
+        border: 1px solid rgba(15,23,42,0.10);
+        border-radius: 18px;
+        padding: 10px;
+        box-shadow: 0 18px 40px rgba(15,23,42,0.12);
     }
 
-    .hero-logo{
-        width:50px;
-        height:50px;
-        border-radius:50%;
-        background:linear-gradient(135deg,#16a34a,#2563eb);
+    .fit-table-scroll{
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        border-radius: 14px;
+    }
+
+    .fit-table-scroll::-webkit-scrollbar{ height: 10px; }
+    .fit-table-scroll::-webkit-scrollbar-track{ background: rgba(15,23,42,0.06); border-radius: 999px; }
+    .fit-table-scroll::-webkit-scrollbar-thumb{ background: rgba(15,23,42,0.18); border-radius: 999px; }
+
+    .fit-table-scroll table{
+        min-width: 720px;
+        width: 100%;
+        border-collapse: separate !important;
+        border-spacing: 0 !important;
+        border-radius: 14px !important;
+        overflow: hidden !important;
+    }
+
+    /* =========================
+       WORKOUT UI (Rutina IA)
+       ========================= */
+    .wk-card{
+        background: rgba(255,255,255,0.78);
+        border: 1px solid rgba(15,23,42,0.10);
+        border-radius: 18px;
+        padding: 14px;
+        box-shadow: 0 16px 36px rgba(15,23,42,0.10);
+        margin-bottom: 12px;
+    }
+    .wk-title{
         display:flex;
         align-items:center;
-        justify-content:center;
-        font-weight:900;
-        color:white;
+        justify-content:space-between;
+        gap:10px;
+    }
+    .wk-title h4{
+        margin:0;
+        font-size: 16px;
+        font-weight: 900;
+        color:#0f172a;
+    }
+    .wk-chip{
+        display:inline-flex;
+        align-items:center;
+        gap:6px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 800;
+        background: linear-gradient(135deg, rgba(22,163,74,0.18), rgba(37,99,235,0.14));
+        border: 1px solid rgba(15,23,42,0.10);
+        color:#0f172a;
+        white-space: nowrap;
+    }
+    .wk-sec{
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px dashed rgba(15,23,42,0.14);
+    }
+    .wk-sec-title{
+        font-weight: 900;
+        color:#0f172a;
+        margin: 0 0 8px 0;
+        font-size: 13px;
+    }
+    .wk-list{
+        margin: 0;
+        padding-left: 18px;
+        color: rgba(15,23,42,0.75);
+        font-weight: 650;
+    }
+    .wk-ex{
+        margin: 0 0 10px 0;
+        padding: 10px 12px;
+        border-radius: 14px;
+        background: rgba(244,247,251,0.85);
+        border: 1px solid rgba(15,23,42,0.08);
+    }
+    .wk-note{
+        margin-top: 6px;
+        font-size: 12px;
+        color: rgba(15,23,42,0.65);
     }
 
     </style>
     """, unsafe_allow_html=True)
+
 
 
 
@@ -403,18 +477,27 @@ def nav_btn(label: str, value: str, key: str):
 
 # Desplegables nativos (bonitos, estables, sin radios)
 with st.sidebar.expander("📊 Principal", expanded=True):
+    st.sidebar.markdown('<div class="sb-exp-body">', unsafe_allow_html=True)
     nav_btn("📊 Dashboard", "📊 Dashboard", "nav_dash")
+    st.sidebar.markdown('</div>', unsafe_allow_html=True)
 
 with st.sidebar.expander("🍽️ Nutrición", expanded=True):
+    st.sidebar.markdown('<div class="sb-exp-body">', unsafe_allow_html=True)
     nav_btn("🍽 Registro", "🍽 Registro", "nav_reg")
     nav_btn("👨‍🍳 Chef IA", "👨‍🍳 Chef IA", "nav_chef")
     nav_btn("➕ Añadir alimento", "➕ Añadir alimento", "nav_foods")
+    st.sidebar.markdown('</div>', unsafe_allow_html=True)
 
 with st.sidebar.expander("🏋️ Entrenamiento", expanded=False):
+    st.sidebar.markdown('<div class="sb-exp-body">', unsafe_allow_html=True)
     nav_btn("🏋️ Rutina IA", "🏋️ Rutina IA", "nav_rutina")
+    st.sidebar.markdown('</div>', unsafe_allow_html=True)
 
 with st.sidebar.expander("⚙️ Perfil", expanded=False):
-    nav_btn("🎯 Objetivos", "🎯 Objetivos", "🎯 Objetivos_btn")
+    st.sidebar.markdown('<div class="sb-exp-body">', unsafe_allow_html=True)
+    nav_btn("🎯 Objetivos", "🎯 Objetivos", "nav_obj")
+    st.sidebar.markdown('</div>', unsafe_allow_html=True)
+
 
 page = st.session_state["nav"]
 
@@ -1680,6 +1763,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
