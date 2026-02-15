@@ -417,8 +417,9 @@ def require_login() -> None:
 # App init
 # ---------------------------
 inject_black_theme()
-
 require_login()
+
+# ===== TOP HEADER (MAIN) =====
 st.markdown("""
 <div class="app-header">
     <div class="app-logo">FM</div>
@@ -428,8 +429,8 @@ st.markdown("""
     </div>
 </div>
 """, unsafe_allow_html=True)
-# ===== SIDEBAR APP STYLE =====
 
+# ===== SIDEBAR BRAND =====
 st.sidebar.markdown("""
 <div class="sb-brand">
   <div class="sb-logo">FM</div>
@@ -442,16 +443,12 @@ st.sidebar.markdown("""
 
 st.sidebar.caption(f"👤 Sesión: **{st.session_state['user_id']}**")
 
-if st.sidebar.button("🚪 Cerrar sesión"):
+if st.sidebar.button("🚪 Cerrar sesión", use_container_width=True):
     st.session_state["auth_ok"] = False
     st.session_state["user_id"] = ""
     st.rerun()
 
-selected_date = st.sidebar.date_input(
-    "📅 Día",
-    value=date.today()
-)
-
+selected_date = st.sidebar.date_input("📅 Día", value=date.today())
 selected_date_str = selected_date.isoformat()
 
 # =========================
@@ -464,8 +461,9 @@ def _set_nav(v: str):
     st.session_state["nav"] = v
 
 def nav_btn(label: str, value: str, key: str):
+    """Botón de navegación (se usa dentro de expander)."""
     active = (st.session_state.get("nav") == value)
-    st.sidebar.button(
+    st.button(
         label,
         key=key,
         use_container_width=True,
@@ -474,52 +472,74 @@ def nav_btn(label: str, value: str, key: str):
         args=(value,),
     )
 
-# Desplegables nativos (bonitos, estables, sin radios)
-with st.sidebar.expander("📊 Principal", expanded=True):
-    st.sidebar.markdown('<div class="sb-exp-body">', unsafe_allow_html=True)
-    nav_btn("📊 Dashboard", "📊 Dashboard", "nav_dash")
-    st.sidebar.markdown('</div>', unsafe_allow_html=True)
-
-with st.sidebar.expander("🍽️ Nutrición", expanded=True):
-    st.sidebar.markdown('<div class="sb-exp-body">', unsafe_allow_html=True)
-    nav_btn("🍽 Registro", "🍽 Registro", "nav_reg")
-    nav_btn("👨‍🍳 Chef IA", "👨‍🍳 Chef IA", "nav_chef")
-    nav_btn("➕ Añadir alimento", "➕ Añadir alimento", "nav_foods")
-    st.sidebar.markdown('</div>', unsafe_allow_html=True)
-
-with st.sidebar.expander("🏋️ Entrenamiento", expanded=False):
-    st.sidebar.markdown('<div class="sb-exp-body">', unsafe_allow_html=True)
-    nav_btn("🏋️ Rutina IA", "🏋️ Rutina IA", "nav_rutina")
-    st.sidebar.markdown('</div>', unsafe_allow_html=True)
-
-with st.sidebar.expander("⚙️ Perfil", expanded=False):
-    st.sidebar.markdown('<div class="sb-exp-body">', unsafe_allow_html=True)
-    nav_btn("🎯 Objetivos", "🎯 Objetivos", "nav_obj")
-    st.sidebar.markdown('</div>', unsafe_allow_html=True)
-
-
-page = st.session_state["nav"]
-
-
-
-# --- Navegación controlada (sin romper widgets) ---
+# --- Navegación controlada (para atajos "Ir a ...") ---
 if "goto_page" not in st.session_state:
     st.session_state["goto_page"] = None
 
-# Si hay petición de cambio de página, la aplicamos ANTES del radio
 if st.session_state["goto_page"]:
     st.session_state["nav"] = st.session_state["goto_page"]
     st.session_state["goto_page"] = None
 
+# =========================
+# MENÚ POR SECCIONES (4 EXPANDERS)
+# =========================
+page = st.session_state["nav"]
 
+GROUPS = {
+    "PRINCIPAL": {
+        "icon": "📊",
+        "pages": [
+            ("📊 Dashboard", "📊 Dashboard", "nav_dash"),
+        ]
+    },
+    "NUTRICIÓN": {
+        "icon": "🍽️",
+        "pages": [
+            ("🍽 Registro", "🍽 Registro", "nav_reg"),
+            ("👨‍🍳 Chef IA", "👨‍🍳 Chef IA", "nav_chef"),
+            ("➕ Añadir alimento", "➕ Añadir alimento", "nav_foods"),
+        ]
+    },
+    "ENTRENAMIENTO": {
+        "icon": "🏋️",
+        "pages": [
+            ("🏋️ Rutina IA", "🏋️ Rutina IA", "nav_rutina"),
+        ]
+    },
+    "PERFIL": {
+        "icon": "⚙️",
+        "pages": [
+            ("🎯 Objetivos", "🎯 Objetivos", "nav_obj"),
+        ]
+    },
+}
 
+def group_for_page(p: str) -> str:
+    for gname, g in GROUPS.items():
+        for _, value, _ in g["pages"]:
+            if value == p:
+                return gname
+    return "PRINCIPAL"
 
+active_group = group_for_page(page)
 
+# Render de los 4 expanders
+for gname in ["PRINCIPAL", "NUTRICIÓN", "ENTRENAMIENTO", "PERFIL"]:
+    g = GROUPS[gname]
+    title = f"{g['icon']} {gname.title()}"
+    expanded = (gname == active_group)
 
+    with st.sidebar.expander(title, expanded=expanded):
+        # 🔥 IMPORTANTE: NO envolver con <div> custom aquí dentro
+        # porque rompe el DOM del expander en Streamlit.
+        for label, value, key in g["pages"]:
+            nav_btn(label, value, key)
 
-st.markdown("""
-<div class="fit-fab">+</div>
-""", unsafe_allow_html=True)
+# Página final (por claridad)
+page = st.session_state["nav"]
+
+# (Si tienes el FAB, déjalo aquí)
+st.markdown("""<div class="fit-fab">+</div>""", unsafe_allow_html=True)
 
 
 
@@ -1762,6 +1782,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
