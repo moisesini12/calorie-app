@@ -323,6 +323,40 @@ def inject_black_theme():
         filter: brightness(1.03);
     }
 
+    /* =========================
+       FIX: eliminar “bloques blancos” internos (streamlit)
+       ========================= */
+    
+    /* Cualquier contenedor grande que Streamlit use para bloques/containers */
+    [data-testid="stVerticalBlock"],
+    [data-testid="stVerticalBlock"] > div,
+    [data-testid="stContainer"],
+    [data-testid="stContainer"] > div,
+    [data-testid="stHorizontalBlock"],
+    [data-testid="stHorizontalBlock"] > div,
+    [data-testid="stBlock"],
+    [data-testid="stBlock"] > div,
+    [data-testid="stMarkdownContainer"]{
+      background: transparent !important;
+    }
+    
+    /* A veces Streamlit mete un fondo blanco en elementos “baseweb” */
+    div[data-baseweb],
+    div[data-baseweb] > div{
+      background: transparent !important;
+    }
+    
+    /* Evita que aparezca una “banda” clara al hacer scroll */
+    section.main{
+      background: transparent !important;
+    }
+
+
+
+
+
+
+
     </style>
     """, unsafe_allow_html=True)
 
@@ -1784,6 +1818,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
