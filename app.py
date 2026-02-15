@@ -85,272 +85,398 @@ def inject_black_theme():
         padding-bottom: 60px !important;
     }
 
-    /* Typography */
-    h1, h2, h3, h4{
+    /* Typography */def inject_black_theme():
+    st.markdown("""
+    <style>
+    /* =========================================================
+       FITMACRO — PRO GLASS THEME (más claro + más brillo)
+       ========================================================= */
+
+    :root{
+        /* Fondo (un pelín más claro que antes) */
+        --bg0: #121a2b;
+        --bg1: #1b263b;
+
+        /* Paneles / glass */
+        --panel: rgba(255,255,255,0.14);
+        --panel2: rgba(255,255,255,0.10);
+
+        /* Bordes */
+        --stroke: rgba(255,255,255,0.22);
+        --stroke2: rgba(255,255,255,0.14);
+
+        /* Texto */
+        --txt: rgba(255,255,255,0.92);
+        --muted: rgba(226,232,240,0.78);
+
+        /* Acentos */
+        --g: #22c55e;   /* verde */
+        --b: #60a5fa;   /* azul */
+        --p: #a78bfa;   /* violeta suave */
+
+        /* Radios */
+        --r16: 16px;
+        --r20: 20px;
+        --r24: 24px;
+    }
+
+    /* =========================
+       GLOBAL
+       ========================= */
+
+    html, body, [data-testid="stAppViewContainer"]{
+        background:
+          radial-gradient(1100px 750px at 10% 10%, rgba(34,197,94,0.22) 0%, transparent 60%),
+          radial-gradient(1000px 700px at 90% 12%, rgba(96,165,250,0.22) 0%, transparent 60%),
+          radial-gradient(900px 650px at 60% 85%, rgba(167,139,250,0.12) 0%, transparent 60%),
+          linear-gradient(180deg, var(--bg0) 0%, var(--bg1) 100%) !important;
+        color: var(--txt) !important;
+    }
+
+    .block-container{
+        max-width: 1180px;
+        padding-top: 8px;
+        padding-bottom: 56px;
+    }
+
+    /* Tipografía */
+    h1{
+        font-size: 44px !important;
+        font-weight: 950 !important;
+        letter-spacing: -0.04em;
+        color: var(--txt) !important;
+    }
+    h2, h3{
+        font-weight: 900 !important;
         color: var(--txt) !important;
         letter-spacing: -0.02em;
     }
-    h1{ font-weight: 950 !important; font-size: 44px !important; }
-    h2{ font-weight: 900 !important; }
-    h3{ font-weight: 850 !important; }
+
     p, label, .stCaption, .stMarkdown{
         color: var(--muted) !important;
-        font-weight: 560 !important;
     }
 
     /* Inputs */
-    input, textarea, div[data-baseweb="select"] > div{
-        background: rgba(255,255,255,0.08) !important;
-        border: 1px solid var(--stroke) !important;
+    input, textarea{
+        background: rgba(255,255,255,0.10) !important;
+        border: 1px solid rgba(255,255,255,0.18) !important;
         border-radius: 14px !important;
         color: var(--txt) !important;
         font-weight: 650 !important;
-        box-shadow: none !important;
-    }
-    div[data-baseweb="select"] span{ color: var(--txt) !important; }
-
-    /* Dividers */
-    hr{
-        border-color: rgba(255,255,255,0.10) !important;
     }
 
-    /* -------------------------
-       MAIN BUTTONS (solo main)
-       ------------------------- */
-    section.main .stButton > button,
-    section.main div[data-testid="stFormSubmitButton"] button{
+    div[data-baseweb="select"] > div{
+        background: rgba(255,255,255,0.10) !important;
+        border: 1px solid rgba(255,255,255,0.18) !important;
+        border-radius: 14px !important;
+        color: var(--txt) !important;
+        font-weight: 650 !important;
+    }
+    div[data-baseweb="select"] span{
+        color: var(--txt) !important;
+    }
+
+    /* =========================
+       BOTONES (MAIN CONTENT)
+       ========================= */
+
+    [data-testid="stAppViewContainer"] .stButton > button,
+    [data-testid="stAppViewContainer"] div[data-testid="stFormSubmitButton"] button{
         background: linear-gradient(135deg, rgba(34,197,94,0.95), rgba(96,165,250,0.95)) !important;
-        color: #071018 !important;
-        border: none !important;
+        color: #07121f !important;
+        border: 1px solid rgba(255,255,255,0.18) !important;
         border-radius: 999px !important;
         padding: 10px 18px !important;
         font-weight: 900 !important;
-        box-shadow: 0 18px 40px rgba(34,197,94,0.18), 0 18px 40px rgba(96,165,250,0.18);
-        transition: transform .14s ease, filter .14s ease;
-    }
-    section.main .stButton > button:hover,
-    section.main div[data-testid="stFormSubmitButton"] button:hover{
-        transform: translateY(-1px);
-        filter: brightness(1.03);
-    }
-    button:disabled{
-        opacity: 0.55 !important;
-        cursor: not-allowed !important;
+        box-shadow:
+            0 18px 40px rgba(34,197,94,0.22),
+            0 18px 40px rgba(96,165,250,0.18),
+            0 0 0 1px rgba(255,255,255,0.06);
+        transition: all .15s ease;
     }
 
-    /* -------------------------
-       METRICS: Card premium
-       ------------------------- */
-    div[data-testid="stMetric"]{
-        background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.06)) !important;
+    [data-testid="stAppViewContainer"] .stButton > button:hover,
+    [data-testid="stAppViewContainer"] div[data-testid="stFormSubmitButton"] button:hover{
+        transform: translateY(-1px);
+        filter: brightness(1.04);
+        box-shadow:
+            0 22px 60px rgba(34,197,94,0.26),
+            0 22px 60px rgba(96,165,250,0.22),
+            0 0 0 1px rgba(255,255,255,0.10);
+    }
+
+    button:disabled{
+        background: rgba(148,163,184,0.55) !important;
+        color: rgba(255,255,255,0.70) !important;
+        box-shadow: none !important;
+        cursor: not-allowed !important;
         border: 1px solid rgba(255,255,255,0.12) !important;
+    }
+
+    /* =========================
+       METRICS / CARDS (más brillo)
+       ========================= */
+
+    div[data-testid="stMetric"]{
+        background:
+            linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.10)) !important;
+        border: 1px solid rgba(255,255,255,0.22) !important;
         border-radius: var(--r24) !important;
         padding: 18px !important;
-        box-shadow: var(--shadow2) !important;
+        box-shadow:
+            0 0 0 1px rgba(255,255,255,0.06),
+            0 20px 60px rgba(34,197,94,0.18),
+            0 20px 60px rgba(96,165,250,0.18) !important;
+        backdrop-filter: blur(18px);
         position: relative;
         overflow: hidden;
     }
+
     div[data-testid="stMetric"]::before{
-        content: "";
-        position: absolute;
-        inset: -40px;
+        content:"";
+        position:absolute;
+        inset:-2px;
         background:
-          radial-gradient(500px 180px at 20% 0%, rgba(34,197,94,0.18) 0%, transparent 60%),
-          radial-gradient(500px 180px at 80% 0%, rgba(96,165,250,0.18) 0%, transparent 60%);
-        pointer-events: none;
-        filter: blur(0px);
+            radial-gradient(900px 260px at 15% 0%, rgba(34,197,94,0.25) 0%, transparent 60%),
+            radial-gradient(900px 260px at 85% 0%, rgba(96,165,250,0.22) 0%, transparent 60%);
+        pointer-events:none;
+        opacity: 0.9;
     }
+
     div[data-testid="stMetric"] label{
-        color: var(--muted) !important;
-        font-weight: 800 !important;
-        font-size: 12px !important;
-        letter-spacing: 0.02em;
-        text-transform: none;
-    }
-    div[data-testid="stMetricValue"]{
-        color: var(--txt) !important;
-        font-weight: 950 !important;
-        font-size: 34px !important;
-    }
-
-    /* -------------------------
-       PROGRESS BAR styling
-       ------------------------- */
-    div[data-testid="stProgress"] > div{
-        background: rgba(255,255,255,0.10) !important;
-        border-radius: 999px !important;
-        border: 1px solid rgba(255,255,255,0.10) !important;
-    }
-    div[data-testid="stProgress"] > div > div{
-        border-radius: 999px !important;
-        background: linear-gradient(90deg, rgba(34,197,94,0.95), rgba(34,211,238,0.90), rgba(96,165,250,0.90)) !important;
-    }
-
-    /* -------------------------
-       SIDEBAR: App-like
-       ------------------------- */
-    [data-testid="stSidebar"] > div{
-        background:
-          linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.06)) !important;
-        border-right: 1px solid rgba(255,255,255,0.10) !important;
-        backdrop-filter: blur(14px);
-        padding-top: 16px !important;
-        padding-bottom: 16px !important;
-    }
-
-    /* Brand card */
-    .sb-brand{
-        display:flex;
-        align-items:center;
-        gap:12px;
-        padding: 12px 12px;
-        margin: 8px 10px 14px 10px;
-        border-radius: var(--r24);
-        background: linear-gradient(135deg, rgba(34,197,94,0.18), rgba(96,165,250,0.18));
-        border: 1px solid rgba(255,255,255,0.14);
-        box-shadow: var(--shadow2);
-    }
-    .sb-logo{
-        width: 44px; height: 44px;
-        border-radius: 16px;
-        background: linear-gradient(135deg, rgba(34,197,94,0.95), rgba(96,165,250,0.95));
-        display:flex; align-items:center; justify-content:center;
-        font-weight: 950;
-        color: #071018;
-        letter-spacing: 0.02em;
-    }
-    .sb-title .sb-name{
-        font-size: 18px;
-        font-weight: 950;
-        color: var(--txt);
-        line-height: 1.05;
-    }
-    .sb-title .sb-sub{
-        font-size: 12px;
-        font-weight: 650;
-        color: var(--muted);
-        margin-top: 2px;
-    }
-
-    /* Sidebar inputs */
-    [data-testid="stSidebar"] input,
-    [data-testid="stSidebar"] textarea,
-    [data-testid="stSidebar"] div[data-baseweb="select"] > div{
-        background: rgba(0,0,0,0.22) !important;
-        border: 1px solid rgba(255,255,255,0.14) !important;
-        border-radius: 14px !important;
-        color: var(--txt) !important;
-    }
-
-    /* Sidebar "Cerrar sesión" button (keeps it tidy) */
-    [data-testid="stSidebar"] .stButton > button{
-        border-radius: 999px !important;
-        font-weight: 900 !important;
-    }
-
-    /* -------------------------
-       SIDEBAR EXPANDERS (Premium)
-       ------------------------- */
-    [data-testid="stSidebar"] details{
-        border: none !important;
-        background: transparent !important;
-        margin: 10px 10px !important;
-        padding: 0 !important;
-    }
-
-    [data-testid="stSidebar"] details > summary{
-        background: linear-gradient(135deg, rgba(34,197,94,0.26), rgba(96,165,250,0.22)) !important;
-        border: 1px solid rgba(255,255,255,0.14) !important;
-        border-radius: 999px !important;
-        padding: 10px 14px !important;
-        color: var(--txt) !important;
-        font-weight: 950 !important;
-        list-style: none !important;
-        cursor: pointer !important;
-        box-shadow: 0 10px 24px rgba(0,0,0,0.22);
-    }
-    [data-testid="stSidebar"] summary::-webkit-details-marker{ display:none; }
-
-    .sb-exp-body{
-        margin-top: 10px;
-        padding: 10px;
-        border-radius: var(--r24);
-        background: rgba(0,0,0,0.18);
-        border: 1px solid rgba(255,255,255,0.10);
-        box-shadow: 0 10px 24px rgba(0,0,0,0.22);
-    }
-
-    /* Sidebar nav items (buttons inside body) */
-    .sb-exp-body .stButton > button{
-        width: 100%;
-        background: rgba(255,255,255,0.08) !important;
-        color: var(--txt) !important;
-        border: 1px solid rgba(255,255,255,0.12) !important;
-        border-radius: 16px !important;
-        padding: 10px 12px !important;
+        color: rgba(255,255,255,0.78) !important;
         font-weight: 850 !important;
-        margin: 8px 0 !important;
-        box-shadow: none !important;
-        transition: transform .12s ease, filter .12s ease, background .12s ease;
-    }
-    .sb-exp-body .stButton > button:hover{
-        transform: translateY(-1px);
-        background: rgba(255,255,255,0.12) !important;
-        filter: brightness(1.03);
+        font-size: 13px !important;
     }
 
-    /* Active item = primary */
-    .sb-exp-body .stButton > button[kind="primary"]{
-        background: linear-gradient(135deg, rgba(34,197,94,0.75), rgba(96,165,250,0.70)) !important;
-        color: #071018 !important;
-        border: none !important;
-        box-shadow: 0 14px 30px rgba(34,197,94,0.16), 0 14px 30px rgba(96,165,250,0.16);
+    div[data-testid="stMetricValue"]{
+        color: rgba(255,255,255,0.96) !important;
+        font-weight: 950 !important;
+        font-size: 36px !important;
+        letter-spacing: -0.03em;
     }
 
-    /* -------------------------
-       FIT-CARDS (your custom containers)
-       ------------------------- */
     .fit-card{
-        background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.06));
-        border: 1px solid rgba(255,255,255,0.12);
-        border-radius: var(--r24);
-        padding: 16px;
-        box-shadow: var(--shadow);
+        background:
+            linear-gradient(180deg, rgba(255,255,255,0.16), rgba(255,255,255,0.10)) !important;
+        border: 1px solid rgba(255,255,255,0.20) !important;
+        border-radius: var(--r24) !important;
+        padding: 16px !important;
+        box-shadow:
+            0 0 0 1px rgba(255,255,255,0.06),
+            0 24px 70px rgba(34,197,94,0.12),
+            0 24px 70px rgba(96,165,250,0.12) !important;
+        backdrop-filter: blur(16px);
     }
 
-    /* HERO */
+    /* =========================
+       HERO
+       ========================= */
+
     .hero-banner{
         display:flex;
         align-items:center;
-        gap: 18px;
-        padding: 18px 18px;
+        gap:24px;
+        background:
+            linear-gradient(135deg, rgba(34,197,94,0.20), rgba(96,165,250,0.18)) !important;
+        border: 1px solid rgba(255,255,255,0.18);
+        padding: 22px 22px;
         border-radius: var(--r24);
-        background: linear-gradient(135deg, rgba(34,197,94,0.14), rgba(96,165,250,0.14));
-        border: 1px solid rgba(255,255,255,0.12);
-        box-shadow: var(--shadow2);
-        margin-bottom: 16px;
+        margin-bottom: 22px;
+        box-shadow:
+            0 0 0 1px rgba(255,255,255,0.06),
+            0 26px 70px rgba(34,197,94,0.12),
+            0 26px 70px rgba(96,165,250,0.10);
+        backdrop-filter: blur(16px);
     }
+
     .hero-logo{
-        width: 48px;
-        height: 48px;
+        width: 52px;
+        height: 52px;
         border-radius: 18px;
         background: linear-gradient(135deg, rgba(34,197,94,0.95), rgba(96,165,250,0.95));
         display:flex;
         align-items:center;
         justify-content:center;
-        color: #071018;
+        color:#07121f;
+        font-weight: 950;
+        letter-spacing: 0.6px;
+        box-shadow:
+            0 18px 44px rgba(34,197,94,0.22),
+            0 18px 44px rgba(96,165,250,0.18);
+    }
+
+    .hero-text h1{
+        margin: 0 !important;
+        font-size: 34px !important;
+    }
+    .hero-text p{
+        margin: 2px 0 0 0 !important;
+        color: rgba(226,232,240,0.78) !important;
+        font-weight: 650;
+        font-size: 13px;
+    }
+
+    /* =========================
+       SIDEBAR (glass)
+       ========================= */
+
+    [data-testid="stSidebar"] > div{
+        background: rgba(12,18,34,0.55) !important;
+        backdrop-filter: blur(16px);
+        border-right: 1px solid rgba(255,255,255,0.10) !important;
+        padding-top: 16px !important;
+        padding-bottom: 16px !important;
+    }
+
+    .sb-brand{
+        display:flex;
+        align-items:center;
+        gap:12px;
+        padding: 12px 12px;
+        margin: 6px 8px 12px 8px;
+        border-radius: var(--r24);
+        background: linear-gradient(135deg, rgba(255,255,255,0.16), rgba(255,255,255,0.10));
+        border: 1px solid rgba(255,255,255,0.18);
+        box-shadow:
+            0 0 0 1px rgba(255,255,255,0.06),
+            0 18px 44px rgba(0,0,0,0.35);
+        backdrop-filter: blur(16px);
+    }
+
+    .sb-logo{
+        width: 44px;
+        height: 44px;
+        border-radius: 16px;
+        background: linear-gradient(135deg, rgba(34,197,94,0.95), rgba(96,165,250,0.95));
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        color:#07121f;
         font-weight: 950;
     }
 
-    /* -------------------------
-       TABLE CARD + SCROLL
-       ------------------------- */
+    .sb-title .sb-name{
+        font-size: 18px;
+        font-weight: 950;
+        color: rgba(255,255,255,0.95);
+        line-height: 1.0;
+    }
+    .sb-title .sb-sub{
+        font-size: 12px;
+        font-weight: 650;
+        color: rgba(226,232,240,0.70);
+        margin-top: 2px;
+    }
+
+    [data-testid="stSidebar"] .stCaption{
+        color: rgba(226,232,240,0.72) !important;
+    }
+
+    /* sidebar inputs */
+    [data-testid="stSidebar"] input,
+    [data-testid="stSidebar"] textarea,
+    [data-testid="stSidebar"] div[data-baseweb="select"] > div{
+        background: rgba(255,255,255,0.10) !important;
+        border: 1px solid rgba(255,255,255,0.16) !important;
+        border-radius: 14px !important;
+        color: rgba(255,255,255,0.92) !important;
+    }
+
+    /* =========================
+       SIDEBAR EXPANDERS (nativos)
+       ========================= */
+
+    [data-testid="stSidebar"] details{
+        border: none !important;
+        background: transparent !important;
+        padding: 0 !important;
+        margin: 8px 8px !important;
+    }
+
+    [data-testid="stSidebar"] details > summary{
+        background: linear-gradient(135deg, rgba(34,197,94,0.92), rgba(96,165,250,0.92)) !important;
+        border-radius: 999px !important;
+        padding: 10px 14px !important;
+        color: #07121f !important;
+        font-weight: 950 !important;
+        list-style: none !important;
+        border: 1px solid rgba(255,255,255,0.18) !important;
+        box-shadow:
+            0 18px 44px rgba(34,197,94,0.18),
+            0 18px 44px rgba(96,165,250,0.16);
+        cursor: pointer;
+    }
+
+    [data-testid="stSidebar"] summary::-webkit-details-marker{ display:none; }
+
+    [data-testid="stSidebar"] details > div{
+        background: linear-gradient(180deg, rgba(255,255,255,0.16), rgba(255,255,255,0.10)) !important;
+        border: 1px solid rgba(255,255,255,0.18) !important;
+        border-radius: var(--r24) !important;
+        padding: 10px !important;
+        margin-top: 10px !important;
+        box-shadow:
+            0 0 0 1px rgba(255,255,255,0.06),
+            0 22px 60px rgba(0,0,0,0.30);
+        backdrop-filter: blur(16px);
+    }
+
+    /* Botones dentro del expander (sidebar nav) */
+    [data-testid="stSidebar"] details > div .stButton > button{
+        width: 100%;
+        background: rgba(255,255,255,0.10) !important;
+        color: rgba(255,255,255,0.92) !important;
+        border: 1px solid rgba(255,255,255,0.16) !important;
+        border-radius: 16px !important;
+        padding: 10px 12px !important;
+        font-weight: 850 !important;
+        box-shadow: none !important;
+        margin: 6px 0 !important;
+        transition: all .12s ease;
+    }
+
+    /* Activo (type="primary" en nav_btn) */
+    [data-testid="stSidebar"] details > div .stButton > button[kind="primary"]{
+        background: linear-gradient(135deg, rgba(34,197,94,0.22), rgba(96,165,250,0.20)) !important;
+        border: 1px solid rgba(255,255,255,0.22) !important;
+        box-shadow:
+            0 14px 40px rgba(34,197,94,0.16),
+            0 14px 40px rgba(96,165,250,0.14);
+    }
+
+    [data-testid="stSidebar"] details > div .stButton > button:hover{
+        transform: translateY(-1px);
+        filter: brightness(1.04);
+    }
+
+    /* Tip inferior */
+    .sb-tip{
+        margin: 12px 10px 0 10px;
+        padding: 12px 12px;
+        border-radius: var(--r20);
+        background: rgba(255,255,255,0.10);
+        border: 1px solid rgba(255,255,255,0.14);
+        color: rgba(226,232,240,0.72);
+        font-weight: 700;
+        font-size: 12px;
+        backdrop-filter: blur(16px);
+    }
+
+    /* =========================
+       TABLA BONITA + SCROLL INDEPENDIENTE
+       ========================= */
+
     .fit-table-card{
-        background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.06));
-        border: 1px solid rgba(255,255,255,0.12);
+        background:
+            linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.10));
+        border: 1px solid rgba(255,255,255,0.22);
         border-radius: var(--r24);
         padding: 10px;
-        box-shadow: var(--shadow2);
+        box-shadow:
+            0 22px 60px rgba(34,197,94,0.10),
+            0 22px 60px rgba(96,165,250,0.10);
+        backdrop-filter: blur(16px);
     }
 
     .fit-table-scroll{
@@ -362,7 +488,7 @@ def inject_black_theme():
 
     .fit-table-scroll::-webkit-scrollbar{ height: 10px; }
     .fit-table-scroll::-webkit-scrollbar-track{ background: rgba(255,255,255,0.08); border-radius: 999px; }
-    .fit-table-scroll::-webkit-scrollbar-thumb{ background: rgba(255,255,255,0.18); border-radius: 999px; }
+    .fit-table-scroll::-webkit-scrollbar-thumb{ background: rgba(255,255,255,0.20); border-radius: 999px; }
 
     .fit-table-scroll table{
         min-width: 720px;
@@ -373,58 +499,36 @@ def inject_black_theme():
         overflow: hidden !important;
     }
 
-    /* Sticky header (si el navegador lo soporta) */
-    .fit-table-scroll thead th{
-        position: sticky;
-        top: 0;
-        z-index: 2;
-        background: linear-gradient(135deg, rgba(34,197,94,0.70), rgba(96,165,250,0.70)) !important;
-        color: #061018 !important;
-        font-weight: 950 !important;
-        border: none !important;
-        padding: 12px 14px !important;
-    }
+    /* =========================
+       WORKOUT UI (Rutina IA)
+       ========================= */
 
-    .fit-table-scroll tbody td{
-        background: rgba(255,255,255,0.08) !important;
-        color: var(--txt) !important;
-        border: none !important;
-        padding: 12px 14px !important;
-        font-weight: 700 !important;
-    }
-
-    .fit-table-scroll tbody tr:nth-child(even) td{
-        background: rgba(255,255,255,0.06) !important;
-    }
-
-    .fit-table-scroll tbody tr:hover td{
-        background: rgba(34,211,238,0.10) !important;
-        transition: background .12s ease;
-    }
-
-    /* -------------------------
-       WORKOUT CARDS (Rutina IA)
-       ------------------------- */
     .wk-card{
-        background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.06));
-        border: 1px solid rgba(255,255,255,0.12);
+        background: linear-gradient(180deg, rgba(255,255,255,0.16), rgba(255,255,255,0.10));
+        border: 1px solid rgba(255,255,255,0.18);
         border-radius: var(--r24);
-        padding: 14px;
-        box-shadow: var(--shadow2);
+        padding: 14px 14px;
+        box-shadow:
+            0 0 0 1px rgba(255,255,255,0.06),
+            0 18px 46px rgba(0,0,0,0.25);
         margin-bottom: 12px;
+        backdrop-filter: blur(16px);
     }
+
     .wk-title{
         display:flex;
         align-items:center;
         justify-content:space-between;
         gap:10px;
     }
+
     .wk-title h4{
         margin:0;
         font-size: 16px;
         font-weight: 950;
-        color: var(--txt);
+        color: rgba(255,255,255,0.92);
     }
+
     .wk-chip{
         display:inline-flex;
         align-items:center;
@@ -433,44 +537,51 @@ def inject_black_theme():
         border-radius: 999px;
         font-size: 12px;
         font-weight: 900;
-        background: rgba(255,255,255,0.10);
-        border: 1px solid rgba(255,255,255,0.12);
-        color: var(--txt);
+        background: linear-gradient(135deg, rgba(34,197,94,0.22), rgba(96,165,250,0.20));
+        border: 1px solid rgba(255,255,255,0.18);
+        color: rgba(255,255,255,0.90);
         white-space: nowrap;
     }
+
     .wk-sec{
         margin-top: 10px;
         padding-top: 10px;
-        border-top: 1px dashed rgba(255,255,255,0.14);
+        border-top: 1px dashed rgba(255,255,255,0.18);
     }
+
     .wk-sec-title{
         font-weight: 950;
-        color: var(--txt);
+        color: rgba(255,255,255,0.92);
         margin: 0 0 8px 0;
         font-size: 13px;
     }
+
     .wk-list{
         margin: 0;
         padding-left: 18px;
-        color: var(--muted);
-        font-weight: 700;
+        color: rgba(226,232,240,0.78);
+        font-weight: 650;
     }
+
     .wk-ex{
         margin: 0 0 10px 0;
         padding: 10px 12px;
         border-radius: 16px;
-        background: rgba(0,0,0,0.18);
-        border: 1px solid rgba(255,255,255,0.10);
+        background: rgba(255,255,255,0.08);
+        border: 1px solid rgba(255,255,255,0.14);
     }
+
+    .wk-ex b{ color: rgba(255,255,255,0.92); }
+
     .wk-note{
         margin-top: 6px;
         font-size: 12px;
-        color: var(--muted);
-        font-weight: 650;
+        color: rgba(226,232,240,0.72);
     }
 
     </style>
     """, unsafe_allow_html=True)
+
 
 
 
@@ -1918,6 +2029,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
