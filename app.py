@@ -72,13 +72,22 @@ def inject_black_theme():
         background: transparent !important;
     }
 
-    /* Fondo real (aplicado al contenedor grande) */
-    [data-testid="stAppViewContainer"]{
-        background:
-          radial-gradient(1100px 750px at 12% 12%, rgba(34,197,94,0.18) 0%, transparent 60%),
-          radial-gradient(1000px 700px at 88% 12%, rgba(96,165,250,0.18) 0%, transparent 60%),
-          radial-gradient(900px 650px at 60% 85%, rgba(96,165,250,0.10) 0%, transparent 60%),
-          linear-gradient(180deg, var(--bg0) 0%, var(--bg1) 100%) !important;
+    html, body{
+      min-height: 100%;
+      background: transparent !important;
+    }
+    
+    /* Fondo FIJO que nunca “se corta” al hacer scroll */
+    body::before{
+      content:"";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background:
+        radial-gradient(1100px 750px at 12% 12%, rgba(34,197,94,0.18) 0%, transparent 60%),
+        radial-gradient(1000px 700px at 88% 12%, rgba(96,165,250,0.18) 0%, transparent 60%),
+        radial-gradient(900px 650px at 60% 85%, rgba(96,165,250,0.10) 0%, transparent 60%),
+        linear-gradient(180deg, var(--bg0) 0%, var(--bg1) 100%);
     }
 
     /* Evita “cortes” raros de sombras */
@@ -1753,6 +1762,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
