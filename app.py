@@ -30,99 +30,26 @@ st.set_page_config(
 
 
 def inject_black_theme():
-    st.markdown("""
+    st.markdown(r"""
     <style>
-    /* =========================================================
-       FITMACRO PRO THEME v2 (Radical / Premium)
-       ========================================================= */
 
     :root{
-        --bg0: #0b1220;
-        --bg1: #0f172a;
-        --glass: rgba(255,255,255,0.08);
-        --glass2: rgba(255,255,255,0.12);
+        --bg0:#121a2b;
+        --bg1:#1b263b;
 
-        --card: rgba(255,255,255,0.10);
-        --card2: rgba(255,255,255,0.14);
+        --panel:rgba(255,255,255,0.14);
+        --panel2:rgba(255,255,255,0.10);
 
-        --stroke: rgba(255,255,255,0.14);
-        --stroke2: rgba(255,255,255,0.10);
+        --stroke:rgba(255,255,255,0.22);
+        --stroke2:rgba(255,255,255,0.14);
 
-        --txt: rgba(255,255,255,0.92);
-        --muted: rgba(255,255,255,0.68);
-        --faint: rgba(255,255,255,0.52);
+        --txt:rgba(255,255,255,0.92);
+        --muted:rgba(226,232,240,0.78);
 
-        --green: #22c55e;
-        --mint: #34d399;
-        --cyan: #22d3ee;
-        --blue: #60a5fa;
-        --violet: #a78bfa;
-
-        --shadow: 0 18px 50px rgba(0,0,0,0.35);
-        --shadow2: 0 12px 28px rgba(0,0,0,0.28);
-
-        --r16: 16px;
-        --r20: 20px;
-        --r24: 24px;
+        --g:#22c55e;
+        --b:#60a5fa;
+        --p:#a78bfa;
     }
-
-    /* -------------------------
-       APP BACKGROUND
-       ------------------------- */
-    html, body, [data-testid="stAppViewContainer"]{
-        background:
-          radial-gradient(900px 700px at 10% 10%, rgba(34,197,94,0.18) 0%, transparent 55%),
-          radial-gradient(900px 700px at 90% 12%, rgba(96,165,250,0.18) 0%, transparent 55%),
-          radial-gradient(900px 700px at 60% 85%, rgba(167,139,250,0.14) 0%, transparent 55%),
-          linear-gradient(180deg, var(--bg0) 0%, var(--bg1) 100%) !important;
-        color: var(--txt) !important;
-    }
-
-    /* Container spacing */
-    .block-container{
-        max-width: 1180px;
-        padding-top: 18px !important;
-        padding-bottom: 60px !important;
-    }
-
-    /* Typography */def inject_black_theme():
-    st.markdown("""
-    <style>
-    /* =========================================================
-       FITMACRO PRO GLASS THEME (más claro + más brillo)
-       ========================================================= */
-
-    :root{
-        /* Fondo (un pelín más claro que antes) */
-        --bg0: #121a2b;
-        --bg1: #1b263b;
-
-        /* Paneles / glass */
-        --panel: rgba(255,255,255,0.14);
-        --panel2: rgba(255,255,255,0.10);
-
-        /* Bordes */
-        --stroke: rgba(255,255,255,0.22);
-        --stroke2: rgba(255,255,255,0.14);
-
-        /* Texto */
-        --txt: rgba(255,255,255,0.92);
-        --muted: rgba(226,232,240,0.78);
-
-        /* Acentos */
-        --g: #22c55e;   /* verde */
-        --b: #60a5fa;   /* azul */
-        --p: #a78bfa;   /* violeta suave */
-
-        /* Radios */
-        --r16: 16px;
-        --r20: 20px;
-        --r24: 24px;
-    }
-
-    /* =========================
-       GLOBAL
-       ========================= */
 
     html, body, [data-testid="stAppViewContainer"]{
         background:
@@ -130,457 +57,133 @@ def inject_black_theme():
           radial-gradient(1000px 700px at 90% 12%, rgba(96,165,250,0.22) 0%, transparent 60%),
           radial-gradient(900px 650px at 60% 85%, rgba(167,139,250,0.12) 0%, transparent 60%),
           linear-gradient(180deg, var(--bg0) 0%, var(--bg1) 100%) !important;
-        color: var(--txt) !important;
+        color:var(--txt) !important;
     }
 
     .block-container{
-        max-width: 1180px;
-        padding-top: 8px;
-        padding-bottom: 56px;
+        max-width:1180px;
+        padding-top:8px;
+        padding-bottom:56px;
     }
 
-    /* Tipografía */
     h1{
-        font-size: 44px !important;
-        font-weight: 950 !important;
-        letter-spacing: -0.04em;
-        color: var(--txt) !important;
-    }
-    h2, h3{
-        font-weight: 900 !important;
-        color: var(--txt) !important;
-        letter-spacing: -0.02em;
+        font-size:44px !important;
+        font-weight:950 !important;
+        letter-spacing:-0.04em;
+        color:var(--txt) !important;
     }
 
-    p, label, .stCaption, .stMarkdown{
-        color: var(--muted) !important;
+    h2,h3{
+        font-weight:900 !important;
+        color:var(--txt) !important;
     }
 
-    /* Inputs */
-    input, textarea{
-        background: rgba(255,255,255,0.10) !important;
-        border: 1px solid rgba(255,255,255,0.18) !important;
-        border-radius: 14px !important;
-        color: var(--txt) !important;
-        font-weight: 650 !important;
+    p,label,.stCaption,.stMarkdown{
+        color:var(--muted) !important;
     }
 
-    div[data-baseweb="select"] > div{
-        background: rgba(255,255,255,0.10) !important;
-        border: 1px solid rgba(255,255,255,0.18) !important;
-        border-radius: 14px !important;
-        color: var(--txt) !important;
-        font-weight: 650 !important;
-    }
-    div[data-baseweb="select"] span{
-        color: var(--txt) !important;
+    input, textarea, div[data-baseweb="select"] > div{
+        background:rgba(255,255,255,0.10) !important;
+        border:1px solid rgba(255,255,255,0.18) !important;
+        border-radius:14px !important;
+        color:var(--txt) !important;
+        font-weight:650 !important;
     }
 
-    /* =========================
-       BOTONES (MAIN CONTENT)
-       ========================= */
+    /* ===== BOTONES MAIN ===== */
 
     [data-testid="stAppViewContainer"] .stButton > button,
     [data-testid="stAppViewContainer"] div[data-testid="stFormSubmitButton"] button{
-        background: linear-gradient(135deg, rgba(34,197,94,0.95), rgba(96,165,250,0.95)) !important;
-        color: #07121f !important;
-        border: 1px solid rgba(255,255,255,0.18) !important;
-        border-radius: 999px !important;
-        padding: 10px 18px !important;
-        font-weight: 900 !important;
+        background:linear-gradient(135deg,#22c55e,#60a5fa) !important;
+        color:#07121f !important;
+        border:none !important;
+        border-radius:999px !important;
+        padding:10px 18px !important;
+        font-weight:900 !important;
         box-shadow:
             0 18px 40px rgba(34,197,94,0.22),
-            0 18px 40px rgba(96,165,250,0.18),
-            0 0 0 1px rgba(255,255,255,0.06);
-        transition: all .15s ease;
+            0 18px 40px rgba(96,165,250,0.18);
+        transition:all .15s ease;
     }
 
-    [data-testid="stAppViewContainer"] .stButton > button:hover,
-    [data-testid="stAppViewContainer"] div[data-testid="stFormSubmitButton"] button:hover{
-        transform: translateY(-1px);
-        filter: brightness(1.04);
-        box-shadow:
-            0 22px 60px rgba(34,197,94,0.26),
-            0 22px 60px rgba(96,165,250,0.22),
-            0 0 0 1px rgba(255,255,255,0.10);
+    [data-testid="stAppViewContainer"] .stButton > button:hover{
+        transform:translateY(-1px);
+        filter:brightness(1.05);
     }
 
-    button:disabled{
-        background: rgba(148,163,184,0.55) !important;
-        color: rgba(255,255,255,0.70) !important;
-        box-shadow: none !important;
-        cursor: not-allowed !important;
-        border: 1px solid rgba(255,255,255,0.12) !important;
-    }
-
-    /* =========================
-       METRICS / CARDS (más brillo)
-       ========================= */
+    /* ===== METRICS GLASS ===== */
 
     div[data-testid="stMetric"]{
-        background:
-            linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.10)) !important;
-        border: 1px solid rgba(255,255,255,0.22) !important;
-        border-radius: var(--r24) !important;
-        padding: 18px !important;
+        background:linear-gradient(
+            180deg,
+            rgba(255,255,255,0.18),
+            rgba(255,255,255,0.10)
+        ) !important;
+        border:1px solid rgba(255,255,255,0.22) !important;
+        border-radius:22px !important;
+        padding:18px !important;
+        backdrop-filter:blur(18px);
         box-shadow:
             0 0 0 1px rgba(255,255,255,0.06),
             0 20px 60px rgba(34,197,94,0.18),
             0 20px 60px rgba(96,165,250,0.18) !important;
-        backdrop-filter: blur(18px);
-        position: relative;
-        overflow: hidden;
-    }
-
-    div[data-testid="stMetric"]::before{
-        content:"";
-        position:absolute;
-        inset:-2px;
-        background:
-            radial-gradient(900px 260px at 15% 0%, rgba(34,197,94,0.25) 0%, transparent 60%),
-            radial-gradient(900px 260px at 85% 0%, rgba(96,165,250,0.22) 0%, transparent 60%);
-        pointer-events:none;
-        opacity: 0.9;
-    }
-
-    div[data-testid="stMetric"] label{
-        color: rgba(255,255,255,0.78) !important;
-        font-weight: 850 !important;
-        font-size: 13px !important;
     }
 
     div[data-testid="stMetricValue"]{
-        color: rgba(255,255,255,0.96) !important;
-        font-weight: 950 !important;
-        font-size: 36px !important;
-        letter-spacing: -0.03em;
+        color:#fff !important;
+        font-weight:950 !important;
+        font-size:36px !important;
     }
 
-    .fit-card{
-        background:
-            linear-gradient(180deg, rgba(255,255,255,0.16), rgba(255,255,255,0.10)) !important;
-        border: 1px solid rgba(255,255,255,0.20) !important;
-        border-radius: var(--r24) !important;
-        padding: 16px !important;
-        box-shadow:
-            0 0 0 1px rgba(255,255,255,0.06),
-            0 24px 70px rgba(34,197,94,0.12),
-            0 24px 70px rgba(96,165,250,0.12) !important;
-        backdrop-filter: blur(16px);
-    }
-
-    /* =========================
-       HERO
-       ========================= */
-
-    .hero-banner{
-        display:flex;
-        align-items:center;
-        gap:24px;
-        background:
-            linear-gradient(135deg, rgba(34,197,94,0.20), rgba(96,165,250,0.18)) !important;
-        border: 1px solid rgba(255,255,255,0.18);
-        padding: 22px 22px;
-        border-radius: var(--r24);
-        margin-bottom: 22px;
-        box-shadow:
-            0 0 0 1px rgba(255,255,255,0.06),
-            0 26px 70px rgba(34,197,94,0.12),
-            0 26px 70px rgba(96,165,250,0.10);
-        backdrop-filter: blur(16px);
-    }
-
-    .hero-logo{
-        width: 52px;
-        height: 52px;
-        border-radius: 18px;
-        background: linear-gradient(135deg, rgba(34,197,94,0.95), rgba(96,165,250,0.95));
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        color:#07121f;
-        font-weight: 950;
-        letter-spacing: 0.6px;
-        box-shadow:
-            0 18px 44px rgba(34,197,94,0.22),
-            0 18px 44px rgba(96,165,250,0.18);
-    }
-
-    .hero-text h1{
-        margin: 0 !important;
-        font-size: 34px !important;
-    }
-    .hero-text p{
-        margin: 2px 0 0 0 !important;
-        color: rgba(226,232,240,0.78) !important;
-        font-weight: 650;
-        font-size: 13px;
-    }
-
-    /* =========================
-       SIDEBAR (glass)
-       ========================= */
+    /* ===== SIDEBAR ===== */
 
     [data-testid="stSidebar"] > div{
-        background: rgba(12,18,34,0.55) !important;
-        backdrop-filter: blur(16px);
-        border-right: 1px solid rgba(255,255,255,0.10) !important;
-        padding-top: 16px !important;
-        padding-bottom: 16px !important;
+        background:rgba(12,18,34,0.55) !important;
+        backdrop-filter:blur(16px);
+        border-right:1px solid rgba(255,255,255,0.10);
     }
-
-    .sb-brand{
-        display:flex;
-        align-items:center;
-        gap:12px;
-        padding: 12px 12px;
-        margin: 6px 8px 12px 8px;
-        border-radius: var(--r24);
-        background: linear-gradient(135deg, rgba(255,255,255,0.16), rgba(255,255,255,0.10));
-        border: 1px solid rgba(255,255,255,0.18);
-        box-shadow:
-            0 0 0 1px rgba(255,255,255,0.06),
-            0 18px 44px rgba(0,0,0,0.35);
-        backdrop-filter: blur(16px);
-    }
-
-    .sb-logo{
-        width: 44px;
-        height: 44px;
-        border-radius: 16px;
-        background: linear-gradient(135deg, rgba(34,197,94,0.95), rgba(96,165,250,0.95));
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        color:#07121f;
-        font-weight: 950;
-    }
-
-    .sb-title .sb-name{
-        font-size: 18px;
-        font-weight: 950;
-        color: rgba(255,255,255,0.95);
-        line-height: 1.0;
-    }
-    .sb-title .sb-sub{
-        font-size: 12px;
-        font-weight: 650;
-        color: rgba(226,232,240,0.70);
-        margin-top: 2px;
-    }
-
-    [data-testid="stSidebar"] .stCaption{
-        color: rgba(226,232,240,0.72) !important;
-    }
-
-    /* sidebar inputs */
-    [data-testid="stSidebar"] input,
-    [data-testid="stSidebar"] textarea,
-    [data-testid="stSidebar"] div[data-baseweb="select"] > div{
-        background: rgba(255,255,255,0.10) !important;
-        border: 1px solid rgba(255,255,255,0.16) !important;
-        border-radius: 14px !important;
-        color: rgba(255,255,255,0.92) !important;
-    }
-
-    /* =========================
-       SIDEBAR EXPANDERS (nativos)
-       ========================= */
 
     [data-testid="stSidebar"] details{
-        border: none !important;
-        background: transparent !important;
-        padding: 0 !important;
-        margin: 8px 8px !important;
+        margin:8px !important;
+        background:transparent !important;
     }
 
-    [data-testid="stSidebar"] details > summary{
-        background: linear-gradient(135deg, rgba(34,197,94,0.92), rgba(96,165,250,0.92)) !important;
-        border-radius: 999px !important;
-        padding: 10px 14px !important;
-        color: #07121f !important;
-        font-weight: 950 !important;
-        list-style: none !important;
-        border: 1px solid rgba(255,255,255,0.18) !important;
-        box-shadow:
-            0 18px 44px rgba(34,197,94,0.18),
-            0 18px 44px rgba(96,165,250,0.16);
-        cursor: pointer;
+    [data-testid="stSidebar"] summary{
+        background:linear-gradient(135deg,#22c55e,#60a5fa) !important;
+        border-radius:999px !important;
+        padding:10px 14px !important;
+        font-weight:900 !important;
+        color:#07121f !important;
+        border:none !important;
+        cursor:pointer !important;
     }
-
-    [data-testid="stSidebar"] summary::-webkit-details-marker{ display:none; }
 
     [data-testid="stSidebar"] details > div{
-        background: linear-gradient(180deg, rgba(255,255,255,0.16), rgba(255,255,255,0.10)) !important;
-        border: 1px solid rgba(255,255,255,0.18) !important;
-        border-radius: var(--r24) !important;
-        padding: 10px !important;
-        margin-top: 10px !important;
-        box-shadow:
-            0 0 0 1px rgba(255,255,255,0.06),
-            0 22px 60px rgba(0,0,0,0.30);
-        backdrop-filter: blur(16px);
+        background:rgba(255,255,255,0.12) !important;
+        border:1px solid rgba(255,255,255,0.18) !important;
+        border-radius:20px !important;
+        padding:10px !important;
+        margin-top:10px !important;
+        backdrop-filter:blur(16px);
     }
 
-    /* Botones dentro del expander (sidebar nav) */
     [data-testid="stSidebar"] details > div .stButton > button{
-        width: 100%;
-        background: rgba(255,255,255,0.10) !important;
-        color: rgba(255,255,255,0.92) !important;
-        border: 1px solid rgba(255,255,255,0.16) !important;
-        border-radius: 16px !important;
-        padding: 10px 12px !important;
-        font-weight: 850 !important;
-        box-shadow: none !important;
-        margin: 6px 0 !important;
-        transition: all .12s ease;
+        background:rgba(255,255,255,0.10) !important;
+        color:#fff !important;
+        border:1px solid rgba(255,255,255,0.16) !important;
+        border-radius:16px !important;
+        padding:10px 12px !important;
+        font-weight:800 !important;
+        margin:6px 0 !important;
     }
 
-    /* Activo (type="primary" en nav_btn) */
     [data-testid="stSidebar"] details > div .stButton > button[kind="primary"]{
-        background: linear-gradient(135deg, rgba(34,197,94,0.22), rgba(96,165,250,0.20)) !important;
-        border: 1px solid rgba(255,255,255,0.22) !important;
-        box-shadow:
-            0 14px 40px rgba(34,197,94,0.16),
-            0 14px 40px rgba(96,165,250,0.14);
-    }
-
-    [data-testid="stSidebar"] details > div .stButton > button:hover{
-        transform: translateY(-1px);
-        filter: brightness(1.04);
-    }
-
-    /* Tip inferior */
-    .sb-tip{
-        margin: 12px 10px 0 10px;
-        padding: 12px 12px;
-        border-radius: var(--r20);
-        background: rgba(255,255,255,0.10);
-        border: 1px solid rgba(255,255,255,0.14);
-        color: rgba(226,232,240,0.72);
-        font-weight: 700;
-        font-size: 12px;
-        backdrop-filter: blur(16px);
-    }
-
-    /* =========================
-       TABLA BONITA + SCROLL INDEPENDIENTE
-       ========================= */
-
-    .fit-table-card{
-        background:
-            linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.10));
-        border: 1px solid rgba(255,255,255,0.22);
-        border-radius: var(--r24);
-        padding: 10px;
-        box-shadow:
-            0 22px 60px rgba(34,197,94,0.10),
-            0 22px 60px rgba(96,165,250,0.10);
-        backdrop-filter: blur(16px);
-    }
-
-    .fit-table-scroll{
-        overflow-x: auto;
-        overflow-y: hidden;
-        -webkit-overflow-scrolling: touch;
-        border-radius: 16px;
-    }
-
-    .fit-table-scroll::-webkit-scrollbar{ height: 10px; }
-    .fit-table-scroll::-webkit-scrollbar-track{ background: rgba(255,255,255,0.08); border-radius: 999px; }
-    .fit-table-scroll::-webkit-scrollbar-thumb{ background: rgba(255,255,255,0.20); border-radius: 999px; }
-
-    .fit-table-scroll table{
-        min-width: 720px;
-        width: 100%;
-        border-collapse: separate !important;
-        border-spacing: 0 !important;
-        border-radius: 16px !important;
-        overflow: hidden !important;
-    }
-
-    /* =========================
-       WORKOUT UI (Rutina IA)
-       ========================= */
-
-    .wk-card{
-        background: linear-gradient(180deg, rgba(255,255,255,0.16), rgba(255,255,255,0.10));
-        border: 1px solid rgba(255,255,255,0.18);
-        border-radius: var(--r24);
-        padding: 14px 14px;
-        box-shadow:
-            0 0 0 1px rgba(255,255,255,0.06),
-            0 18px 46px rgba(0,0,0,0.25);
-        margin-bottom: 12px;
-        backdrop-filter: blur(16px);
-    }
-
-    .wk-title{
-        display:flex;
-        align-items:center;
-        justify-content:space-between;
-        gap:10px;
-    }
-
-    .wk-title h4{
-        margin:0;
-        font-size: 16px;
-        font-weight: 950;
-        color: rgba(255,255,255,0.92);
-    }
-
-    .wk-chip{
-        display:inline-flex;
-        align-items:center;
-        gap:6px;
-        padding: 6px 10px;
-        border-radius: 999px;
-        font-size: 12px;
-        font-weight: 900;
-        background: linear-gradient(135deg, rgba(34,197,94,0.22), rgba(96,165,250,0.20));
-        border: 1px solid rgba(255,255,255,0.18);
-        color: rgba(255,255,255,0.90);
-        white-space: nowrap;
-    }
-
-    .wk-sec{
-        margin-top: 10px;
-        padding-top: 10px;
-        border-top: 1px dashed rgba(255,255,255,0.18);
-    }
-
-    .wk-sec-title{
-        font-weight: 950;
-        color: rgba(255,255,255,0.92);
-        margin: 0 0 8px 0;
-        font-size: 13px;
-    }
-
-    .wk-list{
-        margin: 0;
-        padding-left: 18px;
-        color: rgba(226,232,240,0.78);
-        font-weight: 650;
-    }
-
-    .wk-ex{
-        margin: 0 0 10px 0;
-        padding: 10px 12px;
-        border-radius: 16px;
-        background: rgba(255,255,255,0.08);
-        border: 1px solid rgba(255,255,255,0.14);
-    }
-
-    .wk-ex b{ color: rgba(255,255,255,0.92); }
-
-    .wk-note{
-        margin-top: 6px;
-        font-size: 12px;
-        color: rgba(226,232,240,0.72);
+        background:linear-gradient(135deg,rgba(34,197,94,0.22),rgba(96,165,250,0.20)) !important;
     }
 
     </style>
     """, unsafe_allow_html=True)
+
 
 
 
@@ -2029,6 +1632,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
