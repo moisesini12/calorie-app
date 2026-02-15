@@ -186,11 +186,74 @@ def inject_black_theme():
         background:linear-gradient(135deg,rgba(34,197,94,0.22),rgba(96,165,250,0.20)) !important;
     }
 
+    /* =========================
+       TOP APP HEADER
+    ========================= */
+    
+    .app-header{
+        display:flex;
+        align-items:center;
+        gap:16px;
+        margin-bottom:28px;
+        padding:18px 22px;
+    
+        background:linear-gradient(
+            135deg,
+            rgba(34,197,94,0.15),
+            rgba(96,165,250,0.15)
+        );
+    
+        border-radius:24px;
+        border:1px solid rgba(255,255,255,0.12);
+    
+        box-shadow:
+            0 10px 40px rgba(34,197,94,0.12),
+            0 10px 40px rgba(96,165,250,0.12);
+    }
+    
+    .app-logo{
+        width:56px;
+        height:56px;
+        border-radius:18px;
+    
+        background:linear-gradient(135deg,#22c55e,#3b82f6);
+        display:flex;
+        align-items:center;
+        justify-content:center;
+    
+        font-weight:900;
+        font-size:20px;
+        color:white;
+    }
+    
+    .app-name{
+        font-size:26px;
+        font-weight:900;
+        letter-spacing:-0.02em;
+    }
+    
+    .app-sub{
+        font-size:13px;
+        opacity:0.75;
+    }
+
+
+
+
     </style>
     """, unsafe_allow_html=True)
 
 
 
+st.markdown("""
+<div class="app-header">
+    <div class="app-logo">FM</div>
+    <div class="app-title">
+        <div class="app-name">FitMacro</div>
+        <div class="app-sub">Fitness macros intelligence</div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
 
 
@@ -1637,6 +1700,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
