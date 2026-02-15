@@ -323,11 +323,12 @@ def inject_black_theme():
     
     /* Fuerza a que haya scroll si faltan px */
     .fit-table-scroll table{
-      width: max-content !important;    /* 👈 clave */
-      min-width: 820px;                 /* ajusta si quieres más/menos */
+      width: 100% !important;          /* 👈 llena el card */
+      min-width: 980px;                /* 👈 fuerza scroll si no cabe (ajusta) */
       border-collapse: separate !important;
       border-spacing: 0 !important;
     }
+
     
     /* Evita que el Styler meta cosas raras */
     .fit-table-scroll thead th,
@@ -1837,6 +1838,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
