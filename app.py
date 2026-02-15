@@ -322,9 +322,22 @@ def inject_black_theme():
       overflow-y: hidden;
       -webkit-overflow-scrolling: touch;
     }
+    .fit-table-scroll table{
+      width: 100% !important;      /* rellena la card */
+      min-width: 900px;            /* si no cabe, aparece scroll */
+      table-layout: auto;
+    }
+
     
     /* Asegura que el HTML de pandas no se*
 
+    .fit-table-scroll{
+      padding-bottom: 6px; /* deja espacio para la scrollbar */
+    }
+    .fit-table-scroll table{
+      border-collapse: separate !important;
+      border-spacing: 0 !important;
+    }
 
 
 
@@ -1811,6 +1824,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
