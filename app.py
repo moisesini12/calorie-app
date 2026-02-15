@@ -339,23 +339,6 @@ def inject_black_theme():
       border-spacing: 0 !important;
     }
 
-    /* --- REGISTRO: card tabla sin “corte” abajo --- */
-    .fit-table-card{
-      padding: 14px 14px 18px 14px !important;   /* +aire abajo */
-      border-radius: 22px !important;
-      overflow: hidden !important;               /* respeta el radio */
-    }
-    
-    /* el scroll debe respirar para que no se vea cortado */
-    .fit-table-scroll{
-      overflow-x: auto !important;
-      overflow-y: visible !important;
-      padding-bottom: 10px !important;           /* deja hueco para scrollbar/borde */
-    }
-    
-    /* por si el styler mete márgenes raros */
-    .fit-table-scroll table{
-      margin-bottom: 6px
 
 
 
@@ -1841,6 +1824,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
