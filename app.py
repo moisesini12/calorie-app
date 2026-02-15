@@ -292,8 +292,106 @@ def inject_black_theme():
     }
 
 
+    /* =========================
+       SIDEBAR PRO (estable)
+       ========================= */
+    
+    [data-testid="stSidebar"] > div{
+      background: rgba(12,16,24,0.82) !important;
+      backdrop-filter: blur(14px);
+      border-right: 1px solid rgba(255,255,255,0.08) !important;
+    }
+    
+    /* BRAND CARD */
+    .sb-brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:12px 12px;
+      margin:8px 10px 14px 10px;
+      border-radius:18px;
+      background: linear-gradient(135deg, rgba(34,197,94,0.16), rgba(37,99,235,0.16));
+      border: 1px solid rgba(255,255,255,0.10);
+      box-shadow: 0 18px 46px rgba(0,0,0,0.35);
+    }
+    .sb-logo{
+      width:44px;height:44px;
+      border-radius:14px;
+      background: linear-gradient(135deg,#16a34a,#2563eb);
+      display:flex;align-items:center;justify-content:center;
+      font-weight:900;color:#fff;
+    }
+    .sb-title .sb-name{
+      font-size:18px;font-weight:900;color:#eaf0ff;line-height:1.1;
+    }
+    .sb-title .sb-sub{
+      font-size:12px;font-weight:650;color:rgba(234,240,255,0.70);
+    }
+    
+    /* Inputs sidebar */
+    [data-testid="stSidebar"] input,
+    [data-testid="stSidebar"] textarea,
+    [data-testid="stSidebar"] div[data-baseweb="select"] > div{
+      background: rgba(255,255,255,0.06) !important;
+      color: #eaf0ff !important;
+      border: 1px solid rgba(255,255,255,0.10) !important;
+      border-radius: 14px !important;
+    }
+    
+    /* ===== EXPANDERS (NO romper estructura) ===== */
+    [data-testid="stSidebar"] [data-testid="stExpander"]{
+      margin: 10px 10px !important;
+      border: none !important;
+      background: transparent !important;
+    }
+    
+    /* Header del expander */
+    [data-testid="stSidebar"] [data-testid="stExpander"] details > summary{
+      background: linear-gradient(135deg, rgba(34,197,94,0.92), rgba(37,99,235,0.92)) !important;
+      color: #ffffff !important;
+      border-radius: 999px !important;
+      padding: 10px 14px !important;
+      font-weight: 900 !important;
+      border: none !important;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.28) !important;
+    }
+    [data-testid="stSidebar"] summary::-webkit-details-marker{ display:none; }
+    
+    /* Cuerpo del expander (AQUÍ estaba tu bug) */
+    [data-testid="stSidebar"] [data-testid="stExpanderDetails"]{
+      margin-top: 10px !important;
+      padding: 10px !important;
+      border-radius: 18px !important;
+      background: rgba(255,255,255,0.06) !important;
+      border: 1px solid rgba(255,255,255,0.10) !important;
+      overflow: visible !important;   /* 🔥 evita que “expulse” widgets */
+    }
+    
+    /* Botones de navegación dentro del expander */
+    [data-testid="stSidebar"] [data-testid="stExpanderDetails"] .stButton > button{
+      width: 100% !important;
+      border-radius: 999px !important;
+      padding: 10px 14px !important;
+      font-weight: 800 !important;
+      border: 1px solid rgba(255,255,255,0.10) !important;
+      background: rgba(255,255,255,0.06) !important;
+      color: #eaf0ff !important;
+      box-shadow: none !important;
+      margin: 6px 0 !important;
+    }
+    
+    /* Activo (type="primary") */
+    [data-testid="stSidebar"] [data-testid="stExpanderDetails"] .stButton > button[kind="primary"]{
+      background: linear-gradient(135deg, rgba(34,197,94,0.35), rgba(37,99,235,0.30)) !important;
+      border: 1px solid rgba(255,255,255,0.14) !important;
+    }
+    
+    /* Hover */
+    [data-testid="stSidebar"] [data-testid="stExpanderDetails"] .stButton > button:hover{
+      transform: translateY(-1px);
+      filter: brightness(1.03);
+    }
 
-2
 
     </style>
     """, unsafe_allow_html=True)
@@ -1756,6 +1854,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
