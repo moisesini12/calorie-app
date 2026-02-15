@@ -32,366 +32,273 @@ st.set_page_config(
 def inject_black_theme():
     st.markdown(r"""
     <style>
+    /* =========================
+       FITMACRO PRO DARK (CLEAN)
+       - Sin duplicados
+       - Expanders estables (Streamlit)
+       - Sidebar con brand card
+       - Glow controlado
+       ========================= */
 
     :root{
-        --bg0:#121a2b;
-        --bg1:#1b263b;
+        --bg0:#0c1220;
+        --bg1:#121b2f;
 
-        --panel:rgba(255,255,255,0.14);
-        --panel2:rgba(255,255,255,0.10);
+        --glass: rgba(255,255,255,0.10);
+        --glass2: rgba(255,255,255,0.06);
 
-        --stroke:rgba(255,255,255,0.22);
-        --stroke2:rgba(255,255,255,0.14);
+        --stroke: rgba(255,255,255,0.14);
+        --stroke2: rgba(255,255,255,0.10);
 
-        --txt:rgba(255,255,255,0.92);
-        --muted:rgba(226,232,240,0.78);
+        --txt: rgba(255,255,255,0.94);
+        --muted: rgba(226,232,240,0.76);
 
         --g:#22c55e;
         --b:#60a5fa;
-        --p:#a78bfa;
+        --shadow: 0 18px 46px rgba(0,0,0,0.38);
+        --r16: 16px;
+        --r20: 20px;
+        --r24: 24px;
     }
 
+    /* ===== GLOBAL BACKDROP ===== */
     html, body, [data-testid="stAppViewContainer"]{
         background:
-          radial-gradient(1100px 750px at 10% 10%, rgba(34,197,94,0.22) 0%, transparent 60%),
-          radial-gradient(1000px 700px at 90% 12%, rgba(96,165,250,0.22) 0%, transparent 60%),
-          radial-gradient(900px 650px at 60% 85%, rgba(167,139,250,0.12) 0%, transparent 60%),
+          radial-gradient(1100px 750px at 10% 10%, rgba(34,197,94,0.18) 0%, transparent 60%),
+          radial-gradient(1000px 700px at 90% 12%, rgba(96,165,250,0.18) 0%, transparent 60%),
           linear-gradient(180deg, var(--bg0) 0%, var(--bg1) 100%) !important;
-        color:var(--txt) !important;
+        color: var(--txt) !important;
     }
 
-    .block-container{
-        max-width:1180px;
-        padding-top:8px;
-        padding-bottom:56px;
-    }
-
-    h1{
-        font-size:44px !important;
-        font-weight:950 !important;
-        letter-spacing:-0.04em;
-        color:var(--txt) !important;
-    }
-
-    h2,h3{
-        font-weight:900 !important;
-        color:var(--txt) !important;
-    }
-
-    p,label,.stCaption,.stMarkdown{
-        color:var(--muted) !important;
-    }
-
-    input, textarea, div[data-baseweb="select"] > div{
-        background:rgba(255,255,255,0.10) !important;
-        border:1px solid rgba(255,255,255,0.18) !important;
-        border-radius:14px !important;
-        color:var(--txt) !important;
-        font-weight:650 !important;
-    }
-
-    /* ===== BOTONES MAIN ===== */
-
-    [data-testid="stAppViewContainer"] .stButton > button,
-    [data-testid="stAppViewContainer"] div[data-testid="stFormSubmitButton"] button{
-        background:linear-gradient(135deg,#22c55e,#60a5fa) !important;
-        color:#07121f !important;
-        border:none !important;
-        border-radius:999px !important;
-        padding:10px 18px !important;
-        font-weight:900 !important;
-        box-shadow:
-            0 18px 40px rgba(34,197,94,0.22),
-            0 18px 40px rgba(96,165,250,0.18);
-        transition:all .15s ease;
-    }
-
-    [data-testid="stAppViewContainer"] .stButton > button:hover{
-        transform:translateY(-1px);
-        filter:brightness(1.05);
-    }
-
-    /* ===== METRICS GLASS ===== */
-
-    div[data-testid="stMetric"]{
-        background:linear-gradient(
-            180deg,
-            rgba(255,255,255,0.16),
-            rgba(255,255,255,0.10)
-        ) !important;
-    
-        border:1px solid rgba(255,255,255,0.18) !important;
-        border-radius:22px !important;
-        padding:18px !important;
-    
-        backdrop-filter:blur(14px);
-    
-        /* ✨ Glow reducido elegante */
-        box-shadow:
-            0 0 0 1px rgba(255,255,255,0.04),
-            0 8px 24px rgba(34,197,94,0.10),
-            0 8px 24px rgba(96,165,250,0.10) !important;
-    }
-
-
-    div[data-testid="stMetricValue"]{
-        color:#fff !important;
-        font-weight:950 !important;
-        font-size:36px !important;
-    }
-
-    /* ===== SIDEBAR ===== */
-
-    [data-testid="stSidebar"] > div{
-        background:rgba(12,18,34,0.55) !important;
-        backdrop-filter:blur(16px);
-        border-right:1px solid rgba(255,255,255,0.10);
-    }
-
-    [data-testid="stSidebar"] details{
-        margin:8px !important;
-        background:transparent !important;
-    }
-
-    [data-testid="stSidebar"] summary{
-        background:linear-gradient(135deg,#22c55e,#60a5fa) !important;
-        border-radius:999px !important;
-        padding:10px 14px !important;
-        font-weight:900 !important;
-        color:#07121f !important;
-        border:none !important;
-        cursor:pointer !important;
-    }
-
-    [data-testid="stSidebar"] details > div{
-        background:rgba(255,255,255,0.12) !important;
-        border:1px solid rgba(255,255,255,0.18) !important;
-        border-radius:20px !important;
-        padding:10px !important;
-        margin-top:10px !important;
-        backdrop-filter:blur(16px);
-    }
-
-    [data-testid="stSidebar"] details > div .stButton > button{
-        background:rgba(255,255,255,0.10) !important;
-        color:#fff !important;
-        border:1px solid rgba(255,255,255,0.16) !important;
-        border-radius:16px !important;
-        padding:10px 12px !important;
-        font-weight:800 !important;
-        margin:6px 0 !important;
-    }
-
-    [data-testid="stSidebar"] details > div .stButton > button[kind="primary"]{
-        background:linear-gradient(135deg,rgba(34,197,94,0.22),rgba(96,165,250,0.20)) !important;
-    }
-
-    /* =========================
-       TOP APP HEADER
-    ========================= */
-    
-    .app-header{
-        display:flex;
-        align-items:center;
-        gap:16px;
-        margin-bottom:28px;
-        padding:18px 22px;
-    
-        background:linear-gradient(
-            135deg,
-            rgba(34,197,94,0.15),
-            rgba(96,165,250,0.15)
-        );
-    
-        border-radius:24px;
-        border:1px solid rgba(255,255,255,0.12);
-    
-        box-shadow:
-            0 10px 40px rgba(34,197,94,0.12),
-            0 10px 40px rgba(96,165,250,0.12);
-    }
-    
-    .app-logo{
-        width:56px;
-        height:56px;
-        border-radius:18px;
-    
-        background:linear-gradient(135deg,#22c55e,#3b82f6);
-        display:flex;
-        align-items:center;
-        justify-content:center;
-    
-        font-weight:900;
-        font-size:20px;
-        color:white;
-    }
-    
-    .app-name{
-        font-size:26px;
-        font-weight:900;
-        letter-spacing:-0.02em;
-    }
-    
-    .app-sub{
-        font-size:13px;
-        opacity:0.75;
-    }
-
-    /* =========================
-       FIX: header cortado (overflow)
-    ========================= */
-    
-    /* Deja respirar el contenido y evita recortes */
-    section.main, section.main > div {
-      overflow: visible !important;
-    }
-    
-    [data-testid="stAppViewContainer"]{
-      overflow: visible !important;
-    }
-    
-    /* El contenedor principal no debe recortar sombras */
-    .block-container{
-      overflow: visible !important;
-      padding-top: 18px !important; /* un poco más de margen arriba */
-    }
-    
-    /* Por si el propio header se recorta */
-    .app-header{
-      overflow: visible !important;
-    }
-
-    /* =========================
-       FIX HARD: nada recorta el header
-    ========================= */
-    
-    /* Cadena completa de contenedores Streamlit */
-    html, body {
-      overflow: visible !important;
-    }
-    
+    /* Evitar recortes raros (header / sombras) */
+    html, body,
     [data-testid="stApp"],
     [data-testid="stAppViewContainer"],
     [data-testid="stMain"],
-    section.main,
-    section.main > div,
-    .block-container,
-    [data-testid="stHeader"]{
-      overflow: visible !important;
-    }
-    
-    /* Dale espacio arriba real al contenido */
+    section.main, section.main > div,
     .block-container{
-      padding-top: 34px !important;  /* sube esto si quieres aún más */
-    }
-    
-    /* Si tu header usa glow, evita que se vaya demasiado arriba */
-    .app-header{
-      margin-top: 10px !important;
-      overflow: visible !important;
+        overflow: visible !important;
     }
 
+    .block-container{
+        max-width: 1180px;
+        padding-top: 22px !important;
+        padding-bottom: 56px !important;
+    }
+
+    h1{
+        font-size: 44px !important;
+        font-weight: 950 !important;
+        letter-spacing: -0.04em;
+        color: var(--txt) !important;
+    }
+    h2,h3{
+        font-weight: 900 !important;
+        color: var(--txt) !important;
+    }
+    p,label,.stCaption,.stMarkdown{
+        color: var(--muted) !important;
+    }
+
+    /* ===== INPUTS ===== */
+    input, textarea, div[data-baseweb="select"] > div{
+        background: var(--glass2) !important;
+        border: 1px solid var(--stroke) !important;
+        border-radius: 14px !important;
+        color: var(--txt) !important;
+        font-weight: 650 !important;
+    }
+
+    /* ===== MAIN BUTTONS ===== */
+    [data-testid="stAppViewContainer"] .stButton > button,
+    [data-testid="stAppViewContainer"] div[data-testid="stFormSubmitButton"] button{
+        background: linear-gradient(135deg, var(--g), var(--b)) !important;
+        color: #06111f !important;
+        border: none !important;
+        border-radius: 999px !important;
+        padding: 10px 18px !important;
+        font-weight: 900 !important;
+        box-shadow: 0 18px 44px rgba(0,0,0,0.30) !important;
+        transition: all .15s ease;
+    }
+    [data-testid="stAppViewContainer"] .stButton > button:hover{
+        transform: translateY(-1px);
+        filter: brightness(1.03);
+    }
+    button:disabled{
+        opacity: 0.55 !important;
+        cursor: not-allowed !important;
+        box-shadow: none !important;
+    }
+
+    /* ===== METRICS GLASS (glow suave) ===== */
+    div[data-testid="stMetric"]{
+        background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.07)) !important;
+        border: 1px solid rgba(255,255,255,0.14) !important;
+        border-radius: 22px !important;
+        padding: 18px !important;
+        backdrop-filter: blur(14px);
+        box-shadow:
+            0 0 0 1px rgba(255,255,255,0.03),
+            0 14px 40px rgba(0,0,0,0.36) !important;
+    }
+    div[data-testid="stMetric"] label{
+        color: rgba(226,232,240,0.82) !important;
+        font-weight: 800 !important;
+    }
+    div[data-testid="stMetricValue"]{
+        color: #fff !important;
+        font-weight: 950 !important;
+        font-size: 36px !important;
+    }
 
     /* =========================
-       SIDEBAR PRO (estable)
+       TOP APP HEADER (tu .app-header)
        ========================= */
-    
-    [data-testid="stSidebar"] > div{
-      background: rgba(12,16,24,0.82) !important;
-      backdrop-filter: blur(14px);
-      border-right: 1px solid rgba(255,255,255,0.08) !important;
+    .app-header{
+        display:flex;
+        align-items:center;
+        gap: 16px;
+        margin: 8px 0 26px 0;
+        padding: 18px 22px;
+        background: linear-gradient(135deg, rgba(34,197,94,0.12), rgba(96,165,250,0.12));
+        border-radius: var(--r24);
+        border: 1px solid rgba(255,255,255,0.10);
+        box-shadow: 0 18px 50px rgba(0,0,0,0.35);
+        overflow: visible !important;
     }
-    
-    /* BRAND CARD */
+    .app-logo{
+        width: 56px;
+        height: 56px;
+        border-radius: 18px;
+        background: linear-gradient(135deg, var(--g), #3b82f6);
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-weight: 950;
+        font-size: 20px;
+        color: #fff;
+        box-shadow: 0 16px 36px rgba(0,0,0,0.35);
+    }
+    .app-name{
+        font-size: 26px;
+        font-weight: 950;
+        letter-spacing: -0.02em;
+        color: var(--txt);
+        margin: 0;
+    }
+    .app-sub{
+        font-size: 13px;
+        opacity: 0.75;
+        margin: 2px 0 0 0;
+    }
+
+    /* =========================
+       SIDEBAR (ONE TRUE BLOCK)
+       ========================= */
+    [data-testid="stSidebar"] > div{
+        background: rgba(10,14,22,0.78) !important;
+        backdrop-filter: blur(16px);
+        border-right: 1px solid rgba(255,255,255,0.10) !important;
+        padding-top: 16px !important;
+        padding-bottom: 16px !important;
+    }
+
+    /* Brand card sidebar */
     .sb-brand{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      padding:12px 12px;
-      margin:8px 10px 14px 10px;
-      border-radius:18px;
-      background: linear-gradient(135deg, rgba(34,197,94,0.16), rgba(37,99,235,0.16));
-      border: 1px solid rgba(255,255,255,0.10);
-      box-shadow: 0 18px 46px rgba(0,0,0,0.35);
+        display:flex;
+        align-items:center;
+        gap:12px;
+        padding:12px 12px;
+        margin: 6px 10px 14px 10px;
+        border-radius: 18px;
+        background: linear-gradient(135deg, rgba(34,197,94,0.14), rgba(96,165,250,0.14));
+        border: 1px solid rgba(255,255,255,0.10);
+        box-shadow: var(--shadow);
     }
     .sb-logo{
-      width:44px;height:44px;
-      border-radius:14px;
-      background: linear-gradient(135deg,#16a34a,#2563eb);
-      display:flex;align-items:center;justify-content:center;
-      font-weight:900;color:#fff;
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, var(--g), #2563eb);
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-weight: 950;
+        color:#fff;
     }
     .sb-title .sb-name{
-      font-size:18px;font-weight:900;color:#eaf0ff;line-height:1.1;
+        font-size: 18px;
+        font-weight: 950;
+        color: rgba(255,255,255,0.92);
+        line-height: 1.05;
     }
     .sb-title .sb-sub{
-      font-size:12px;font-weight:650;color:rgba(234,240,255,0.70);
+        font-size: 12px;
+        font-weight: 650;
+        color: rgba(226,232,240,0.70);
+        margin-top: 2px;
     }
-    
+
     /* Inputs sidebar */
     [data-testid="stSidebar"] input,
     [data-testid="stSidebar"] textarea,
     [data-testid="stSidebar"] div[data-baseweb="select"] > div{
-      background: rgba(255,255,255,0.06) !important;
-      color: #eaf0ff !important;
-      border: 1px solid rgba(255,255,255,0.10) !important;
-      border-radius: 14px !important;
-    }
-    
-    /* ===== EXPANDERS (NO romper estructura) ===== */
-    [data-testid="stSidebar"] [data-testid="stExpander"]{
-      margin: 10px 10px !important;
-      border: none !important;
-      background: transparent !important;
-    }
-    
-    /* Header del expander */
-    [data-testid="stSidebar"] [data-testid="stExpander"] details > summary{
-      background: linear-gradient(135deg, rgba(34,197,94,0.92), rgba(37,99,235,0.92)) !important;
-      color: #ffffff !important;
-      border-radius: 999px !important;
-      padding: 10px 14px !important;
-      font-weight: 900 !important;
-      border: none !important;
-      box-shadow: 0 16px 40px rgba(0,0,0,0.28) !important;
-    }
-    [data-testid="stSidebar"] summary::-webkit-details-marker{ display:none; }
-    
-    /* Cuerpo del expander (AQUÍ estaba tu bug) */
-    [data-testid="stSidebar"] [data-testid="stExpanderDetails"]{
-      margin-top: 10px !important;
-      padding: 10px !important;
-      border-radius: 18px !important;
-      background: rgba(255,255,255,0.06) !important;
-      border: 1px solid rgba(255,255,255,0.10) !important;
-      overflow: visible !important;   /* 🔥 evita que “expulse” widgets */
-    }
-    
-    /* Botones de navegación dentro del expander */
-    [data-testid="stSidebar"] [data-testid="stExpanderDetails"] .stButton > button{
-      width: 100% !important;
-      border-radius: 999px !important;
-      padding: 10px 14px !important;
-      font-weight: 800 !important;
-      border: 1px solid rgba(255,255,255,0.10) !important;
-      background: rgba(255,255,255,0.06) !important;
-      color: #eaf0ff !important;
-      box-shadow: none !important;
-      margin: 6px 0 !important;
-    }
-    
-    /* Activo (type="primary") */
-    [data-testid="stSidebar"] [data-testid="stExpanderDetails"] .stButton > button[kind="primary"]{
-      background: linear-gradient(135deg, rgba(34,197,94,0.35), rgba(37,99,235,0.30)) !important;
-      border: 1px solid rgba(255,255,255,0.14) !important;
-    }
-    
-    /* Hover */
-    [data-testid="stSidebar"] [data-testid="stExpanderDetails"] .stButton > button:hover{
-      transform: translateY(-1px);
-      filter: brightness(1.03);
+        background: rgba(255,255,255,0.06) !important;
+        border: 1px solid rgba(255,255,255,0.10) !important;
+        color: rgba(255,255,255,0.90) !important;
+        border-radius: 14px !important;
     }
 
+    /* =========================
+       EXPANDERS (Streamlit-safe)
+       ========================= */
+    [data-testid="stSidebar"] [data-testid="stExpander"]{
+        margin: 10px 10px !important;
+        border: none !important;
+        background: transparent !important;
+    }
+
+    [data-testid="stSidebar"] [data-testid="stExpander"] details > summary{
+        background: linear-gradient(135deg, rgba(34,197,94,0.92), rgba(96,165,250,0.92)) !important;
+        color: #06111f !important;
+        border-radius: 999px !important;
+        padding: 10px 14px !important;
+        font-weight: 950 !important;
+        border: none !important;
+        box-shadow: 0 16px 40px rgba(0,0,0,0.28) !important;
+    }
+    [data-testid="stSidebar"] summary::-webkit-details-marker{ display:none; }
+
+    [data-testid="stSidebar"] [data-testid="stExpanderDetails"]{
+        margin-top: 10px !important;
+        padding: 10px !important;
+        border-radius: 20px !important;
+        background: rgba(255,255,255,0.06) !important;
+        border: 1px solid rgba(255,255,255,0.10) !important;
+        overflow: visible !important;
+    }
+
+    /* Botones dentro de expander */
+    [data-testid="stSidebar"] [data-testid="stExpanderDetails"] .stButton > button{
+        width: 100% !important;
+        border-radius: 999px !important;
+        padding: 10px 14px !important;
+        font-weight: 850 !important;
+        border: 1px solid rgba(255,255,255,0.10) !important;
+        background: rgba(255,255,255,0.06) !important;
+        color: rgba(255,255,255,0.92) !important;
+        box-shadow: none !important;
+        margin: 6px 0 !important;
+    }
+    [data-testid="stSidebar"] [data-testid="stExpanderDetails"] .stButton > button[kind="primary"]{
+        background: linear-gradient(135deg, rgba(34,197,94,0.22), rgba(96,165,250,0.20)) !important;
+        border: 1px solid rgba(255,255,255,0.14) !important;
+    }
+    [data-testid="stSidebar"] [data-testid="stExpanderDetails"] .stButton > button:hover{
+        transform: translateY(-1px);
+        filter: brightness(1.03);
+    }
 
     </style>
     """, unsafe_allow_html=True)
@@ -1854,6 +1761,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
