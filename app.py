@@ -410,7 +410,15 @@ def require_login() -> None:
 inject_black_theme()
 
 require_login()
-
+st.markdown("""
+<div class="app-header">
+    <div class="app-logo">FM</div>
+    <div class="app-title">
+        <div class="app-name">FitMacro</div>
+        <div class="app-sub">Fitness macros intelligence</div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
 # ===== SIDEBAR APP STYLE =====
 
 st.sidebar.markdown("""
@@ -1745,6 +1753,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
