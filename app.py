@@ -305,36 +305,39 @@ def inject_black_theme():
        ========================= */
     
     .fit-table-card{
-      margin-top: 12px;
       border-radius: 22px;
-      border: 1px solid rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.10);
       background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.06));
-      box-shadow: 0 18px 46px rgba(0,0,0,0.35);
-      overflow: hidden;                 /* mantiene el radius bonito */
+      box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+      overflow: hidden;          /* 🔥 clave: recorta por las curvas */
+      padding: 0 !important;     /* 🔥 sin margen interno */
     }
     
     /* IMPORTANTE: padding abajo para que NO “muerda” el borde redondo */
     .fit-table-scroll{
-      padding: 14px 14px 18px 14px;     /* 👈 ese padding-bottom arregla el corte */
-      overflow-x: auto;
+      width: 100%;
+      overflow-x: auto;          /* scroll lateral si hace falta */
       overflow-y: hidden;
-      -webkit-overflow-scrolling: touch;
+      padding: 0 !important;     /* 🔥 sin margen interno */
+      margin: 0 !important;
     }
     
     /* Fuerza a que haya scroll si faltan px */
     .fit-table-scroll table{
-      width: 100% !important;   /* 👈 siempre ocupa todo */
+      width: 100% !important;
       min-width: 100% !important;
       border-collapse: separate !important;
       border-spacing: 0 !important;
+      margin: 0 !important;
     }
 
     
-    /* Evita que el Styler meta cosas raras */
+        /* Evita que el Styler meta cosas raras */
     .fit-table-scroll thead th,
     .fit-table-scroll tbody td{
-      white-space: nowrap;
+      border: none !important;
     }
+
     
     /* Scrollbar (opcional, pro) */
     .fit-table-scroll::-webkit-scrollbar{
@@ -352,7 +355,10 @@ def inject_black_theme():
       background: rgba(255,255,255,0.26);
     }
 
-
+    .fit-table-scroll thead th:first-child{ border-top-left-radius: 22px; }
+    .fit-table-scroll thead th:last-child{  border-top-right-radius: 22px; }
+    .fit-table-scroll tbody tr:last-child td:first-child{ border-bottom-left-radius: 22px; }
+    .fit-table-scroll tbody tr:last-child td:last-child{  border-bottom-right-radius: 22px; }
 
 
 
@@ -1838,6 +1844,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
