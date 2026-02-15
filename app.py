@@ -70,6 +70,29 @@ def inject_black_theme():
         color: var(--txt) !important;
     }
 
+
+    /* ✅ FIX: Streamlit pinta el fondo en otros wrappers (evita franja blanca) */
+    [data-testid="stApp"],
+    [data-testid="stMain"],
+    section.main,
+    section.main > div,
+    .block-container{
+        background: transparent !important;
+    }
+    
+    /* Aplica el MISMO fondo también a stApp y stMain */
+    [data-testid="stApp"],
+    [data-testid="stMain"],
+    section.main{
+        background:
+          radial-gradient(1100px 750px at 10% 10%, rgba(34,197,94,0.18) 0%, transparent 60%),
+          radial-gradient(1000px 700px at 90% 12%, rgba(96,165,250,0.18) 0%, transparent 60%),
+          linear-gradient(180deg, var(--bg0) 0%, var(--bg1) 100%) !important;
+        color: var(--txt) !important;
+    }
+
+
+
     /* Evitar recortes raros (header / sombras) */
     html, body,
     [data-testid="stApp"],
@@ -1761,6 +1784,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
