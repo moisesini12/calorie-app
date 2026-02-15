@@ -383,6 +383,50 @@ def inject_black_theme():
       user-select: none;
     }
 
+    /* ===== TOP APP HEADER ===== */
+    .app-header{
+      display:flex;
+      align-items:center;
+      gap:16px;
+      margin: 6px 0 22px 0;
+      padding:18px 22px;
+      border-radius:24px;
+      border:1px solid rgba(255,255,255,0.12);
+      background: linear-gradient(135deg, rgba(34,197,94,0.14), rgba(96,165,250,0.14));
+      box-shadow: 0 12px 36px rgba(0,0,0,0.30);
+      overflow: hidden;
+    }
+    
+    .app-logo{
+      width:56px;
+      height:56px;
+      border-radius:18px;
+      background: linear-gradient(135deg,#22c55e,#3b82f6);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:900;
+      font-size:20px;
+      color:white;
+      flex: 0 0 auto;
+    }
+    
+    .app-title{ line-height: 1.05; }
+    .app-name{
+      font-size:26px;
+      font-weight:900;
+      letter-spacing:-0.02em;
+      color: rgba(255,255,255,0.95);
+    }
+    .app-sub{
+      font-size:13px;
+      color: rgba(226,232,240,0.75);
+      margin-top: 4px;
+    }
+
+
+
+
 
     </style>
     """, unsafe_allow_html=True)
@@ -1866,6 +1910,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
