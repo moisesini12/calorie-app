@@ -362,6 +362,28 @@ def inject_black_theme():
 
 
 
+    /* ===== Floating Action Button (evita el "+" suelto) ===== */
+    .fit-fab{
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      width: 54px;
+      height: 54px;
+      border-radius: 999px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size: 26px;
+      font-weight: 900;
+      color: #07121f;
+      background: linear-gradient(135deg,#22c55e,#60a5fa);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+      cursor: pointer;
+      z-index: 9999;
+      user-select: none;
+    }
+
+
     </style>
     """, unsafe_allow_html=True)
 
@@ -1844,6 +1866,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
