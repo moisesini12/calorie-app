@@ -2,11 +2,10 @@
 
 
 import hashlib, hmac, base64
+from datetime import date
 
 import streamlit as st
 import pandas as pd
-
-from datetime import date
 
 from db_gsheets import (
     init_db, seed_foods_if_empty,
@@ -59,24 +58,15 @@ def inject_fitness_ui():
 
     .block-container{
       max-width: 1100px;
-      padding-top: 60px;   /* ✅ antes 16px: evita el corte superior */
+      padding-top: 60px;
       padding-bottom: 90px;
     }
 
-
-   
-    .fm-row{
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-    }
-    .fm-title{
-      font-weight: 900; letter-spacing:-0.02em;
-    }
-    .fm-sub{
-      color: var(--muted); font-size: 12px; font-weight: 650;
-    }
-    .fm-big{
-      font-size: 32px; font-weight: 950; letter-spacing:-0.04em;
-    }
+    /* Layout helpers */
+    .fm-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+    .fm-title{ font-weight: 900; letter-spacing:-0.02em; }
+    .fm-sub{ color: var(--muted); font-size: 12px; font-weight: 650; }
+    .fm-big{ font-size: 32px; font-weight: 950; letter-spacing:-0.04em; }
     .fm-chip{
       display:inline-flex; align-items:center; gap:6px;
       padding: 6px 10px;
@@ -91,6 +81,40 @@ def inject_fitness_ui():
     .fm-divider{
       height:1px; background: rgba(255,255,255,0.08);
       margin: 10px 0;
+    }
+
+    /* Cards */
+    .fm-card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.05));
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 18px 45px rgba(0,0,0,0.40);
+      backdrop-filter: blur(12px);
+    }
+    .fm-card + .fm-card{ margin-top: 14px; }
+
+    .fm-mini{ border-radius: 18px; padding: 14px 14px; }
+
+    .fm-accent-pink{
+      border-color: rgba(255,79,216,0.22);
+      box-shadow: 0 18px 45px rgba(0,0,0,0.40), 0 0 0 1px rgba(255,79,216,0.10);
+      background: linear-gradient(180deg, rgba(255,79,216,0.12), rgba(255,255,255,0.05));
+    }
+    .fm-accent-purple{
+      border-color: rgba(139,92,246,0.22);
+      box-shadow: 0 18px 45px rgba(0,0,0,0.40), 0 0 0 1px rgba(139,92,246,0.10);
+      background: linear-gradient(180deg, rgba(139,92,246,0.12), rgba(255,255,255,0.05));
+    }
+    .fm-accent-cyan{
+      border-color: rgba(34,211,238,0.22);
+      box-shadow: 0 18px 45px rgba(0,0,0,0.40), 0 0 0 1px rgba(34,211,238,0.10);
+      background: linear-gradient(180deg, rgba(34,211,238,0.10), rgba(255,255,255,0.05));
+    }
+    .fm-accent-green{
+      border-color: rgba(34,197,94,0.22);
+      box-shadow: 0 18px 45px rgba(0,0,0,0.40), 0 0 0 1px rgba(34,197,94,0.10);
+      background: linear-gradient(180deg, rgba(34,197,94,0.10), rgba(255,255,255,0.05));
     }
 
     /* Inputs */
@@ -114,123 +138,6 @@ def inject_fitness_ui():
       border: none !important;
       box-shadow: 0 16px 34px rgba(0,0,0,0.35);
     }
-
-    /* Bottom nav “fake” (no toca scroll global) */
-    .fm-bottom{
-      position: fixed;
-      left: 50%;
-      transform: translateX(-50%);
-      bottom: 14px;
-      width: min(980px, calc(100vw - 28px));
-      background: rgba(10,14,24,0.70);
-      border: 1px solid rgba(255,255,255,0.10);
-      border-radius: 18px;
-      padding: 10px 12px;
-      backdrop-filter: blur(16px);
-      box-shadow: 0 18px 45px rgba(0,0,0,0.45);
-      z-index: 9999;
-    }
-
-
-    /* ===== Tabla FitMacro (dark) + scroll independiente ===== */
-    .fm-table-card{
-      background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.05));
-      border: 1px solid rgba(255,255,255,0.10);
-      border-radius: 18px;
-      padding: 10px;
-      box-shadow: 0 18px 45px rgba(0,0,0,0.40);
-      backdrop-filter: blur(12px);
-    }
-    
-    .fm-table-scroll{
-      overflow-x: auto;
-      overflow-y: hidden;
-      -webkit-overflow-scrolling: touch;
-      border-radius: 14px;
-    }
-    
-    /* Scrollbar */
-    .fm-table-scroll::-webkit-scrollbar{ height: 10px; }
-    .fm-table-scroll::-webkit-scrollbar-track{ background: rgba(255,255,255,0.06); border-radius: 999px; }
-    .fm-table-scroll::-webkit-scrollbar-thumb{ background: rgba(255,255,255,0.16); border-radius: 999px; }
-    
-    /* Estilo de tabla (HTML de pandas styler) */
-    .fm-table-scroll table{
-      width: 100%;
-      min-width: 820px;           /* ✅ fuerza scroll si no cabe */
-      border-collapse: separate !important;
-      border-spacing: 0 !important;
-      overflow: hidden !important;
-      border-radius: 14px !important;
-    }
-    
-    .fm-table-scroll thead th{
-      background: linear-gradient(135deg, rgba(255,79,216,0.55), rgba(139,92,246,0.55)) !important;
-      color: rgba(255,255,255,0.92) !important;
-      font-weight: 900 !important;
-      padding: 12px 12px !important;
-      border: none !important;
-      text-align: left !important;
-    }
-    
-    .fm-table-scroll tbody td{
-      background: rgba(255,255,255,0.06) !important;
-      color: rgba(255,255,255,0.90) !important;
-      font-weight: 650 !important;
-      padding: 12px 12px !important;
-      border: none !important;
-    }
-    
-    .fm-table-scroll tbody tr:nth-child(even) td{
-      background: rgba(255,255,255,0.045) !important;
-    }
-    
-    .fm-table-scroll tbody tr:hover td{
-      background: rgba(34,211,238,0.10) !important;
-      transition: background 0.12s ease;
-    }
-
-    /* ===== Cards (cuadraditos) ===== */
-    .fm-card{
-      background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.05));
-      border: 1px solid rgba(255,255,255,0.10);
-      border-radius: 18px;
-      padding: 16px;
-      box-shadow: 0 18px 45px rgba(0,0,0,0.40);
-      backdrop-filter: blur(12px);
-    }
-    
-    .fm-card + .fm-card{ margin-top: 14px; }
-    
-    /* Variantes con acento */
-    .fm-accent-pink{
-      border-color: rgba(255,79,216,0.22);
-      box-shadow: 0 18px 45px rgba(0,0,0,0.40), 0 0 0 1px rgba(255,79,216,0.10);
-      background: linear-gradient(180deg, rgba(255,79,216,0.12), rgba(255,255,255,0.05));
-    }
-    .fm-accent-purple{
-      border-color: rgba(139,92,246,0.22);
-      box-shadow: 0 18px 45px rgba(0,0,0,0.40), 0 0 0 1px rgba(139,92,246,0.10);
-      background: linear-gradient(180deg, rgba(139,92,246,0.12), rgba(255,255,255,0.05));
-    }
-    .fm-accent-cyan{
-      border-color: rgba(34,211,238,0.22);
-      box-shadow: 0 18px 45px rgba(0,0,0,0.40), 0 0 0 1px rgba(34,211,238,0.10);
-      background: linear-gradient(180deg, rgba(34,211,238,0.10), rgba(255,255,255,0.05));
-    }
-    .fm-accent-green{
-      border-color: rgba(34,197,94,0.22);
-      box-shadow: 0 18px 45px rgba(0,0,0,0.40), 0 0 0 1px rgba(34,197,94,0.10);
-      background: linear-gradient(180deg, rgba(34,197,94,0.10), rgba(255,255,255,0.05));
-    }
-    
-    /* Mini-cards para métricas */
-    .fm-mini{
-      border-radius: 18px;
-      padding: 14px 14px;
-    }
-
-
 
     /* Sidebar brand */
     .sb-brand{
@@ -265,48 +172,132 @@ def inject_fitness_ui():
       margin-top: 2px;
     }
 
-
-    /* ===== Fix: st.progress no debe parecer otra card ===== */
-    div[data-testid="stProgress"]{
-      background: transparent !important;
-      padding: 0 !important;
-      margin: 6px 0 0 0 !important;
+    /* ===== Tabla FitMacro (dark) + scroll independiente ===== */
+    .fm-table-card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.05));
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 18px;
+      padding: 10px;
+      box-shadow: 0 18px 45px rgba(0,0,0,0.40);
+      backdrop-filter: blur(12px);
     }
-    
-    div[data-testid="stProgress"] > div{
-      height: 10px !important;
-      border-radius: 999px !important;
-      background: rgba(255,255,255,0.10) !important;
-      border: 1px solid rgba(255,255,255,0.10) !important;
+    .fm-table-scroll{
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      border-radius: 14px;
+    }
+    .fm-table-scroll::-webkit-scrollbar{ height: 10px; }
+    .fm-table-scroll::-webkit-scrollbar-track{ background: rgba(255,255,255,0.06); border-radius: 999px; }
+    .fm-table-scroll::-webkit-scrollbar-thumb{ background: rgba(255,255,255,0.16); border-radius: 999px; }
+
+    .fm-table-scroll table{
+      width: 100%;
+      min-width: 820px;
+      border-collapse: separate !important;
+      border-spacing: 0 !important;
       overflow: hidden !important;
-      box-shadow: none !important;
+      border-radius: 14px !important;
     }
-    
-    /* Barra rellena */
-    div[data-testid="stProgress"] > div > div{
-      border-radius: 999px !important;
-    }
-
-    /* Fix: st.metric dentro de cards (evita cápsulas raras) */
-    div[data-testid="stMetric"]{
-      background: transparent !important;
+    .fm-table-scroll thead th{
+      background: linear-gradient(135deg, rgba(255,79,216,0.55), rgba(139,92,246,0.55)) !important;
+      color: rgba(255,255,255,0.92) !important;
+      font-weight: 900 !important;
+      padding: 12px 12px !important;
       border: none !important;
-      padding: 0 !important;
-      box-shadow: none !important;
+      text-align: left !important;
+    }
+    .fm-table-scroll tbody td{
+      background: rgba(255,255,255,0.06) !important;
+      color: rgba(255,255,255,0.90) !important;
+      font-weight: 650 !important;
+      padding: 12px 12px !important;
+      border: none !important;
+    }
+    .fm-table-scroll tbody tr:nth-child(even) td{ background: rgba(255,255,255,0.045) !important; }
+    .fm-table-scroll tbody tr:hover td{
+      background: rgba(34,211,238,0.10) !important;
+      transition: background 0.12s ease;
     }
 
+    /* ===== DASHBOARD: Totales mini-cards (HTML) ===== */
+    .fm-metric-label{
+      font-size: 12px;
+      font-weight: 800;
+      color: rgba(226,232,240,0.82);
+      display:flex;
+      align-items:center;
+      gap:6px;
+      margin-bottom: 6px;
+    }
+    .fm-metric-value{
+      font-size: 34px;
+      font-weight: 950;
+      letter-spacing: -0.04em;
+      color: rgba(255,255,255,0.92);
+      line-height: 1.05;
+    }
 
-    
+    /* ===== DASHBOARD: Progress rows (HTML) ===== */
+    .fm-progress-row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+    }
+    .fm-progress-left{ flex: 1; min-width: 0; }
+    .fm-progress-right{
+      width: 160px;
+      text-align:right;
+      flex: 0 0 auto;
+    }
+    .fm-progress-title{
+      font-weight: 900;
+      color: rgba(255,255,255,0.92);
+      margin-bottom: 6px;
+    }
+    .fm-progress-sub{
+      color: rgba(226,232,240,0.72);
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .fm-bar{
+      height: 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.10);
+      border: 1px solid rgba(255,255,255,0.10);
+      overflow: hidden;
+    }
+    .fm-bar > span{
+      display:block;
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      background: rgba(139,92,246,0.85);
+    }
+    .fm-rem-caption{
+      color: rgba(226,232,240,0.72);
+      font-size: 12px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+    .fm-rem-value{
+      font-size: 32px;
+      font-weight: 950;
+      letter-spacing:-0.04em;
+      color: rgba(255,255,255,0.92);
+      line-height: 1.05;
+    }
+
+    /* Per-macro bar colors */
+    .fm-bar.pink > span{ background: rgba(255,79,216,0.90); }
+    .fm-bar.purple > span{ background: rgba(139,92,246,0.90); }
+    .fm-bar.cyan > span{ background: rgba(34,211,238,0.90); }
+    .fm-bar.green > span{ background: rgba(34,197,94,0.90); }
+
     </style>
     """, unsafe_allow_html=True)
-
-
-
-
-
-
-
-
 
 
 # ---------------------------
@@ -340,7 +331,6 @@ def _get_users() -> dict:
 
 
 def require_login() -> None:
-    # Estado
     if "auth_ok" not in st.session_state:
         st.session_state["auth_ok"] = False
     if "user_id" not in st.session_state:
@@ -348,12 +338,10 @@ def require_login() -> None:
 
     users = _get_users()
 
-    # 🔒 Limpia user_id inválido (evita "****" o users que ya no existen)
     if st.session_state.get("user_id") and st.session_state["user_id"] not in users:
         st.session_state["auth_ok"] = False
         st.session_state["user_id"] = ""
 
-    # Ya logueado
     if st.session_state["auth_ok"]:
         return
 
@@ -367,7 +355,6 @@ def require_login() -> None:
         st.markdown("### 🔐 Iniciar sesión")
         st.caption("Selecciona usuario e introduce contraseña.")
 
-        # contador para resetear input sin tocar el state del widget
         if "_login_pwd_n" not in st.session_state:
             st.session_state["_login_pwd_n"] = 0
 
@@ -409,21 +396,15 @@ def require_login() -> None:
         st.stop()
 
 
-
-
 # ---------------------------
 # App init
 # ---------------------------
-
-# ✅ Tema (NO toques overflow global para no romper scroll)
 inject_fitness_ui()
-
-# ✅ Login
 require_login()
 
 uid = st.session_state["user_id"]
 
-# ===== SIDEBAR (minimal) =====
+# ===== SIDEBAR =====
 st.sidebar.markdown("""
 <div class="sb-brand">
   <div class="sb-logo">FM</div>
@@ -441,7 +422,6 @@ if st.sidebar.button("🚪 Cerrar sesión", use_container_width=True):
     st.session_state["user_id"] = ""
     st.rerun()
 
-# ✅ Fecha (DEBE ir antes de usar selected_date_str)
 selected_date = st.sidebar.date_input("📅 Día", value=date.today())
 selected_date_str = selected_date.isoformat()
 
@@ -457,7 +437,7 @@ with cB:
         st.session_state["goto_page"] = "🎯 Objetivos"
         st.rerun()
 
-# ===== TOP BAR (MAIN) =====
+# ===== TOP BAR =====
 st.markdown(f"""
 <div class="fm-card">
   <div class="fm-row">
@@ -473,19 +453,16 @@ st.markdown(f"""
 st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
 
 # =========================
-# NAV V2 (router real + bottom bar visual)
+# NAV
 # =========================
 if "goto_page" not in st.session_state:
     st.session_state["goto_page"] = None
-
 if "nav" not in st.session_state:
     st.session_state["nav"] = "📊"
 
-# si vienes de un atajo, fuerza la página
 if st.session_state["goto_page"]:
     gp = st.session_state["goto_page"]
     st.session_state["goto_page"] = None
-    # traduce a icono nav
     if gp == "📊 Dashboard": st.session_state["nav"] = "📊"
     elif gp == "🍽 Registro": st.session_state["nav"] = "🍽️"
     elif gp == "👨‍🍳 Chef IA": st.session_state["nav"] = "👨‍🍳"
@@ -517,10 +494,6 @@ st.session_state["nav"] = picked
 page = icon_to_page[picked]
 
 
-
-
-
-
 # ==========================================================
 # PÁGINA: DASHBOARD
 # ==========================================================
@@ -538,95 +511,96 @@ if page == "📊 Dashboard":
     total_carbs = sum(float(r["carbs"]) for r in rows) if rows else 0.0
     total_fat = sum(float(r["fat"]) for r in rows) if rows else 0.0
 
-    # ===== GRID METRICS (fit style) =====
-
+    # ===== TOTales del día (HTML, sin st.metric) =====
     st.markdown('<div class="fm-card">', unsafe_allow_html=True)
-    st.subheader("📌 Totales del día")
-    
+    st.markdown("## 📌 Totales del día")
+
     m1, m2, m3, m4 = st.columns(4)
     with m1:
-        st.markdown('<div class="fm-card fm-mini fm-accent-pink">', unsafe_allow_html=True)
-        st.metric("🔥 Calorías", f"{total_kcal:.0f} kcal")
-        st.markdown('</div>', unsafe_allow_html=True)
-    
+        st.markdown(f"""
+        <div class="fm-card fm-mini fm-accent-pink">
+          <div class="fm-metric-label">🔥 Calorías</div>
+          <div class="fm-metric-value">{total_kcal:.0f} kcal</div>
+        </div>
+        """, unsafe_allow_html=True)
     with m2:
-        st.markdown('<div class="fm-card fm-mini fm-accent-purple">', unsafe_allow_html=True)
-        st.metric("🥩 Proteína", f"{total_protein:.1f} g")
-        st.markdown('</div>', unsafe_allow_html=True)
-    
+        st.markdown(f"""
+        <div class="fm-card fm-mini fm-accent-purple">
+          <div class="fm-metric-label">🥩 Proteína</div>
+          <div class="fm-metric-value">{total_protein:.1f} g</div>
+        </div>
+        """, unsafe_allow_html=True)
     with m3:
-        st.markdown('<div class="fm-card fm-mini fm-accent-cyan">', unsafe_allow_html=True)
-        st.metric("🍚 Carbs", f"{total_carbs:.1f} g")
-        st.markdown('</div>', unsafe_allow_html=True)
-    
+        st.markdown(f"""
+        <div class="fm-card fm-mini fm-accent-cyan">
+          <div class="fm-metric-label">🍚 Carbs</div>
+          <div class="fm-metric-value">{total_carbs:.1f} g</div>
+        </div>
+        """, unsafe_allow_html=True)
     with m4:
-        st.markdown('<div class="fm-card fm-mini fm-accent-green">', unsafe_allow_html=True)
-        st.metric("🥑 Grasas", f"{total_fat:.1f} g")
-        st.markdown('</div>', unsafe_allow_html=True)
-    
+        st.markdown(f"""
+        <div class="fm-card fm-mini fm-accent-green">
+          <div class="fm-metric-label">🥑 Grasas</div>
+          <div class="fm-metric-value">{total_fat:.1f} g</div>
+        </div>
+        """, unsafe_allow_html=True)
+
     st.markdown('</div>', unsafe_allow_html=True)
     st.divider()
 
-    # ===== PROGRESO =====
-
-    st.caption("Objetivo vs consumido y cuánto te queda.")
-
+    # ===== PROGRESO (HTML, sin st.progress) =====
     uid = st.session_state["user_id"]
     target_kcal = float(get_setting("target_deficit_calories", 1800, user_id=uid))
     target_p = float(get_setting("target_protein", 120, user_id=uid))
     target_c = float(get_setting("target_carbs", 250, user_id=uid))
     target_f = float(get_setting("target_fat", 60, user_id=uid))
 
-
     def clamp01(x: float) -> float:
         return 0.0 if x < 0 else 1.0 if x > 1 else x
 
-    def progress_row(label: str, value: float, goal: float, unit: str = "", accent_cls: str = "fm-accent-purple"):
+    def progress_row_html(label: str, value: float, goal: float, unit: str, accent_cls: str, bar_color_cls: str):
         goal = float(goal) if goal else 0.0
         value = float(value) if value else 0.0
         ratio = 0.0 if goal <= 0 else clamp01(value / goal)
         remaining = goal - value
-    
-        st.markdown(f'<div class="fm-card fm-mini {accent_cls}">', unsafe_allow_html=True)
-    
-        left, right = st.columns([5, 2], vertical_alignment="center")
-        with left:
-            st.markdown(f"**{label}**  ·  {value:.0f}{unit} / {goal:.0f}{unit}")
-            st.progress(ratio)
-    
-        with right:
-            if goal <= 0:
-                st.caption("sin objetivo")
-            else:
-                st.caption("Restante" if remaining >= 0 else "Exceso")
-                st.markdown(f"<div class='fm-big'>{abs(remaining):.0f}{unit}</div>", unsafe_allow_html=True)
-    
-        st.markdown("</div>", unsafe_allow_html=True)
+        tag = "Restante" if remaining >= 0 else "Exceso"
 
+        pct = int(round(ratio * 100.0))
+        left_txt = f"{value:.0f}{unit} / {goal:.0f}{unit}" if unit.strip() == "kcal" else f"{value:.1f}{unit} / {goal:.1f}{unit}"
+        rem_txt = f"{abs(remaining):.0f}{unit}" if unit.strip() == "kcal" else f"{abs(remaining):.1f}{unit}"
+
+        st.markdown(f"""
+        <div class="fm-card fm-mini {accent_cls}">
+          <div class="fm-progress-row">
+            <div class="fm-progress-left">
+              <div class="fm-progress-title">{label} · {left_txt}</div>
+              <div class="fm-bar {bar_color_cls}"><span style="width:{pct}%"></span></div>
+            </div>
+            <div class="fm-progress-right">
+              <div class="fm-rem-caption">{tag}</div>
+              <div class="fm-rem-value">{rem_txt}</div>
+            </div>
+          </div>
+        </div>
+        """, unsafe_allow_html=True)
 
     st.markdown('<div class="fm-card">', unsafe_allow_html=True)
-    st.subheader("🎯 Progreso del día")
-    st.caption("Objetivo vs consumido y cuánto te queda.")
-    
-    progress_row("🔥 Calorías", total_kcal, target_kcal, " kcal", "fm-accent-pink")
-    progress_row("🥩 Proteína", total_protein, target_p, " g", "fm-accent-purple")
-    progress_row("🍚 Carbs", total_carbs, target_c, " g", "fm-accent-cyan")
-    progress_row("🥑 Grasas", total_fat, target_f, " g", "fm-accent-green")
-    
+    st.markdown("## 🎯 Progreso del día")
+    st.markdown('<div class="fm-progress-sub">Objetivo vs consumido y cuánto te queda.</div>', unsafe_allow_html=True)
+
+    progress_row_html("🔥 Calorías", total_kcal, target_kcal, " kcal", "fm-accent-pink", "pink")
+    progress_row_html("🥩 Proteína", total_protein, target_p, " g", "fm-accent-purple", "purple")
+    progress_row_html("🍚 Carbs", total_carbs, target_c, " g", "fm-accent-cyan", "cyan")
+    progress_row_html("🥑 Grasas", total_fat, target_f, " g", "fm-accent-green", "green")
+
     st.markdown("</div>", unsafe_allow_html=True)
     st.divider()
-        
 
-    # ===== HISTÓRICO EN CARD DEGRADADA =====
-    # ===== HISTÓRICO + INSIGHTS (multiusuario) =====
-    uid = st.session_state["user_id"]
-
-    hist = daily_totals_last_days(30, user_id=uid)  # [(date, kcal, p, c, f), ...]
+    # ===== HISTÓRICO + INSIGHTS =====
+    hist = daily_totals_last_days(30, user_id=uid)
     hist_df = pd.DataFrame(hist, columns=["date", "calories", "protein", "carbs", "fat"])
 
-    # Card contenedora
     st.markdown('<div class="fm-card">', unsafe_allow_html=True)
-
 
     topL, topR = st.columns([3, 2], vertical_alignment="top")
 
@@ -638,7 +612,6 @@ if page == "📊 Dashboard":
             hist_df["date"] = pd.to_datetime(hist_df["date"])
             hist_df = hist_df.sort_values("date")
 
-            # Kcal chart con objetivo
             target_kcal_line = pd.DataFrame({
                 "date": hist_df["date"],
                 "Objetivo": [target_kcal] * len(hist_df),
@@ -658,7 +631,6 @@ if page == "📊 Dashboard":
             )
             st.altair_chart(kcal_chart, use_container_width=True)
 
-            # Mini resumen: media 7 días
             hist_df["kcal_7d"] = hist_df["calories"].rolling(7, min_periods=1).mean()
             last7 = float(hist_df["kcal_7d"].iloc[-1])
             diff = last7 - float(target_kcal)
@@ -675,7 +647,6 @@ if page == "📊 Dashboard":
         rem_f = float(target_f) - float(total_fat)
 
         def badge(label, val, unit):
-            # positivo = te queda, negativo = te pasaste
             tag = "Restante" if val >= 0 else "Exceso"
             st.metric(f"{label} ({tag})", f"{abs(val):.0f}{unit}" if unit == " kcal" else f"{abs(val):.1f}{unit}")
 
@@ -694,18 +665,14 @@ if page == "📊 Dashboard":
             if st.button("➕ Ir a Registro", type="primary"):
                 st.session_state["goto_page"] = "🍽 Registro"
                 st.rerun()
-
         with cB:
             if st.button("🎯 Ir a Objetivos", type="primary"):
                 st.session_state["goto_page"] = "🎯 Objetivos"
                 st.rerun()
 
-
     st.markdown("</div>", unsafe_allow_html=True)
-
     st.divider()
 
-    # ===== MACROS (stacked) últimos 14 días =====
     st.subheader("🥗 Macros recientes (14 días)")
     if hist_df.empty:
         st.caption("Aquí aparecerán tus macros cuando tengas datos.")
@@ -728,8 +695,6 @@ if page == "📊 Dashboard":
         st.altair_chart(macros_chart, use_container_width=True)
 
 
-
-
 # ==========================================================
 # PÁGINA: REGISTRO
 # ==========================================================
@@ -738,13 +703,11 @@ elif page == "🍽 Registro":
     st.caption(f"Día: {selected_date_str}")
     st.divider()
 
-    # Mensaje persistente post-rerun (para que no “parpadee”)
     if st.session_state.get("_just_added", False):
         last_id = st.session_state.get("_last_add_id", "")
         st.success(f"✅ Entrada guardada (id={last_id})")
         st.session_state["_just_added"] = False
 
-    # DEBUG (DENTRO de Registro, con indent correcto)
     with st.expander("🛠️ DEBUG Sheets (solo para ti)", expanded=False):
         import db_gsheets
         try:
@@ -786,9 +749,7 @@ elif page == "🍽 Registro":
             st.stop()
         food = st.selectbox("Alimento", foods_in_cat, format_func=lambda x: x["name"], key="reg_food")
 
-        # FORM de alta
     with st.form("add_entry_form", clear_on_submit=False):
-    
         grams = float(
             st.number_input(
                 "Gramos consumidos",
@@ -799,16 +760,16 @@ elif page == "🍽 Registro":
                 key="reg_grams"
             )
         )
-    
+
         meal = st.radio(
             "Comida",
             ["Desayuno", "Almuerzo", "Merienda", "Cena"],
             horizontal=False,
             key="reg_meal"
         )
-    
+
         add_btn = st.form_submit_button("Añadir al registro")
-    
+
         if add_btn:
             try:
                 macros = scale_macros(food, grams)
@@ -820,20 +781,18 @@ elif page == "🍽 Registro":
                     "grams": float(grams),
                     **macros
                 }
-    
+
                 new_id = add_entry(entry)
-    
+
                 st.cache_data.clear()
                 st.session_state["_just_added"] = True
                 st.session_state["_last_add_id"] = new_id
                 st.rerun()
-    
+
             except Exception as e:
                 st.error("❌ Error guardando la entrada en Google Sheets")
                 st.exception(e)
 
-
-    # Lectura del día (siempre, después del form)
     st.subheader("Registro")
     rows = list_entries_by_date(selected_date_str, st.session_state["user_id"])
     df = pd.DataFrame(rows, columns=["id", "meal", "name", "grams", "calories", "protein", "carbs", "fat"])
@@ -850,18 +809,17 @@ elif page == "🍽 Registro":
             "carbs": "Carbohidratos",
             "fat": "Grasas"
         })
-        # ----- TABLA BONITA (HTML) -----
+
         df_tbl = df_view.copy()
-        
-        # Formato numérico
+
         for col in ["Gramos", "Calorías"]:
             if col in df_tbl.columns:
                 df_tbl[col] = pd.to_numeric(df_tbl[col], errors="coerce").fillna(0).round(0).astype(int)
-        
+
         for col in ["Proteínas", "Carbohidratos", "Grasas"]:
             if col in df_tbl.columns:
                 df_tbl[col] = pd.to_numeric(df_tbl[col], errors="coerce").fillna(0).round(1)
-                
+
         styler = (
             df_tbl.style
             .hide(axis="index")
@@ -881,11 +839,6 @@ elif page == "🍽 Registro":
             unsafe_allow_html=True
         )
 
-
-
-
-
-
         st.subheader("Totales")
         c1, c2, c3, c4 = st.columns(4)
         with c1:
@@ -897,28 +850,24 @@ elif page == "🍽 Registro":
         with c4:
             st.metric("🥑 Grasas", f"{df['fat'].sum():.1f} g")
 
-    # Tendencia (aunque el día esté vacío, puede haber histórico)
-        
-    
-        # Editor/Borrado (solo si hay filas)
         if not df.empty:
             st.subheader("✏️ Editar / 🗑️ Borrar entrada")
-    
+
             options = [{
                 "id": int(r["id"]),
                 "label": f"{r['meal']} — {r['name']} — {float(r['grams']):.0f} g"
             } for _, r in df.iterrows()]
-    
+
             selected_opt = st.selectbox(
                 "Selecciona una entrada",
                 options,
                 format_func=lambda x: x["label"],
                 key="entry_select_edit"
             )
-    
+
             selected_id = int(selected_opt["id"])
             row = df[df["id"] == selected_id].iloc[0]
-    
+
             colE1, colE2, colE3 = st.columns([2, 1, 1])
             with colE1:
                 meals = ["Desayuno", "Almuerzo", "Merienda", "Cena"]
@@ -929,15 +878,14 @@ elif page == "🍽 Registro":
             with colE3:
                 st.write("")
                 st.write("")
-    
-            # Mapa de alimentos para recalcular macros
+
             if "food_map" not in st.session_state:
                 m = {}
                 for c in list_categories():
                     for f in list_foods_by_category(c):
                         m[f["name"]] = f
                 st.session_state["food_map"] = m
-    
+
             base_food = st.session_state["food_map"].get(row["name"])
             if base_food is None:
                 st.error("No encuentro este alimento en la base de datos (quizá lo borraste).")
@@ -956,7 +904,7 @@ elif page == "🍽 Registro":
                     st.cache_data.clear()
                     st.success("Entrada actualizada ✅")
                     st.rerun()
-    
+
                 st.warning("⚠️ Borrar elimina la entrada (no se puede deshacer).")
                 confirm_del = st.checkbox("Confirmo que quiero borrar esta entrada", key=f"confirm_del_{selected_id}")
                 if st.button("Borrar entrada", disabled=not confirm_del, key=f"del_entry_{selected_id}"):
@@ -971,14 +919,13 @@ elif page == "🍽 Registro":
 # ==========================================================
 elif page == "🎯 Objetivos":
     uid = st.session_state["user_id"]
-    
+
     saved_sex = str(get_setting("sex", "M", user_id=uid)).upper().strip()
     saved_age = float(get_setting("age", 25, user_id=uid))
     saved_weight = float(get_setting("weight", 70, user_id=uid))
     saved_height = float(get_setting("height", 175, user_id=uid))
     saved_activity = float(get_setting("activity", 1.55, user_id=uid))
     saved_deficit = float(get_setting("deficit_pct", 20, user_id=uid))
-
 
     st.subheader("🎯 Objetivos")
     st.caption("Calcula y guarda tus objetivos diarios.")
@@ -1025,13 +972,12 @@ elif page == "🎯 Objetivos":
         set_setting("height", str(height), user_id=uid)
         set_setting("activity", str(activity), user_id=uid)
         set_setting("deficit_pct", str(deficit_pct), user_id=uid)
-        
+
         set_setting("target_maintenance", str(maintenance), user_id=uid)
         set_setting("target_deficit_calories", str(deficit_kcal), user_id=uid)
         set_setting("target_protein", str(protein_g), user_id=uid)
         set_setting("target_carbs", str(carbs_g), user_id=uid)
         set_setting("target_fat", str(fat_g), user_id=uid)
-
 
         st.cache_data.clear()
         st.success("Perfil y objetivos guardados ✅")
@@ -1044,7 +990,6 @@ elif page == "🎯 Objetivos":
     target_p = get_setting("target_protein", user_id=uid)
     target_c = get_setting("target_carbs", user_id=uid)
     target_f = get_setting("target_fat", user_id=uid)
-
 
     if all([target_maint, target_def, target_p, target_c, target_f]):
         st.subheader("📌 Tus objetivos guardados")
@@ -1172,9 +1117,6 @@ elif page == "👨‍🍳 Chef IA":
 
     uid = st.session_state["user_id"]
 
-    # ---------------------------
-    # Chat
-    # ---------------------------
     def send_coach():
         prompt = st.session_state.get("coach_prompt", "").strip()
         if not prompt:
@@ -1192,7 +1134,6 @@ elif page == "👨‍🍳 Chef IA":
     st.subheader("👨‍🍳 Chef IA")
     st.caption("Nutrición + menú + platos con tus alimentos (optimizado para móvil).")
 
-    # Chat arriba (siempre)
     for m in st.session_state.chat_history:
         if m["role"] == "system":
             continue
@@ -1209,12 +1150,8 @@ elif page == "👨‍🍳 Chef IA":
 
     st.divider()
 
-    # ---------------------------
-    # Selector móvil: Menús vs Platos
-    # ---------------------------
     if "chef_mode" not in st.session_state:
-        st.session_state["chef_mode"] = "none"  # al entrar: no mostrar nada
-
+        st.session_state["chef_mode"] = "none"
 
     b1, b2 = st.columns(2)
     with b1:
@@ -1228,9 +1165,6 @@ elif page == "👨‍🍳 Chef IA":
 
     st.divider()
 
-    # ---------------------------
-    # Datos comunes para ambos generadores
-    # ---------------------------
     cats = list_categories()
     food_map = {}
     for c in cats:
@@ -1240,11 +1174,6 @@ elif page == "👨‍🍳 Chef IA":
 
     mode = st.session_state.get("chef_mode", "Menus")
 
-
-
-    # ==========================================================
-    # 🍽️ GENERADOR DE MENÚS
-    # ==========================================================
     if mode == "menus":
         st.subheader("🍽️ Generador de menú")
         st.caption("Te genera un menú de 4 comidas usando SOLO tus alimentos.")
@@ -1300,9 +1229,6 @@ elif page == "👨‍🍳 Chef IA":
                 f"Total menú: {totals['calories']:.0f} kcal · P {totals['protein']:.0f} · C {totals['carbs']:.0f} · G {totals['fat']:.0f}"
             )
 
-    # ==========================================================
-    # 🥘 GENERADOR DE PLATOS (plato combinado)
-    # ==========================================================
     elif mode == "platos":
         st.subheader("🥘 Generador de platos")
         st.caption("Combina alimentos de tu base, calcula macros automáticamente y guarda el plato como nuevo alimento.")
@@ -1311,7 +1237,6 @@ elif page == "👨‍🍳 Chef IA":
             st.info("No hay alimentos disponibles en tu base para crear un plato.")
             st.stop()
 
-        # Estado para ir añadiendo ingredientes
         if "dish_items" not in st.session_state:
             st.session_state["dish_items"] = [{"name": allowed[0], "grams": 100.0}]
 
@@ -1340,7 +1265,6 @@ elif page == "👨‍🍳 Chef IA":
             for i, it in enumerate(st.session_state["dish_items"]):
                 st.markdown(f"**Ingrediente {i+1}**")
 
-                # Asegurar consistencia si cambió allowed
                 if it.get("name") not in allowed:
                     it["name"] = allowed[0]
 
@@ -1387,7 +1311,6 @@ elif page == "👨‍🍳 Chef IA":
 
             st.caption(f"Peso total: **{total_grams:.0f} g**")
 
-            # Por 100g (para guardar como alimento)
             if total_grams > 0:
                 per100 = {
                     "calories": totals["calories"] / total_grams * 100.0,
@@ -1429,7 +1352,6 @@ elif page == "👨‍🍳 Chef IA":
                     st.cache_data.clear()
                     st.success("Plato guardado como alimento ✅")
 
-                    # Reset rápido
                     st.session_state["dish_items"] = [{"name": allowed[0], "grams": 100.0}]
                     st.rerun()
 
@@ -1759,4 +1681,5 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
