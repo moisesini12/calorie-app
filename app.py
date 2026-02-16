@@ -761,46 +761,13 @@ elif page == "🍽 Registro":
             })
         )
 
-            .set_table_styles([
-                {"selector": "table", "props": [
-                    ("width", "100%"),
-                    ("border-collapse", "separate"),
-                    ("border-spacing", "0"),
-                    ("border-radius", "18px"),
-                    ("overflow", "hidden"),
-                    ("box-shadow", "0 18px 40px rgba(15,23,42,0.12)"),
-                    ("border", "1px solid rgba(15,23,42,0.10)"),
-                ]},
-                {"selector": "thead th", "props": [
-                    ("background", "linear-gradient(135deg, rgba(22,163,74,0.85), rgba(37,99,235,0.85))"),
-                    ("color", "white"),
-                    ("font-weight", "800"),
-                    ("padding", "12px 12px"),
-                    ("border", "none"),
-                    ("text-align", "left"),
-                ]},
-                {"selector": "tbody td", "props": [
-                    ("background", "rgba(255,255,255,0.75)"),
-                    ("color", "#0f172a"),
-                    ("font-weight", "650"),
-                    ("padding", "12px 12px"),
-                    ("border", "none"),
-                ]},
-                {"selector": "tbody tr:nth-child(even) td", "props": [
-                    ("background", "rgba(255,255,255,0.62)"),
-                ]},
-                {"selector": "tbody tr:hover td", "props": [
-                    ("background", "rgba(37,99,235,0.14)"),
-                ]},
-            ])
-        )
-                
         table_html = styler.to_html()
-        
+
         st.markdown(
             f"""<div class="fm-table-card"><div class="fm-table-scroll">{table_html}</div></div>""",
             unsafe_allow_html=True
         )
+
 
 
 
@@ -1679,6 +1646,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
