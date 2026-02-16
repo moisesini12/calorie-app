@@ -623,95 +623,80 @@ if st.sidebar.button("🚪 Cerrar sesión", use_container_width=True):
 selected_date = st.sidebar.date_input("📅 Día", value=date.today())
 selected_date_str = selected_date.isoformat()
 
+
 # =========================
-# SIDEBAR NAV (UNA SOLA SELECCIÓN)
+# NAV V2 (TOP NAV + SIDEBAR MINIMAL)
 # =========================
+
+# Estado nav
 if "nav" not in st.session_state:
     st.session_state["nav"] = "📊 Dashboard"
 
-def _set_nav(v: str):
-    st.session_state["nav"] = v
-
-def nav_btn(label: str, value: str, key: str):
-    """Botón de navegación (se usa dentro de expander)."""
-    active = (st.session_state.get("nav") == value)
-    st.button(
-        label,
-        key=key,
-        use_container_width=True,
-        type="primary" if active else "secondary",
-        on_click=_set_nav,
-        args=(value,),
-    )
-
-# --- Navegación controlada (para atajos "Ir a ...") ---
+# Atajos controlados
 if "goto_page" not in st.session_state:
     st.session_state["goto_page"] = None
-
 if st.session_state["goto_page"]:
     st.session_state["nav"] = st.session_state["goto_page"]
     st.session_state["goto_page"] = None
 
-# =========================
-# MENÚ POR SECCIONES (4 EXPANDERS)
-# =========================
+
+PAGES = [
+    ("📊 Dashboard", "📊 Dashboard"),
+    ("🍽 Registro", "🍽 Registro"),
+    ("👨‍🍳 Chef IA", "👨‍🍳 Chef IA"),
+    ("🏋️ Rutina IA", "🏋️ Rutina IA"),
+    ("🎯 Objetivos", "🎯 Objetivos"),
+    ("➕ Alimentos", "➕ Añadir alimento"),
+]
+page_labels = [p[0] for p in PAGES]
+label_to_value = {label: value for label, value in PAGES}
+value_to_label = {value: label for label, value in PAGES}
+
+# Sidebar (minimal)
+st.sidebar.divider()
+st.sidebar.caption("Atajos")
+cA, cB = st.sidebar.columns(2)
+with cA:
+    if st.button("➕ Registro", use_container_width=True):
+        st.session_state["goto_page"] = "🍽 Registro"
+        st.rerun()
+with cB:
+    if st.button("🎯 Objetivos", use_container_width=True):
+        st.session_state["goto_page"] = "🎯 Objetivos"
+        st.rerun()
+
+# Top nav (main)
+st.markdown("### 🧭 Navegación")
+current_label = value_to_label.get(st.session_state["nav"], "📊 Dashboard")
+
+picked_label = st.radio(
+    "nav_top",
+    page_labels,
+    index=page_labels.index(current_label),
+    horizontal=True,
+    label_visibility="collapsed",
+)
+
+st.session_state["nav"] = label_to_value[picked_label]
 page = st.session_state["nav"]
 
-GROUPS = {
-    "PRINCIPAL": {
-        "icon": "📊",
-        "pages": [
-            ("📊 Dashboard", "📊 Dashboard", "nav_dash"),
-        ]
-    },
-    "NUTRICIÓN": {
-        "icon": "🍽️",
-        "pages": [
-            ("🍽 Registro", "🍽 Registro", "nav_reg"),
-            ("👨‍🍳 Chef IA", "👨‍🍳 Chef IA", "nav_chef"),
-            ("➕ Añadir alimento", "➕ Añadir alimento", "nav_foods"),
-        ]
-    },
-    "ENTRENAMIENTO": {
-        "icon": "🏋️",
-        "pages": [
-            ("🏋️ Rutina IA", "🏋️ Rutina IA", "nav_rutina"),
-        ]
-    },
-    "PERFIL": {
-        "icon": "⚙️",
-        "pages": [
-            ("🎯 Objetivos", "🎯 Objetivos", "nav_obj"),
-        ]
-    },
-}
 
-def group_for_page(p: str) -> str:
-    for gname, g in GROUPS.items():
-        for _, value, _ in g["pages"]:
-            if value == p:
-                return gname
-    return "PRINCIPAL"
 
-active_group = group_for_page(page)
+def render_page():
+    if page == "📊 Dashboard":
+        return page_dashboard()
+    if page == "🍽 Registro":
+        return page_registro()
+    if page == "🎯 Objetivos":
+        return page_objetivos()
+    if page == "➕ Añadir alimento":
+        return page_alimentos()
+    if page == "👨‍🍳 Chef IA":
+        return page_chef_ia()
+    if page == "🏋️ Rutina IA":
+        return page_rutina_ia()
+    st.info("Página no encontrada 🤖")
 
-# Render de los 4 expanders
-for gname in ["PRINCIPAL", "NUTRICIÓN", "ENTRENAMIENTO", "PERFIL"]:
-    g = GROUPS[gname]
-    title = f"{g['icon']} {gname.title()}"
-    expanded = (gname == active_group)
-
-    with st.sidebar.expander(title, expanded=expanded):
-        # 🔥 IMPORTANTE: NO envolver con <div> custom aquí dentro
-        # porque rompe el DOM del expander en Streamlit.
-        for label, value, key in g["pages"]:
-            nav_btn(label, value, key)
-
-# Página final (por claridad)
-page = st.session_state["nav"]
-
-# (Si tienes el FAB, déjalo aquí)
-st.markdown("""<div class="fit-fab">+</div>""", unsafe_allow_html=True)
 
 
 
@@ -1954,6 +1939,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
