@@ -420,19 +420,6 @@ picked = st.radio(
 st.session_state["nav"] = picked
 page = icon_to_page[picked]
 
-# Bottom bar VISUAL (solo estética)
-st.markdown("""
-<div class="fm-bottom">
-  <div style="display:flex;justify-content:space-between;gap:10px;">
-    <span class="fm-chip">📊</span>
-    <span class="fm-chip">🍽️</span>
-    <span class="fm-chip">👨‍🍳</span>
-    <span class="fm-chip">🏋️</span>
-    <span class="fm-chip">⚙️</span>
-    <span class="fm-chip">➕</span>
-  </div>
-</div>
-""", unsafe_allow_html=True)
 
 
 
@@ -1646,6 +1633,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
