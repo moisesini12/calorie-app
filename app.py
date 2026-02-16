@@ -303,7 +303,7 @@ st.markdown(f"""
 <div class="fm-card">
   <div class="fm-row">
     <div>
-      <div class="fm-title">For today</div>
+      <div class="fm-title">DALE DURO</div>
       <div class="fm-sub">Usuario: <b>{uid}</b></div>
     </div>
     <div class="fm-chip">📅 {selected_date_str}</div>
@@ -1614,6 +1614,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
