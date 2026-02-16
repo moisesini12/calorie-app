@@ -254,12 +254,50 @@ def require_login() -> None:
 # ---------------------------
 # App init
 # ---------------------------
+
+# ✅ Tema (NO toques overflow global para no romper scroll)
 inject_fitness_ui()
 
+# ✅ Login
 require_login()
 
 uid = st.session_state["user_id"]
 
+# ===== SIDEBAR (minimal) =====
+st.sidebar.markdown("""
+<div class="sb-brand">
+  <div class="sb-logo">FM</div>
+  <div class="sb-title">
+    <div class="sb-name">FitMacro</div>
+    <div class="sb-sub">Fitness macros tracker</div>
+  </div>
+</div>
+""", unsafe_allow_html=True)
+
+st.sidebar.caption(f"👤 Sesión: **{uid}**")
+
+if st.sidebar.button("🚪 Cerrar sesión", use_container_width=True):
+    st.session_state["auth_ok"] = False
+    st.session_state["user_id"] = ""
+    st.rerun()
+
+# ✅ Fecha (DEBE ir antes de usar selected_date_str)
+selected_date = st.sidebar.date_input("📅 Día", value=date.today())
+selected_date_str = selected_date.isoformat()
+
+st.sidebar.divider()
+st.sidebar.caption("Atajos")
+cA, cB = st.sidebar.columns(2)
+with cA:
+    if st.sidebar.button("➕ Registro", use_container_width=True):
+        st.session_state["goto_page"] = "🍽 Registro"
+        st.rerun()
+with cB:
+    if st.sidebar.button("🎯 Objetivos", use_container_width=True):
+        st.session_state["goto_page"] = "🎯 Objetivos"
+        st.rerun()
+
+# ===== TOP BAR (MAIN) =====
 st.markdown(f"""
 <div class="fm-card">
   <div class="fm-row">
@@ -272,50 +310,53 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
+st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
 
-# ===== SIDEBAR BRAND =====
-st.sidebar.markdown("""
-<div class="sb-brand">
-  <div class="sb-logo">FM</div>
-  <div class="sb-title">
-    <div class="sb-name">FitMacro</div>
-    <div class="sb-sub">Fitness macros tracker</div>
-  </div>
-</div>
-""", unsafe_allow_html=True)
-
-st.sidebar.caption(f"👤 Sesión: **{st.session_state['user_id']}**")
-
-if st.sidebar.button("🚪 Cerrar sesión", use_container_width=True):
-    st.session_state["auth_ok"] = False
-    st.session_state["user_id"] = ""
-    st.rerun()
-
-selected_date = st.sidebar.date_input("📅 Día", value=date.today())
-selected_date_str = selected_date.isoformat()
+# =========================
+# NAV V2 (router real + bottom bar visual)
+# =========================
+if "goto_page" not in st.session_state:
+    st.session_state["goto_page"] = None
 
 if "nav" not in st.session_state:
     st.session_state["nav"] = "📊"
 
+# si vienes de un atajo, fuerza la página
+if st.session_state["goto_page"]:
+    gp = st.session_state["goto_page"]
+    st.session_state["goto_page"] = None
+    # traduce a icono nav
+    if gp == "📊 Dashboard": st.session_state["nav"] = "📊"
+    elif gp == "🍽 Registro": st.session_state["nav"] = "🍽️"
+    elif gp == "👨‍🍳 Chef IA": st.session_state["nav"] = "👨‍🍳"
+    elif gp == "🏋️ Rutina IA": st.session_state["nav"] = "🏋️"
+    elif gp == "🎯 Objetivos": st.session_state["nav"] = "⚙️"
+    elif gp == "➕ Añadir alimento": st.session_state["nav"] = "➕"
+
 NAV = [
-    ("📊", "Dashboard"),
-    ("🍽️", "Registro"),
-    ("👨‍🍳", "Chef IA"),
-    ("🏋️", "Rutina IA"),
-    ("⚙️", "Objetivos"),
+    ("📊", "📊 Dashboard"),
+    ("🍽️", "🍽 Registro"),
+    ("👨‍🍳", "👨‍🍳 Chef IA"),
+    ("🏋️", "🏋️ Rutina IA"),
+    ("⚙️", "🎯 Objetivos"),
+    ("➕", "➕ Añadir alimento"),
 ]
 
-# Router real (arriba, invisible label)
+icons = [x[0] for x in NAV]
+icon_to_page = {x[0]: x[1] for x in NAV}
+
 picked = st.radio(
     "nav",
-    [x[0] for x in NAV],
-    index=[x[0] for x in NAV].index(st.session_state["nav"]),
+    icons,
+    index=icons.index(st.session_state["nav"]) if st.session_state["nav"] in icons else 0,
     horizontal=True,
     label_visibility="collapsed",
 )
-st.session_state["nav"] = picked
 
-# Bottom bar visual (solo estética)
+st.session_state["nav"] = picked
+page = icon_to_page[picked]
+
+# Bottom bar VISUAL (solo estética)
 st.markdown("""
 <div class="fm-bottom">
   <div style="display:flex;justify-content:space-between;gap:10px;">
@@ -324,19 +365,11 @@ st.markdown("""
     <span class="fm-chip">👨‍🍳</span>
     <span class="fm-chip">🏋️</span>
     <span class="fm-chip">⚙️</span>
+    <span class="fm-chip">➕</span>
   </div>
 </div>
 """, unsafe_allow_html=True)
 
-# Traducción a tu sistema de páginas
-icon_to_page = {
-    "📊": "📊 Dashboard",
-    "🍽️": "🍽 Registro",
-    "👨‍🍳": "👨‍🍳 Chef IA",
-    "🏋️": "🏋️ Rutina IA",
-    "⚙️": "🎯 Objetivos",
-}
-page = icon_to_page[st.session_state["nav"]]
 
 
 
@@ -1580,6 +1613,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
