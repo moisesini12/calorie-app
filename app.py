@@ -84,17 +84,17 @@ def inject_black_theme():
       color: var(--txt) !important;
     }
 
-    /* Evitar recortes de sombras/headers */
-    html, body { overflow: visible !important; }
-    [data-testid="stApp"],
-    [data-testid="stAppViewContainer"],
-    [data-testid="stMain"],
-    section.main,
-    section.main > div,
-    .block-container,
-    [data-testid="stHeader"]{
-      overflow: visible !important;
+    /* Evita scroll horizontal raro y que sombras invadan secciones */
+    html, body { overflow-x: hidden !important; }
+    
+    /* Deja respirar el header, pero no “liberes” todo el layout */
+    [data-testid="stHeader"]{ overflow: visible !important; }
+    
+    /* Contenido principal: recorta el overflow para que las sombras no se solapen con lo siguiente */
+    section.main, .block-container{
+      overflow: hidden !important;
     }
+
 
     .block-container{
       max-width: 1180px;
@@ -1939,6 +1939,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
