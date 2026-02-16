@@ -265,6 +265,37 @@ def inject_fitness_ui():
       margin-top: 2px;
     }
 
+
+    /* ===== Fix: st.progress no debe parecer otra card ===== */
+    div[data-testid="stProgress"]{
+      background: transparent !important;
+      padding: 0 !important;
+      margin: 6px 0 0 0 !important;
+    }
+    
+    div[data-testid="stProgress"] > div{
+      height: 10px !important;
+      border-radius: 999px !important;
+      background: rgba(255,255,255,0.10) !important;
+      border: 1px solid rgba(255,255,255,0.10) !important;
+      overflow: hidden !important;
+      box-shadow: none !important;
+    }
+    
+    /* Barra rellena */
+    div[data-testid="stProgress"] > div > div{
+      border-radius: 999px !important;
+    }
+
+    /* Fix: st.metric dentro de cards (evita cápsulas raras) */
+    div[data-testid="stMetric"]{
+      background: transparent !important;
+      border: none !important;
+      padding: 0 !important;
+      box-shadow: none !important;
+    }
+
+
     
     </style>
     """, unsafe_allow_html=True)
@@ -537,7 +568,7 @@ if page == "📊 Dashboard":
     st.divider()
 
     # ===== PROGRESO =====
-    st.subheader("🎯 Progreso del día")
+
     st.caption("Objetivo vs consumido y cuánto te queda.")
 
     uid = st.session_state["user_id"]
@@ -1728,6 +1759,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
