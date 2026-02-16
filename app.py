@@ -90,10 +90,12 @@ def inject_black_theme():
     /* Deja respirar el header, pero no “liberes” todo el layout */
     [data-testid="stHeader"]{ overflow: visible !important; }
     
-    /* Contenido principal: recorta el overflow para que las sombras no se solapen con lo siguiente */
-    section.main, .block-container{
-      overflow: hidden !important;
-    }
+/* Mantén scroll vertical, bloquea solo el horizontal */
+section.main, .block-container{
+  overflow-x: hidden !important;
+  overflow-y: visible !important;
+}
+
 
 
     .block-container{
@@ -1939,6 +1941,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
