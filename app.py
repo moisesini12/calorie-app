@@ -138,6 +138,69 @@ def inject_fitness_ui():
       box-shadow: 0 18px 45px rgba(0,0,0,0.45);
       z-index: 9999;
     }
+
+
+    /* ===== Tabla FitMacro (dark) + scroll independiente ===== */
+    .fm-table-card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.05));
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 18px;
+      padding: 10px;
+      box-shadow: 0 18px 45px rgba(0,0,0,0.40);
+      backdrop-filter: blur(12px);
+    }
+    
+    .fm-table-scroll{
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      border-radius: 14px;
+    }
+    
+    /* Scrollbar */
+    .fm-table-scroll::-webkit-scrollbar{ height: 10px; }
+    .fm-table-scroll::-webkit-scrollbar-track{ background: rgba(255,255,255,0.06); border-radius: 999px; }
+    .fm-table-scroll::-webkit-scrollbar-thumb{ background: rgba(255,255,255,0.16); border-radius: 999px; }
+    
+    /* Estilo de tabla (HTML de pandas styler) */
+    .fm-table-scroll table{
+      width: 100%;
+      min-width: 820px;           /* ✅ fuerza scroll si no cabe */
+      border-collapse: separate !important;
+      border-spacing: 0 !important;
+      overflow: hidden !important;
+      border-radius: 14px !important;
+    }
+    
+    .fm-table-scroll thead th{
+      background: linear-gradient(135deg, rgba(255,79,216,0.55), rgba(139,92,246,0.55)) !important;
+      color: rgba(255,255,255,0.92) !important;
+      font-weight: 900 !important;
+      padding: 12px 12px !important;
+      border: none !important;
+      text-align: left !important;
+    }
+    
+    .fm-table-scroll tbody td{
+      background: rgba(255,255,255,0.06) !important;
+      color: rgba(255,255,255,0.90) !important;
+      font-weight: 650 !important;
+      padding: 12px 12px !important;
+      border: none !important;
+    }
+    
+    .fm-table-scroll tbody tr:nth-child(even) td{
+      background: rgba(255,255,255,0.045) !important;
+    }
+    
+    .fm-table-scroll tbody tr:hover td{
+      background: rgba(34,211,238,0.10) !important;
+      transition: background 0.12s ease;
+    }
+
+
+
+    
     </style>
     """, unsafe_allow_html=True)
 
@@ -696,6 +759,8 @@ elif page == "🍽 Registro":
                 "Carbohidratos": "{:.1f}",
                 "Grasas": "{:.1f}",
             })
+        )
+
             .set_table_styles([
                 {"selector": "table", "props": [
                     ("width", "100%"),
@@ -733,7 +798,7 @@ elif page == "🍽 Registro":
         table_html = styler.to_html()
         
         st.markdown(
-            f"""<div class="fit-table-card"><div class="fit-table-scroll">{table_html}</div></div>""",
+            f"""<div class="fm-table-card"><div class="fm-table-scroll">{table_html}</div></div>""",
             unsafe_allow_html=True
         )
 
@@ -1614,6 +1679,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
