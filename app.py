@@ -59,9 +59,10 @@ def inject_fitness_ui():
 
     .block-container{
       max-width: 1100px;
-      padding-top: 16px;
-      padding-bottom: 90px; /* deja “aire” abajo por el nav */
+      padding-top: 60px;   /* ✅ antes 16px: evita el corte superior */
+      padding-bottom: 90px;
     }
+
 
     /* Cards */
     .fm-card{
@@ -1613,6 +1614,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
