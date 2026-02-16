@@ -254,19 +254,24 @@ def require_login() -> None:
 # ---------------------------
 # App init
 # ---------------------------
-inject_black_theme()
+inject_fitness_ui()
+
 require_login()
 
-# ===== TOP HEADER (MAIN) =====
-st.markdown("""
-<div class="app-header">
-    <div class="app-logo">FM</div>
-    <div class="app-title">
-        <div class="app-name">FitMacro</div>
-        <div class="app-sub">Fitness macros intelligence</div>
+uid = st.session_state["user_id"]
+
+st.markdown(f"""
+<div class="fm-card">
+  <div class="fm-row">
+    <div>
+      <div class="fm-title">For today</div>
+      <div class="fm-sub">Usuario: <b>{uid}</b></div>
     </div>
+    <div class="fm-chip">📅 {selected_date_str}</div>
+  </div>
 </div>
 """, unsafe_allow_html=True)
+
 
 # ===== SIDEBAR BRAND =====
 st.sidebar.markdown("""
@@ -289,95 +294,50 @@ if st.sidebar.button("🚪 Cerrar sesión", use_container_width=True):
 selected_date = st.sidebar.date_input("📅 Día", value=date.today())
 selected_date_str = selected_date.isoformat()
 
-# =========================
-# SIDEBAR NAV (UNA SOLA SELECCIÓN)
-# =========================
 if "nav" not in st.session_state:
-    st.session_state["nav"] = "📊 Dashboard"
+    st.session_state["nav"] = "📊"
 
-def _set_nav(v: str):
-    st.session_state["nav"] = v
+NAV = [
+    ("📊", "Dashboard"),
+    ("🍽️", "Registro"),
+    ("👨‍🍳", "Chef IA"),
+    ("🏋️", "Rutina IA"),
+    ("⚙️", "Objetivos"),
+]
 
-def nav_btn(label: str, value: str, key: str):
-    """Botón de navegación (se usa dentro de expander)."""
-    active = (st.session_state.get("nav") == value)
-    st.button(
-        label,
-        key=key,
-        use_container_width=True,
-        type="primary" if active else "secondary",
-        on_click=_set_nav,
-        args=(value,),
-    )
+# Router real (arriba, invisible label)
+picked = st.radio(
+    "nav",
+    [x[0] for x in NAV],
+    index=[x[0] for x in NAV].index(st.session_state["nav"]),
+    horizontal=True,
+    label_visibility="collapsed",
+)
+st.session_state["nav"] = picked
 
-# --- Navegación controlada (para atajos "Ir a ...") ---
-if "goto_page" not in st.session_state:
-    st.session_state["goto_page"] = None
+# Bottom bar visual (solo estética)
+st.markdown("""
+<div class="fm-bottom">
+  <div style="display:flex;justify-content:space-between;gap:10px;">
+    <span class="fm-chip">📊</span>
+    <span class="fm-chip">🍽️</span>
+    <span class="fm-chip">👨‍🍳</span>
+    <span class="fm-chip">🏋️</span>
+    <span class="fm-chip">⚙️</span>
+  </div>
+</div>
+""", unsafe_allow_html=True)
 
-if st.session_state["goto_page"]:
-    st.session_state["nav"] = st.session_state["goto_page"]
-    st.session_state["goto_page"] = None
-
-# =========================
-# MENÚ POR SECCIONES (4 EXPANDERS)
-# =========================
-page = st.session_state["nav"]
-
-GROUPS = {
-    "PRINCIPAL": {
-        "icon": "📊",
-        "pages": [
-            ("📊 Dashboard", "📊 Dashboard", "nav_dash"),
-        ]
-    },
-    "NUTRICIÓN": {
-        "icon": "🍽️",
-        "pages": [
-            ("🍽 Registro", "🍽 Registro", "nav_reg"),
-            ("👨‍🍳 Chef IA", "👨‍🍳 Chef IA", "nav_chef"),
-            ("➕ Añadir alimento", "➕ Añadir alimento", "nav_foods"),
-        ]
-    },
-    "ENTRENAMIENTO": {
-        "icon": "🏋️",
-        "pages": [
-            ("🏋️ Rutina IA", "🏋️ Rutina IA", "nav_rutina"),
-        ]
-    },
-    "PERFIL": {
-        "icon": "⚙️",
-        "pages": [
-            ("🎯 Objetivos", "🎯 Objetivos", "nav_obj"),
-        ]
-    },
+# Traducción a tu sistema de páginas
+icon_to_page = {
+    "📊": "📊 Dashboard",
+    "🍽️": "🍽 Registro",
+    "👨‍🍳": "👨‍🍳 Chef IA",
+    "🏋️": "🏋️ Rutina IA",
+    "⚙️": "🎯 Objetivos",
 }
+page = icon_to_page[st.session_state["nav"]]
 
-def group_for_page(p: str) -> str:
-    for gname, g in GROUPS.items():
-        for _, value, _ in g["pages"]:
-            if value == p:
-                return gname
-    return "PRINCIPAL"
-
-active_group = group_for_page(page)
-
-# Render de los 4 expanders
-for gname in ["PRINCIPAL", "NUTRICIÓN", "ENTRENAMIENTO", "PERFIL"]:
-    g = GROUPS[gname]
-    title = f"{g['icon']} {gname.title()}"
-    expanded = (gname == active_group)
-
-    with st.sidebar.expander(title, expanded=expanded):
-        # 🔥 IMPORTANTE: NO envolver con <div> custom aquí dentro
-        # porque rompe el DOM del expander en Streamlit.
-        for label, value, key in g["pages"]:
-            nav_btn(label, value, key)
-
-# Página final (por claridad)
-page = st.session_state["nav"]
-
-# (Si tienes el FAB, déjalo aquí)
-st.markdown("""<div class="fit-fab">+</div>""", unsafe_allow_html=True)
 
 
 
@@ -1620,6 +1580,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
