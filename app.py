@@ -32,410 +32,448 @@ st.set_page_config(
 def inject_black_theme():
     st.markdown(r"""
     <style>
-    /* =========================
-       FITMACRO — DARK PRO (FIX WHITE BANDS)
-       ========================= */
+    /* =========================================================
+       FITMACRO — Dark Pro System (consistente, premium, estable)
+       ========================================================= */
 
     :root{
-        --bg0:#0b1220;
-        --bg1:#0f1b2e;
+      /* Fondo (un pelín más claro que tu versión anterior) */
+      --bg0:#0f1626;
+      --bg1:#131c30;
+      --bg2:#0b1020;
 
-        --glass: rgba(255,255,255,0.10);
-        --glass2: rgba(255,255,255,0.07);
+      /* Superficies / cards (glass MUY controlado) */
+      --card: rgba(255,255,255,0.08);
+      --card2: rgba(255,255,255,0.06);
 
-        --stroke: rgba(255,255,255,0.16);
-        --stroke2: rgba(255,255,255,0.10);
+      /* Bordes */
+      --stroke: rgba(255,255,255,0.12);
+      --stroke2: rgba(255,255,255,0.08);
 
-        --txt: rgba(255,255,255,0.92);
-        --muted: rgba(226,232,240,0.72);
+      /* Texto */
+      --txt: rgba(255,255,255,0.92);
+      --muted: rgba(226,232,240,0.72);
 
-        --g:#22c55e;
-        --b:#60a5fa;
+      /* Acentos */
+      --g:#22c55e;
+      --b:#60a5fa;
+      --p:#a78bfa;
 
-        --r16: 16px;
-        --r18: 18px;
-        --r22: 22px;
+      /* Radio / sombras */
+      --r16: 16px;
+      --r20: 20px;
+      --r24: 24px;
+
+      /* Glow suave (no “quemar”) */
+      --glow-g: rgba(34,197,94,0.10);
+      --glow-b: rgba(96,165,250,0.10);
+      --glow-p: rgba(167,139,250,0.08);
+
+      /* Sombra base elegante */
+      --shadow: 0 18px 50px rgba(0,0,0,0.38);
+      --shadow-soft: 0 10px 26px rgba(0,0,0,0.30);
     }
 
-    /* ====== HARD RESET: QUITAR FONDOS BLANCOS EN TODA LA CADENA ====== */
-    html, body{
-        background: transparent !important;
-        color: var(--txt) !important;
-    }
-
-    [data-testid="stApp"],
-    [data-testid="stAppViewContainer"],
-    [data-testid="stMain"],
-    section.main,
-    section.main > div,
-    .block-container{
-        background: transparent !important;
-    }
-
-    html, body{
-      min-height: 100%;
-      background: transparent !important;
-    }
-    
-    /* Fondo FIJO que nunca “se corta” al hacer scroll */
-    body::before{
-      content:"";
-      position: fixed;
-      inset: 0;
-      z-index: -1;
+    /* ---------- Base / Fondo ---------- */
+    html, body, [data-testid="stAppViewContainer"]{
       background:
-        radial-gradient(1100px 750px at 12% 12%, rgba(34,197,94,0.18) 0%, transparent 60%),
-        radial-gradient(1000px 700px at 88% 12%, rgba(96,165,250,0.18) 0%, transparent 60%),
-        radial-gradient(900px 650px at 60% 85%, rgba(96,165,250,0.10) 0%, transparent 60%),
-        linear-gradient(180deg, var(--bg0) 0%, var(--bg1) 100%);
+        radial-gradient(1100px 760px at 12% 12%, rgba(34,197,94,0.16) 0%, transparent 62%),
+        radial-gradient(980px 720px at 88% 14%, rgba(96,165,250,0.16) 0%, transparent 62%),
+        radial-gradient(900px 640px at 58% 88%, rgba(167,139,250,0.10) 0%, transparent 62%),
+        linear-gradient(180deg, var(--bg0) 0%, var(--bg1) 55%, var(--bg2) 100%) !important;
+      color: var(--txt) !important;
     }
 
-    /* Evita “cortes” raros de sombras */
+    /* Evitar recortes de sombras/headers */
+    html, body { overflow: visible !important; }
     [data-testid="stApp"],
     [data-testid="stAppViewContainer"],
     [data-testid="stMain"],
     section.main,
     section.main > div,
-    .block-container{
-        overflow: visible !important;
+    .block-container,
+    [data-testid="stHeader"]{
+      overflow: visible !important;
     }
 
     .block-container{
-        max-width: 1180px;
-        padding-top: 18px !important;
-        padding-bottom: 56px !important;
+      max-width: 1180px;
+      padding-top: 22px;   /* evita “corte” superior */
+      padding-bottom: 70px;
     }
 
-    /* ===== TIPOGRAFÍA ===== */
+    /* ---------- Tipografía ---------- */
     h1{
-        font-size: 44px !important;
-        font-weight: 950 !important;
-        letter-spacing: -0.04em;
-        color: var(--txt) !important;
+      font-size: 42px !important;
+      font-weight: 950 !important;
+      letter-spacing: -0.04em;
+      color: var(--txt) !important;
+      margin-bottom: 6px !important;
     }
     h2,h3{
-        font-weight: 900 !important;
-        color: var(--txt) !important;
+      font-weight: 900 !important;
+      color: var(--txt) !important;
+      letter-spacing: -0.02em;
     }
-    p,label,.stCaption,.stMarkdown{
-        color: var(--muted) !important;
+    p, label, .stCaption, .stMarkdown{
+      color: var(--muted) !important;
     }
 
-    /* ===== INPUTS ===== */
+    /* ---------- Inputs ---------- */
     input, textarea, div[data-baseweb="select"] > div{
-        background: rgba(255,255,255,0.08) !important;
-        border: 1px solid rgba(255,255,255,0.14) !important;
-        border-radius: 14px !important;
-        color: var(--txt) !important;
-        font-weight: 650 !important;
-    }
-    div[data-baseweb="select"] span{
-        color: var(--txt) !important;
+      background: rgba(255,255,255,0.07) !important;
+      border: 1px solid var(--stroke) !important;
+      border-radius: 14px !important;
+      color: var(--txt) !important;
+      font-weight: 650 !important;
+      box-shadow: none !important;
     }
 
-    /* ===== BOTONES (MAIN) ===== */
+    /* ---------- Botones (solo MAIN; sidebar tiene su estilo) ---------- */
     [data-testid="stAppViewContainer"] .stButton > button,
     [data-testid="stAppViewContainer"] div[data-testid="stFormSubmitButton"] button{
-        background: linear-gradient(135deg, var(--g), var(--b)) !important;
-        color: #06101c !important;
-        border: none !important;
-        border-radius: 999px !important;
-        padding: 10px 18px !important;
-        font-weight: 900 !important;
-        box-shadow:
-            0 14px 34px rgba(34,197,94,0.14),
-            0 14px 34px rgba(96,165,250,0.12) !important;
-        transition: all .15s ease;
+      background: linear-gradient(135deg, rgba(34,197,94,0.95), rgba(96,165,250,0.95)) !important;
+      color: #07121f !important;
+      border: none !important;
+      border-radius: 999px !important;
+      padding: 10px 18px !important;
+      font-weight: 900 !important;
+      box-shadow:
+        0 18px 42px rgba(0,0,0,0.35),
+        0 14px 34px var(--glow-g),
+        0 14px 34px var(--glow-b);
+      transition: transform .14s ease, filter .14s ease;
     }
     [data-testid="stAppViewContainer"] .stButton > button:hover{
-        transform: translateY(-1px);
-        filter: brightness(1.04);
+      transform: translateY(-1px);
+      filter: brightness(1.03);
     }
     button:disabled{
-        opacity: .55 !important;
-        box-shadow: none !important;
+      background: rgba(148,163,184,0.55) !important;
+      box-shadow: none !important;
+      color: rgba(255,255,255,0.85) !important;
     }
 
-    /* ===== MÉTRICAS (GLASS PRO, GLOW CONTROLADO) ===== */
+    /* ---------- Cards base ---------- */
+    .fit-card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.09), rgba(255,255,255,0.06));
+      border: 1px solid var(--stroke2);
+      border-radius: var(--r24);
+      padding: 18px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+
+    /* ---------- Metric cards (brillo controlado) ---------- */
     div[data-testid="stMetric"]{
-        background: linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.08)) !important;
-        border: 1px solid rgba(255,255,255,0.14) !important;
-        border-radius: 22px !important;
-        padding: 18px !important;
-        backdrop-filter: blur(14px);
-        box-shadow:
-            0 0 0 1px rgba(255,255,255,0.03),
-            0 10px 28px rgba(0,0,0,0.35) !important;
+      background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.07)) !important;
+      border: 1px solid var(--stroke) !important;
+      border-radius: 22px !important;
+      padding: 18px !important;
+      backdrop-filter: blur(14px);
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.03),
+        0 16px 40px rgba(0,0,0,0.35),
+        0 10px 22px var(--glow-g),
+        0 10px 22px var(--glow-b) !important;
     }
     div[data-testid="stMetric"] label{
-        color: rgba(226,232,240,0.78) !important;
-        font-weight: 800 !important;
-        font-size: 13px !important;
+      color: rgba(255,255,255,0.78) !important;
+      font-weight: 800 !important;
+      font-size: 13px !important;
     }
     div[data-testid="stMetricValue"]{
-        color: #fff !important;
-        font-weight: 950 !important;
-        font-size: 36px !important;
+      color: #fff !important;
+      font-weight: 950 !important;
+      font-size: 34px !important;
     }
 
-    /* ===== PROGRESS ===== */
-    [data-testid="stProgress"] > div{
-        background: rgba(255,255,255,0.10) !important;
-        border-radius: 999px !important;
+    /* =========================================================
+       HEADER SUPERIOR (tu app-header)
+       ========================================================= */
+    .app-header{
+      display:flex;
+      align-items:center;
+      gap:16px;
+      margin: 0 0 24px 0;
+      padding: 16px 18px;
+      border-radius: var(--r24);
+      background: linear-gradient(135deg, rgba(34,197,94,0.10), rgba(96,165,250,0.10));
+      border: 1px solid var(--stroke2);
+      box-shadow:
+        0 16px 44px rgba(0,0,0,0.34),
+        0 10px 24px var(--glow-g),
+        0 10px 24px var(--glow-b);
+      overflow: visible !important;
+    }
+    .app-logo{
+      width: 54px;
+      height: 54px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(34,197,94,0.95), rgba(59,130,246,0.95));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight: 950;
+      font-size: 20px;
+      color: #07121f;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.32);
+      flex: 0 0 auto;
+    }
+    .app-title .app-name{
+      font-size: 24px;
+      font-weight: 950;
+      letter-spacing: -0.02em;
+      color: var(--txt);
+      line-height: 1.05;
+    }
+    .app-title .app-sub{
+      font-size: 13px;
+      color: rgba(226,232,240,0.70);
+      margin-top: 2px;
     }
 
-    /* ===== VEGA/ALTAIR: quita fondos blancos ===== */
-    .vega-embed, .vega-embed details, .vega-embed summary{
-        background: transparent !important;
-    }
-    .vega-embed .chart-wrapper{
-        background: transparent !important;
-    }
-    /* algunos renders meten un div blanco alrededor */
-    [data-testid="stVegaLiteChart"], 
-    [data-testid="stVegaLiteChart"] > div,
-    [data-testid="stVegaLiteChart"] svg,
-    [data-testid="stVegaLiteChart"] canvas{
-        background: transparent !important;
-    }
-
-    /* ===== SIDEBAR BASE ===== */
+    /* =========================================================
+       SIDEBAR (4 recuadritos + items dentro)
+       ========================================================= */
     [data-testid="stSidebar"] > div{
-        background: rgba(10,14,22,0.72) !important;
-        backdrop-filter: blur(14px);
-        border-right: 1px solid rgba(255,255,255,0.08) !important;
+      background: rgba(10,14,24,0.80) !important;
+      backdrop-filter: blur(16px);
+      border-right: 1px solid rgba(255,255,255,0.08) !important;
+      padding-top: 14px !important;
+      padding-bottom: 14px !important;
     }
 
-    /* Mantén visible el “brand card” que tú pintas con markdown (.sb-brand) */
+    /* Brand card sidebar */
     .sb-brand{
-        display:flex;
-        align-items:center;
-        gap:12px;
-        padding:12px 12px;
-        margin:8px 10px 14px 10px;
-        border-radius:18px;
-        background: linear-gradient(135deg, rgba(34,197,94,0.16), rgba(96,165,250,0.14));
-        border: 1px solid rgba(255,255,255,0.10);
-        box-shadow: 0 18px 46px rgba(0,0,0,0.35);
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding: 12px 12px;
+      margin: 8px 10px 14px 10px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(34,197,94,0.12), rgba(96,165,250,0.12));
+      border: 1px solid rgba(255,255,255,0.10);
+      box-shadow: 0 18px 46px rgba(0,0,0,0.45);
     }
     .sb-logo{
-        width:44px;height:44px;
-        border-radius:14px;
-        background: linear-gradient(135deg, #16a34a, #2563eb);
-        display:flex;align-items:center;justify-content:center;
-        font-weight:900;color:#fff;
+      width:44px;height:44px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(34,197,94,0.95), rgba(37,99,235,0.95));
+      display:flex;align-items:center;justify-content:center;
+      font-weight: 950;
+      color: #07121f;
+      letter-spacing: 0.5px;
     }
     .sb-title .sb-name{
-        font-size:18px;font-weight:900;color:#eaf0ff;line-height:1.1;
+      font-size: 18px;
+      font-weight: 950;
+      color: rgba(255,255,255,0.92);
+      line-height: 1.05;
     }
     .sb-title .sb-sub{
-        font-size:12px;font-weight:650;color:rgba(234,240,255,0.70);
+      font-size: 12px;
+      font-weight: 650;
+      color: rgba(226,232,240,0.70);
+      margin-top: 2px;
     }
 
     /* Inputs sidebar */
     [data-testid="stSidebar"] input,
     [data-testid="stSidebar"] textarea,
     [data-testid="stSidebar"] div[data-baseweb="select"] > div{
-        background: rgba(255,255,255,0.06) !important;
-        color: #eaf0ff !important;
-        border: 1px solid rgba(255,255,255,0.10) !important;
-        border-radius: 14px !important;
+      background: rgba(255,255,255,0.06) !important;
+      color: rgba(255,255,255,0.92) !important;
+      border: 1px solid rgba(255,255,255,0.10) !important;
+      border-radius: 14px !important;
     }
 
-    /* ===== EXPANDERS SIDEBAR (ESTABLES) ===== */
+    /* Expander wrapper (4 recuadritos) */
     [data-testid="stSidebar"] [data-testid="stExpander"]{
-        margin: 10px 10px !important;
-        border: none !important;
-        background: transparent !important;
-    }
-    [data-testid="stSidebar"] [data-testid="stExpander"] details{
-        border: none !important;
-        background: transparent !important;
+      margin: 10px 10px !important;
+      border: none !important;
+      background: transparent !important;
     }
 
     /* Header del expander */
     [data-testid="stSidebar"] [data-testid="stExpander"] details > summary{
-        background: linear-gradient(135deg, rgba(34,197,94,0.92), rgba(37,99,235,0.92)) !important;
-        color: #07121f !important;
-        border-radius: 999px !important;
-        padding: 10px 14px !important;
-        font-weight: 950 !important;
-        border: none !important;
-        box-shadow: 0 16px 40px rgba(0,0,0,0.28) !important;
-        list-style: none !important;
+      background: linear-gradient(135deg, rgba(34,197,94,0.90), rgba(96,165,250,0.90)) !important;
+      color: #07121f !important;
+      border-radius: 16px !important;              /* recuadrito, no píldora infinita */
+      padding: 10px 12px !important;
+      font-weight: 950 !important;
+      border: 1px solid rgba(255,255,255,0.10) !important;
+      box-shadow: 0 14px 34px rgba(0,0,0,0.35) !important;
+      list-style: none !important;
+      cursor: pointer !important;
     }
-    [data-testid="stSidebar"] summary::-webkit-details-marker{
-        display:none !important;
-    }
+    [data-testid="stSidebar"] summary::-webkit-details-marker{ display:none; }
 
-    /* CUERPO (clave para que NO “salgan” fuera los botones) */
+    /* CUERPO del expander: aquí estaba el “se salen fuera” */
     [data-testid="stSidebar"] [data-testid="stExpanderDetails"]{
-        margin-top: 10px !important;
-        padding: 10px !important;
-        border-radius: 18px !important;
-        background: rgba(255,255,255,0.06) !important;
-        border: 1px solid rgba(255,255,255,0.10) !important;
-        overflow: hidden !important; /* <- importante: encierra los botones dentro */
+      margin-top: 10px !important;
+      padding: 10px !important;
+      border-radius: 18px !important;
+      background: rgba(255,255,255,0.06) !important;
+      border: 1px solid rgba(255,255,255,0.10) !important;
+      overflow: visible !important;
+      box-shadow: 0 16px 44px rgba(0,0,0,0.35);
     }
 
-    /* Botones nav dentro del expander */
+    /* Botones dentro del expander (items) */
     [data-testid="stSidebar"] [data-testid="stExpanderDetails"] .stButton > button{
-        width: 100% !important;
-        border-radius: 999px !important;
-        padding: 10px 14px !important;
-        font-weight: 850 !important;
-        border: 1px solid rgba(255,255,255,0.10) !important;
-        background: rgba(255,255,255,0.06) !important;
-        color: #eaf0ff !important;
-        box-shadow: none !important;
-        margin: 6px 0 !important;
-        transition: all .12s ease;
-    }
-    [data-testid="stSidebar"] [data-testid="stExpanderDetails"] .stButton > button[kind="primary"]{
-        background: linear-gradient(135deg, rgba(34,197,94,0.28), rgba(37,99,235,0.24)) !important;
-        border: 1px solid rgba(255,255,255,0.14) !important;
-    }
-    [data-testid="stSidebar"] [data-testid="stExpanderDetails"] .stButton > button:hover{
-        transform: translateY(-1px);
-        filter: brightness(1.03);
+      width: 100% !important;
+      border-radius: 14px !important;
+      padding: 10px 12px !important;
+      font-weight: 850 !important;
+      border: 1px solid rgba(255,255,255,0.10) !important;
+      background: rgba(255,255,255,0.05) !important;
+      color: rgba(255,255,255,0.92) !important;
+      box-shadow: none !important;
+      margin: 6px 0 !important;
+      transition: transform .12s ease, filter .12s ease;
     }
 
-    /* =========================
-       REGISTRO TABLE CARD (scroll + no cortada)
-       ========================= */
-    
+    /* Activo (type="primary") */
+    [data-testid="stSidebar"] [data-testid="stExpanderDetails"] .stButton > button[kind="primary"]{
+      background: linear-gradient(135deg, rgba(34,197,94,0.20), rgba(96,165,250,0.18)) !important;
+      border: 1px solid rgba(255,255,255,0.14) !important;
+    }
+
+    [data-testid="stSidebar"] [data-testid="stExpanderDetails"] .stButton > button:hover{
+      transform: translateY(-1px);
+      filter: brightness(1.03);
+    }
+
+    /* Opcional: cuerpo interno que tú envuelves con <div class="sb-exp-body"> */
+    .sb-exp-body{
+      padding: 2px 2px;
+    }
+
+    /* =========================================================
+       TABLA REGISTRO: card + scroll lateral independiente
+       ========================================================= */
     .fit-table-card{
-      border-radius: 22px;
-      border: 1px solid rgba(255,255,255,0.10);
-      background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.06));
-      box-shadow: 0 18px 40px rgba(0,0,0,0.35);
-      overflow: hidden;          /* 🔥 clave: recorta por las curvas */
-      padding: 0 !important;     /* 🔥 sin margen interno */
+      background: linear-gradient(180deg, rgba(255,255,255,0.09), rgba(255,255,255,0.06));
+      border: 1px solid var(--stroke2);
+      border-radius: var(--r24);
+      padding: 10px;
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(14px);
     }
-    
-    /* IMPORTANTE: padding abajo para que NO “muerda” el borde redondo */
+
     .fit-table-scroll{
-      width: 100%;
-      overflow-x: auto;          /* scroll lateral si hace falta */
-      overflow-y: hidden;
-      padding: 0 !important;     /* 🔥 sin margen interno */
-      margin: 0 !important;
+      overflow-x: auto;
+      overflow-y: auto;           /* ✅ si quieres también vertical dentro */
+      max-height: 460px;          /* ✅ evita que “corte” por abajo: ajusta si quieres */
+      -webkit-overflow-scrolling: touch;
+      border-radius: 16px;
     }
-    
-    /* Fuerza a que haya scroll si faltan px */
+
+    .fit-table-scroll::-webkit-scrollbar{ height: 10px; width: 10px; }
+    .fit-table-scroll::-webkit-scrollbar-track{ background: rgba(255,255,255,0.06); border-radius: 999px; }
+    .fit-table-scroll::-webkit-scrollbar-thumb{ background: rgba(255,255,255,0.16); border-radius: 999px; }
+
     .fit-table-scroll table{
-      width: 100% !important;
-      min-width: 100% !important;
+      min-width: 720px;
+      width: 100%;
       border-collapse: separate !important;
       border-spacing: 0 !important;
-      margin: 0 !important;
+      border-radius: 16px !important;
+      overflow: hidden !important;
     }
 
-    
-        /* Evita que el Styler meta cosas raras */
-    .fit-table-scroll thead th,
-    .fit-table-scroll tbody td{
+    .fit-table-scroll thead th{
+      background: linear-gradient(135deg, rgba(34,197,94,0.85), rgba(96,165,250,0.85)) !important;
+      color: #07121f !important;
+      font-weight: 950 !important;
       border: none !important;
+      padding: 12px 14px !important;
     }
 
-    
-    /* Scrollbar (opcional, pro) */
-    .fit-table-scroll::-webkit-scrollbar{
-      height: 10px;
+    .fit-table-scroll tbody td{
+      background: rgba(255,255,255,0.07) !important;
+      color: rgba(255,255,255,0.90) !important;
+      font-weight: 700 !important;
+      border: none !important;
+      padding: 12px 14px !important;
     }
-    .fit-table-scroll::-webkit-scrollbar-track{
-      background: rgba(255,255,255,0.08);
+
+    .fit-table-scroll tbody tr:nth-child(even) td{
+      background: rgba(255,255,255,0.055) !important;
+    }
+
+    .fit-table-scroll tbody tr:hover td{
+      background: rgba(96,165,250,0.12) !important;
+      transition: background 0.12s ease;
+    }
+
+    /* =========================================================
+       Workout cards (si ya las usas)
+       ========================================================= */
+    .wk-card{
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 18px;
+      padding: 14px 14px;
+      box-shadow: 0 14px 34px rgba(0,0,0,0.30);
+      margin-bottom: 12px;
+      backdrop-filter: blur(14px);
+    }
+    .wk-title{
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+    }
+    .wk-title h4{
+      margin:0;
+      font-size: 16px;
+      font-weight: 950;
+      color: rgba(255,255,255,0.92);
+    }
+    .wk-chip{
+      display:inline-flex;align-items:center;gap:6px;
+      padding: 6px 10px;
       border-radius: 999px;
-    }
-    .fit-table-scroll::-webkit-scrollbar-thumb{
-      background: rgba(255,255,255,0.18);
-      border-radius: 999px;
-    }
-    .fit-table-scroll::-webkit-scrollbar-thumb:hover{
-      background: rgba(255,255,255,0.26);
-    }
-
-    .fit-table-scroll thead th:first-child{ border-top-left-radius: 22px; }
-    .fit-table-scroll thead th:last-child{  border-top-right-radius: 22px; }
-    .fit-table-scroll tbody tr:last-child td:first-child{ border-bottom-left-radius: 22px; }
-    .fit-table-scroll tbody tr:last-child td:last-child{  border-bottom-right-radius: 22px; }
-
-
-
-    /* ===== Floating Action Button (evita el "+" suelto) ===== */
-    .fit-fab{
-      position: fixed;
-      right: 22px;
-      bottom: 22px;
-      width: 54px;
-      height: 54px;
-      border-radius: 999px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size: 26px;
+      font-size: 12px;
       font-weight: 900;
-      color: #07121f;
-      background: linear-gradient(135deg,#22c55e,#60a5fa);
-      box-shadow: 0 18px 40px rgba(0,0,0,0.35);
-      cursor: pointer;
-      z-index: 9999;
-      user-select: none;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.10);
+      color: rgba(255,255,255,0.90);
+      white-space: nowrap;
     }
-
-    /* ===== TOP APP HEADER ===== */
-    .app-header{
-      display:flex;
-      align-items:center;
-      gap:16px;
-      margin: 6px 0 22px 0;
-      padding:18px 22px;
-      border-radius:24px;
-      border:1px solid rgba(255,255,255,0.12);
-      background: linear-gradient(135deg, rgba(34,197,94,0.14), rgba(96,165,250,0.14));
-      box-shadow: 0 12px 36px rgba(0,0,0,0.30);
-      overflow: hidden;
+    .wk-sec{
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px dashed rgba(255,255,255,0.12);
     }
-    
-    .app-logo{
-      width:56px;
-      height:56px;
-      border-radius:18px;
-      background: linear-gradient(135deg,#22c55e,#3b82f6);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-weight:900;
-      font-size:20px;
-      color:white;
-      flex: 0 0 auto;
+    .wk-sec-title{
+      font-weight: 950;
+      color: rgba(255,255,255,0.90);
+      margin: 0 0 8px 0;
+      font-size: 13px;
     }
-    
-    .app-title{ line-height: 1.05; }
-    .app-name{
-      font-size:26px;
-      font-weight:900;
-      letter-spacing:-0.02em;
-      color: rgba(255,255,255,0.95);
+    .wk-list{
+      margin: 0;
+      padding-left: 18px;
+      color: rgba(226,232,240,0.78);
+      font-weight: 650;
     }
-    .app-sub{
-      font-size:13px;
-      color: rgba(226,232,240,0.75);
-      margin-top: 4px;
+    .wk-ex{
+      margin: 0 0 10px 0;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.10);
     }
-
-    .block-container{
-      max-width:1180px;
-      padding-top: 64px !important;   /* ⬅️ antes tenías 8/34… aquí está la clave */
-      padding-bottom:56px;
-      overflow: visible !important;
+    .wk-ex b{ color: rgba(255,255,255,0.92); }
+    .wk-note{
+      margin-top: 6px;
+      font-size: 12px;
+      color: rgba(226,232,240,0.72);
     }
-
-
-
 
     </style>
     """, unsafe_allow_html=True)
+
 
 
 
