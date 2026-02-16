@@ -64,15 +64,7 @@ def inject_fitness_ui():
     }
 
 
-    /* Cards */
-    .fm-card{
-      background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.05));
-      border: 1px solid var(--stroke);
-      border-radius: var(--r20);
-      padding: 14px 14px;
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(12px);
-    }
+   
     .fm-row{
       display:flex; align-items:center; justify-content:space-between; gap:10px;
     }
@@ -198,7 +190,80 @@ def inject_fitness_ui():
       transition: background 0.12s ease;
     }
 
+    /* ===== Cards (cuadraditos) ===== */
+    .fm-card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.05));
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 18px 45px rgba(0,0,0,0.40);
+      backdrop-filter: blur(12px);
+    }
+    
+    .fm-card + .fm-card{ margin-top: 14px; }
+    
+    /* Variantes con acento */
+    .fm-accent-pink{
+      border-color: rgba(255,79,216,0.22);
+      box-shadow: 0 18px 45px rgba(0,0,0,0.40), 0 0 0 1px rgba(255,79,216,0.10);
+      background: linear-gradient(180deg, rgba(255,79,216,0.12), rgba(255,255,255,0.05));
+    }
+    .fm-accent-purple{
+      border-color: rgba(139,92,246,0.22);
+      box-shadow: 0 18px 45px rgba(0,0,0,0.40), 0 0 0 1px rgba(139,92,246,0.10);
+      background: linear-gradient(180deg, rgba(139,92,246,0.12), rgba(255,255,255,0.05));
+    }
+    .fm-accent-cyan{
+      border-color: rgba(34,211,238,0.22);
+      box-shadow: 0 18px 45px rgba(0,0,0,0.40), 0 0 0 1px rgba(34,211,238,0.10);
+      background: linear-gradient(180deg, rgba(34,211,238,0.10), rgba(255,255,255,0.05));
+    }
+    .fm-accent-green{
+      border-color: rgba(34,197,94,0.22);
+      box-shadow: 0 18px 45px rgba(0,0,0,0.40), 0 0 0 1px rgba(34,197,94,0.10);
+      background: linear-gradient(180deg, rgba(34,197,94,0.10), rgba(255,255,255,0.05));
+    }
+    
+    /* Mini-cards para métricas */
+    .fm-mini{
+      border-radius: 18px;
+      padding: 14px 14px;
+    }
 
+
+
+    /* Sidebar brand */
+    .sb-brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding: 12px 12px;
+      margin: 6px 0 12px 0;
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(255,79,216,0.12), rgba(139,92,246,0.12));
+      border: 1px solid rgba(255,255,255,0.10);
+      box-shadow: 0 18px 46px rgba(0,0,0,0.45);
+    }
+    .sb-logo{
+      width:44px;height:44px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(255,79,216,0.92), rgba(139,92,246,0.92));
+      display:flex;align-items:center;justify-content:center;
+      font-weight: 950;
+      color: #0b1020;
+    }
+    .sb-title .sb-name{
+      font-size: 18px;
+      font-weight: 950;
+      color: rgba(255,255,255,0.92);
+      line-height: 1.05;
+    }
+    .sb-title .sb-sub{
+      font-size: 12px;
+      font-weight: 650;
+      color: rgba(226,232,240,0.70);
+      margin-top: 2px;
+    }
 
     
     </style>
@@ -444,15 +509,31 @@ if page == "📊 Dashboard":
 
     # ===== GRID METRICS (fit style) =====
 
-    cL, cR = st.columns(2)
+    st.markdown('<div class="fm-card">', unsafe_allow_html=True)
+    st.subheader("📌 Totales del día")
     
-    with cL:
+    m1, m2, m3, m4 = st.columns(4)
+    with m1:
+        st.markdown('<div class="fm-card fm-mini fm-accent-pink">', unsafe_allow_html=True)
         st.metric("🔥 Calorías", f"{total_kcal:.0f} kcal")
-        st.metric("🥩 Proteína", f"{total_protein:.1f} g")
+        st.markdown('</div>', unsafe_allow_html=True)
     
-    with cR:
+    with m2:
+        st.markdown('<div class="fm-card fm-mini fm-accent-purple">', unsafe_allow_html=True)
+        st.metric("🥩 Proteína", f"{total_protein:.1f} g")
+        st.markdown('</div>', unsafe_allow_html=True)
+    
+    with m3:
+        st.markdown('<div class="fm-card fm-mini fm-accent-cyan">', unsafe_allow_html=True)
         st.metric("🍚 Carbs", f"{total_carbs:.1f} g")
+        st.markdown('</div>', unsafe_allow_html=True)
+    
+    with m4:
+        st.markdown('<div class="fm-card fm-mini fm-accent-green">', unsafe_allow_html=True)
         st.metric("🥑 Grasas", f"{total_fat:.1f} g")
+        st.markdown('</div>', unsafe_allow_html=True)
+    
+    st.markdown('</div>', unsafe_allow_html=True)
     st.divider()
 
     # ===== PROGRESO =====
@@ -469,28 +550,41 @@ if page == "📊 Dashboard":
     def clamp01(x: float) -> float:
         return 0.0 if x < 0 else 1.0 if x > 1 else x
 
-    def progress_row(label: str, value: float, goal: float, unit: str = ""):
+    def progress_row(label: str, value: float, goal: float, unit: str = "", accent_cls: str = "fm-accent-purple"):
         goal = float(goal) if goal else 0.0
         value = float(value) if value else 0.0
         ratio = 0.0 if goal <= 0 else clamp01(value / goal)
         remaining = goal - value
-
-        left, right = st.columns([5, 2])
+    
+        st.markdown(f'<div class="fm-card fm-mini {accent_cls}">', unsafe_allow_html=True)
+    
+        left, right = st.columns([5, 2], vertical_alignment="center")
         with left:
             st.markdown(f"**{label}**  ·  {value:.0f}{unit} / {goal:.0f}{unit}")
             st.progress(ratio)
+    
         with right:
             if goal <= 0:
                 st.caption("sin objetivo")
             else:
-                st.metric("Restante" if remaining >= 0 else "Exceso", f"{abs(remaining):.0f}{unit}")
+                st.caption("Restante" if remaining >= 0 else "Exceso")
+                st.markdown(f"<div class='fm-big'>{abs(remaining):.0f}{unit}</div>", unsafe_allow_html=True)
+    
+        st.markdown("</div>", unsafe_allow_html=True)
 
-    progress_row("🔥 Calorías", total_kcal, target_kcal, " kcal")
-    progress_row("🥩 Proteína", total_protein, target_p, " g")
-    progress_row("🍚 Carbs", total_carbs, target_c, " g")
-    progress_row("🥑 Grasas", total_fat, target_f, " g")
 
+    st.markdown('<div class="fm-card">', unsafe_allow_html=True)
+    st.subheader("🎯 Progreso del día")
+    st.caption("Objetivo vs consumido y cuánto te queda.")
+    
+    progress_row("🔥 Calorías", total_kcal, target_kcal, " kcal", "fm-accent-pink")
+    progress_row("🥩 Proteína", total_protein, target_p, " g", "fm-accent-purple")
+    progress_row("🍚 Carbs", total_carbs, target_c, " g", "fm-accent-cyan")
+    progress_row("🥑 Grasas", total_fat, target_f, " g", "fm-accent-green")
+    
+    st.markdown("</div>", unsafe_allow_html=True)
     st.divider()
+        
 
     # ===== HISTÓRICO EN CARD DEGRADADA =====
     # ===== HISTÓRICO + INSIGHTS (multiusuario) =====
@@ -500,7 +594,8 @@ if page == "📊 Dashboard":
     hist_df = pd.DataFrame(hist, columns=["date", "calories", "protein", "carbs", "fat"])
 
     # Card contenedora
-    st.markdown('<div class="fit-card">', unsafe_allow_html=True)
+    st.markdown('<div class="fm-card">', unsafe_allow_html=True)
+
 
     topL, topR = st.columns([3, 2], vertical_alignment="top")
 
@@ -1633,6 +1728,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
