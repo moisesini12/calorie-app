@@ -29,413 +29,117 @@ st.set_page_config(
 )
 
 
-def inject_black_theme():
+def inject_fitness_ui():
     st.markdown(r"""
     <style>
-    /* =========================
-       FITMACRO — DARK PRO (FIX WHITE BANDS)
-       ========================= */
-
     :root{
-        --bg0:#0b1220;
-        --bg1:#0f1b2e;
-
-        --glass: rgba(255,255,255,0.10);
-        --glass2: rgba(255,255,255,0.07);
-
-        --stroke: rgba(255,255,255,0.16);
-        --stroke2: rgba(255,255,255,0.10);
-
-        --txt: rgba(255,255,255,0.92);
-        --muted: rgba(226,232,240,0.72);
-
-        --g:#22c55e;
-        --b:#60a5fa;
-
-        --r16: 16px;
-        --r18: 18px;
-        --r22: 22px;
+      --bg0:#0b1020;
+      --bg1:#0e1630;
+      --card: rgba(255,255,255,0.06);
+      --stroke: rgba(255,255,255,0.10);
+      --txt: rgba(255,255,255,0.92);
+      --muted: rgba(226,232,240,0.72);
+      --pink:#ff4fd8;
+      --purple:#8b5cf6;
+      --cyan:#22d3ee;
+      --green:#22c55e;
+      --r16: 16px;
+      --r20: 20px;
+      --shadow: 0 18px 45px rgba(0,0,0,0.40);
     }
 
-    /* ====== HARD RESET: QUITAR FONDOS BLANCOS EN TODA LA CADENA ====== */
-    html, body{
-        background: transparent !important;
-        color: var(--txt) !important;
-    }
-
-    [data-testid="stApp"],
-    [data-testid="stAppViewContainer"],
-    [data-testid="stMain"],
-    section.main,
-    section.main > div,
-    .block-container{
-        background: transparent !important;
-    }
-
-    html, body{
-      min-height: 100%;
-      background: transparent !important;
-    }
-    
-    /* Fondo FIJO que nunca “se corta” al hacer scroll */
-    body::before{
-      content:"";
-      position: fixed;
-      inset: 0;
-      z-index: -1;
+    html, body, [data-testid="stAppViewContainer"]{
       background:
-        radial-gradient(1100px 750px at 12% 12%, rgba(34,197,94,0.18) 0%, transparent 60%),
-        radial-gradient(1000px 700px at 88% 12%, rgba(96,165,250,0.18) 0%, transparent 60%),
-        radial-gradient(900px 650px at 60% 85%, rgba(96,165,250,0.10) 0%, transparent 60%),
-        linear-gradient(180deg, var(--bg0) 0%, var(--bg1) 100%);
-    }
-
-    /* Evita “cortes” raros de sombras */
-    [data-testid="stApp"],
-    [data-testid="stAppViewContainer"],
-    [data-testid="stMain"],
-    section.main,
-    section.main > div,
-    .block-container{
-        overflow: visible !important;
+        radial-gradient(900px 700px at 80% 10%, rgba(139,92,246,0.18) 0%, transparent 62%),
+        radial-gradient(900px 700px at 10% 30%, rgba(255,79,216,0.12) 0%, transparent 62%),
+        radial-gradient(900px 700px at 60% 90%, rgba(34,211,238,0.10) 0%, transparent 62%),
+        linear-gradient(180deg, var(--bg0) 0%, var(--bg1) 100%) !important;
+      color: var(--txt) !important;
     }
 
     .block-container{
-        max-width: 1180px;
-        padding-top: 18px !important;
-        padding-bottom: 56px !important;
+      max-width: 1100px;
+      padding-top: 16px;
+      padding-bottom: 90px; /* deja “aire” abajo por el nav */
     }
 
-    /* ===== TIPOGRAFÍA ===== */
-    h1{
-        font-size: 44px !important;
-        font-weight: 950 !important;
-        letter-spacing: -0.04em;
-        color: var(--txt) !important;
+    /* Cards */
+    .fm-card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.05));
+      border: 1px solid var(--stroke);
+      border-radius: var(--r20);
+      padding: 14px 14px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
     }
-    h2,h3{
-        font-weight: 900 !important;
-        color: var(--txt) !important;
+    .fm-row{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
     }
-    p,label,.stCaption,.stMarkdown{
-        color: var(--muted) !important;
+    .fm-title{
+      font-weight: 900; letter-spacing:-0.02em;
     }
-
-    /* ===== INPUTS ===== */
-    input, textarea, div[data-baseweb="select"] > div{
-        background: rgba(255,255,255,0.08) !important;
-        border: 1px solid rgba(255,255,255,0.14) !important;
-        border-radius: 14px !important;
-        color: var(--txt) !important;
-        font-weight: 650 !important;
+    .fm-sub{
+      color: var(--muted); font-size: 12px; font-weight: 650;
     }
-    div[data-baseweb="select"] span{
-        color: var(--txt) !important;
+    .fm-big{
+      font-size: 32px; font-weight: 950; letter-spacing:-0.04em;
     }
-
-    /* ===== BOTONES (MAIN) ===== */
-    [data-testid="stAppViewContainer"] .stButton > button,
-    [data-testid="stAppViewContainer"] div[data-testid="stFormSubmitButton"] button{
-        background: linear-gradient(135deg, var(--g), var(--b)) !important;
-        color: #06101c !important;
-        border: none !important;
-        border-radius: 999px !important;
-        padding: 10px 18px !important;
-        font-weight: 900 !important;
-        box-shadow:
-            0 14px 34px rgba(34,197,94,0.14),
-            0 14px 34px rgba(96,165,250,0.12) !important;
-        transition: all .15s ease;
-    }
-    [data-testid="stAppViewContainer"] .stButton > button:hover{
-        transform: translateY(-1px);
-        filter: brightness(1.04);
-    }
-    button:disabled{
-        opacity: .55 !important;
-        box-shadow: none !important;
-    }
-
-    /* ===== MÉTRICAS (GLASS PRO, GLOW CONTROLADO) ===== */
-    div[data-testid="stMetric"]{
-        background: linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.08)) !important;
-        border: 1px solid rgba(255,255,255,0.14) !important;
-        border-radius: 22px !important;
-        padding: 18px !important;
-        backdrop-filter: blur(14px);
-        box-shadow:
-            0 0 0 1px rgba(255,255,255,0.03),
-            0 10px 28px rgba(0,0,0,0.35) !important;
-    }
-    div[data-testid="stMetric"] label{
-        color: rgba(226,232,240,0.78) !important;
-        font-weight: 800 !important;
-        font-size: 13px !important;
-    }
-    div[data-testid="stMetricValue"]{
-        color: #fff !important;
-        font-weight: 950 !important;
-        font-size: 36px !important;
-    }
-
-    /* ===== PROGRESS ===== */
-    [data-testid="stProgress"] > div{
-        background: rgba(255,255,255,0.10) !important;
-        border-radius: 999px !important;
-    }
-
-    /* ===== VEGA/ALTAIR: quita fondos blancos ===== */
-    .vega-embed, .vega-embed details, .vega-embed summary{
-        background: transparent !important;
-    }
-    .vega-embed .chart-wrapper{
-        background: transparent !important;
-    }
-    /* algunos renders meten un div blanco alrededor */
-    [data-testid="stVegaLiteChart"], 
-    [data-testid="stVegaLiteChart"] > div,
-    [data-testid="stVegaLiteChart"] svg,
-    [data-testid="stVegaLiteChart"] canvas{
-        background: transparent !important;
-    }
-
-    /* ===== SIDEBAR BASE ===== */
-    [data-testid="stSidebar"] > div{
-        background: rgba(10,14,22,0.72) !important;
-        backdrop-filter: blur(14px);
-        border-right: 1px solid rgba(255,255,255,0.08) !important;
-    }
-
-    /* Mantén visible el “brand card” que tú pintas con markdown (.sb-brand) */
-    .sb-brand{
-        display:flex;
-        align-items:center;
-        gap:12px;
-        padding:12px 12px;
-        margin:8px 10px 14px 10px;
-        border-radius:18px;
-        background: linear-gradient(135deg, rgba(34,197,94,0.16), rgba(96,165,250,0.14));
-        border: 1px solid rgba(255,255,255,0.10);
-        box-shadow: 0 18px 46px rgba(0,0,0,0.35);
-    }
-    .sb-logo{
-        width:44px;height:44px;
-        border-radius:14px;
-        background: linear-gradient(135deg, #16a34a, #2563eb);
-        display:flex;align-items:center;justify-content:center;
-        font-weight:900;color:#fff;
-    }
-    .sb-title .sb-name{
-        font-size:18px;font-weight:900;color:#eaf0ff;line-height:1.1;
-    }
-    .sb-title .sb-sub{
-        font-size:12px;font-weight:650;color:rgba(234,240,255,0.70);
-    }
-
-    /* Inputs sidebar */
-    [data-testid="stSidebar"] input,
-    [data-testid="stSidebar"] textarea,
-    [data-testid="stSidebar"] div[data-baseweb="select"] > div{
-        background: rgba(255,255,255,0.06) !important;
-        color: #eaf0ff !important;
-        border: 1px solid rgba(255,255,255,0.10) !important;
-        border-radius: 14px !important;
-    }
-
-    /* ===== EXPANDERS SIDEBAR (ESTABLES) ===== */
-    [data-testid="stSidebar"] [data-testid="stExpander"]{
-        margin: 10px 10px !important;
-        border: none !important;
-        background: transparent !important;
-    }
-    [data-testid="stSidebar"] [data-testid="stExpander"] details{
-        border: none !important;
-        background: transparent !important;
-    }
-
-    /* Header del expander */
-    [data-testid="stSidebar"] [data-testid="stExpander"] details > summary{
-        background: linear-gradient(135deg, rgba(34,197,94,0.92), rgba(37,99,235,0.92)) !important;
-        color: #07121f !important;
-        border-radius: 999px !important;
-        padding: 10px 14px !important;
-        font-weight: 950 !important;
-        border: none !important;
-        box-shadow: 0 16px 40px rgba(0,0,0,0.28) !important;
-        list-style: none !important;
-    }
-    [data-testid="stSidebar"] summary::-webkit-details-marker{
-        display:none !important;
-    }
-
-    /* CUERPO (clave para que NO “salgan” fuera los botones) */
-    [data-testid="stSidebar"] [data-testid="stExpanderDetails"]{
-        margin-top: 10px !important;
-        padding: 10px !important;
-        border-radius: 18px !important;
-        background: rgba(255,255,255,0.06) !important;
-        border: 1px solid rgba(255,255,255,0.10) !important;
-        overflow: hidden !important; /* <- importante: encierra los botones dentro */
-    }
-
-    /* Botones nav dentro del expander */
-    [data-testid="stSidebar"] [data-testid="stExpanderDetails"] .stButton > button{
-        width: 100% !important;
-        border-radius: 999px !important;
-        padding: 10px 14px !important;
-        font-weight: 850 !important;
-        border: 1px solid rgba(255,255,255,0.10) !important;
-        background: rgba(255,255,255,0.06) !important;
-        color: #eaf0ff !important;
-        box-shadow: none !important;
-        margin: 6px 0 !important;
-        transition: all .12s ease;
-    }
-    [data-testid="stSidebar"] [data-testid="stExpanderDetails"] .stButton > button[kind="primary"]{
-        background: linear-gradient(135deg, rgba(34,197,94,0.28), rgba(37,99,235,0.24)) !important;
-        border: 1px solid rgba(255,255,255,0.14) !important;
-    }
-    [data-testid="stSidebar"] [data-testid="stExpanderDetails"] .stButton > button:hover{
-        transform: translateY(-1px);
-        filter: brightness(1.03);
-    }
-
-    /* =========================
-       REGISTRO TABLE CARD (scroll + no cortada)
-       ========================= */
-    
-    .fit-table-card{
-      border-radius: 22px;
+    .fm-chip{
+      display:inline-flex; align-items:center; gap:6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
       border: 1px solid rgba(255,255,255,0.10);
-      background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.06));
-      box-shadow: 0 18px 40px rgba(0,0,0,0.35);
-      overflow: hidden;          /* 🔥 clave: recorta por las curvas */
-      padding: 0 !important;     /* 🔥 sin margen interno */
+      color: rgba(255,255,255,0.88);
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
     }
-    
-    /* IMPORTANTE: padding abajo para que NO “muerda” el borde redondo */
-    .fit-table-scroll{
-      width: 100%;
-      overflow-x: auto;          /* scroll lateral si hace falta */
-      overflow-y: hidden;
-      padding: 0 !important;     /* 🔥 sin margen interno */
-      margin: 0 !important;
-    }
-    
-    /* Fuerza a que haya scroll si faltan px */
-    .fit-table-scroll table{
-      width: 100% !important;
-      min-width: 100% !important;
-      border-collapse: separate !important;
-      border-spacing: 0 !important;
-      margin: 0 !important;
+    .fm-divider{
+      height:1px; background: rgba(255,255,255,0.08);
+      margin: 10px 0;
     }
 
-    
-        /* Evita que el Styler meta cosas raras */
-    .fit-table-scroll thead th,
-    .fit-table-scroll tbody td{
+    /* Inputs */
+    input, textarea, div[data-baseweb="select"] > div{
+      background: rgba(255,255,255,0.06) !important;
+      border: 1px solid rgba(255,255,255,0.10) !important;
+      border-radius: 14px !important;
+      color: var(--txt) !important;
+      font-weight: 650 !important;
+    }
+
+    /* Buttons */
+    .stButton > button, div[data-testid="stFormSubmitButton"] button{
+      border-radius: 999px !important;
+      font-weight: 900 !important;
+      border: 1px solid rgba(255,255,255,0.10) !important;
+    }
+    .stButton > button[kind="primary"], div[data-testid="stFormSubmitButton"] button{
+      background: linear-gradient(135deg, rgba(255,79,216,0.92), rgba(139,92,246,0.92)) !important;
+      color: #0b1020 !important;
       border: none !important;
+      box-shadow: 0 16px 34px rgba(0,0,0,0.35);
     }
 
-    
-    /* Scrollbar (opcional, pro) */
-    .fit-table-scroll::-webkit-scrollbar{
-      height: 10px;
-    }
-    .fit-table-scroll::-webkit-scrollbar-track{
-      background: rgba(255,255,255,0.08);
-      border-radius: 999px;
-    }
-    .fit-table-scroll::-webkit-scrollbar-thumb{
-      background: rgba(255,255,255,0.18);
-      border-radius: 999px;
-    }
-    .fit-table-scroll::-webkit-scrollbar-thumb:hover{
-      background: rgba(255,255,255,0.26);
-    }
-
-    .fit-table-scroll thead th:first-child{ border-top-left-radius: 22px; }
-    .fit-table-scroll thead th:last-child{  border-top-right-radius: 22px; }
-    .fit-table-scroll tbody tr:last-child td:first-child{ border-bottom-left-radius: 22px; }
-    .fit-table-scroll tbody tr:last-child td:last-child{  border-bottom-right-radius: 22px; }
-
-
-
-    /* ===== Floating Action Button (evita el "+" suelto) ===== */
-    .fit-fab{
+    /* Bottom nav “fake” (no toca scroll global) */
+    .fm-bottom{
       position: fixed;
-      right: 22px;
-      bottom: 22px;
-      width: 54px;
-      height: 54px;
-      border-radius: 999px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size: 26px;
-      font-weight: 900;
-      color: #07121f;
-      background: linear-gradient(135deg,#22c55e,#60a5fa);
-      box-shadow: 0 18px 40px rgba(0,0,0,0.35);
-      cursor: pointer;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 14px;
+      width: min(980px, calc(100vw - 28px));
+      background: rgba(10,14,24,0.70);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 18px;
+      padding: 10px 12px;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 18px 45px rgba(0,0,0,0.45);
       z-index: 9999;
-      user-select: none;
     }
-
-    /* ===== TOP APP HEADER ===== */
-    .app-header{
-      display:flex;
-      align-items:center;
-      gap:16px;
-      margin: 6px 0 22px 0;
-      padding:18px 22px;
-      border-radius:24px;
-      border:1px solid rgba(255,255,255,0.12);
-      background: linear-gradient(135deg, rgba(34,197,94,0.14), rgba(96,165,250,0.14));
-      box-shadow: 0 12px 36px rgba(0,0,0,0.30);
-      overflow: hidden;
-    }
-    
-    .app-logo{
-      width:56px;
-      height:56px;
-      border-radius:18px;
-      background: linear-gradient(135deg,#22c55e,#3b82f6);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-weight:900;
-      font-size:20px;
-      color:white;
-      flex: 0 0 auto;
-    }
-    
-    .app-title{ line-height: 1.05; }
-    .app-name{
-      font-size:26px;
-      font-weight:900;
-      letter-spacing:-0.02em;
-      color: rgba(255,255,255,0.95);
-    }
-    .app-sub{
-      font-size:13px;
-      color: rgba(226,232,240,0.75);
-      margin-top: 4px;
-    }
-
-    .block-container{
-      max-width:1180px;
-      padding-top: 64px !important;   /* ⬅️ antes tenías 8/34… aquí está la clave */
-      padding-bottom:56px;
-      overflow: visible !important;
-    }
-
-
-
-
     </style>
     """, unsafe_allow_html=True)
+
 
 
 
@@ -1916,6 +1620,7 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
