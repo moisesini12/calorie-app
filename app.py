@@ -412,10 +412,11 @@ def _fdc_key() -> str:
     # Usa tu key real en secrets; fallback a DEMO_KEY para pruebas
     return st.secrets.get("FDC_API_KEY", "v9pKcIdiVPg2mrWKcmMNgcdTUr4bqgLavV9Gb4TD")
 
-def fdc_search_generic_foods(query: str, page_size: int = 8):
+def fdc_search_generic_foods(query: str, page_size: int = 8, include_fndds: bool = False):
     """
-    Devuelve lista de foods (candidatos) genéricos.
-    Filtramos a Foundation + SR Legacy + Survey (FNDDS) para evitar "Branded".
+    Devuelve lista de foods.
+    - Por defecto SOLO básicos: Foundation + SR Legacy
+    - Opcional: incluir Survey (FNDDS) = platos preparados
     """
     q = (query or "").strip()
     if not q:
@@ -423,10 +424,15 @@ def fdc_search_generic_foods(query: str, page_size: int = 8):
 
     url = f"{FDC_BASE}/foods/search"
     params = {"api_key": _fdc_key()}
+
+    data_types = ["Foundation", "SR Legacy"]
+    if include_fndds:
+        data_types.append("Survey (FNDDS)")
+
     payload = {
         "query": q,
         "pageSize": int(page_size),
-        "dataType": ["Foundation", "SR Legacy", "Survey (FNDDS)"],
+        "dataType": data_types,
         "sortBy": "dataType.keyword",
         "sortOrder": "asc",
     }
@@ -434,7 +440,50 @@ def fdc_search_generic_foods(query: str, page_size: int = 8):
     r = requests.post(url, params=params, json=payload, timeout=15)
     r.raise_for_status()
     data = r.json() or {}
-    return data.get("foods", []) or []
+    foods = data.get("foods", []) or []
+
+    # --- Ranking local: prioriza ingredientes y penaliza platos ---
+    good_tokens = [
+        "raw", "breast", "meat", "thigh", "drumstick", "wing",
+        "skinless", "boneless", "uncooked", "plain",
+        "chicken", "turkey", "beef", "pork", "fish",
+        "potato", "rice", "oat", "egg", "milk", "yogurt"
+    ]
+    bad_tokens = [
+        "soup", "stew", "with", "sauce", "gravy", "fried", "breaded",
+        "style", "recipe", "sandwich", "pizza", "burger", "taco",
+        "rice with", "casserole", "fricassee"
+    ]
+
+    def score_food(f):
+        desc = str(f.get("description", "")).lower()
+        dt = str(f.get("dataType", "")).lower()
+
+        score = 0
+        # preferimos foundation/sr legacy
+        if "foundation" in dt:
+            score += 50
+        if "sr legacy" in dt:
+            score += 40
+        if "fndds" in dt:
+            score -= 20
+
+        # tokens buenos/malos por descripción
+        for t in good_tokens:
+            if t in desc:
+                score += 3
+        for t in bad_tokens:
+            if t in desc:
+                score -= 4
+
+        # penaliza descripciones muy largas típicas de platos
+        if len(desc) > 60:
+            score -= 5
+
+        return score
+
+    foods.sort(key=score_food, reverse=True)
+    return foods
 
 def fdc_get_macros_per_100g(fdc_id: int):
     """
@@ -475,6 +524,23 @@ def fdc_get_macros_per_100g(fdc_id: int):
         "fat": float(fat),
     }
 
+def fdc_tag(food: dict) -> str:
+    """
+    Etiqueta simple para UI:
+    - 🧪 Ingrediente: foundation / sr legacy o desc tipo 'raw/breast/meat'
+    - 🍲 Plato: fndds o desc tipo soup/stew/with sauce...
+    """
+    desc = str(food.get("description", "")).lower()
+    dt = str(food.get("dataType", "")).lower()
+
+    if "fndds" in dt:
+        return "🍲 Plato"
+
+    # heurística rápida
+    if any(x in desc for x in ["soup", "stew", "with sauce", "gravy", "style", "recipe"]):
+        return "🍲 Plato"
+
+    return "🧪 Ingrediente"
 
 
 
@@ -1769,6 +1835,8 @@ elif page == "🏋️ Rutina IA":
 elif page == "🤖 IA Alimento":
     st.subheader("🤖 IA Alimento (genéricos)")
     st.caption("Escribe un alimento (ej. patata) y lo añado con macros por 100g desde USDA FoodData Central.")
+    st.caption("Tip: deja activado 'Solo básicos' para ingredientes (pollo, arroz, patata). Desactívalo si quieres platos.")
+
     st.divider()
 
     # -------------------------
@@ -1793,20 +1861,18 @@ elif page == "🤖 IA Alimento":
     # -------------------------
     st.markdown('<div class="fm-card fm-accent-cyan">', unsafe_allow_html=True)
 
-    q = st.text_input(
-        "Nombre del alimento",
-        placeholder="Ej: patata, arroz, pollo...",
-        key="ai_food_query",
-        on_change=_clear_ai_state,   # ✅ si cambias texto, limpia resultados viejos
-    )
-
+    q = st.text_input("Nombre del alimento", placeholder="Ej: patata, arroz, pollo...", key="ai_food_query")
+    
+    # Toggle pro: básicos vs platos
+    only_basics = st.toggle("✅ Solo alimentos básicos (recomendado)", value=True, key="ai_food_only_basics")
+    include_fndds = not only_basics  # si no son básicos, permitimos platos
+    
     col1, col2 = st.columns([2, 1])
     with col1:
         category = st.text_input("Categoría para guardarlo", value="Genericos", key="ai_food_category")
     with col2:
-        # ✅ patrón robusto: flag en session_state
-        if st.button("🔎 Buscar", type="primary", use_container_width=True, key="btn_ai_food_search"):
-            st.session_state["ai_food_search_now"] = True
+        do_search = st.button("🔎 Buscar", type="primary", use_container_width=True)
+
 
     st.markdown("</div>", unsafe_allow_html=True)
     st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
@@ -1822,7 +1888,7 @@ elif page == "🤖 IA Alimento":
             st.warning("Escribe un alimento para buscar.")
         else:
             try:
-                foods = fdc_search_generic_foods(q_clean, page_size=8)
+                foods = fdc_search_generic_foods(q, page_size=8, include_fndds=include_fndds)
                 st.session_state["ai_food_results"] = foods
                 st.session_state["ai_food_last_query"] = q_clean
                 st.toast("Búsqueda OK ✅")
@@ -1864,10 +1930,12 @@ elif page == "🤖 IA Alimento":
 
     options = []
     for f in foods:
-        desc = str(f.get("description", "Food")).strip()
-        dt = str(f.get("dataType", "")).strip()
+        desc = f.get("description", "Food")
+        dt = f.get("dataType", "")
         fdc_id = f.get("fdcId", "")
-        options.append({"fdcId": int(fdc_id), "label": f"{desc}  ·  {dt}  ·  id={fdc_id}"})
+        tag = fdc_tag(f)
+        options.append({"fdcId": fdc_id, "label": f"{tag} · {desc}  ·  {dt}  ·  id={fdc_id}"})
+
 
     # índice por defecto: si ya había selección, la mantenemos
     current_id = st.session_state.get("ai_food_selected_fdcid")
@@ -1968,6 +2036,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
