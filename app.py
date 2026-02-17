@@ -410,7 +410,7 @@ FDC_BASE = "https://api.nal.usda.gov/fdc/v1"
 
 def _fdc_key() -> str:
     # Usa tu key real en secrets; fallback a DEMO_KEY para pruebas
-    return st.secrets.get("FDC_API_KEY", "DEMO_KEY")
+    return st.secrets.get("FDC_API_KEY", "v9pKcIdiVPg2mrWKcmMNgcdTUr4bqgLavV9Gb4TD")
 
 def fdc_search_generic_foods(query: str, page_size: int = 8):
     """
@@ -1968,6 +1968,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
