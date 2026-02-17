@@ -1771,91 +1771,190 @@ elif page == "🤖 IA Alimento":
     st.caption("Escribe un alimento (ej. patata) y lo añado con macros por 100g desde USDA FoodData Central.")
     st.divider()
 
+    # -------------------------
+    # Estado estable
+    # -------------------------
+    if "ai_food_results" not in st.session_state:
+        st.session_state["ai_food_results"] = []
+    if "ai_food_last_query" not in st.session_state:
+        st.session_state["ai_food_last_query"] = ""
+    if "ai_food_selected_fdcid" not in st.session_state:
+        st.session_state["ai_food_selected_fdcid"] = None
+    if "ai_food_macros_preview" not in st.session_state:
+        st.session_state["ai_food_macros_preview"] = None
+
+    def _clear_ai_state():
+        st.session_state["ai_food_results"] = []
+        st.session_state["ai_food_selected_fdcid"] = None
+        st.session_state["ai_food_macros_preview"] = None
+
+    # -------------------------
+    # UI
+    # -------------------------
     st.markdown('<div class="fm-card fm-accent-cyan">', unsafe_allow_html=True)
 
-    q = st.text_input("Nombre del alimento", placeholder="Ej: patata, arroz, pollo...", key="ai_food_query")
+    q = st.text_input(
+        "Nombre del alimento",
+        placeholder="Ej: patata, arroz, pollo...",
+        key="ai_food_query",
+        on_change=_clear_ai_state,   # ✅ si cambias texto, limpia resultados viejos
+    )
+
     col1, col2 = st.columns([2, 1])
     with col1:
         category = st.text_input("Categoría para guardarlo", value="Genericos", key="ai_food_category")
     with col2:
-        do_search = st.button("🔎 Buscar", type="primary", use_container_width=True)
+        # ✅ patrón robusto: flag en session_state
+        if st.button("🔎 Buscar", type="primary", use_container_width=True, key="btn_ai_food_search"):
+            st.session_state["ai_food_search_now"] = True
 
     st.markdown("</div>", unsafe_allow_html=True)
     st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
 
-    if do_search:
-        try:
-            foods = fdc_search_generic_foods(q, page_size=8)
-            st.session_state["ai_food_results"] = foods
-        except Exception as e:
-            st.error("No pude buscar en la base USDA (FDC). Revisa tu API key o conexión.")
-            st.exception(e)
+    # -------------------------
+    # Buscar (solo cuando toca)
+    # -------------------------
+    if st.session_state.get("ai_food_search_now", False):
+        st.session_state["ai_food_search_now"] = False
+
+        q_clean = (q or "").strip()
+        if not q_clean:
+            st.warning("Escribe un alimento para buscar.")
+        else:
+            try:
+                foods = fdc_search_generic_foods(q_clean, page_size=8)
+                st.session_state["ai_food_results"] = foods
+                st.session_state["ai_food_last_query"] = q_clean
+                st.toast("Búsqueda OK ✅")
+
+                # Reset selección/preview al buscar nuevo
+                st.session_state["ai_food_selected_fdcid"] = None
+                st.session_state["ai_food_macros_preview"] = None
+
+            except requests.HTTPError as e:
+                code = getattr(e.response, "status_code", None)
+                if code == 403:
+                    st.error("403: API key inválida o sin permisos. Revisa `FDC_API_KEY` en secrets.")
+                elif code == 429:
+                    st.error("429: demasiadas peticiones (rate limit). Espera un poco y reintenta.")
+                else:
+                    st.error("Error HTTP al buscar en USDA (FDC).")
+                st.exception(e)
+
+            except requests.Timeout as e:
+                st.error("Timeout conectando con USDA (FDC). Reintenta.")
+                st.exception(e)
+
+            except Exception as e:
+                st.error("No pude buscar en la base USDA (FDC). Revisa tu conexión o API key.")
+                st.exception(e)
 
     foods = st.session_state.get("ai_food_results", [])
 
     if not foods:
         st.info("Busca algo arriba para ver resultados.")
-    else:
-        st.markdown('<div class="fm-card fm-accent-purple">', unsafe_allow_html=True)
-        st.subheader("Resultados")
+        st.stop()
 
-        # Opciones legibles
-        options = []
-        for f in foods:
-            desc = f.get("description", "Food")
-            dt = f.get("dataType", "")
-            fdc_id = f.get("fdcId", "")
-            options.append({"fdcId": fdc_id, "label": f"{desc}  ·  {dt}  ·  id={fdc_id}"})
+    # -------------------------
+    # Resultados + selección
+    # -------------------------
+    st.markdown('<div class="fm-card fm-accent-purple">', unsafe_allow_html=True)
+    st.subheader("Resultados")
+    st.caption(f"Query: **{st.session_state.get('ai_food_last_query','')}**")
 
-        picked = st.selectbox(
-            "Elige el alimento correcto",
-            options,
-            format_func=lambda x: x["label"],
-            key="ai_food_pick"
-        )
+    options = []
+    for f in foods:
+        desc = str(f.get("description", "Food")).strip()
+        dt = str(f.get("dataType", "")).strip()
+        fdc_id = f.get("fdcId", "")
+        options.append({"fdcId": int(fdc_id), "label": f"{desc}  ·  {dt}  ·  id={fdc_id}"})
 
-        st.markdown("</div>", unsafe_allow_html=True)
+    # índice por defecto: si ya había selección, la mantenemos
+    current_id = st.session_state.get("ai_food_selected_fdcid")
+    idx = 0
+    if current_id is not None:
+        for i, opt in enumerate(options):
+            if opt["fdcId"] == int(current_id):
+                idx = i
+                break
 
-        # Preview macros
-        st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
-        st.markdown('<div class="fm-card fm-accent-green">', unsafe_allow_html=True)
-        st.subheader("Macros (por 100g)")
+    picked = st.selectbox(
+        "Elige el alimento correcto",
+        options,
+        index=idx,
+        format_func=lambda x: x["label"],
+        key="ai_food_pick",
+    )
 
+    # Si cambia el picked, limpia preview para recalcular solo una vez
+    if st.session_state.get("ai_food_selected_fdcid") != int(picked["fdcId"]):
+        st.session_state["ai_food_selected_fdcid"] = int(picked["fdcId"])
+        st.session_state["ai_food_macros_preview"] = None
+
+    st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
+
+    # -------------------------
+    # Preview macros (cacheado)
+    # -------------------------
+    st.markdown('<div class="fm-card fm-accent-green">', unsafe_allow_html=True)
+    st.subheader("Macros (por 100g)")
+
+    if st.session_state.get("ai_food_macros_preview") is None:
         try:
-            macros = fdc_get_macros_per_100g(int(picked["fdcId"]))
+            macros = fdc_get_macros_per_100g(int(st.session_state["ai_food_selected_fdcid"]))
             st.session_state["ai_food_macros_preview"] = macros
+        except requests.HTTPError as e:
+            code = getattr(e.response, "status_code", None)
+            if code == 403:
+                st.error("403: API key inválida. Revisa `FDC_API_KEY` en secrets.")
+            elif code == 429:
+                st.error("429: rate limit. Espera y reintenta.")
+            else:
+                st.error("Error HTTP leyendo detalles del alimento (FDC).")
+            st.exception(e)
+            st.stop()
         except Exception as e:
             st.error("No pude leer los detalles del alimento (FDC).")
             st.exception(e)
             st.stop()
 
-        macros = st.session_state.get("ai_food_macros_preview", {})
+    macros = st.session_state.get("ai_food_macros_preview") or {}
 
-        c1, c2, c3, c4 = st.columns(4)
-        with c1:
-            st.metric("🔥 kcal", f"{macros.get('calories',0):.0f}")
-        with c2:
-            st.metric("🥩 Prote", f"{macros.get('protein',0):.1f} g")
-        with c3:
-            st.metric("🍚 Carbs", f"{macros.get('carbs',0):.1f} g")
-        with c4:
-            st.metric("🥑 Grasas", f"{macros.get('fat',0):.1f} g")
+    c1, c2, c3, c4 = st.columns(4)
+    with c1:
+        st.metric("🔥 kcal", f"{float(macros.get('calories',0)):.0f}")
+    with c2:
+        st.metric("🥩 Prote", f"{float(macros.get('protein',0)):.1f} g")
+    with c3:
+        st.metric("🍚 Carbs", f"{float(macros.get('carbs',0)):.1f} g")
+    with c4:
+        st.metric("🥑 Grasas", f"{float(macros.get('fat',0)):.1f} g")
 
-        st.caption("Fuente: USDA FoodData Central (dominio público/CC0).")
-        st.markdown("</div>", unsafe_allow_html=True)
+    st.caption("Fuente: USDA FoodData Central.")
+    st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
 
-        st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
+    # -------------------------
+    # Guardar en tu base
+    # -------------------------
+    st.markdown('<div class="fm-card fm-accent-pink">', unsafe_allow_html=True)
+    st.subheader("Guardar en tu base")
 
-        # Guardar
-        st.markdown('<div class="fm-card fm-accent-pink">', unsafe_allow_html=True)
-        st.subheader("Guardar en tu base")
+    default_name = str(macros.get("name", "")).strip()
+    nn = st.text_input("Nombre final (puedes editarlo)", value=default_name.title(), key="ai_food_final_name")
 
-        nn = st.text_input("Nombre final (puedes editarlo)", value=str(macros.get("name","")).title(), key="ai_food_final_name")
-        if st.button("✅ Añadir a mi base", type="primary", use_container_width=True):
-            try:
+    if st.button("✅ Añadir a mi base", type="primary", use_container_width=True, key="btn_ai_food_save"):
+        try:
+            final_name = (nn or "").strip()
+            final_cat = (category or "Genericos").strip()
+
+            if not final_name:
+                st.error("Pon un nombre válido.")
+            else:
                 add_food({
-                    "name": nn.strip(),
-                    "category": (category or "Genericos").strip(),
+                    "name": final_name,
+                    "category": final_cat,
                     "calories": float(macros.get("calories", 0.0)),
                     "protein": float(macros.get("protein", 0.0)),
                     "carbs": float(macros.get("carbs", 0.0)),
@@ -1863,11 +1962,14 @@ elif page == "🤖 IA Alimento":
                 })
                 st.cache_data.clear()
                 st.success("Alimento añadido ✅")
-            except Exception as e:
-                st.error("Error guardando el alimento en Google Sheets.")
-                st.exception(e)
 
-        st.markdown("</div>", unsafe_allow_html=True)
+        except Exception as e:
+            st.error("Error guardando el alimento en Google Sheets.")
+            st.exception(e)
+
+    st.markdown("</div>", unsafe_allow_html=True)
+
+
 
 
 
