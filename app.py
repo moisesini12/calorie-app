@@ -6,6 +6,8 @@ from datetime import date
 
 import streamlit as st
 import pandas as pd
+import requests
+
 
 from db_gsheets import (
     init_db, seed_foods_if_empty,
@@ -400,6 +402,83 @@ def require_login() -> None:
 # App init
 # ---------------------------
 inject_fitness_ui()
+
+# =========================
+# USDA FoodData Central (FDC) helpers
+# =========================
+FDC_BASE = "https://api.nal.usda.gov/fdc/v1"
+
+def _fdc_key() -> str:
+    # Usa tu key real en secrets; fallback a DEMO_KEY para pruebas
+    return st.secrets.get("FDC_API_KEY", "DEMO_KEY")
+
+def fdc_search_generic_foods(query: str, page_size: int = 8):
+    """
+    Devuelve lista de foods (candidatos) genéricos.
+    Filtramos a Foundation + SR Legacy + Survey (FNDDS) para evitar "Branded".
+    """
+    q = (query or "").strip()
+    if not q:
+        return []
+
+    url = f"{FDC_BASE}/foods/search"
+    params = {"api_key": _fdc_key()}
+    payload = {
+        "query": q,
+        "pageSize": int(page_size),
+        "dataType": ["Foundation", "SR Legacy", "Survey (FNDDS)"],
+        "sortBy": "dataType.keyword",
+        "sortOrder": "asc",
+    }
+
+    r = requests.post(url, params=params, json=payload, timeout=15)
+    r.raise_for_status()
+    data = r.json() or {}
+    return data.get("foods", []) or []
+
+def fdc_get_macros_per_100g(fdc_id: int):
+    """
+    Lee detalle del alimento y extrae kcal/prote/carb/fat (por 100g típicamente).
+    """
+    url = f"{FDC_BASE}/food/{int(fdc_id)}"
+    params = {"api_key": _fdc_key()}
+    r = requests.get(url, params=params, timeout=15)
+    r.raise_for_status()
+    food = r.json() or {}
+
+    # Nutrientes vienen en foodNutrients
+    # Buscamos por nombre estándar (puede variar un poco según dataset)
+    nutrients = food.get("foodNutrients", []) or []
+
+    def pick(names):
+        for n in nutrients:
+            name = str(n.get("nutrient", {}).get("name", "")).lower()
+            if any(x in name for x in names):
+                val = n.get("amount", None)
+                unit = n.get("nutrient", {}).get("unitName", "")
+                if val is None:
+                    continue
+                return float(val), str(unit)
+        return 0.0, ""
+
+    kcal, _ = pick(["energy"])  # normalmente "Energy"
+    protein, _ = pick(["protein"])
+    fat, _ = pick(["total lipid", "fat"])
+    carbs, _ = pick(["carbohydrate", "carb"])
+
+    # Ojo: algunos entries podrían no traer alguno => 0.0
+    return {
+        "name": food.get("description", "Alimento"),
+        "calories": float(kcal),
+        "protein": float(protein),
+        "carbs": float(carbs),
+        "fat": float(fat),
+    }
+
+
+
+
+
 require_login()
 
 uid = st.session_state["user_id"]
@@ -477,6 +556,7 @@ NAV = [
     ("🏋️", "🏋️ Rutina IA"),
     ("⚙️", "🎯 Objetivos"),
     ("➕", "➕ Añadir alimento"),
+    ("🤖", "🤖 IA Alimento"),
 ]
 
 icons = [x[0] for x in NAV]
@@ -1681,5 +1761,113 @@ elif page == "🏋️ Rutina IA":
         hint = str(rd.get("hint","")).strip()
         if hint: st.markdown(f"- {hint}")
         st.markdown("</div>", unsafe_allow_html=True)
+
+
+# ==========================================================
+# PÁGINA: IA ALIMENTO (genéricos)
+# ==========================================================
+elif page == "🤖 IA Alimento":
+    st.subheader("🤖 IA Alimento (genéricos)")
+    st.caption("Escribe un alimento (ej. patata) y lo añado con macros por 100g desde USDA FoodData Central.")
+    st.divider()
+
+    st.markdown('<div class="fm-card fm-accent-cyan">', unsafe_allow_html=True)
+
+    q = st.text_input("Nombre del alimento", placeholder="Ej: patata, arroz, pollo...", key="ai_food_query")
+    col1, col2 = st.columns([2, 1])
+    with col1:
+        category = st.text_input("Categoría para guardarlo", value="Genericos", key="ai_food_category")
+    with col2:
+        do_search = st.button("🔎 Buscar", type="primary", use_container_width=True)
+
+    st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
+
+    if do_search:
+        try:
+            foods = fdc_search_generic_foods(q, page_size=8)
+            st.session_state["ai_food_results"] = foods
+        except Exception as e:
+            st.error("No pude buscar en la base USDA (FDC). Revisa tu API key o conexión.")
+            st.exception(e)
+
+    foods = st.session_state.get("ai_food_results", [])
+
+    if not foods:
+        st.info("Busca algo arriba para ver resultados.")
+    else:
+        st.markdown('<div class="fm-card fm-accent-purple">', unsafe_allow_html=True)
+        st.subheader("Resultados")
+
+        # Opciones legibles
+        options = []
+        for f in foods:
+            desc = f.get("description", "Food")
+            dt = f.get("dataType", "")
+            fdc_id = f.get("fdcId", "")
+            options.append({"fdcId": fdc_id, "label": f"{desc}  ·  {dt}  ·  id={fdc_id}"})
+
+        picked = st.selectbox(
+            "Elige el alimento correcto",
+            options,
+            format_func=lambda x: x["label"],
+            key="ai_food_pick"
+        )
+
+        st.markdown("</div>", unsafe_allow_html=True)
+
+        # Preview macros
+        st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
+        st.markdown('<div class="fm-card fm-accent-green">', unsafe_allow_html=True)
+        st.subheader("Macros (por 100g)")
+
+        try:
+            macros = fdc_get_macros_per_100g(int(picked["fdcId"]))
+            st.session_state["ai_food_macros_preview"] = macros
+        except Exception as e:
+            st.error("No pude leer los detalles del alimento (FDC).")
+            st.exception(e)
+            st.stop()
+
+        macros = st.session_state.get("ai_food_macros_preview", {})
+
+        c1, c2, c3, c4 = st.columns(4)
+        with c1:
+            st.metric("🔥 kcal", f"{macros.get('calories',0):.0f}")
+        with c2:
+            st.metric("🥩 Prote", f"{macros.get('protein',0):.1f} g")
+        with c3:
+            st.metric("🍚 Carbs", f"{macros.get('carbs',0):.1f} g")
+        with c4:
+            st.metric("🥑 Grasas", f"{macros.get('fat',0):.1f} g")
+
+        st.caption("Fuente: USDA FoodData Central (dominio público/CC0).")
+        st.markdown("</div>", unsafe_allow_html=True)
+
+        st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
+
+        # Guardar
+        st.markdown('<div class="fm-card fm-accent-pink">', unsafe_allow_html=True)
+        st.subheader("Guardar en tu base")
+
+        nn = st.text_input("Nombre final (puedes editarlo)", value=str(macros.get("name","")).title(), key="ai_food_final_name")
+        if st.button("✅ Añadir a mi base", type="primary", use_container_width=True):
+            try:
+                add_food({
+                    "name": nn.strip(),
+                    "category": (category or "Genericos").strip(),
+                    "calories": float(macros.get("calories", 0.0)),
+                    "protein": float(macros.get("protein", 0.0)),
+                    "carbs": float(macros.get("carbs", 0.0)),
+                    "fat": float(macros.get("fat", 0.0)),
+                })
+                st.cache_data.clear()
+                st.success("Alimento añadido ✅")
+            except Exception as e:
+                st.error("Error guardando el alimento en Google Sheets.")
+                st.exception(e)
+
+        st.markdown("</div>", unsafe_allow_html=True)
+
 
 
