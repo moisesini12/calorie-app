@@ -842,18 +842,32 @@ if page == "📊 Dashboard":
 
 
 # ==========================================================
-# PÁGINA: REGISTRO
+# PÁGINA: REGISTRO  (MULTI-AÑADIDO / “CARRITO”)
 # ==========================================================
 elif page == "🍽 Registro":
     st.subheader("🍽 Registro")
     st.caption(f"Día: {selected_date_str}")
     st.divider()
 
+    # -------------------------
+    # Estado / feedback
+    # -------------------------
+    if "pending_entries" not in st.session_state:
+        st.session_state["pending_entries"] = []  # lista de items pendientes
+
     if st.session_state.get("_just_added", False):
-        last_id = st.session_state.get("_last_add_id", "")
-        st.success(f"✅ Entrada guardada (id={last_id})")
+        last_ids = st.session_state.get("_last_add_ids", [])
+        if isinstance(last_ids, list) and last_ids:
+            st.success(f"✅ Añadidas {len(last_ids)} entradas al registro")
+        else:
+            last_id = st.session_state.get("_last_add_id", "")
+            if last_id:
+                st.success(f"✅ Entrada guardada (id={last_id})")
         st.session_state["_just_added"] = False
 
+    # -------------------------
+    # DEBUG (lo dejas igual)
+    # -------------------------
     with st.expander("🛠️ DEBUG Sheets (solo para ti)", expanded=False):
         import db_gsheets
         try:
@@ -880,65 +894,198 @@ elif page == "🍽 Registro":
             st.error("Fallo leyendo debug de Sheets")
             st.exception(e)
 
+    # -------------------------
+    # Datos base
+    # -------------------------
     categories = list_categories()
     if not categories:
         st.error("No hay categorías. Revisa la pestaña foods.")
         st.stop()
 
+    # Construye un map global nombre -> food (para calcular macros y para guardar)
+    # (Tu app asume nombres únicos; si hay duplicados, habría que usar id)
+    food_map = {}
+    for c in categories:
+        for f in list_foods_by_category(c):
+            food_map[f["name"]] = f
+
+    # -------------------------
+    # UI: carrito (añadir varios)
+    # -------------------------
+    st.markdown('<div class="fm-card fm-accent-cyan">', unsafe_allow_html=True)
+    st.markdown("## 🧺 Añadir varios (rápido)")
+    st.caption("Vas metiendo alimentos a la lista y luego los vuelcas todos al registro con un solo botón.")
+
     colA, colB = st.columns([2, 2])
     with colA:
-        category = st.selectbox("Categoría", categories, key="reg_category")
+        category = st.selectbox("Categoría", categories, key="reg_category_cart")
     with colB:
         foods_in_cat = list_foods_by_category(category)
         if not foods_in_cat:
             st.warning("Esa categoría no tiene alimentos.")
             st.stop()
-        food = st.selectbox("Alimento", foods_in_cat, format_func=lambda x: x["name"], key="reg_food")
+        food = st.selectbox("Alimento", foods_in_cat, format_func=lambda x: x["name"], key="reg_food_cart")
 
-    with st.form("add_entry_form", clear_on_submit=False):
+    col1, col2, col3 = st.columns([2, 2, 2])
+    with col1:
         grams = float(
             st.number_input(
-                "Gramos consumidos",
+                "Gramos",
                 min_value=1.0,
                 step=1.0,
                 value=100.0,
                 format="%.0f",
-                key="reg_grams"
+                key="reg_grams_cart",
             )
         )
-
-        meal = st.radio(
+    with col2:
+        meal = st.selectbox(
             "Comida",
             ["Desayuno", "Almuerzo", "Merienda", "Cena"],
-            horizontal=False,
-            key="reg_meal"
+            index=0,
+            key="reg_meal_cart",
+        )
+    with col3:
+        st.write("")
+        st.write("")
+
+    # Preview macros del item actual (solo visual, no guarda)
+    try:
+        _m = scale_macros(food, grams)
+        st.caption(
+            f"Preview: **{food['name']}** — {grams:.0f} g · "
+            f"{_m['calories']:.0f} kcal · P {_m['protein']:.1f} · C {_m['carbs']:.1f} · G {_m['fat']:.1f}"
+        )
+    except Exception:
+        pass
+
+    b1, b2, b3 = st.columns([2, 2, 2])
+    with b1:
+        add_to_list = st.button("➕ Añadir a la lista", type="primary", use_container_width=True, key="btn_add_to_list")
+    with b2:
+        clear_list = st.button("🧹 Vaciar lista", use_container_width=True, key="btn_clear_list")
+    with b3:
+        pending_n = len(st.session_state["pending_entries"])
+        commit_disabled = pending_n == 0
+        commit = st.button(
+            f"✅ Añadir al registro ({pending_n})",
+            disabled=commit_disabled,
+            type="primary",
+            use_container_width=True,
+            key="btn_commit_list",
         )
 
-        add_btn = st.form_submit_button("Añadir al registro")
+    st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
 
-        if add_btn:
-            try:
-                macros = scale_macros(food, grams)
+    # -------------------------
+    # Acciones: añadir / vaciar / guardar
+    # -------------------------
+    if add_to_list:
+        try:
+            item = {
+                "meal": str(meal),
+                "name": str(food["name"]),
+                "grams": float(grams),
+            }
+            st.session_state["pending_entries"].append(item)
+            st.toast("Añadido a la lista ✅")
+            st.rerun()
+        except Exception as e:
+            st.error("No pude añadir el item a la lista.")
+            st.exception(e)
+
+    if clear_list:
+        st.session_state["pending_entries"] = []
+        st.toast("Lista vaciada 🧹")
+        st.rerun()
+
+    if commit and st.session_state["pending_entries"]:
+        try:
+            new_ids = []
+            for it in st.session_state["pending_entries"]:
+                nm = str(it.get("name", "")).strip()
+                gr = float(it.get("grams", 0))
+                ml = str(it.get("meal", "")).strip()
+
+                if not nm or nm not in food_map:
+                    continue
+                if gr <= 0:
+                    continue
+                if ml not in ["Desayuno", "Almuerzo", "Merienda", "Cena"]:
+                    ml = "Almuerzo"
+
+                base_food = food_map[nm]
+                macros = scale_macros(base_food, gr)
+
                 entry = {
                     "user_id": st.session_state["user_id"],
                     "entry_date": selected_date_str,
-                    "meal": meal,
-                    "name": food["name"],
-                    "grams": float(grams),
-                    **macros
+                    "meal": ml,
+                    "name": nm,
+                    "grams": float(gr),
+                    **macros,
                 }
 
                 new_id = add_entry(entry)
+                new_ids.append(new_id)
 
-                st.cache_data.clear()
-                st.session_state["_just_added"] = True
-                st.session_state["_last_add_id"] = new_id
-                st.rerun()
+            st.cache_data.clear()
 
-            except Exception as e:
-                st.error("❌ Error guardando la entrada en Google Sheets")
-                st.exception(e)
+            # feedback
+            st.session_state["_just_added"] = True
+            st.session_state["_last_add_ids"] = new_ids
+            if new_ids:
+                st.session_state["_last_add_id"] = new_ids[-1]
 
+            # limpia carrito
+            st.session_state["pending_entries"] = []
+            st.rerun()
+
+        except Exception as e:
+            st.error("❌ Error guardando el lote en Google Sheets")
+            st.exception(e)
+
+    # -------------------------
+    # Mostrar pendientes (carrito)
+    # -------------------------
+    pending = st.session_state.get("pending_entries", [])
+    if pending:
+        st.markdown('<div class="fm-card fm-accent-purple">', unsafe_allow_html=True)
+        st.markdown("## 🧾 Pendientes por añadir")
+
+        # Tabla simple
+        pend_df = pd.DataFrame(pending, columns=["meal", "name", "grams"])
+        pend_df = pend_df.rename(columns={"meal": "Comida", "name": "Alimento", "grams": "Gramos"})
+        pend_df["Gramos"] = pd.to_numeric(pend_df["Gramos"], errors="coerce").fillna(0).round(0).astype(int)
+
+        st.dataframe(pend_df, use_container_width=True, hide_index=True)
+
+        # Totales del carrito (opcional pero útil)
+        tot = {"calories": 0.0, "protein": 0.0, "carbs": 0.0, "fat": 0.0}
+        for it in pending:
+            nm = str(it.get("name", ""))
+            gr = float(it.get("grams", 0))
+            if nm in food_map and gr > 0:
+                mm = scale_macros(food_map[nm], gr)
+                tot["calories"] += float(mm.get("calories", 0))
+                tot["protein"] += float(mm.get("protein", 0))
+                tot["carbs"] += float(mm.get("carbs", 0))
+                tot["fat"] += float(mm.get("fat", 0))
+
+        c1, c2, c3, c4 = st.columns(4)
+        c1.metric("🔥 kcal (pendientes)", f"{tot['calories']:.0f}")
+        c2.metric("🥩 P (pendientes)", f"{tot['protein']:.1f} g")
+        c3.metric("🍚 C (pendientes)", f"{tot['carbs']:.1f} g")
+        c4.metric("🥑 G (pendientes)", f"{tot['fat']:.1f} g")
+
+        st.caption("Nota: si quieres borrar un pendiente, lo más limpio es vaciar lista y volver a añadir (luego lo mejoramos con botones por fila).")
+        st.markdown("</div>", unsafe_allow_html=True)
+        st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
+
+    # ======================================================
+    # REGISTRO DEL DÍA (TU TABLA ACTUAL: intacta)
+    # ======================================================
     st.subheader("Registro")
     rows = list_entries_by_date(selected_date_str, st.session_state["user_id"])
     df = pd.DataFrame(rows, columns=["id", "meal", "name", "grams", "calories", "protein", "carbs", "fat"])
@@ -1025,14 +1172,8 @@ elif page == "🍽 Registro":
                 st.write("")
                 st.write("")
 
-            if "food_map" not in st.session_state:
-                m = {}
-                for c in list_categories():
-                    for f in list_foods_by_category(c):
-                        m[f["name"]] = f
-                st.session_state["food_map"] = m
-
-            base_food = st.session_state["food_map"].get(row["name"])
+            # Reusar el food_map global (ya lo hemos construido arriba)
+            base_food = food_map.get(row["name"])
             if base_food is None:
                 st.error("No encuentro este alimento en la base de datos (quizá lo borraste).")
             else:
@@ -1058,6 +1199,7 @@ elif page == "🍽 Registro":
                     st.cache_data.clear()
                     st.success("Entrada borrada ✅")
                     st.rerun()
+
 
 
 # ==========================================================
@@ -2059,6 +2201,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
