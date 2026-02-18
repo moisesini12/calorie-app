@@ -794,7 +794,10 @@ page = nav_to_page.get(picked, "📊 Dashboard")
 # ==========================================================
 if page == "📊 Dashboard":
     import altair as alt
+    import streamlit.components.v1 as components
 
+
+    
     st.subheader("📊 Dashboard")
     st.caption(f"Día: {selected_date_str}")
     st.divider()
@@ -806,7 +809,7 @@ if page == "📊 Dashboard":
     total_carbs = sum(float(r["carbs"]) for r in rows) if rows else 0.0
     total_fat = sum(float(r["fat"]) for r in rows) if rows else 0.0
 
-    # ===== TOTALES DEL DÍA (HTML SIN CODEBLOCK) =====
+    # ===== TOTALES DEL DÍA (render HTML real, nunca se imprime como código) =====
     totales_html = textwrap.dedent(f"""
     <div class="fm-section">
       <div class="fm-section-title">📌 Totales del día</div>
@@ -834,9 +837,10 @@ if page == "📊 Dashboard":
       </div>
     </div>
     """).strip()
-    st.markdown(totales_html, unsafe_allow_html=True)
 
-    # ===== PROGRESO (HTML SIN CODEBLOCK) =====
+    components.html(totales_html, height=190, scrolling=False)
+
+    # ===== PROGRESO DEL DÍA (render HTML real) =====
     uid = st.session_state["user_id"]
     target_kcal = float(get_setting("target_deficit_calories", 1800, user_id=uid))
     target_p = float(get_setting("target_protein", 120, user_id=uid))
@@ -896,7 +900,9 @@ if page == "📊 Dashboard":
       </div>
     </div>
     """).strip()
-    st.markdown(progreso_html, unsafe_allow_html=True)
+
+    components.html(progreso_html, height=360, scrolling=False)
+
 
     # ===== HISTÓRICO + INSIGHTS =====
     hist = daily_totals_last_days(30, user_id=uid)
@@ -2458,6 +2464,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
