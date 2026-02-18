@@ -598,46 +598,162 @@ st.markdown(f"""
 st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
 
 # =========================
-# NAV
+# NAV (Bottom mobile-style)
 # =========================
+
+# --- CSS para fijar la navegación abajo y darle estilo app ---
+st.markdown(r"""
+<style>
+/* Deja espacio abajo para que no tape contenido */
+.block-container{ padding-bottom: 140px !important; }
+
+/* Contenedor del radio */
+div[data-testid="stRadio"]{
+  position: fixed !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  bottom: 18px !important;
+  z-index: 9999 !important;
+
+  width: min(980px, calc(100vw - 24px)) !important;
+  padding: 12px 14px !important;
+
+  border-radius: 22px !important;
+  background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.06)) !important;
+  border: 1px solid rgba(255,255,255,0.14) !important;
+  box-shadow: 0 18px 46px rgba(0,0,0,0.55) !important;
+  backdrop-filter: blur(14px) !important;
+}
+
+/* Oculta label "nav" (ya lo ocultamos también con label_visibility) */
+div[data-testid="stRadio"] > label{ display:none !important; }
+
+/* Grupo horizontal bonito */
+div[data-testid="stRadio"] div[role="radiogroup"]{
+  display:flex !important;
+  gap: 10px !important;
+  justify-content: space-between !important;
+}
+
+/* Cada opción */
+div[data-testid="stRadio"] div[role="radiogroup"] label{
+  flex: 1 1 auto !important;
+  margin: 0 !important;
+  padding: 10px 12px !important;
+  border-radius: 16px !important;
+
+  background: rgba(255,255,255,0.06) !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
+
+  transition: transform 120ms ease, background 120ms ease, border-color 120ms ease, box-shadow 120ms ease;
+}
+
+/* Hover */
+div[data-testid="stRadio"] div[role="radiogroup"] label:hover{
+  transform: translateY(-2px);
+  background: rgba(34,211,238,0.10) !important;
+  border-color: rgba(34,211,238,0.22) !important;
+}
+
+/* Oculta el círculo radio */
+div[data-testid="stRadio"] div[role="radiogroup"] label input{
+  display:none !important;
+}
+
+/* Texto dentro (lo hacemos “icono + label” estilo app) */
+div[data-testid="stRadio"] div[role="radiogroup"] label div{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap: 8px !important;
+
+  font-weight: 900 !important;
+  color: rgba(255,255,255,0.92) !important;
+  white-space: nowrap !important;
+}
+
+/* Opción activa: Streamlit marca aria-checked=true */
+div[data-testid="stRadio"] div[role="radiogroup"] label:has([aria-checked="true"]){
+  background: linear-gradient(135deg, rgba(255,79,216,0.92), rgba(139,92,246,0.92)) !important;
+  border: none !important;
+  box-shadow: 0 12px 28px rgba(0,0,0,0.40), 0 0 0 1px rgba(255,79,216,0.18) !important;
+}
+div[data-testid="stRadio"] div[role="radiogroup"] label:has([aria-checked="true"]) div{
+  color: #0b1020 !important;
+}
+
+/* Responsive: en móvil quitamos texto largo y dejamos solo icono */
+@media (max-width: 720px){
+  div[data-testid="stRadio"] div[role="radiogroup"] label div{
+    font-size: 0px !important; /* oculta texto */
+  }
+  div[data-testid="stRadio"] div[role="radiogroup"] label div::before{
+    content: attr(data-testid);
+  }
+}
+</style>
+""", unsafe_allow_html=True)
+
+
+# --- Estado NAV ---
 if "goto_page" not in st.session_state:
     st.session_state["goto_page"] = None
 if "nav" not in st.session_state:
-    st.session_state["nav"] = "📊"
+    st.session_state["nav"] = "📊 Dashboard"
 
+# --- Navegación declarativa (lo que ve el usuario) ---
+NAV = [
+    "📊 Dashboard",
+    "🍽 Registro",
+    "🤖 IA",
+    "👨‍🍳 Chef",
+    "🏋️ Rutina",
+    "🎯 Objetivos",
+    "➕ Alimentos",
+]
+
+# --- Mapa a tus páginas reales (lo que usa tu app por dentro) ---
+nav_to_page = {
+    "📊 Dashboard": "📊 Dashboard",
+    "🍽 Registro": "🍽 Registro",
+    "🤖 IA": "🤖 IA Alimento",
+    "👨‍🍳 Chef": "👨‍🍳 Chef IA",
+    "🏋️ Rutina": "🏋️ Rutina IA",
+    "🎯 Objetivos": "🎯 Objetivos",
+    "➕ Alimentos": "➕ Añadir alimento",
+}
+
+# --- Soporte de atajos goto_page que ya tienes ---
 if st.session_state["goto_page"]:
     gp = st.session_state["goto_page"]
     st.session_state["goto_page"] = None
-    if gp == "📊 Dashboard": st.session_state["nav"] = "📊"
-    elif gp == "🍽 Registro": st.session_state["nav"] = "🍽️"
-    elif gp == "👨‍🍳 Chef IA": st.session_state["nav"] = "👨‍🍳"
-    elif gp == "🏋️ Rutina IA": st.session_state["nav"] = "🏋️"
-    elif gp == "🎯 Objetivos": st.session_state["nav"] = "⚙️"
-    elif gp == "➕ Añadir alimento": st.session_state["nav"] = "➕"
 
-NAV = [
-    ("📊", "📊 Dashboard"),
-    ("🍽️", "🍽 Registro"),
-    ("👨‍🍳", "👨‍🍳 Chef IA"),
-    ("🏋️", "🏋️ Rutina IA"),
-    ("⚙️", "🎯 Objetivos"),
-    ("➕", "➕ Añadir alimento"),
-    ("🤖", "🤖 IA Alimento"),
-]
+    # gp llega como "🍽 Registro", "🎯 Objetivos", etc.
+    # Lo transformamos al label del dock inferior
+    reverse_map = {
+        "📊 Dashboard": "📊 Dashboard",
+        "🍽 Registro": "🍽 Registro",
+        "🤖 IA Alimento": "🤖 IA",
+        "👨‍🍳 Chef IA": "👨‍🍳 Chef",
+        "🏋️ Rutina IA": "🏋️ Rutina",
+        "🎯 Objetivos": "🎯 Objetivos",
+        "➕ Añadir alimento": "➕ Alimentos",
+    }
+    st.session_state["nav"] = reverse_map.get(gp, "📊 Dashboard")
 
-icons = [x[0] for x in NAV]
-icon_to_page = {x[0]: x[1] for x in NAV}
-
+# --- Render del dock inferior ---
 picked = st.radio(
     "nav",
-    icons,
-    index=icons.index(st.session_state["nav"]) if st.session_state["nav"] in icons else 0,
+    NAV,
+    index=NAV.index(st.session_state["nav"]) if st.session_state["nav"] in NAV else 0,
     horizontal=True,
     label_visibility="collapsed",
+    key="bottom_nav_radio"
 )
 
+# --- Persistimos estado y sacamos el `page` que tu app usa ---
 st.session_state["nav"] = picked
-page = icon_to_page[picked]
+page = nav_to_page.get(picked, "📊 Dashboard")
 
 
 # ==========================================================
@@ -2201,6 +2317,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
