@@ -806,37 +806,36 @@ if page == "📊 Dashboard":
     total_carbs = sum(float(r["carbs"]) for r in rows) if rows else 0.0
     total_fat = sum(float(r["fat"]) for r in rows) if rows else 0.0
 
-    # ===== TOTales del día (1 solo bloque HTML) =====
-    st.markdown(
-        textwrap.dedent(f"""
-        <div class="fm-section">
-          <div class="fm-section-title">📌 Totales del día</div>
-
-          <div class="fm-grid-4">
-            <div class="fm-card fm-mini fm-accent-pink">
-              <div class="fm-metric-label">🔥 Calorías</div>
-              <div class="fm-metric-value">{total_kcal:.0f} kcal</div>
-            </div>
-
-            <div class="fm-card fm-mini fm-accent-purple">
-              <div class="fm-metric-label">🥩 Proteína</div>
-              <div class="fm-metric-value">{total_protein:.1f} g</div>
-            </div>
-
-            <div class="fm-card fm-mini fm-accent-cyan">
-              <div class="fm-metric-label">🍚 Carbs</div>
-              <div class="fm-metric-value">{total_carbs:.1f} g</div>
-            </div>
-
-            <div class="fm-card fm-mini fm-accent-green">
-              <div class="fm-metric-label">🥑 Grasas</div>
-              <div class="fm-metric-value">{total_fat:.1f} g</div>
-            </div>
-          </div>
+    # ===== TOTALES DEL DÍA (UN SOLO BLOQUE HTML, SIN SANGRÍA EN EL STRING) =====
+    totales_html = f"""
+    <div class="fm-section">
+      <div class="fm-section-title">📌 Totales del día</div>
+    
+      <div class="fm-grid-4">
+        <div class="fm-card fm-mini fm-accent-pink">
+          <div class="fm-metric-label">🔥 Calorías</div>
+          <div class="fm-metric-value">{total_kcal:.0f} kcal</div>
         </div>
-        """),
-        unsafe_allow_html=True
-    )
+    
+        <div class="fm-card fm-mini fm-accent-purple">
+          <div class="fm-metric-label">🥩 Proteína</div>
+          <div class="fm-metric-value">{total_protein:.1f} g</div>
+        </div>
+    
+        <div class="fm-card fm-mini fm-accent-cyan">
+          <div class="fm-metric-label">🍚 Carbs</div>
+          <div class="fm-metric-value">{total_carbs:.1f} g</div>
+        </div>
+    
+        <div class="fm-card fm-mini fm-accent-green">
+          <div class="fm-metric-label">🥑 Grasas</div>
+          <div class="fm-metric-value">{total_fat:.1f} g</div>
+        </div>
+      </div>
+    </div>
+    """
+    st.markdown(totales_html, unsafe_allow_html=True)
+
 
     # ===== PROGRESO (1 solo bloque HTML) =====
     uid = st.session_state["user_id"]
@@ -847,14 +846,14 @@ if page == "📊 Dashboard":
 
     def clamp01(x: float) -> float:
         return 0.0 if x < 0 else 1.0 if x > 1 else x
-
+    
     def mk_progress_html(label, value, goal, unit, accent_cls, bar_color_cls):
         goal = float(goal) if goal else 0.0
         value = float(value) if value else 0.0
         ratio = 0.0 if goal <= 0 else clamp01(value / goal)
         remaining = goal - value
         tag = "Restante" if remaining >= 0 else "Exceso"
-
+    
         pct = int(round(ratio * 100.0))
         left_txt = (
             f"{value:.0f}{unit} / {goal:.0f}{unit}"
@@ -866,41 +865,40 @@ if page == "📊 Dashboard":
             if unit.strip() == "kcal"
             else f"{abs(remaining):.1f}{unit}"
         )
-
-        return textwrap.dedent(f"""
-        <div class="fm-card fm-mini {accent_cls}">
-          <div class="fm-progress-row">
-            <div class="fm-progress-left">
-              <div class="fm-progress-title">{label} · {left_txt}</div>
-              <div class="fm-bar {bar_color_cls}"><span style="width:{pct}%"></span></div>
-            </div>
-            <div class="fm-progress-right">
-              <div class="fm-rem-caption">{tag}</div>
-              <div class="fm-rem-value">{rem_txt}</div>
-            </div>
-          </div>
+    
+        return f"""
+    <div class="fm-card fm-mini {accent_cls}">
+      <div class="fm-progress-row">
+        <div class="fm-progress-left">
+          <div class="fm-progress-title">{label} · {left_txt}</div>
+          <div class="fm-bar {bar_color_cls}"><span style="width:{pct}%"></span></div>
         </div>
-        """)
-
+        <div class="fm-progress-right">
+          <div class="fm-rem-caption">{tag}</div>
+          <div class="fm-rem-value">{rem_txt}</div>
+        </div>
+      </div>
+    </div>
+    """
+    
     progress_html = "".join([
         mk_progress_html("🔥 Calorías", total_kcal, target_kcal, " kcal", "fm-accent-pink", "pink"),
         mk_progress_html("🥩 Proteína", total_protein, target_p, " g", "fm-accent-purple", "purple"),
         mk_progress_html("🍚 Carbs", total_carbs, target_c, " g", "fm-accent-cyan", "cyan"),
         mk_progress_html("🥑 Grasas", total_fat, target_f, " g", "fm-accent-green", "green"),
     ])
+    
+    progreso_html = f"""
+    <div class="fm-section">
+      <div class="fm-section-title">🎯 Progreso del día</div>
+      <div class="fm-progress-sub">Objetivo vs consumido y cuánto te queda.</div>
+      <div class="fm-progress-stack">
+        {progress_html}
+      </div>
+    </div>
+    """
+    st.markdown(progreso_html, unsafe_allow_html=True)
 
-    st.markdown(
-        textwrap.dedent(f"""
-        <div class="fm-section">
-          <div class="fm-section-title">🎯 Progreso del día</div>
-          <div class="fm-progress-sub">Objetivo vs consumido y cuánto te queda.</div>
-          <div class="fm-progress-stack">
-            {progress_html}
-          </div>
-        </div>
-        """),
-        unsafe_allow_html=True
-    )
 
 
 
@@ -2363,6 +2361,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
