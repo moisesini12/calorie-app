@@ -793,24 +793,163 @@ page = nav_to_page.get(picked, "📊 Dashboard")
 # PÁGINA: DASHBOARD
 # ==========================================================
 if page == "📊 Dashboard":
-    import altair as alt
     import streamlit.components.v1 as components
     import textwrap
 
-    
-    st.subheader("📊 Dashboard")
-    st.caption(f"Día: {selected_date_str}")
-    st.divider()
+    # CSS mínimo SOLO para el iframe del dashboard (para que se vea igual)
+    DASH_CSS = """
+    <style>
+      :root{
+        --card: rgba(255,255,255,0.06);
+        --stroke: rgba(255,255,255,0.10);
+        --txt: rgba(255,255,255,0.92);
+        --muted: rgba(226,232,240,0.72);
+      }
 
-    rows = list_entries_by_date(selected_date_str, st.session_state["user_id"])
+      body{
+        margin:0;
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial;
+        color: var(--txt);
+        background: transparent;
+      }
 
-    total_kcal = sum(float(r["calories"]) for r in rows) if rows else 0.0
-    total_protein = sum(float(r["protein"]) for r in rows) if rows else 0.0
-    total_carbs = sum(float(r["carbs"]) for r in rows) if rows else 0.0
-    total_fat = sum(float(r["fat"]) for r in rows) if rows else 0.0
+      .fm-card{
+        background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.05));
+        border: 1px solid rgba(255,255,255,0.10);
+        border-radius: 18px;
+        padding: 16px;
+        box-shadow: 0 18px 45px rgba(0,0,0,0.40);
+        backdrop-filter: blur(12px);
+      }
 
-    # ===== TOTALES DEL DÍA (render HTML real, nunca se imprime como código) =====
+      .fm-mini{ border-radius: 18px; padding: 14px; }
+
+      .fm-accent-pink{
+        border-color: rgba(255,79,216,0.22);
+        box-shadow: 0 18px 45px rgba(0,0,0,0.40), 0 0 0 1px rgba(255,79,216,0.10);
+        background: linear-gradient(180deg, rgba(255,79,216,0.12), rgba(255,255,255,0.05));
+      }
+      .fm-accent-purple{
+        border-color: rgba(139,92,246,0.22);
+        box-shadow: 0 18px 45px rgba(0,0,0,0.40), 0 0 0 1px rgba(139,92,246,0.10);
+        background: linear-gradient(180deg, rgba(139,92,246,0.12), rgba(255,255,255,0.05));
+      }
+      .fm-accent-cyan{
+        border-color: rgba(34,211,238,0.22);
+        box-shadow: 0 18px 45px rgba(0,0,0,0.40), 0 0 0 1px rgba(34,211,238,0.10);
+        background: linear-gradient(180deg, rgba(34,211,238,0.10), rgba(255,255,255,0.05));
+      }
+      .fm-accent-green{
+        border-color: rgba(34,197,94,0.22);
+        box-shadow: 0 18px 45px rgba(0,0,0,0.40), 0 0 0 1px rgba(34,197,94,0.10);
+        background: linear-gradient(180deg, rgba(34,197,94,0.10), rgba(255,255,255,0.05));
+      }
+
+      .fm-section{
+        background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.05));
+        border: 1px solid rgba(255,255,255,0.10);
+        border-radius: 18px;
+        padding: 16px;
+        box-shadow: 0 18px 45px rgba(0,0,0,0.40);
+        backdrop-filter: blur(12px);
+        margin: 14px 0;
+      }
+      .fm-section-title{
+        font-size: 20px;
+        font-weight: 950;
+        letter-spacing:-0.02em;
+        margin: 0 0 10px 0;
+      }
+
+      .fm-grid-4{
+        display:grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+      }
+      @media (max-width: 900px){
+        .fm-grid-4{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      }
+
+      .fm-metric-label{
+        font-size: 12px;
+        font-weight: 800;
+        color: rgba(226,232,240,0.82);
+        display:flex;
+        align-items:center;
+        gap:6px;
+        margin-bottom: 6px;
+      }
+      .fm-metric-value{
+        font-size: 34px;
+        font-weight: 950;
+        letter-spacing: -0.04em;
+        color: rgba(255,255,255,0.92);
+        line-height: 1.05;
+      }
+
+      .fm-progress-stack{
+        display:flex;
+        flex-direction:column;
+        gap: 12px;
+      }
+      .fm-progress-row{
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:14px;
+      }
+      .fm-progress-left{ flex: 1; min-width: 0; }
+      .fm-progress-right{ width: 160px; text-align:right; flex: 0 0 auto; }
+
+      .fm-progress-title{
+        font-weight: 900;
+        color: rgba(255,255,255,0.92);
+        margin-bottom: 6px;
+      }
+      .fm-progress-sub{
+        color: rgba(226,232,240,0.72);
+        font-size: 12px;
+        font-weight: 700;
+        margin-bottom: 10px;
+      }
+
+      .fm-bar{
+        height: 12px;
+        border-radius: 999px;
+        background: rgba(255,255,255,0.10);
+        border: 1px solid rgba(255,255,255,0.10);
+        overflow: hidden;
+      }
+      .fm-bar > span{
+        display:block;
+        height: 100%;
+        width: 0%;
+        border-radius: 999px;
+      }
+      .fm-bar.pink > span{ background: rgba(255,79,216,0.90); }
+      .fm-bar.purple > span{ background: rgba(139,92,246,0.90); }
+      .fm-bar.cyan > span{ background: rgba(34,211,238,0.90); }
+      .fm-bar.green > span{ background: rgba(34,197,94,0.90); }
+
+      .fm-rem-caption{
+        color: rgba(226,232,240,0.72);
+        font-size: 12px;
+        font-weight: 800;
+        margin-bottom: 4px;
+      }
+      .fm-rem-value{
+        font-size: 32px;
+        font-weight: 950;
+        letter-spacing:-0.04em;
+        color: rgba(255,255,255,0.92);
+        line-height: 1.05;
+      }
+    </style>
+    """
+
+    # ===== TOTALES DEL DÍA =====
     totales_html = textwrap.dedent(f"""
+    {DASH_CSS}
     <div class="fm-section">
       <div class="fm-section-title">📌 Totales del día</div>
 
@@ -838,15 +977,9 @@ if page == "📊 Dashboard":
     </div>
     """).strip()
 
-    components.html(totales_html, height=190, scrolling=False)
+    components.html(totales_html, height=210, scrolling=False)
 
-    # ===== PROGRESO DEL DÍA (render HTML real) =====
-    uid = st.session_state["user_id"]
-    target_kcal = float(get_setting("target_deficit_calories", 1800, user_id=uid))
-    target_p = float(get_setting("target_protein", 120, user_id=uid))
-    target_c = float(get_setting("target_carbs", 250, user_id=uid))
-    target_f = float(get_setting("target_fat", 60, user_id=uid))
-
+    # ===== PROGRESO =====
     def clamp01(x: float) -> float:
         return 0.0 if x < 0 else 1.0 if x > 1 else x
 
@@ -892,6 +1025,7 @@ if page == "📊 Dashboard":
     ])
 
     progreso_html = textwrap.dedent(f"""
+    {DASH_CSS}
     <div class="fm-section">
       <div class="fm-section-title">🎯 Progreso del día</div>
       <div class="fm-progress-sub">Objetivo vs consumido y cuánto te queda.</div>
@@ -901,7 +1035,8 @@ if page == "📊 Dashboard":
     </div>
     """).strip()
 
-    components.html(progreso_html, height=360, scrolling=False)
+    components.html(progreso_html, height=420, scrolling=False)
+
 
 
     # ===== HISTÓRICO + INSIGHTS =====
@@ -2464,6 +2599,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
