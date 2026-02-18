@@ -298,6 +298,43 @@ def inject_fitness_ui():
     .fm-bar.cyan > span{ background: rgba(34,211,238,0.90); }
     .fm-bar.green > span{ background: rgba(34,197,94,0.90); }
 
+    /* ===== Secciones en una sola "card" (evita cards vacías) ===== */
+    .fm-section{
+      background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.05));
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 18px 45px rgba(0,0,0,0.40);
+      backdrop-filter: blur(12px);
+      margin: 14px 0;
+    }
+    
+    .fm-section-title{
+      font-size: 20px;
+      font-weight: 950;
+      letter-spacing:-0.02em;
+      margin: 0 0 10px 0;
+    }
+    
+    .fm-grid-4{
+      display:grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+    
+    @media (max-width: 900px){
+      .fm-grid-4{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    
+    .fm-progress-stack{
+      display:flex;
+      flex-direction:column;
+      gap: 12px;
+    }
+
+
+
+
     </style>
     """, unsafe_allow_html=True)
 
@@ -768,44 +805,36 @@ if page == "📊 Dashboard":
     total_carbs = sum(float(r["carbs"]) for r in rows) if rows else 0.0
     total_fat = sum(float(r["fat"]) for r in rows) if rows else 0.0
 
-    # ===== TOTales del día (HTML, sin st.metric) =====
-    st.markdown('<div class="fm-card">', unsafe_allow_html=True)
-    st.markdown("## 📌 Totales del día")
+    # ===== TOTales del día (1 solo bloque HTML) =====
+    st.markdown(f"""
+    <div class="fm-section">
+      <div class="fm-section-title">📌 Totales del día</div>
 
-    m1, m2, m3, m4 = st.columns(4)
-    with m1:
-        st.markdown(f"""
+      <div class="fm-grid-4">
         <div class="fm-card fm-mini fm-accent-pink">
           <div class="fm-metric-label">🔥 Calorías</div>
           <div class="fm-metric-value">{total_kcal:.0f} kcal</div>
         </div>
-        """, unsafe_allow_html=True)
-    with m2:
-        st.markdown(f"""
+
         <div class="fm-card fm-mini fm-accent-purple">
           <div class="fm-metric-label">🥩 Proteína</div>
           <div class="fm-metric-value">{total_protein:.1f} g</div>
         </div>
-        """, unsafe_allow_html=True)
-    with m3:
-        st.markdown(f"""
+
         <div class="fm-card fm-mini fm-accent-cyan">
           <div class="fm-metric-label">🍚 Carbs</div>
           <div class="fm-metric-value">{total_carbs:.1f} g</div>
         </div>
-        """, unsafe_allow_html=True)
-    with m4:
-        st.markdown(f"""
+
         <div class="fm-card fm-mini fm-accent-green">
           <div class="fm-metric-label">🥑 Grasas</div>
           <div class="fm-metric-value">{total_fat:.1f} g</div>
         </div>
-        """, unsafe_allow_html=True)
+      </div>
+    </div>
+    """, unsafe_allow_html=True)
 
-    st.markdown('</div>', unsafe_allow_html=True)
-    st.divider()
-
-    # ===== PROGRESO (HTML, sin st.progress) =====
+    # ===== PROGRESO (1 solo bloque HTML) =====
     uid = st.session_state["user_id"]
     target_kcal = float(get_setting("target_deficit_calories", 1800, user_id=uid))
     target_p = float(get_setting("target_protein", 120, user_id=uid))
@@ -815,7 +844,7 @@ if page == "📊 Dashboard":
     def clamp01(x: float) -> float:
         return 0.0 if x < 0 else 1.0 if x > 1 else x
 
-    def progress_row_html(label: str, value: float, goal: float, unit: str, accent_cls: str, bar_color_cls: str):
+    def mk_progress_html(label, value, goal, unit, accent_cls, bar_color_cls):
         goal = float(goal) if goal else 0.0
         value = float(value) if value else 0.0
         ratio = 0.0 if goal <= 0 else clamp01(value / goal)
@@ -823,10 +852,18 @@ if page == "📊 Dashboard":
         tag = "Restante" if remaining >= 0 else "Exceso"
 
         pct = int(round(ratio * 100.0))
-        left_txt = f"{value:.0f}{unit} / {goal:.0f}{unit}" if unit.strip() == "kcal" else f"{value:.1f}{unit} / {goal:.1f}{unit}"
-        rem_txt = f"{abs(remaining):.0f}{unit}" if unit.strip() == "kcal" else f"{abs(remaining):.1f}{unit}"
+        left_txt = (
+            f"{value:.0f}{unit} / {goal:.0f}{unit}"
+            if unit.strip() == "kcal"
+            else f"{value:.1f}{unit} / {goal:.1f}{unit}"
+        )
+        rem_txt = (
+            f"{abs(remaining):.0f}{unit}"
+            if unit.strip() == "kcal"
+            else f"{abs(remaining):.1f}{unit}"
+        )
 
-        st.markdown(f"""
+        return f"""
         <div class="fm-card fm-mini {accent_cls}">
           <div class="fm-progress-row">
             <div class="fm-progress-left">
@@ -839,19 +876,25 @@ if page == "📊 Dashboard":
             </div>
           </div>
         </div>
-        """, unsafe_allow_html=True)
+        """
 
-    st.markdown('<div class="fm-card">', unsafe_allow_html=True)
-    st.markdown("## 🎯 Progreso del día")
-    st.markdown('<div class="fm-progress-sub">Objetivo vs consumido y cuánto te queda.</div>', unsafe_allow_html=True)
+    progress_html = "".join([
+        mk_progress_html("🔥 Calorías", total_kcal, target_kcal, " kcal", "fm-accent-pink", "pink"),
+        mk_progress_html("🥩 Proteína", total_protein, target_p, " g", "fm-accent-purple", "purple"),
+        mk_progress_html("🍚 Carbs", total_carbs, target_c, " g", "fm-accent-cyan", "cyan"),
+        mk_progress_html("🥑 Grasas", total_fat, target_f, " g", "fm-accent-green", "green"),
+    ])
 
-    progress_row_html("🔥 Calorías", total_kcal, target_kcal, " kcal", "fm-accent-pink", "pink")
-    progress_row_html("🥩 Proteína", total_protein, target_p, " g", "fm-accent-purple", "purple")
-    progress_row_html("🍚 Carbs", total_carbs, target_c, " g", "fm-accent-cyan", "cyan")
-    progress_row_html("🥑 Grasas", total_fat, target_f, " g", "fm-accent-green", "green")
+    st.markdown(f"""
+    <div class="fm-section">
+      <div class="fm-section-title">🎯 Progreso del día</div>
+      <div class="fm-progress-sub">Objetivo vs consumido y cuánto te queda.</div>
+      <div class="fm-progress-stack">
+        {progress_html}
+      </div>
+    </div>
+    """, unsafe_allow_html=True)
 
-    st.markdown("</div>", unsafe_allow_html=True)
-    st.divider()
 
     # ===== HISTÓRICO + INSIGHTS =====
     hist = daily_totals_last_days(30, user_id=uid)
@@ -2312,6 +2355,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
