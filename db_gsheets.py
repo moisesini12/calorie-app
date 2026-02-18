@@ -38,7 +38,30 @@ def _client() -> gspread.Client:
 
 @st.cache_resource
 def _sh():
-    return _client().open_by_key(SHEET_ID)
+    try:
+        return _client().open_by_key(SHEET_ID)
+    except Exception as e:
+        import streamlit as st
+        import gspread
+
+        msg = str(e)
+
+        st.error("❌ No puedo abrir Google Sheet (gspread).")
+        st.caption("Causas típicas: SHEET_ID mal / hoja no compartida con el service account / APIs o cuota.")
+
+        # Intento sacar info útil (a veces viene dentro del texto)
+        st.code(msg)
+
+        st.info(
+            "Checklist rápida:\n"
+            "1) SHEET_ID correcto (entre /d/ y /edit en la URL)\n"
+            "2) Hoja compartida con el service account (client_email) como Editor\n"
+            "3) En Google Cloud: Sheets API y Drive API habilitadas\n"
+            "4) Si es cuota/rate limit: espera 1-2 min y recarga"
+        )
+
+        st.stop()
+
 
 def _ws(tab_name: str):
     # NO cachear worksheet: evita estados raros tras errores de API/cuota
@@ -492,6 +515,7 @@ def set_setting(key: str, value: str, user_id: Optional[str] = None) -> None:
 
     ws.append_row([scoped, value], value_input_option="USER_ENTERED", insert_data_option="INSERT_ROWS")
     _cache_bump(TAB_SETTINGS)
+
 
 
 
