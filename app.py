@@ -7,7 +7,7 @@ from datetime import date
 import streamlit as st
 import pandas as pd
 import requests
-import textwrap
+
 
 
 from db_gsheets import (
@@ -795,7 +795,7 @@ page = nav_to_page.get(picked, "📊 Dashboard")
 if page == "📊 Dashboard":
     import altair as alt
     import streamlit.components.v1 as components
-
+    import textwrap
 
     
     st.subheader("📊 Dashboard")
@@ -2464,6 +2464,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
