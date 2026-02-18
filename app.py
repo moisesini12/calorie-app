@@ -793,10 +793,30 @@ page = nav_to_page.get(picked, "📊 Dashboard")
 # PÁGINA: DASHBOARD
 # ==========================================================
 if page == "📊 Dashboard":
+    import altair as alt
     import streamlit.components.v1 as components
     import textwrap
 
-    # CSS mínimo SOLO para el iframe del dashboard (para que se vea igual)
+    st.subheader("📊 Dashboard")
+    st.caption(f"Día: {selected_date_str}")
+    st.divider()
+
+    # --- Datos del día ---
+    rows = list_entries_by_date(selected_date_str, st.session_state["user_id"])
+
+    total_kcal = sum(float(r["calories"]) for r in rows) if rows else 0.0
+    total_protein = sum(float(r["protein"]) for r in rows) if rows else 0.0
+    total_carbs = sum(float(r["carbs"]) for r in rows) if rows else 0.0
+    total_fat = sum(float(r["fat"]) for r in rows) if rows else 0.0
+
+    # --- Objetivos ---
+    uid = st.session_state["user_id"]
+    target_kcal = float(get_setting("target_deficit_calories", 1800, user_id=uid))
+    target_p = float(get_setting("target_protein", 120, user_id=uid))
+    target_c = float(get_setting("target_carbs", 250, user_id=uid))
+    target_f = float(get_setting("target_fat", 60, user_id=uid))
+
+    # --- CSS SOLO para el iframe (dashboard) ---
     DASH_CSS = """
     <style>
       :root{
@@ -805,14 +825,12 @@ if page == "📊 Dashboard":
         --txt: rgba(255,255,255,0.92);
         --muted: rgba(226,232,240,0.72);
       }
-
       body{
         margin:0;
         font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial;
         color: var(--txt);
         background: transparent;
       }
-
       .fm-card{
         background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.05));
         border: 1px solid rgba(255,255,255,0.10);
@@ -821,7 +839,6 @@ if page == "📊 Dashboard":
         box-shadow: 0 18px 45px rgba(0,0,0,0.40);
         backdrop-filter: blur(12px);
       }
-
       .fm-mini{ border-radius: 18px; padding: 14px; }
 
       .fm-accent-pink{
@@ -947,7 +964,7 @@ if page == "📊 Dashboard":
     </style>
     """
 
-    # ===== TOTALES DEL DÍA =====
+    # ===== TOTALES DEL DÍA (iframe con CSS dentro) =====
     totales_html = textwrap.dedent(f"""
     {DASH_CSS}
     <div class="fm-section">
@@ -976,10 +993,9 @@ if page == "📊 Dashboard":
       </div>
     </div>
     """).strip()
+    components.html(totales_html, height=220, scrolling=False)
 
-    components.html(totales_html, height=210, scrolling=False)
-
-    # ===== PROGRESO =====
+    # ===== PROGRESO (iframe con CSS dentro) =====
     def clamp01(x: float) -> float:
         return 0.0 if x < 0 else 1.0 if x > 1 else x
 
@@ -1034,12 +1050,9 @@ if page == "📊 Dashboard":
       </div>
     </div>
     """).strip()
+    components.html(progreso_html, height=450, scrolling=False)
 
-    components.html(progreso_html, height=420, scrolling=False)
-
-
-
-    # ===== HISTÓRICO + INSIGHTS =====
+    # ===== HISTÓRICO + INSIGHTS (TU CÓDIGO ORIGINAL) =====
     hist = daily_totals_last_days(30, user_id=uid)
     hist_df = pd.DataFrame(hist, columns=["date", "calories", "protein", "carbs", "fat"])
 
@@ -2502,6 +2515,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
