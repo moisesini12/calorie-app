@@ -7,7 +7,7 @@ from datetime import date
 import streamlit as st
 import pandas as pd
 import requests
-
+import textwrap
 
 
 from db_gsheets import (
@@ -2361,6 +2361,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
