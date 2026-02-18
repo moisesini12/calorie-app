@@ -1140,103 +1140,6 @@ if page == "📊 Dashboard":
 
 
 
-    # ===== HISTÓRICO + INSIGHTS =====
-    hist = daily_totals_last_days(30, user_id=uid)
-    hist_df = pd.DataFrame(hist, columns=["date", "calories", "protein", "carbs", "fat"])
-
-    st.markdown('<div class="fm-card">', unsafe_allow_html=True)
-
-    topL, topR = st.columns([3, 2], vertical_alignment="top")
-
-    with topL:
-        st.subheader("📈 Últimos 30 días")
-        if hist_df.empty:
-            st.info("Aún no hay histórico para este usuario. Registra comidas y aquí verás la evolución 💪")
-        else:
-            hist_df["date"] = pd.to_datetime(hist_df["date"])
-            hist_df = hist_df.sort_values("date")
-
-            target_kcal_line = pd.DataFrame({
-                "date": hist_df["date"],
-                "Objetivo": [target_kcal] * len(hist_df),
-                "Consumido": hist_df["calories"].astype(float),
-            }).melt("date", var_name="serie", value_name="kcal")
-
-            kcal_chart = (
-                alt.Chart(target_kcal_line)
-                .mark_line()
-                .encode(
-                    x=alt.X("date:T", title=""),
-                    y=alt.Y("kcal:Q", title="kcal"),
-                    color=alt.Color("serie:N", legend=alt.Legend(orient="top")),
-                    tooltip=["date:T", "serie:N", "kcal:Q"]
-                )
-                .properties(height=220)
-            )
-            st.altair_chart(kcal_chart, use_container_width=True)
-
-            hist_df["kcal_7d"] = hist_df["calories"].rolling(7, min_periods=1).mean()
-            last7 = float(hist_df["kcal_7d"].iloc[-1])
-            diff = last7 - float(target_kcal)
-
-            st.caption(f"📌 Media móvil (7 días): **{last7:.0f} kcal** · Diferencia vs objetivo: **{diff:+.0f} kcal**")
-
-    with topR:
-        st.subheader("🧾 Resumen rápido")
-        st.caption("Hoy + lo que te queda para cumplir el objetivo.")
-
-        rem_kcal = float(target_kcal) - float(total_kcal)
-        rem_p = float(target_p) - float(total_protein)
-        rem_c = float(target_c) - float(total_carbs)
-        rem_f = float(target_f) - float(total_fat)
-
-        def badge(label, val, unit):
-            tag = "Restante" if val >= 0 else "Exceso"
-            st.metric(f"{label} ({tag})", f"{abs(val):.0f}{unit}" if unit == " kcal" else f"{abs(val):.1f}{unit}")
-
-        b1, b2 = st.columns(2)
-        with b1:
-            badge("🔥 kcal", rem_kcal, " kcal")
-            badge("🥩 P", rem_p, " g")
-        with b2:
-            badge("🍚 C", rem_c, " g")
-            badge("🥑 G", rem_f, " g")
-
-        st.divider()
-        st.caption("Atajos")
-        cA, cB = st.columns(2)
-        with cA:
-            if st.button("➕ Ir a Registro", type="primary"):
-                st.session_state["goto_page"] = "🍽 Registro"
-                st.rerun()
-        with cB:
-            if st.button("🎯 Ir a Objetivos", type="primary"):
-                st.session_state["goto_page"] = "🎯 Objetivos"
-                st.rerun()
-
-    st.markdown("</div>", unsafe_allow_html=True)
-    st.divider()
-
-    st.subheader("🥗 Macros recientes (14 días)")
-    if hist_df.empty:
-        st.caption("Aquí aparecerán tus macros cuando tengas datos.")
-    else:
-        df14 = hist_df.tail(14).copy()
-        df14["date"] = pd.to_datetime(df14["date"])
-        long_macros = df14.melt("date", value_vars=["protein", "carbs", "fat"], var_name="macro", value_name="g")
-
-        macros_chart = (
-            alt.Chart(long_macros)
-            .mark_bar()
-            .encode(
-                x=alt.X("date:T", title=""),
-                y=alt.Y("g:Q", title="gramos"),
-                color=alt.Color("macro:N", legend=alt.Legend(orient="top")),
-                tooltip=["date:T", "macro:N", "g:Q"]
-            )
-            .properties(height=220)
-        )
-        st.altair_chart(macros_chart, use_container_width=True)
 
 
 # ==========================================================
@@ -2599,6 +2502,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
