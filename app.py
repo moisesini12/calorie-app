@@ -7,6 +7,7 @@ from datetime import date
 import streamlit as st
 import pandas as pd
 import requests
+import textwrap
 
 
 from db_gsheets import (
@@ -806,33 +807,36 @@ if page == "📊 Dashboard":
     total_fat = sum(float(r["fat"]) for r in rows) if rows else 0.0
 
     # ===== TOTales del día (1 solo bloque HTML) =====
-    st.markdown(f"""
-    <div class="fm-section">
-      <div class="fm-section-title">📌 Totales del día</div>
+    st.markdown(
+        textwrap.dedent(f"""
+        <div class="fm-section">
+          <div class="fm-section-title">📌 Totales del día</div>
 
-      <div class="fm-grid-4">
-        <div class="fm-card fm-mini fm-accent-pink">
-          <div class="fm-metric-label">🔥 Calorías</div>
-          <div class="fm-metric-value">{total_kcal:.0f} kcal</div>
-        </div>
+          <div class="fm-grid-4">
+            <div class="fm-card fm-mini fm-accent-pink">
+              <div class="fm-metric-label">🔥 Calorías</div>
+              <div class="fm-metric-value">{total_kcal:.0f} kcal</div>
+            </div>
 
-        <div class="fm-card fm-mini fm-accent-purple">
-          <div class="fm-metric-label">🥩 Proteína</div>
-          <div class="fm-metric-value">{total_protein:.1f} g</div>
-        </div>
+            <div class="fm-card fm-mini fm-accent-purple">
+              <div class="fm-metric-label">🥩 Proteína</div>
+              <div class="fm-metric-value">{total_protein:.1f} g</div>
+            </div>
 
-        <div class="fm-card fm-mini fm-accent-cyan">
-          <div class="fm-metric-label">🍚 Carbs</div>
-          <div class="fm-metric-value">{total_carbs:.1f} g</div>
-        </div>
+            <div class="fm-card fm-mini fm-accent-cyan">
+              <div class="fm-metric-label">🍚 Carbs</div>
+              <div class="fm-metric-value">{total_carbs:.1f} g</div>
+            </div>
 
-        <div class="fm-card fm-mini fm-accent-green">
-          <div class="fm-metric-label">🥑 Grasas</div>
-          <div class="fm-metric-value">{total_fat:.1f} g</div>
+            <div class="fm-card fm-mini fm-accent-green">
+              <div class="fm-metric-label">🥑 Grasas</div>
+              <div class="fm-metric-value">{total_fat:.1f} g</div>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-    """, unsafe_allow_html=True)
+        """),
+        unsafe_allow_html=True
+    )
 
     # ===== PROGRESO (1 solo bloque HTML) =====
     uid = st.session_state["user_id"]
@@ -863,7 +867,7 @@ if page == "📊 Dashboard":
             else f"{abs(remaining):.1f}{unit}"
         )
 
-        return f"""
+        return textwrap.dedent(f"""
         <div class="fm-card fm-mini {accent_cls}">
           <div class="fm-progress-row">
             <div class="fm-progress-left">
@@ -876,7 +880,7 @@ if page == "📊 Dashboard":
             </div>
           </div>
         </div>
-        """
+        """)
 
     progress_html = "".join([
         mk_progress_html("🔥 Calorías", total_kcal, target_kcal, " kcal", "fm-accent-pink", "pink"),
@@ -885,15 +889,19 @@ if page == "📊 Dashboard":
         mk_progress_html("🥑 Grasas", total_fat, target_f, " g", "fm-accent-green", "green"),
     ])
 
-    st.markdown(f"""
-    <div class="fm-section">
-      <div class="fm-section-title">🎯 Progreso del día</div>
-      <div class="fm-progress-sub">Objetivo vs consumido y cuánto te queda.</div>
-      <div class="fm-progress-stack">
-        {progress_html}
-      </div>
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown(
+        textwrap.dedent(f"""
+        <div class="fm-section">
+          <div class="fm-section-title">🎯 Progreso del día</div>
+          <div class="fm-progress-sub">Objetivo vs consumido y cuánto te queda.</div>
+          <div class="fm-progress-stack">
+            {progress_html}
+          </div>
+        </div>
+        """),
+        unsafe_allow_html=True
+    )
+
 
 
     # ===== HISTÓRICO + INSIGHTS =====
@@ -2355,6 +2363,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
