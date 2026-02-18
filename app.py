@@ -607,8 +607,10 @@ st.markdown(r"""
 /* Deja espacio abajo para que no tape contenido */
 .block-container{ padding-bottom: 140px !important; }
 
-/* Contenedor del radio */
-div[data-testid="stRadio"]{
+/* ================================
+   SOLO NAV INFERIOR (7 botones)
+   ================================ */
+div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)){
   position: fixed !important;
   left: 50% !important;
   transform: translateX(-50%) !important;
@@ -625,18 +627,20 @@ div[data-testid="stRadio"]{
   backdrop-filter: blur(14px) !important;
 }
 
-/* Oculta label "nav" (ya lo ocultamos también con label_visibility) */
-div[data-testid="stRadio"] > label{ display:none !important; }
+/* Oculta label solo del nav inferior */
+div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)) > label{
+  display:none !important;
+}
 
 /* Grupo horizontal bonito */
-div[data-testid="stRadio"] div[role="radiogroup"]{
+div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)) div[role="radiogroup"]{
   display:flex !important;
   gap: 10px !important;
   justify-content: space-between !important;
 }
 
 /* Cada opción */
-div[data-testid="stRadio"] div[role="radiogroup"] label{
+div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)) div[role="radiogroup"] label{
   flex: 1 1 auto !important;
   margin: 0 !important;
   padding: 10px 12px !important;
@@ -649,19 +653,19 @@ div[data-testid="stRadio"] div[role="radiogroup"] label{
 }
 
 /* Hover */
-div[data-testid="stRadio"] div[role="radiogroup"] label:hover{
+div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)) div[role="radiogroup"] label:hover{
   transform: translateY(-2px);
   background: rgba(34,211,238,0.10) !important;
   border-color: rgba(34,211,238,0.22) !important;
 }
 
 /* Oculta el círculo radio */
-div[data-testid="stRadio"] div[role="radiogroup"] label input{
+div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)) div[role="radiogroup"] label input{
   display:none !important;
 }
 
-/* Texto dentro (lo hacemos “icono + label” estilo app) */
-div[data-testid="stRadio"] div[role="radiogroup"] label div{
+/* Texto dentro */
+div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)) div[role="radiogroup"] label div{
   display:flex !important;
   align-items:center !important;
   justify-content:center !important;
@@ -672,27 +676,18 @@ div[data-testid="stRadio"] div[role="radiogroup"] label div{
   white-space: nowrap !important;
 }
 
-/* Opción activa: Streamlit marca aria-checked=true */
-div[data-testid="stRadio"] div[role="radiogroup"] label:has([aria-checked="true"]){
+/* Opción activa */
+div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)) div[role="radiogroup"] label:has([aria-checked="true"]){
   background: linear-gradient(135deg, rgba(255,79,216,0.92), rgba(139,92,246,0.92)) !important;
   border: none !important;
   box-shadow: 0 12px 28px rgba(0,0,0,0.40), 0 0 0 1px rgba(255,79,216,0.18) !important;
 }
-div[data-testid="stRadio"] div[role="radiogroup"] label:has([aria-checked="true"]) div{
+div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)) div[role="radiogroup"] label:has([aria-checked="true"]) div{
   color: #0b1020 !important;
-}
-
-/* Responsive: en móvil quitamos texto largo y dejamos solo icono */
-@media (max-width: 720px){
-  div[data-testid="stRadio"] div[role="radiogroup"] label div{
-    font-size: 0px !important; /* oculta texto */
-  }
-  div[data-testid="stRadio"] div[role="radiogroup"] label div::before{
-    content: attr(data-testid);
-  }
 }
 </style>
 """, unsafe_allow_html=True)
+
 
 
 # --- Estado NAV ---
@@ -2317,6 +2312,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
