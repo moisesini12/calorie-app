@@ -790,6 +790,29 @@ div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)) div[ro
   }
 }
 
+/* =========================================================
+   MODO MÓVIL COMPACTO (−12% aprox)
+   Reduce altura visual de cards y métricas
+   ========================================================= */
+
+@media (max-width: 900px){
+
+  /* Reducimos tamaño general del contenido */
+  .block-container{
+    transform: scale(0.88);
+    transform-origin: top center;
+  }
+
+  /* Compensamos el espacio para que no quede hueco lateral */
+  .block-container > div{
+    width: 113% !important;
+    margin-left: -6.5% !important;
+  }
+
+}
+
+
+
 
 
 
@@ -2586,6 +2609,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
