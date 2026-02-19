@@ -765,51 +765,6 @@ div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)) div[ro
   }
 }
 
-/* =========================================================
-   FIX MÓVIL: cards “cortadas” por dock + safe area
-   - Más padding real abajo
-   - Subimos un poco el dock
-   - Respetamos la zona segura (notch / barra sistema)
-   ========================================================= */
-
-@media (max-width: 900px){
-
-  /* Espacio extra para que el último bloque NO quede bajo el dock */
-  .block-container{
-    padding-bottom: calc(320px + env(safe-area-inset-bottom, 0px)) !important;
-  }
-
-  /* Subimos el dock un poco y añadimos safe area */
-  div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)){
-    bottom: calc(14px + env(safe-area-inset-bottom, 0px)) !important;
-  }
-
-  /* Asegura que dentro de tus secciones haya margen inferior suficiente */
-  .fm-section{
-    margin-bottom: 18px !important;
-  }
-}
-
-/* =========================================================
-   MODO MÓVIL COMPACTO (−12% aprox)
-   Reduce altura visual de cards y métricas
-   ========================================================= */
-
-@media (max-width: 900px){
-
-  /* Reducimos tamaño general del contenido */
-  .block-container{
-    transform: scale(0.88);
-    transform-origin: top center;
-  }
-
-  /* Compensamos el espacio para que no quede hueco lateral */
-  .block-container > div{
-    width: 113% !important;
-    margin-left: -6.5% !important;
-  }
-
-}
 
 
 
@@ -2609,6 +2564,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
