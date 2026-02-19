@@ -778,6 +778,7 @@ div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)) div[ro
     border-radius: 20px !important;
   }
 
+
   /* Grid interno */
   div[data-testid="stRadio"] div[role="radiogroup"]{
     gap: 10px !important;
@@ -797,6 +798,40 @@ div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)) div[ro
 
 }
 
+/* =========================================================
+   DOCK INFERIOR: COMPACTO REAL (solo móvil)
+   Misma especificidad que el dock principal -> sí aplica
+   ========================================================= */
+@media (max-width: 900px){
+
+  /* Contenedor dock (EL MISMO SELECTOR) */
+  div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)){
+    padding: 8px 10px !important;
+    border-radius: 18px !important;
+    bottom: 12px !important;
+    width: min(980px, calc(100vw - 16px)) !important;
+
+    /* ✅ Esto SÍ reduce tamaño en móvil (Chrome/Android) */
+    zoom: 0.85 !important;
+  }
+
+  /* Grupo: reduce huecos */
+  div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)) div[role="radiogroup"]{
+    gap: 8px !important;
+  }
+
+  /* Botones */
+  div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)) div[role="radiogroup"] label{
+    padding: 8px 8px !important;
+    border-radius: 14px !important;
+  }
+
+  /* Texto dentro */
+  div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)) div[role="radiogroup"] label div{
+    font-size: 12px !important;
+    gap: 6px !important;
+  }
+}
 
 
 
@@ -2595,6 +2630,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
