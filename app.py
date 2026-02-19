@@ -765,6 +765,37 @@ div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)) div[ro
   }
 }
 
+/* =========================================================
+   DOCK INFERIOR COMPACTO (solo móvil)
+   Reduce tamaño ~15-20%
+   ========================================================= */
+
+@media (max-width: 900px){
+
+  /* Contenedor principal del dock */
+  div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)){
+    padding: 12px 14px !important;
+    border-radius: 20px !important;
+  }
+
+  /* Grid interno */
+  div[data-testid="stRadio"] div[role="radiogroup"]{
+    gap: 10px !important;
+  }
+
+  /* Botones individuales */
+  div[data-testid="stRadio"] div[role="radiogroup"] label{
+    padding: 10px 8px !important;
+    font-size: 13px !important;
+    border-radius: 16px !important;
+  }
+
+  /* Iconos */
+  div[data-testid="stRadio"] div[role="radiogroup"] label span:first-child{
+    font-size: 16px !important;
+  }
+
+}
 
 
 
@@ -2564,6 +2595,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
