@@ -723,6 +723,53 @@ div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)) div[ro
 div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)) div[role="radiogroup"] label:has([aria-checked="true"]) div{
   color: #0b1020 !important;
 }
+
+/* =========================================================
+   FIX MÓVIL: el dock no debe tapar botones/inputs
+   - Más padding abajo en pantallas pequeñas
+   - Auto-ocultar dock cuando un input está en foco (teclado abierto)
+   ========================================================= */
+
+@media (max-width: 900px){
+
+  /* Más espacio inferior en móvil para que nunca quede contenido bajo el dock */
+  .block-container{
+    padding-bottom: 220px !important;
+  }
+
+  /* Auto-ocultar dock al editar (teclado / foco en inputs) */
+  html:has(input:focus),
+  html:has(textarea:focus),
+  html:has(select:focus),
+  html:has(div[data-baseweb="select"]:focus-within),
+  html:has(div[data-testid="stNumberInput"]:focus-within),
+  html:has(div[data-testid="stDateInput"]:focus-within),
+  html:has(div[data-testid="stTimeInput"]:focus-within),
+  html:has(div[data-testid="stTextInput"]:focus-within),
+  html:has(div[data-testid="stTextArea"]:focus-within){
+    /* ocultamos el dock inferior */
+  }
+
+  html:has(input:focus) div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)),
+  html:has(textarea:focus) div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)),
+  html:has(select:focus) div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)),
+  html:has(div[data-baseweb="select"]:focus-within) div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)),
+  html:has(div[data-testid="stNumberInput"]:focus-within) div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)),
+  html:has(div[data-testid="stDateInput"]:focus-within) div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)),
+  html:has(div[data-testid="stTimeInput"]:focus-within) div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)),
+  html:has(div[data-testid="stTextInput"]:focus-within) div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)),
+  html:has(div[data-testid="stTextArea"]:focus-within) div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)){
+    opacity: 0 !important;
+    transform: translateX(-50%) translateY(30px) !important;
+    pointer-events: none !important;
+  }
+}
+
+
+
+
+
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -2515,6 +2562,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
