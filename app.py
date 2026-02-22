@@ -1108,7 +1108,7 @@ if page == "📊 Dashboard":
       </div>
     </div>
     """).strip()
-    components.html(totales_html, height=320, scrolling=False)
+    components.html(totales_html, height=270, scrolling=False)
 
     # ===== PROGRESO (iframe con CSS dentro) =====
     def clamp01(x: float) -> float:
@@ -2630,6 +2630,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
