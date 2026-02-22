@@ -1154,38 +1154,7 @@ if page == "📊 Dashboard":
 
             st.caption(f"📌 Media móvil (7 días): **{last7:.0f} kcal** · Diferencia vs objetivo: **{diff:+.0f} kcal**")
 
-    with topR:
-        st.subheader("🧾 Resumen rápido")
-        st.caption("Hoy + lo que te queda para cumplir el objetivo.")
 
-        rem_kcal = float(target_kcal) - float(total_kcal)
-        rem_p = float(target_p) - float(total_protein)
-        rem_c = float(target_c) - float(total_carbs)
-        rem_f = float(target_f) - float(total_fat)
-
-        def badge(label, val, unit):
-            tag = "Restante" if val >= 0 else "Exceso"
-            st.metric(f"{label} ({tag})", f"{abs(val):.0f}{unit}" if unit == " kcal" else f"{abs(val):.1f}{unit}")
-
-        b1, b2 = st.columns(2)
-        with b1:
-            badge("🔥 kcal", rem_kcal, " kcal")
-            badge("🥩 P", rem_p, " g")
-        with b2:
-            badge("🍚 C", rem_c, " g")
-            badge("🥑 G", rem_f, " g")
-
-        st.divider()
-        st.caption("Atajos")
-        cA, cB = st.columns(2)
-        with cA:
-            if st.button("➕ Ir a Registro", type="primary"):
-                st.session_state["goto_page"] = "🍽 Registro"
-                st.rerun()
-        with cB:
-            if st.button("🎯 Ir a Objetivos", type="primary"):
-                st.session_state["goto_page"] = "🎯 Objetivos"
-                st.rerun()
 
     st.markdown("</div>", unsafe_allow_html=True)
     st.divider()
@@ -2590,6 +2559,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
