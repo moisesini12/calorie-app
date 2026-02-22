@@ -333,6 +333,113 @@ def inject_fitness_ui():
       gap: 12px;
     }
 
+/* =========================
+   MOBILE UPGRADE (Dashboard)
+   ========================= */
+@media (max-width: 900px){
+  /* Menos “aire” arriba: se siente más app */
+  .block-container{
+    padding-top: 18px !important;
+  }
+
+  /* Títulos un pelín más compactos en móvil */
+  h1, h2, h3{
+    letter-spacing: -0.02em !important;
+  }
+}
+
+    /* ===== HERO (cabecera dashboard) ===== */
+    .fm-hero{
+      position: relative;
+      border-radius: 22px;
+      padding: 16px 16px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background:
+        radial-gradient(900px 400px at 15% 20%, rgba(255,79,216,0.16) 0%, transparent 55%),
+        radial-gradient(900px 500px at 85% 30%, rgba(34,211,238,0.12) 0%, transparent 60%),
+        linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.04));
+      box-shadow: 0 18px 45px rgba(0,0,0,0.45);
+      overflow: hidden;
+    }
+    
+    .fm-hero:after{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: linear-gradient(135deg, rgba(255,79,216,0.10), rgba(139,92,246,0.08), rgba(34,211,238,0.08));
+      filter: blur(18px);
+      opacity: 0.8;
+      pointer-events:none;
+    }
+    
+    .fm-hero-inner{
+      position: relative;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap: 12px;
+      z-index: 2;
+    }
+    
+    .fm-hero-title{
+      font-size: 24px;
+      font-weight: 950;
+      letter-spacing: -0.03em;
+      margin: 0;
+      color: rgba(255,255,255,0.95);
+    }
+    
+    .fm-hero-sub{
+      margin-top: 6px;
+      font-size: 12px;
+      font-weight: 750;
+      color: rgba(226,232,240,0.75);
+    }
+    
+    .fm-hero-pills{
+      display:flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content:flex-end;
+    }
+    
+    .fm-pill{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap: 6px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.10);
+      color: rgba(255,255,255,0.92);
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+    
+    .fm-pill.hot{
+      background: linear-gradient(135deg, rgba(255,79,216,0.92), rgba(139,92,246,0.92));
+      border: none;
+      color: #0b1020;
+      box-shadow: 0 12px 28px rgba(0,0,0,0.35);
+    }
+    
+    /* En móvil: hero más “apretado” y bonito */
+    @media (max-width: 900px){
+      .fm-hero{
+        padding: 14px 14px;
+        border-radius: 20px;
+      }
+      .fm-hero-title{
+        font-size: 22px;
+      }
+      .fm-hero-pills{
+        justify-content:flex-start;
+      }
+    }
+
+
 
 
 
@@ -912,10 +1019,33 @@ if page == "📊 Dashboard":
     import streamlit.components.v1 as components
     import textwrap
 
-    st.subheader("📊 Dashboard")
-    st.caption(f"Día: {selected_date_str}")
-    st.divider()
-
+    st.markdown(f"""
+    <div class="fm-hero">
+      <div class="fm-hero-inner">
+        <div>
+          <div class="fm-hero-title">📊 Dashboard</div>
+          <div class="fm-hero-sub">Hoy · <b>{selected_date_str}</b> · Usuario <b>{uid}</b></div>
+        </div>
+        <div class="fm-hero-pills">
+          <span class="fm-pill">🎯 Obj: {target_kcal:.0f} kcal</span>
+          <span class="fm-pill hot">⚡ Dale duro</span>
+        </div>
+      </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Acciones rápidas (móvil-friendly)
+    c1, c2 = st.columns(2)
+    with c1:
+        if st.button("➕ Añadir comida", type="primary", use_container_width=True):
+            st.session_state["goto_page"] = "🍽 Registro"
+            st.rerun()
+    with c2:
+        if st.button("🎯 Cambiar objetivos", use_container_width=True):
+            st.session_state["goto_page"] = "🎯 Objetivos"
+            st.rerun()
+    
+    st.markdown("<div style='height:12px'></div>", unsafe_allow_html=True)
     # --- Datos del día ---
     rows = list_entries_by_date(selected_date_str, st.session_state["user_id"])
 
@@ -2630,6 +2760,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
