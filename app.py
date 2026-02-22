@@ -762,7 +762,7 @@ if st.session_state["goto_page"]:
 
 def _go(target_page: str):
     st.session_state["page"] = target_page
-    
+    st.session_state["_close_sidebar_after_nav"] = True
 
 # --- Estilo sidebar (sin romper expanders) ---
 st.sidebar.markdown(
@@ -822,6 +822,45 @@ with st.sidebar.expander("🏋️ Rutina", expanded=False):
 # --- Objetivos (desplegable) ---
 with st.sidebar.expander("🎯 Objetivos", expanded=False):
     st.button("🎯 Objetivos", use_container_width=True, key="nav_objetivos_btn", on_click=_go, args=("🎯 Objetivos",))
+
+import streamlit.components.v1 as components
+
+if st.session_state.get("_close_sidebar_after_nav", False):
+    st.session_state["_close_sidebar_after_nav"] = False
+
+    components.html(
+        """
+        <script>
+        (function() {
+          // Intentamos varios selectores según versión/idioma de Streamlit
+          const candidates = [
+            'button[aria-label="Close sidebar"]',
+            'button[aria-label="Collapse sidebar"]',
+            'button[title="Close sidebar"]',
+            'button[title="Collapse sidebar"]',
+            'button[data-testid="stSidebarCollapseButton"]',
+            'button[data-testid="stSidebarCollapseButtonCollapsed"]'
+          ];
+
+          let btn = null;
+          for (const sel of candidates) {
+            btn = parent.document.querySelector(sel) || document.querySelector(sel);
+            if (btn) break;
+          }
+
+          // Fallback: buscar un botón con svg tipo "chevron" en el header del sidebar
+          if (!btn) {
+            const allBtns = Array.from(parent.document.querySelectorAll('button'));
+            btn = allBtns.find(b => (b.getAttribute('aria-label') || '').toLowerCase().includes('sidebar'));
+          }
+
+          if (btn) btn.click();
+        })();
+        </script>
+        """,
+        height=0,
+    )
+
 
 # --- Página actual (lo que usa tu app por dentro) ---
 page = st.session_state["page"]
@@ -2595,6 +2634,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
