@@ -339,7 +339,7 @@ def inject_fitness_ui():
 @media (max-width: 900px){
   /* Menos “aire” arriba: se siente más app */
   .block-container{
-    padding-top: 18px !important;
+    padding-top:56px !important;
   }
 
   /* Títulos un pelín más compactos en móvil */
@@ -2595,6 +2595,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
