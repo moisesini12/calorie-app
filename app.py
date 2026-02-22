@@ -785,28 +785,34 @@ if st.session_state.get("menu_open", False):
             st.rerun()
 
         st.divider()
-        st.markdown("**🍽️ Comidas**")
 
-        if st.button("🍽 Registro", use_container_width=True, key="dlg_reg"):
-            _go("🍽 Registro"); st.rerun()
-
-        if st.button("➕ Añadir alimento", use_container_width=True, key="dlg_addfood"):
-            _go("➕ Añadir alimento"); st.rerun()
-
-        if st.button("👨‍🍳 Chef IA", use_container_width=True, key="dlg_chef"):
-            _go("👨‍🍳 Chef IA"); st.rerun()
+        # ✅ DASHBOARD: principal, más llamativo
+        if st.button("📊 Dashboard", type="primary", use_container_width=True, key="dlg_dash"):
+            _go("📊 Dashboard")
+            st.rerun()
 
         st.divider()
-        st.markdown("**🏋️ Rutina**")
 
-        if st.button("🏋️ Rutina IA", use_container_width=True, key="dlg_rutina"):
-            _go("🏋️ Rutina IA"); st.rerun()
+        # ✅ COMIDAS (desplegable ampliable)
+        with st.expander("🍽️ Comidas", expanded=True):
+            if st.button("🍽 Registro", use_container_width=True, key="dlg_reg"):
+                _go("🍽 Registro"); st.rerun()
 
-        st.divider()
-        st.markdown("**🎯 Objetivos**")
+            if st.button("➕ Añadir alimento", use_container_width=True, key="dlg_addfood"):
+                _go("➕ Añadir alimento"); st.rerun()
 
-        if st.button("🎯 Objetivos", use_container_width=True, key="dlg_obj"):
-            _go("🎯 Objetivos"); st.rerun()
+            if st.button("👨‍🍳 Chef IA", use_container_width=True, key="dlg_chef"):
+                _go("👨‍🍳 Chef IA"); st.rerun()
+
+        # ✅ RUTINA (desplegable ampliable)
+        with st.expander("🏋️ Rutina", expanded=False):
+            if st.button("🏋️ Rutina IA", use_container_width=True, key="dlg_rutina"):
+                _go("🏋️ Rutina IA"); st.rerun()
+
+        # ✅ OBJETIVOS (desplegable ampliable)
+        with st.expander("🎯 Objetivos", expanded=False):
+            if st.button("🎯 Objetivos", use_container_width=True, key="dlg_obj"):
+                _go("🎯 Objetivos"); st.rerun()
 
         st.divider()
         if st.button("✖️ Cerrar", use_container_width=True, key="dlg_close"):
@@ -2589,6 +2595,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
