@@ -1019,6 +1019,14 @@ if page == "📊 Dashboard":
     import streamlit.components.v1 as components
     import textwrap
 
+    # --- Objetivos (ANTES del hero, para poder mostrarlos arriba) ---
+    uid = st.session_state["user_id"]
+    target_kcal = float(get_setting("target_deficit_calories", 1800, user_id=uid))
+    target_p = float(get_setting("target_protein", 120, user_id=uid))
+    target_c = float(get_setting("target_carbs", 250, user_id=uid))
+    target_f = float(get_setting("target_fat", 60, user_id=uid))
+
+    # --- Hero (cabecera móvil pro) ---
     st.markdown(f"""
     <div class="fm-hero">
       <div class="fm-hero-inner">
@@ -1033,7 +1041,7 @@ if page == "📊 Dashboard":
       </div>
     </div>
     """, unsafe_allow_html=True)
-    
+
     # Acciones rápidas (móvil-friendly)
     c1, c2 = st.columns(2)
     with c1:
@@ -1044,8 +1052,9 @@ if page == "📊 Dashboard":
         if st.button("🎯 Cambiar objetivos", use_container_width=True):
             st.session_state["goto_page"] = "🎯 Objetivos"
             st.rerun()
-    
+
     st.markdown("<div style='height:12px'></div>", unsafe_allow_html=True)
+
     # --- Datos del día ---
     rows = list_entries_by_date(selected_date_str, st.session_state["user_id"])
 
@@ -1053,13 +1062,6 @@ if page == "📊 Dashboard":
     total_protein = sum(float(r["protein"]) for r in rows) if rows else 0.0
     total_carbs = sum(float(r["carbs"]) for r in rows) if rows else 0.0
     total_fat = sum(float(r["fat"]) for r in rows) if rows else 0.0
-
-    # --- Objetivos ---
-    uid = st.session_state["user_id"]
-    target_kcal = float(get_setting("target_deficit_calories", 1800, user_id=uid))
-    target_p = float(get_setting("target_protein", 120, user_id=uid))
-    target_c = float(get_setting("target_carbs", 250, user_id=uid))
-    target_f = float(get_setting("target_fat", 60, user_id=uid))
 
     # --- CSS SOLO para el iframe (dashboard) ---
     DASH_CSS = """
@@ -2760,6 +2762,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
