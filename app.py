@@ -715,80 +715,106 @@ if st.sidebar.button("🚪 Cerrar sesión", use_container_width=True):
 selected_date = st.sidebar.date_input("📅 Día", value=date.today())
 selected_date_str = selected_date.isoformat()
 
-st.sidebar.divider()
-st.sidebar.caption("Atajos")
-cA, cB = st.sidebar.columns(2)
-with cA:
-    if st.sidebar.button("➕ Registro", use_container_width=True):
-        st.session_state["goto_page"] = "🍽 Registro"
-        st.rerun()
-with cB:
-    if st.sidebar.button("🎯 Objetivos", use_container_width=True):
-        st.session_state["goto_page"] = "🎯 Objetivos"
-        st.rerun()
+
 
 
 
 # =========================
-# NAV (Sidebar)
+# NAV (Sidebar - desplegable)
 # =========================
 
-# --- Estado NAV ---
+# --- Estado de página ---
 if "goto_page" not in st.session_state:
     st.session_state["goto_page"] = None
-if "nav" not in st.session_state:
-    st.session_state["nav"] = "📊 Dashboard"
+if "page" not in st.session_state:
+    st.session_state["page"] = "📊 Dashboard"
 
-# --- Navegación declarativa (lo que ve el usuario) ---
-NAV = [
-    "📊 Dashboard",
-    "🍽 Registro",
-    "🤖 IA",
-    "👨‍🍳 Chef",
-    "🏋️ Rutina",
-    "🎯 Objetivos",
-    "➕ Alimentos",
-]
-
-# --- Mapa a tus páginas reales (lo que usa tu app por dentro) ---
-nav_to_page = {
-    "📊 Dashboard": "📊 Dashboard",
-    "🍽 Registro": "🍽 Registro",
-    "🤖 IA": "🤖 IA Alimento",
-    "👨‍🍳 Chef": "👨‍🍳 Chef IA",
-    "🏋️ Rutina": "🏋️ Rutina IA",
-    "🎯 Objetivos": "🎯 Objetivos",
-    "➕ Alimentos": "➕ Añadir alimento",
-}
-
-# --- Soporte de atajos goto_page que ya tienes ---
+# --- Soporte de atajos goto_page (por si algún botón interno lo usa) ---
 if st.session_state["goto_page"]:
-    gp = st.session_state["goto_page"]
+    st.session_state["page"] = st.session_state["goto_page"]
     st.session_state["goto_page"] = None
 
-    reverse_map = {
-        "📊 Dashboard": "📊 Dashboard",
-        "🍽 Registro": "🍽 Registro",
-        "🤖 IA Alimento": "🤖 IA",
-        "👨‍🍳 Chef IA": "👨‍🍳 Chef",
-        "🏋️ Rutina IA": "🏋️ Rutina",
-        "🎯 Objetivos": "🎯 Objetivos",
-        "➕ Añadir alimento": "➕ Alimentos",
-    }
-    st.session_state["nav"] = reverse_map.get(gp, "📊 Dashboard")
+# --- Mini CSS solo para sidebar nav (minimal fitness app vibes) ---
+st.sidebar.markdown(
+    """
+    <style>
+      /* separadores suaves */
+      section[data-testid="stSidebar"] hr{ opacity: .35; }
 
-# --- Render del nav en sidebar ---
-picked = st.sidebar.radio(
-    "🧭 Navegación",
-    NAV,
-    index=NAV.index(st.session_state["nav"]) if st.session_state["nav"] in NAV else 0,
-    key="sidebar_nav_radio",
+      /* botón grande “principal” */
+      section[data-testid="stSidebar"] .fm-mainbtn .stButton > button{
+        padding: 14px 14px !important;
+        font-size: 15px !important;
+        font-weight: 950 !important;
+      }
+
+      /* botones dentro de desplegables (compactos) */
+      section[data-testid="stSidebar"] .fm-subbtn .stButton > button{
+        padding: 10px 12px !important;
+        font-size: 13px !important;
+        font-weight: 900 !important;
+        border-radius: 14px !important;
+      }
+
+      /* expander más “app” */
+      section[data-testid="stSidebar"] div[data-testid="stExpander"]{
+        border-radius: 16px !important;
+        border: 1px solid rgba(255,255,255,0.10) !important;
+        background: rgba(255,255,255,0.04) !important;
+      }
+    </style>
+    """,
+    unsafe_allow_html=True
 )
 
-# --- Persistimos estado y sacamos el `page` que tu app usa ---
-st.session_state["nav"] = picked
-page = nav_to_page.get(picked, "📊 Dashboard")
+def _go(target_page: str):
+    st.session_state["page"] = target_page
+    st.rerun()
 
+# --- Botón principal: Dashboard (más grande y llamativo) ---
+st.sidebar.markdown('<div class="fm-mainbtn">', unsafe_allow_html=True)
+is_dash = (st.session_state["page"] == "📊 Dashboard")
+if st.sidebar.button("📊 Dashboard", type="primary", use_container_width=True, key="nav_dash"):
+    _go("📊 Dashboard")
+st.sidebar.markdown("</div>", unsafe_allow_html=True)
+
+st.sidebar.divider()
+
+# --- Desplegable: Comidas ---
+with st.sidebar.expander("🍽️ Comidas", expanded=False):
+    st.sidebar.markdown('<div class="fm-subbtn">', unsafe_allow_html=True)
+
+    if st.sidebar.button("🍽 Registro", use_container_width=True, key="nav_registro"):
+        _go("🍽 Registro")
+
+    if st.sidebar.button("➕ Añadir alimento", use_container_width=True, key="nav_alimentos"):
+        _go("➕ Añadir alimento")
+
+    if st.sidebar.button("👨‍🍳 Chef IA", use_container_width=True, key="nav_chef"):
+        _go("👨‍🍳 Chef IA")
+
+    st.sidebar.markdown("</div>", unsafe_allow_html=True)
+
+# --- Desplegable: Rutina ---
+with st.sidebar.expander("🏋️ Rutina", expanded=False):
+    st.sidebar.markdown('<div class="fm-subbtn">', unsafe_allow_html=True)
+
+    if st.sidebar.button("🏋️ Rutina IA", use_container_width=True, key="nav_rutina"):
+        _go("🏋️ Rutina IA")
+
+    st.sidebar.markdown("</div>", unsafe_allow_html=True)
+
+# --- Desplegable: Objetivos ---
+with st.sidebar.expander("🎯 Objetivos", expanded=False):
+    st.sidebar.markdown('<div class="fm-subbtn">', unsafe_allow_html=True)
+
+    if st.sidebar.button("🎯 Objetivos", use_container_width=True, key="nav_objetivos"):
+        _go("🎯 Objetivos")
+
+    st.sidebar.markdown("</div>", unsafe_allow_html=True)
+
+# --- Página actual (lo que usa tu app por dentro) ---
+page = st.session_state["page"]
 
 
 # ==========================================================
@@ -2545,6 +2571,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
