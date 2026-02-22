@@ -851,12 +851,10 @@ if page == "📊 Dashboard":
       </div>
     </div>
     """).strip()
-    
     st.markdown(hero_html, unsafe_allow_html=True)
 
     # Acciones rápidas (móvil-friendly)
     st.markdown("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
-    
     c1, c2 = st.columns(2)
     with c1:
         if st.button("➕ Añadir comida", type="primary", use_container_width=True):
@@ -1022,8 +1020,33 @@ if page == "📊 Dashboard":
         color: rgba(255,255,255,0.92);
         line-height: 1.05;
       }
+
+      /* ✅ Quita borde blanco del embed de Altair dentro del iframe */
+      .vega-embed, .vega-embed details, .vega-embed summary{
+        color: rgba(255,255,255,0.90) !important;
+      }
+      .vega-embed{
+        border: none !important;
+        background: transparent !important;
+      }
     </style>
     """
+
+    # Helper: renderizar charts dentro de la card (iframe)
+    def chart_in_card(title: str, chart, height: int = 360, subtitle: str = ""):
+        chart_html = chart.to_html()
+        subtitle_html = f'<div class="fm-progress-sub">{subtitle}</div>' if subtitle else ""
+        html = f"""
+        {DASH_CSS}
+        <div class="fm-section">
+          <div class="fm-section-title">{title}</div>
+          {subtitle_html}
+          <div style="border-radius:14px; overflow:hidden;">
+            {chart_html}
+          </div>
+        </div>
+        """
+        components.html(html, height=height, scrolling=False)
 
     # ===== TOTALES DEL DÍA (iframe con CSS dentro) =====
     totales_html = textwrap.dedent(f"""
@@ -1113,79 +1136,54 @@ if page == "📊 Dashboard":
     """).strip()
     components.html(progreso_html, height=550, scrolling=False)
 
+    # ===== HISTÓRICO =====
+    hist = daily_totals_last_days(30, user_id=uid)
+    hist_df = pd.DataFrame(hist, columns=["date", "calories", "protein", "carbs", "fat"])
 
-    def chart_in_card(title: str, chart, height: int = 320, subtitle: str = ""):
-        chart_html = chart.to_html()
-        subtitle_html = f'<div class="fm-progress-sub">{subtitle}</div>' if subtitle else ""
-        html = f"""
-        {DASH_CSS}
-        <div class="fm-section">
-          <div class="fm-section-title">{title}</div>
-          {subtitle_html}
-          <div style="border-radius:14px; overflow:hidden;">
-            {chart_html}
-          </div>
-        </div>
-        """
-        components.html(html, height=height, scrolling=False)
-        
-        # ===== HISTÓRICO + INSIGHTS (TU CÓDIGO ORIGINAL) =====
-        hist = daily_totals_last_days(30, user_id=uid)
-        hist_df = pd.DataFrame(hist, columns=["date", "calories", "protein", "carbs", "fat"])
+    # ===== CHART: Últimos 30 días =====
+    if hist_df.empty:
+        st.info("Aún no hay histórico para este usuario. Registra comidas y aquí verás la evolución 💪")
+    else:
+        hist_df["date"] = pd.to_datetime(hist_df["date"])
+        hist_df = hist_df.sort_values("date")
 
+        target_kcal_line = pd.DataFrame({
+            "date": hist_df["date"],
+            "Objetivo": [target_kcal] * len(hist_df),
+            "Consumido": hist_df["calories"].astype(float),
+        }).melt("date", var_name="serie", value_name="kcal")
 
-
-    # (si NO usas topR ya, cambia esto)
-    topL = st.container()
-    
-    with topL:
-        st.markdown('<div class="fm-section">', unsafe_allow_html=True)
-        st.markdown('<div class="fm-section-title">📈 Últimos 30 días</div>', unsafe_allow_html=True)
-    
-        if hist_df.empty:
-            st.info("Aún no hay histórico para este usuario. Registra comidas y aquí verás la evolución 💪")
-        else:
-            hist_df["date"] = pd.to_datetime(hist_df["date"])
-            hist_df = hist_df.sort_values("date")
-    
-            target_kcal_line = pd.DataFrame({
-                "date": hist_df["date"],
-                "Objetivo": [target_kcal] * len(hist_df),
-                "Consumido": hist_df["calories"].astype(float),
-            }).melt("date", var_name="serie", value_name="kcal")
-    
-            kcal_chart = (
-                alt.Chart(target_kcal_line)
-                .mark_line()
-                .encode(
-                    x=alt.X("date:T", title=""),
-                    y=alt.Y("kcal:Q", title="kcal"),
-                    color=alt.Color("serie:N", legend=alt.Legend(orient="top")),
-                    tooltip=["date:T", "serie:N", "kcal:Q"]
-                )
-                .properties(height=220)
+        kcal_chart = (
+            alt.Chart(target_kcal_line)
+            .mark_line()
+            .encode(
+                x=alt.X("date:T", title=""),
+                y=alt.Y("kcal:Q", title="kcal"),
+                color=alt.Color("serie:N", legend=alt.Legend(orient="top")),
+                tooltip=["date:T", "serie:N", "kcal:Q"]
             )
-            st.altair_chart(kcal_chart, use_container_width=True)
-    
-            hist_df["kcal_7d"] = hist_df["calories"].rolling(7, min_periods=1).mean()
-            last7 = float(hist_df["kcal_7d"].iloc[-1])
-            diff = last7 - float(target_kcal)
-    
-            st.caption(f"📌 Media móvil (7 días): **{last7:.0f} kcal** · Diferencia vs objetivo: **{diff:+.0f} kcal**")
+            .properties(height=220)
+        )
 
-    st.markdown("</div>", unsafe_allow_html=True)
-    st.divider()
+        hist_df["kcal_7d"] = hist_df["calories"].rolling(7, min_periods=1).mean()
+        last7 = float(hist_df["kcal_7d"].iloc[-1])
+        diff = last7 - float(target_kcal)
 
-    st.markdown('<div class="fm-section">', unsafe_allow_html=True)
-    st.markdown('<div class="fm-section-title">🥗 Macros recientes (14 días)</div>', unsafe_allow_html=True)
-    
+        chart_in_card(
+            "📈 Últimos 30 días",
+            kcal_chart,
+            height=360,
+            subtitle=f"📌 Media móvil (7 días): {last7:.0f} kcal · Diferencia vs objetivo: {diff:+.0f} kcal"
+        )
+
+    # ===== CHART: Macros recientes (14 días) =====
     if hist_df.empty:
         st.caption("Aquí aparecerán tus macros cuando tengas datos.")
     else:
         df14 = hist_df.tail(14).copy()
         df14["date"] = pd.to_datetime(df14["date"])
         long_macros = df14.melt("date", value_vars=["protein", "carbs", "fat"], var_name="macro", value_name="g")
-    
+
         macros_chart = (
             alt.Chart(long_macros)
             .mark_bar()
@@ -1197,13 +1195,12 @@ if page == "📊 Dashboard":
             )
             .properties(height=220)
         )
-        st.altair_chart(macros_chart, use_container_width=True)
 
-
-
-
-
-
+        chart_in_card(
+            "🥗 Macros recientes (14 días)",
+            macros_chart,
+            height=360
+        )
 
 # ==========================================================
 # PÁGINA: REGISTRO  (MULTI-AÑADIDO / “CARRITO”)
@@ -2579,6 +2576,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
