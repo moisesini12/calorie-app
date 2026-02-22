@@ -1015,12 +1015,11 @@ if page == "📊 Dashboard":
     target_f = float(get_setting("target_fat", 60, user_id=uid))
 
     # --- Hero (cabecera móvil pro) ---
-    st.markdown(f"""
+    hero_html = textwrap.dedent(f"""
     <div class="fm-hero">
       <div class="fm-hero-inner">
         <div>
           <div class="fm-hero-title">📊 Dashboard</div>
-          
         </div>
         <div class="fm-hero-pills">
           <span class="fm-pill">🎯 Obj: {target_kcal:.0f} kcal</span>
@@ -1028,7 +1027,9 @@ if page == "📊 Dashboard":
         </div>
       </div>
     </div>
-    """, unsafe_allow_html=True)
+    """).strip()
+    
+    st.markdown(hero_html, unsafe_allow_html=True)
 
     # Acciones rápidas (móvil-friendly)
     st.markdown("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
@@ -2752,6 +2753,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
