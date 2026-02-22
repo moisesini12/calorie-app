@@ -762,17 +762,17 @@ if st.session_state["goto_page"]:
 
 def _go(target_page: str):
     st.session_state["page"] = target_page
-
+    
 
 # =========================
 # NAV (Top Popover) - mobile friendly
 # =========================
 if "page" not in st.session_state:
     st.session_state["page"] = "📊 Dashboard"
-
+    
 def _go(target_page: str):
     st.session_state["page"] = target_page
-
+    st.session_state["_close_sidebar_after_nav"] = True
 # Botón menú (queda top, estilo app)
 colL, colR = st.columns([1, 6], vertical_alignment="center")
 with colL:
@@ -2643,6 +2643,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
