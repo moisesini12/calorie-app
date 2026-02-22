@@ -831,34 +831,59 @@ if st.session_state.get("_close_sidebar_after_nav", False):
     components.html(
         """
         <script>
-        (function() {
-          // Intentamos varios selectores según versión/idioma de Streamlit
-          const candidates = [
-            'button[aria-label="Close sidebar"]',
-            'button[aria-label="Collapse sidebar"]',
-            'button[title="Close sidebar"]',
-            'button[title="Collapse sidebar"]',
-            'button[data-testid="stSidebarCollapseButton"]',
-            'button[data-testid="stSidebarCollapseButtonCollapsed"]'
-          ];
-
-          let btn = null;
-          for (const sel of candidates) {
-            btn = parent.document.querySelector(sel) || document.querySelector(sel);
-            if (btn) break;
+        (function () {
+          function findCollapseButton(doc) {
+            // 1) Streamlit suele usar esto para el toggle
+            let btn =
+              doc.querySelector('button[data-testid="collapsedControl"]') ||
+              doc.querySelector('button[data-testid="stSidebarCollapseButton"]') ||
+              doc.querySelector('button[data-testid="stSidebarCollapsedControl"]');
+    
+            if (btn) return btn;
+    
+            // 2) Por aria-label / title (inglés/español)
+            const texts = ["sidebar", "barra lateral", "lateral"];
+            const all = Array.from(doc.querySelectorAll("button"));
+    
+            btn = all.find(b => {
+              const a = (b.getAttribute("aria-label") || "").toLowerCase();
+              const t = (b.getAttribute("title") || "").toLowerCase();
+              return texts.some(x => a.includes(x) || t.includes(x));
+            });
+            if (btn) return btn;
+    
+            // 3) Fallback por icono (chevrons)
+            btn = all.find(b => {
+              const svg = b.querySelector("svg");
+              if (!svg) return false;
+              const html = (svg.outerHTML || "").toLowerCase();
+              return html.includes("chevron") || html.includes("arrow");
+            });
+    
+            return btn || null;
           }
-
-          // Fallback: buscar un botón con svg tipo "chevron" en el header del sidebar
-          if (!btn) {
-            const allBtns = Array.from(parent.document.querySelectorAll('button'));
-            btn = allBtns.find(b => (b.getAttribute('aria-label') || '').toLowerCase().includes('sidebar'));
+    
+          function tryClose(attempt) {
+            const doc = window.parent?.document || document;
+            const btn = findCollapseButton(doc);
+    
+            if (btn) {
+              btn.click();
+              return;
+            }
+    
+            // Reintenta hasta 25 veces (DOM tarda en montar)
+            if (attempt < 25) {
+              setTimeout(() => tryClose(attempt + 1), 60);
+            }
           }
-
-          if (btn) btn.click();
+    
+          // Arranca un pelín tarde
+          setTimeout(() => tryClose(0), 60);
         })();
         </script>
         """,
-        height=0,
+        height=1,   // 👈 NO 0 (para asegurar que se ejecuta)
     )
 
 
@@ -2634,6 +2659,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
