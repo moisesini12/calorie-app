@@ -834,85 +834,60 @@ if st.session_state.get("_close_sidebar_after_nav", False):
         (function () {
           const doc = window.parent?.document || document;
 
-          function sidebarEl() {
-            return doc.querySelector('section[data-testid="stSidebar"]') ||
-                   doc.querySelector('[data-testid="stSidebar"]');
-          }
-
-          function isOpen() {
-            const s = sidebarEl();
-            if (!s) return false;
-            const r = s.getBoundingClientRect();
-            const style = doc.defaultView.getComputedStyle(s);
-            // abierto si tiene ancho visible y no está totalmente desplazado
-            const w = r.width || s.offsetWidth || 0;
-            const tr = style.transform || "";
-            const looksShifted = tr.includes("matrix") && tr.includes("-"); // heurística
-            return w > 80 && !looksShifted;
-          }
-
-          function scoreButton(b) {
-            const a = (b.getAttribute("aria-label") || "").toLowerCase();
-            const t = (b.getAttribute("title") || "").toLowerCase();
+          function isGoodToggleButton(b) {
+            const a  = (b.getAttribute("aria-label") || "").toLowerCase();
+            const t  = (b.getAttribute("title") || "").toLowerCase();
             const dt = (b.getAttribute("data-testid") || "").toLowerCase();
-            const cls = (b.className || "").toLowerCase();
-            let s = 0;
 
-            // data-testid típicos
-            if (dt.includes("collapsedcontrol")) s += 50;
-            if (dt.includes("sidebar") && dt.includes("collapse")) s += 45;
-            if (dt.includes("sidebar")) s += 25;
+            // ✅ Streamlit suele usar esto para el control del sidebar
+            if (dt.includes("collapsedcontrol")) return true;
 
-            // aria-label / title en inglés/español
-            if (a.includes("sidebar") || a.includes("barra lateral") || a.includes("lateral")) s += 30;
-            if (t.includes("sidebar") || t.includes("barra lateral") || t.includes("lateral")) s += 20;
-            if (a.includes("close") || a.includes("collapse") || a.includes("cerrar") || a.includes("colaps")) s += 20;
-            if (t.includes("close") || t.includes("collapse") || t.includes("cerrar") || t.includes("colaps")) s += 10;
+            // ✅ Solo aceptamos botones que mencionen sidebar/barra lateral
+            const mentionsSidebar =
+              a.includes("sidebar") || a.includes("barra lateral") || a.includes("lateral") ||
+              t.includes("sidebar") || t.includes("barra lateral") || t.includes("lateral");
 
-            // clase (por si acaso)
-            if (cls.includes("sidebar")) s += 5;
+            // ✅ y que además indiquen cerrar/colapsar
+            const mentionsCollapse =
+              a.includes("close") || a.includes("collapse") || a.includes("cerrar") || a.includes("colaps") ||
+              t.includes("close") || t.includes("collapse") || t.includes("cerrar") || t.includes("colaps");
 
-            return s;
+            return mentionsSidebar && mentionsCollapse;
           }
 
-          function candidateButtons() {
+          function findToggleButton() {
+            // 1) el más fiable (cuando existe)
+            let btn = doc.querySelector('button[data-testid="collapsedControl"]');
+            if (btn) return btn;
+
+            // 2) alternativas conocidas
+            btn = doc.querySelector('button[data-testid="stSidebarCollapseButton"]')
+              || doc.querySelector('button[data-testid="stSidebarCollapsedControl"]');
+            if (btn) return btn;
+
+            // 3) filtro estricto sobre TODOS los botones (evita clicar "Cerrar sesión")
             const all = Array.from(doc.querySelectorAll("button"));
-            // filtra botones invisibles
-            const visible = all.filter(b => {
+            const good = all.filter(isGoodToggleButton);
+
+            // si hay varios, elige el primero visible
+            const visible = good.find(b => {
               const r = b.getBoundingClientRect();
               return r.width > 0 && r.height > 0;
             });
 
-            // ordena por "probabilidad"
-            visible.sort((b1, b2) => scoreButton(b2) - scoreButton(b1));
-            return visible;
+            return visible || null;
           }
 
           function tryClose(attempt) {
-            if (!isOpen()) return; // ya está cerrado
-
-            const btns = candidateButtons();
-
-            // probamos los top N para no liar clicks raros
-            const N = Math.min(btns.length, 12);
-            let i = 0;
-
-            function clickNext() {
-              if (!isOpen()) return;
-              if (i >= N) {
-                // reintento con tiempo porque el DOM puede cambiar tras rerun
-                if (attempt < 20) setTimeout(() => tryClose(attempt + 1), 80);
-                return;
-              }
-              const b = btns[i++];
-              try { b.click(); } catch (e) {}
-              setTimeout(clickNext, 60);
+            const btn = findToggleButton();
+            if (btn) {
+              btn.click();
+              return;
             }
-
-            clickNext();
+            // reintenta un poco por si el DOM tarda
+            if (attempt < 20) setTimeout(() => tryClose(attempt + 1), 80);
           }
 
-          // espera un pelín a que Streamlit pinte todo
           setTimeout(() => tryClose(0), 120);
         })();
         </script>
@@ -2692,6 +2667,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
