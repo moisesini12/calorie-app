@@ -1172,7 +1172,7 @@ if page == "📊 Dashboard":
         chart_in_card(
             "📈 Últimos 30 días",
             kcal_chart,
-            height=360,
+            height=400,
             subtitle=f"📌 Media móvil (7 días): {last7:.0f} kcal · Diferencia vs objetivo: {diff:+.0f} kcal"
         )
 
@@ -1199,7 +1199,7 @@ if page == "📊 Dashboard":
         chart_in_card(
             "🥗 Macros recientes (14 días)",
             macros_chart,
-            height=360
+            height=400
         )
 
 # ==========================================================
@@ -2576,6 +2576,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
