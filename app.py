@@ -720,7 +720,9 @@ require_login()
 
 uid = st.session_state["user_id"]
 
-# ===== SIDEBAR =====
+# =========================
+# SIDEBAR (solo sesión + fecha)
+# =========================
 st.sidebar.markdown("""
 <div class="sb-brand">
   <div class="sb-logo">FM</div>
@@ -741,190 +743,83 @@ if st.sidebar.button("🚪 Cerrar sesión", use_container_width=True):
 selected_date = st.sidebar.date_input("📅 Día", value=date.today())
 selected_date_str = selected_date.isoformat()
 
-
-
-
-
 # =========================
-# NAV (Sidebar - desplegable) ✅ FIX
+# NAV STATE
 # =========================
-
-# --- Estado de página ---
 if "goto_page" not in st.session_state:
     st.session_state["goto_page"] = None
+
 if "page" not in st.session_state:
     st.session_state["page"] = "📊 Dashboard"
 
-# --- Soporte de atajos goto_page (desde botones dentro de páginas) ---
+if "menu_open" not in st.session_state:
+    st.session_state["menu_open"] = False
+
+# Atajos internos (si algún botón pone goto_page)
 if st.session_state["goto_page"]:
     st.session_state["page"] = st.session_state["goto_page"]
     st.session_state["goto_page"] = None
 
+
 def _go(target_page: str):
+    """Cambia de página y cierra el menú."""
     st.session_state["page"] = target_page
     st.session_state["menu_open"] = False
 
-# =========================
-# NAV (Top Popover) - mobile friendly
-# =========================
-if "page" not in st.session_state:
-    st.session_state["page"] = "📊 Dashboard"
-if "menu_open" not in st.session_state:
-    st.session_state["menu_open"] = False
-
-
-
-def _go(target_page: str):
-    st.session_state["page"] = target_page
-    st.session_state["_close_sidebar_after_nav"] = True
-# Botón menú (queda top, estilo app)
-colL, colR = st.columns([1, 6], vertical_alignment="center")
-with colL:
-    with st.popover("☰", use_container_width=True):
-        # Dashboard destacado
-        if st.button("📊 Dashboard", type="primary", use_container_width=True):
-            _go("📊 Dashboard")
-            st.rerun()
-
-        st.divider()
-
-        st.markdown("**🍽️ Comidas**")
-        if st.button("🍽 Registro", use_container_width=True):
-            _go("🍽 Registro"); st.rerun()
-        if st.button("➕ Añadir alimento", use_container_width=True):
-            _go("➕ Añadir alimento"); st.rerun()
-        if st.button("👨‍🍳 Chef IA", use_container_width=True):
-            _go("👨‍🍳 Chef IA"); st.rerun()
-
-        st.divider()
-
-        st.markdown("**🏋️ Rutina**")
-        if st.button("🏋️ Rutina IA", use_container_width=True):
-            _go("🏋️ Rutina IA"); st.rerun()
-
-        st.divider()
-
-        st.markdown("**🎯 Objetivos**")
-        if st.button("🎯 Objetivos", use_container_width=True):
-            _go("🎯 Objetivos"); st.rerun()
-
-with colR:
-    # Aquí no pongas nada o deja un placeholder
-    pass
-
-page = st.session_state["page"]
 
 # =========================
-# TOP MENU (Dialog) ✅
+# TOP MENU (Dialog) - mobile proof ✅
 # =========================
 topL, topR = st.columns([1, 9], vertical_alignment="center")
 with topL:
     if st.button("☰", key="open_nav_menu", use_container_width=True):
         st.session_state["menu_open"] = True
 
-# Dialog con navegación (solo si está abierto)
+# (opcional) aquí puedes poner algo en topR si quieres
+
 if st.session_state.get("menu_open", False):
     @st.dialog("🧭 Menú", width="small")
     def _nav_dialog():
-        # Dashboard destacado
         if st.button("📊 Dashboard", type="primary", use_container_width=True, key="dlg_dash"):
             _go("📊 Dashboard")
             st.rerun()
 
         st.divider()
-
         st.markdown("**🍽️ Comidas**")
+
         if st.button("🍽 Registro", use_container_width=True, key="dlg_reg"):
             _go("🍽 Registro"); st.rerun()
+
         if st.button("➕ Añadir alimento", use_container_width=True, key="dlg_addfood"):
             _go("➕ Añadir alimento"); st.rerun()
+
         if st.button("👨‍🍳 Chef IA", use_container_width=True, key="dlg_chef"):
             _go("👨‍🍳 Chef IA"); st.rerun()
 
         st.divider()
-
         st.markdown("**🏋️ Rutina**")
+
         if st.button("🏋️ Rutina IA", use_container_width=True, key="dlg_rutina"):
             _go("🏋️ Rutina IA"); st.rerun()
 
         st.divider()
-
         st.markdown("**🎯 Objetivos**")
+
         if st.button("🎯 Objetivos", use_container_width=True, key="dlg_obj"):
             _go("🎯 Objetivos"); st.rerun()
 
         st.divider()
-
         if st.button("✖️ Cerrar", use_container_width=True, key="dlg_close"):
             st.session_state["menu_open"] = False
             st.rerun()
 
     _nav_dialog()
 
-# --- Estilo sidebar (sin romper expanders) ---
-st.sidebar.markdown(
-    """
-    <style>
-      /* Botón principal un poco más grande */
-      section[data-testid="stSidebar"] .stButton > button[data-testid="baseButton-primary"]{
-        padding: 14px 14px !important;
-        font-size: 15px !important;
-        font-weight: 950 !important;
-        border-radius: 16px !important;
-      }
 
-      /* Expanders: look “app” */
-      section[data-testid="stSidebar"] div[data-testid="stExpander"]{
-        border-radius: 16px !important;
-        border: 1px solid rgba(255,255,255,0.10) !important;
-        background: rgba(255,255,255,0.04) !important;
-        overflow: hidden !important; /* ✅ importante */
-      }
-      section[data-testid="stSidebar"] div[data-testid="stExpander"] summary{
-        font-weight: 900 !important;
-      }
-
-      /* Botones normales compactos */
-      section[data-testid="stSidebar"] .stButton > button{
-        border-radius: 14px !important;
-        font-weight: 900 !important;
-      }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
-# --- Botón principal: Dashboard ---
-st.sidebar.button(
-    "📊 Dashboard",
-    type="primary",
-    use_container_width=True,
-    key="nav_dash_btn",
-    on_click=_go,
-    args=("📊 Dashboard",),
-)
-
-st.sidebar.divider()
-
-# --- Comidas (desplegable) ---
-with st.sidebar.expander("🍽️ Comidas", expanded=False):
-    st.button("🍽 Registro", use_container_width=True, key="nav_registro_btn", on_click=_go, args=("🍽 Registro",))
-    st.button("➕ Añadir alimento", use_container_width=True, key="nav_alimentos_btn", on_click=_go, args=("➕ Añadir alimento",))
-    st.button("👨‍🍳 Chef IA", use_container_width=True, key="nav_chef_btn", on_click=_go, args=("👨‍🍳 Chef IA",))
-
-# --- Rutina (desplegable) ---
-with st.sidebar.expander("🏋️ Rutina", expanded=False):
-    st.button("🏋️ Rutina IA", use_container_width=True, key="nav_rutina_btn", on_click=_go, args=("🏋️ Rutina IA",))
-
-# --- Objetivos (desplegable) ---
-with st.sidebar.expander("🎯 Objetivos", expanded=False):
-    st.button("🎯 Objetivos", use_container_width=True, key="nav_objetivos_btn", on_click=_go, args=("🎯 Objetivos",))
-
-
-
-# --- Página actual (lo que usa tu app por dentro) ---
+# =========================
+# CURRENT PAGE
+# =========================
 page = st.session_state["page"]
-
 
 # ==========================================================
 # PÁGINA: DASHBOARD
@@ -2694,6 +2589,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
