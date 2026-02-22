@@ -736,7 +736,7 @@ if st.session_state["goto_page"]:
 
 def _go(target_page: str):
     st.session_state["page"] = target_page
-    st.rerun()
+    
 
 # --- Estilo sidebar (sin romper expanders) ---
 st.sidebar.markdown(
@@ -2555,6 +2555,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
