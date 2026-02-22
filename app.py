@@ -720,7 +720,7 @@ selected_date_str = selected_date.isoformat()
 
 
 # =========================
-# NAV (Sidebar - desplegable)
+# NAV (Sidebar - desplegable) ✅ FIX
 # =========================
 
 # --- Estado de página ---
@@ -729,89 +729,73 @@ if "goto_page" not in st.session_state:
 if "page" not in st.session_state:
     st.session_state["page"] = "📊 Dashboard"
 
-# --- Soporte de atajos goto_page (por si algún botón interno lo usa) ---
+# --- Soporte de atajos goto_page (desde botones dentro de páginas) ---
 if st.session_state["goto_page"]:
     st.session_state["page"] = st.session_state["goto_page"]
     st.session_state["goto_page"] = None
 
-# --- Mini CSS solo para sidebar nav (minimal fitness app vibes) ---
+def _go(target_page: str):
+    st.session_state["page"] = target_page
+    st.rerun()
+
+# --- Estilo sidebar (sin romper expanders) ---
 st.sidebar.markdown(
     """
     <style>
-      /* separadores suaves */
-      section[data-testid="stSidebar"] hr{ opacity: .35; }
-
-      /* botón grande “principal” */
-      section[data-testid="stSidebar"] .fm-mainbtn .stButton > button{
+      /* Botón principal un poco más grande */
+      section[data-testid="stSidebar"] .stButton > button[data-testid="baseButton-primary"]{
         padding: 14px 14px !important;
         font-size: 15px !important;
         font-weight: 950 !important;
+        border-radius: 16px !important;
       }
 
-      /* botones dentro de desplegables (compactos) */
-      section[data-testid="stSidebar"] .fm-subbtn .stButton > button{
-        padding: 10px 12px !important;
-        font-size: 13px !important;
-        font-weight: 900 !important;
-        border-radius: 14px !important;
-      }
-
-      /* expander más “app” */
+      /* Expanders: look “app” */
       section[data-testid="stSidebar"] div[data-testid="stExpander"]{
         border-radius: 16px !important;
         border: 1px solid rgba(255,255,255,0.10) !important;
         background: rgba(255,255,255,0.04) !important;
+        overflow: hidden !important; /* ✅ importante */
+      }
+      section[data-testid="stSidebar"] div[data-testid="stExpander"] summary{
+        font-weight: 900 !important;
+      }
+
+      /* Botones normales compactos */
+      section[data-testid="stSidebar"] .stButton > button{
+        border-radius: 14px !important;
+        font-weight: 900 !important;
       }
     </style>
     """,
     unsafe_allow_html=True
 )
 
-def _go(target_page: str):
-    st.session_state["page"] = target_page
-    st.rerun()
-
-# --- Botón principal: Dashboard (más grande y llamativo) ---
-st.sidebar.markdown('<div class="fm-mainbtn">', unsafe_allow_html=True)
-is_dash = (st.session_state["page"] == "📊 Dashboard")
-if st.sidebar.button("📊 Dashboard", type="primary", use_container_width=True, key="nav_dash"):
-    _go("📊 Dashboard")
-st.sidebar.markdown("</div>", unsafe_allow_html=True)
+# --- Botón principal: Dashboard ---
+st.sidebar.button(
+    "📊 Dashboard",
+    type="primary",
+    use_container_width=True,
+    key="nav_dash_btn",
+    on_click=_go,
+    args=("📊 Dashboard",),
+)
 
 st.sidebar.divider()
 
-# --- Desplegable: Comidas ---
+# --- Comidas (desplegable) ---
 with st.sidebar.expander("🍽️ Comidas", expanded=False):
-    st.sidebar.markdown('<div class="fm-subbtn">', unsafe_allow_html=True)
+    st.button("🍽 Registro", use_container_width=True, key="nav_registro_btn", on_click=_go, args=("🍽 Registro",))
+    st.button("➕ Añadir alimento", use_container_width=True, key="nav_alimentos_btn", on_click=_go, args=("➕ Añadir alimento",))
+    st.button("👨‍🍳 Chef IA", use_container_width=True, key="nav_chef_btn", on_click=_go, args=("👨‍🍳 Chef IA",))
 
-    if st.sidebar.button("🍽 Registro", use_container_width=True, key="nav_registro"):
-        _go("🍽 Registro")
-
-    if st.sidebar.button("➕ Añadir alimento", use_container_width=True, key="nav_alimentos"):
-        _go("➕ Añadir alimento")
-
-    if st.sidebar.button("👨‍🍳 Chef IA", use_container_width=True, key="nav_chef"):
-        _go("👨‍🍳 Chef IA")
-
-    st.sidebar.markdown("</div>", unsafe_allow_html=True)
-
-# --- Desplegable: Rutina ---
+# --- Rutina (desplegable) ---
 with st.sidebar.expander("🏋️ Rutina", expanded=False):
-    st.sidebar.markdown('<div class="fm-subbtn">', unsafe_allow_html=True)
+    st.button("🏋️ Rutina IA", use_container_width=True, key="nav_rutina_btn", on_click=_go, args=("🏋️ Rutina IA",))
 
-    if st.sidebar.button("🏋️ Rutina IA", use_container_width=True, key="nav_rutina"):
-        _go("🏋️ Rutina IA")
-
-    st.sidebar.markdown("</div>", unsafe_allow_html=True)
-
-# --- Desplegable: Objetivos ---
+# --- Objetivos (desplegable) ---
 with st.sidebar.expander("🎯 Objetivos", expanded=False):
-    st.sidebar.markdown('<div class="fm-subbtn">', unsafe_allow_html=True)
-
-    if st.sidebar.button("🎯 Objetivos", use_container_width=True, key="nav_objetivos"):
-        _go("🎯 Objetivos")
-
-    st.sidebar.markdown("</div>", unsafe_allow_html=True)
+    st.button("🎯 Objetivos", use_container_width=True, key="nav_objetivos_btn", on_click=_go, args=("🎯 Objetivos",))
 
 # --- Página actual (lo que usa tu app por dentro) ---
 page = st.session_state["page"]
@@ -2571,6 +2555,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
