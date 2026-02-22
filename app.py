@@ -729,214 +729,9 @@ with cB:
 
 
 
-
 # =========================
-# NAV (Bottom mobile-style)
+# NAV (Sidebar)
 # =========================
-
-# --- CSS para fijar la navegación abajo y darle estilo app ---
-st.markdown(r"""
-<style>
-/* Deja espacio abajo para que no tape contenido */
-.block-container{ padding-bottom: 140px !important; }
-
-/* ================================
-   SOLO NAV INFERIOR (7 botones)
-   ================================ */
-div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)){
-  position: fixed !important;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-  bottom: 18px !important;
-  z-index: 9999 !important;
-
-  width: min(980px, calc(100vw - 24px)) !important;
-  padding: 12px 14px !important;
-
-  border-radius: 22px !important;
-  background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.06)) !important;
-  border: 1px solid rgba(255,255,255,0.14) !important;
-  box-shadow: 0 18px 46px rgba(0,0,0,0.55) !important;
-  backdrop-filter: blur(14px) !important;
-}
-
-/* Oculta label solo del nav inferior */
-div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)) > label{
-  display:none !important;
-}
-
-/* Grupo horizontal bonito */
-div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)) div[role="radiogroup"]{
-  display:flex !important;
-  gap: 10px !important;
-  justify-content: space-between !important;
-}
-
-/* Cada opción */
-div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)) div[role="radiogroup"] label{
-  flex: 1 1 auto !important;
-  margin: 0 !important;
-  padding: 10px 12px !important;
-  border-radius: 16px !important;
-
-  background: rgba(255,255,255,0.06) !important;
-  border: 1px solid rgba(255,255,255,0.10) !important;
-
-  transition: transform 120ms ease, background 120ms ease, border-color 120ms ease, box-shadow 120ms ease;
-}
-
-/* Hover */
-div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)) div[role="radiogroup"] label:hover{
-  transform: translateY(-2px);
-  background: rgba(34,211,238,0.10) !important;
-  border-color: rgba(34,211,238,0.22) !important;
-}
-
-/* Oculta el círculo radio */
-div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)) div[role="radiogroup"] label input{
-  display:none !important;
-}
-
-/* Texto dentro */
-div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)) div[role="radiogroup"] label div{
-  display:flex !important;
-  align-items:center !important;
-  justify-content:center !important;
-  gap: 8px !important;
-
-  font-weight: 900 !important;
-  color: rgba(255,255,255,0.92) !important;
-  white-space: nowrap !important;
-}
-
-/* Opción activa */
-div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)) div[role="radiogroup"] label:has([aria-checked="true"]){
-  background: linear-gradient(135deg, rgba(255,79,216,0.92), rgba(139,92,246,0.92)) !important;
-  border: none !important;
-  box-shadow: 0 12px 28px rgba(0,0,0,0.40), 0 0 0 1px rgba(255,79,216,0.18) !important;
-}
-div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)) div[role="radiogroup"] label:has([aria-checked="true"]) div{
-  color: #0b1020 !important;
-}
-
-/* =========================================================
-   FIX MÓVIL: el dock no debe tapar botones/inputs
-   - Más padding abajo en pantallas pequeñas
-   - Auto-ocultar dock cuando un input está en foco (teclado abierto)
-   ========================================================= */
-
-@media (max-width: 900px){
-
-  /* Más espacio inferior en móvil para que nunca quede contenido bajo el dock */
-  .block-container{
-    padding-bottom: 220px !important;
-  }
-
-  /* Auto-ocultar dock al editar (teclado / foco en inputs) */
-  html:has(input:focus),
-  html:has(textarea:focus),
-  html:has(select:focus),
-  html:has(div[data-baseweb="select"]:focus-within),
-  html:has(div[data-testid="stNumberInput"]:focus-within),
-  html:has(div[data-testid="stDateInput"]:focus-within),
-  html:has(div[data-testid="stTimeInput"]:focus-within),
-  html:has(div[data-testid="stTextInput"]:focus-within),
-  html:has(div[data-testid="stTextArea"]:focus-within){
-    /* ocultamos el dock inferior */
-  }
-
-  html:has(input:focus) div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)),
-  html:has(textarea:focus) div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)),
-  html:has(select:focus) div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)),
-  html:has(div[data-baseweb="select"]:focus-within) div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)),
-  html:has(div[data-testid="stNumberInput"]:focus-within) div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)),
-  html:has(div[data-testid="stDateInput"]:focus-within) div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)),
-  html:has(div[data-testid="stTimeInput"]:focus-within) div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)),
-  html:has(div[data-testid="stTextInput"]:focus-within) div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)),
-  html:has(div[data-testid="stTextArea"]:focus-within) div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)){
-    opacity: 0 !important;
-    transform: translateX(-50%) translateY(30px) !important;
-    pointer-events: none !important;
-  }
-}
-
-/* =========================================================
-   DOCK INFERIOR COMPACTO (solo móvil)
-   Reduce tamaño ~15-20%
-   ========================================================= */
-
-@media (max-width: 900px){
-
-  /* Contenedor principal del dock */
-  div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)){
-    padding: 12px 14px !important;
-    border-radius: 20px !important;
-  }
-
-
-  /* Grid interno */
-  div[data-testid="stRadio"] div[role="radiogroup"]{
-    gap: 10px !important;
-  }
-
-  /* Botones individuales */
-  div[data-testid="stRadio"] div[role="radiogroup"] label{
-    padding: 10px 8px !important;
-    font-size: 13px !important;
-    border-radius: 16px !important;
-  }
-
-  /* Iconos */
-  div[data-testid="stRadio"] div[role="radiogroup"] label span:first-child{
-    font-size: 16px !important;
-  }
-
-}
-
-/* =========================================================
-   DOCK INFERIOR: COMPACTO REAL (solo móvil)
-   Misma especificidad que el dock principal -> sí aplica
-   ========================================================= */
-@media (max-width: 900px){
-
-  /* Contenedor dock (EL MISMO SELECTOR) */
-  div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)){
-    padding: 8px 10px !important;
-    border-radius: 18px !important;
-    bottom: 12px !important;
-    width: min(980px, calc(100vw - 16px)) !important;
-
-    /* ✅ Esto SÍ reduce tamaño en móvil (Chrome/Android) */
-    zoom: 0.85 !important;
-  }
-
-  /* Grupo: reduce huecos */
-  div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)) div[role="radiogroup"]{
-    gap: 8px !important;
-  }
-
-  /* Botones */
-  div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)) div[role="radiogroup"] label{
-    padding: 8px 8px !important;
-    border-radius: 14px !important;
-  }
-
-  /* Texto dentro */
-  div[data-testid="stRadio"]:has(div[role="radiogroup"] label:nth-child(7)) div[role="radiogroup"] label div{
-    font-size: 12px !important;
-    gap: 6px !important;
-  }
-}
-
-
-
-
-
-
-</style>
-""", unsafe_allow_html=True)
-
-
 
 # --- Estado NAV ---
 if "goto_page" not in st.session_state:
@@ -971,8 +766,6 @@ if st.session_state["goto_page"]:
     gp = st.session_state["goto_page"]
     st.session_state["goto_page"] = None
 
-    # gp llega como "🍽 Registro", "🎯 Objetivos", etc.
-    # Lo transformamos al label del dock inferior
     reverse_map = {
         "📊 Dashboard": "📊 Dashboard",
         "🍽 Registro": "🍽 Registro",
@@ -984,19 +777,18 @@ if st.session_state["goto_page"]:
     }
     st.session_state["nav"] = reverse_map.get(gp, "📊 Dashboard")
 
-# --- Render del dock inferior ---
-picked = st.radio(
-    "nav",
+# --- Render del nav en sidebar ---
+picked = st.sidebar.radio(
+    "🧭 Navegación",
     NAV,
     index=NAV.index(st.session_state["nav"]) if st.session_state["nav"] in NAV else 0,
-    horizontal=True,
-    label_visibility="collapsed",
-    key="bottom_nav_radio"
+    key="sidebar_nav_radio",
 )
 
 # --- Persistimos estado y sacamos el `page` que tu app usa ---
 st.session_state["nav"] = picked
 page = nav_to_page.get(picked, "📊 Dashboard")
+
 
 
 # ==========================================================
@@ -2753,6 +2545,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
