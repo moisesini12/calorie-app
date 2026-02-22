@@ -1117,7 +1117,7 @@ if page == "📊 Dashboard":
     hist = daily_totals_last_days(30, user_id=uid)
     hist_df = pd.DataFrame(hist, columns=["date", "calories", "protein", "carbs", "fat"])
 
-    st.markdown('<div class="fm-card">', unsafe_allow_html=False)
+
 
     topL, topR = st.columns([3, 2], vertical_alignment="top")
 
@@ -2559,6 +2559,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
