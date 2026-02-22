@@ -833,73 +833,58 @@ if st.session_state.get("_close_sidebar_after_nav", False):
         <script>
         (function () {
           const doc = window.parent?.document || document;
+          const win = window.parent || window;
 
-          function visible(el){
-            const r = el.getBoundingClientRect();
-            return r.width > 0 && r.height > 0;
-          }
+          function clickAt(x, y) {
+            const el = doc.elementFromPoint(x, y);
+            if (!el) return false;
 
-          function isDanger(btn){
-            const txt = (btn.innerText || "").toLowerCase().trim();
-            // Nunca tocar logout
-            if (txt.includes("cerrar sesión") || txt.includes("cerrar sesion") || txt.includes("logout")) return true;
-            return false;
-          }
-
-          function isIconButton(btn){
-            if (!visible(btn)) return false;
-            if (isDanger(btn)) return false;
-
-            const txt = (btn.innerText || "").trim();
-            if (txt.length > 0) return false;              // ✅ icono = sin texto visible
-
-            const r = btn.getBoundingClientRect();
-            if (r.width > 72 || r.height > 72) return false; // ✅ suele ser pequeño
-
-            const hasSvg = !!btn.querySelector("svg");
-            if (!hasSvg) return false;
-
+            // Dispara eventos tipo click real
+            const opts = { bubbles: true, cancelable: true, clientX: x, clientY: y };
+            el.dispatchEvent(new MouseEvent("mousedown", opts));
+            el.dispatchEvent(new MouseEvent("mouseup", opts));
+            el.dispatchEvent(new MouseEvent("click", opts));
             return true;
           }
 
-          function findBestCollapseButton(){
-            // 1) Si existe collapsedControl, perfecto
-            const direct = doc.querySelector('button[data-testid="collapsedControl"]');
-            if (direct && visible(direct) && !isDanger(direct)) return direct;
-
-            // 2) Buscar un botón-icoNO arriba a la izquierda (zona header)
-            const buttons = Array.from(doc.querySelectorAll("button")).filter(isIconButton);
-
-            // Puntúa: más arriba + más a la izquierda = más probable que sea el toggle
-            let best = null;
-            let bestScore = -1;
-
-            for (const b of buttons){
-              const r = b.getBoundingClientRect();
-
-              // solo candidatos muy arriba (evita tocar cosas del contenido)
-              if (r.top > 140) continue; // ✅ clave: no bajar al área de botones (logout, nav, etc.)
-
-              const score = (1000 - r.top) + (500 - r.left);
-              if (score > bestScore){
-                bestScore = score;
-                best = b;
-              }
-            }
-            return best;
+          function tryCloseByOutsideClick() {
+            // Click “fuera” (lado derecho, arriba). En móvil suele caer en el overlay.
+            const x = Math.max(5, win.innerWidth - 6);
+            const y = 12;
+            return clickAt(x, y);
           }
 
-          function tryClose(attempt){
-            const btn = findBestCollapseButton();
-            if (btn){
-              btn.click();
-              return;
+          function findToggleAndClick() {
+            // Fallback: intenta el toggle si existe
+            const candidates = [
+              'button[data-testid="collapsedControl"]',
+              'button[data-testid="stSidebarCollapseButton"]',
+              'button[aria-label*="sidebar" i]',
+              'button[title*="sidebar" i]',
+              'button[aria-label*="barra lateral" i]',
+              'button[title*="barra lateral" i]',
+            ];
+            for (const sel of candidates) {
+              const b = doc.querySelector(sel);
+              if (b) { b.click(); return true; }
             }
-            if (attempt < 30) setTimeout(() => tryClose(attempt + 1), 80);
+            return false;
           }
 
-          // Espera a que Streamlit pinte el header/DOM
-          setTimeout(() => tryClose(0), 120);
+          function run(attempt) {
+            // 1) Primero: click fuera (overlay/backdrop)
+            const okOutside = tryCloseByOutsideClick();
+            if (okOutside) return;
+
+            // 2) Si no, intenta toggle
+            const okToggle = findToggleAndClick();
+            if (okToggle) return;
+
+            // Reintenta un poco por si el DOM tarda
+            if (attempt < 25) setTimeout(() => run(attempt + 1), 80);
+          }
+
+          setTimeout(() => run(0), 120);
         })();
         </script>
         """,
@@ -2678,6 +2663,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
