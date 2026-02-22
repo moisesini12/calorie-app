@@ -1119,22 +1119,25 @@ if page == "📊 Dashboard":
 
 
 
-    topL, topR = st.columns([3, 2], vertical_alignment="top")
-
+    # (si NO usas topR ya, cambia esto)
+    topL = st.container()
+    
     with topL:
-        st.subheader("📈 Últimos 30 días")
+        st.markdown('<div class="fm-section">', unsafe_allow_html=True)
+        st.markdown('<div class="fm-section-title">📈 Últimos 30 días</div>', unsafe_allow_html=True)
+    
         if hist_df.empty:
             st.info("Aún no hay histórico para este usuario. Registra comidas y aquí verás la evolución 💪")
         else:
             hist_df["date"] = pd.to_datetime(hist_df["date"])
             hist_df = hist_df.sort_values("date")
-
+    
             target_kcal_line = pd.DataFrame({
                 "date": hist_df["date"],
                 "Objetivo": [target_kcal] * len(hist_df),
                 "Consumido": hist_df["calories"].astype(float),
             }).melt("date", var_name="serie", value_name="kcal")
-
+    
             kcal_chart = (
                 alt.Chart(target_kcal_line)
                 .mark_line()
@@ -1147,14 +1150,12 @@ if page == "📊 Dashboard":
                 .properties(height=220)
             )
             st.altair_chart(kcal_chart, use_container_width=True)
-
+    
             hist_df["kcal_7d"] = hist_df["calories"].rolling(7, min_periods=1).mean()
             last7 = float(hist_df["kcal_7d"].iloc[-1])
             diff = last7 - float(target_kcal)
-
+    
             st.caption(f"📌 Media móvil (7 días): **{last7:.0f} kcal** · Diferencia vs objetivo: **{diff:+.0f} kcal**")
-
-
 
     st.markdown("</div>", unsafe_allow_html=True)
     st.divider()
@@ -2559,6 +2560,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
