@@ -832,60 +832,93 @@ if st.session_state.get("_close_sidebar_after_nav", False):
         """
         <script>
         (function () {
-          function findCollapseButton(doc) {
-            // 1) Streamlit suele usar esto para el toggle
-            let btn =
-              doc.querySelector('button[data-testid="collapsedControl"]') ||
-              doc.querySelector('button[data-testid="stSidebarCollapseButton"]') ||
-              doc.querySelector('button[data-testid="stSidebarCollapsedControl"]');
-    
-            if (btn) return btn;
-    
-            // 2) Por aria-label / title (inglés/español)
-            const texts = ["sidebar", "barra lateral", "lateral"];
+          const doc = window.parent?.document || document;
+
+          function sidebarEl() {
+            return doc.querySelector('section[data-testid="stSidebar"]') ||
+                   doc.querySelector('[data-testid="stSidebar"]');
+          }
+
+          function isOpen() {
+            const s = sidebarEl();
+            if (!s) return false;
+            const r = s.getBoundingClientRect();
+            const style = doc.defaultView.getComputedStyle(s);
+            // abierto si tiene ancho visible y no está totalmente desplazado
+            const w = r.width || s.offsetWidth || 0;
+            const tr = style.transform || "";
+            const looksShifted = tr.includes("matrix") && tr.includes("-"); // heurística
+            return w > 80 && !looksShifted;
+          }
+
+          function scoreButton(b) {
+            const a = (b.getAttribute("aria-label") || "").toLowerCase();
+            const t = (b.getAttribute("title") || "").toLowerCase();
+            const dt = (b.getAttribute("data-testid") || "").toLowerCase();
+            const cls = (b.className || "").toLowerCase();
+            let s = 0;
+
+            // data-testid típicos
+            if (dt.includes("collapsedcontrol")) s += 50;
+            if (dt.includes("sidebar") && dt.includes("collapse")) s += 45;
+            if (dt.includes("sidebar")) s += 25;
+
+            // aria-label / title en inglés/español
+            if (a.includes("sidebar") || a.includes("barra lateral") || a.includes("lateral")) s += 30;
+            if (t.includes("sidebar") || t.includes("barra lateral") || t.includes("lateral")) s += 20;
+            if (a.includes("close") || a.includes("collapse") || a.includes("cerrar") || a.includes("colaps")) s += 20;
+            if (t.includes("close") || t.includes("collapse") || t.includes("cerrar") || t.includes("colaps")) s += 10;
+
+            // clase (por si acaso)
+            if (cls.includes("sidebar")) s += 5;
+
+            return s;
+          }
+
+          function candidateButtons() {
             const all = Array.from(doc.querySelectorAll("button"));
-    
-            btn = all.find(b => {
-              const a = (b.getAttribute("aria-label") || "").toLowerCase();
-              const t = (b.getAttribute("title") || "").toLowerCase();
-              return texts.some(x => a.includes(x) || t.includes(x));
+            // filtra botones invisibles
+            const visible = all.filter(b => {
+              const r = b.getBoundingClientRect();
+              return r.width > 0 && r.height > 0;
             });
-            if (btn) return btn;
-    
-            // 3) Fallback por icono (chevrons)
-            btn = all.find(b => {
-              const svg = b.querySelector("svg");
-              if (!svg) return false;
-              const html = (svg.outerHTML || "").toLowerCase();
-              return html.includes("chevron") || html.includes("arrow");
-            });
-    
-            return btn || null;
+
+            // ordena por "probabilidad"
+            visible.sort((b1, b2) => scoreButton(b2) - scoreButton(b1));
+            return visible;
           }
-    
+
           function tryClose(attempt) {
-            const doc = window.parent?.document || document;
-            const btn = findCollapseButton(doc);
-    
-            if (btn) {
-              btn.click();
-              return;
+            if (!isOpen()) return; // ya está cerrado
+
+            const btns = candidateButtons();
+
+            // probamos los top N para no liar clicks raros
+            const N = Math.min(btns.length, 12);
+            let i = 0;
+
+            function clickNext() {
+              if (!isOpen()) return;
+              if (i >= N) {
+                // reintento con tiempo porque el DOM puede cambiar tras rerun
+                if (attempt < 20) setTimeout(() => tryClose(attempt + 1), 80);
+                return;
+              }
+              const b = btns[i++];
+              try { b.click(); } catch (e) {}
+              setTimeout(clickNext, 60);
             }
-    
-            // Reintenta hasta 25 veces (DOM tarda en montar)
-            if (attempt < 25) {
-              setTimeout(() => tryClose(attempt + 1), 60);
-            }
+
+            clickNext();
           }
-    
-          // Arranca un pelín tarde
-          setTimeout(() => tryClose(0), 60);
+
+          // espera un pelín a que Streamlit pinte todo
+          setTimeout(() => tryClose(0), 120);
         })();
         </script>
         """,
-        height=1,   # 👈 NO 0 (para asegurar que se ejecuta)
+        height=1,
     )
-
 
 # --- Página actual (lo que usa tu app por dentro) ---
 page = st.session_state["page"]
@@ -2659,6 +2692,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
