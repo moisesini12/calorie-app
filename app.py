@@ -762,7 +762,53 @@ if st.session_state["goto_page"]:
 
 def _go(target_page: str):
     st.session_state["page"] = target_page
-    st.session_state["_close_sidebar_after_nav"] = True
+
+
+# =========================
+# NAV (Top Popover) - mobile friendly
+# =========================
+if "page" not in st.session_state:
+    st.session_state["page"] = "📊 Dashboard"
+
+def _go(target_page: str):
+    st.session_state["page"] = target_page
+
+# Botón menú (queda top, estilo app)
+colL, colR = st.columns([1, 6], vertical_alignment="center")
+with colL:
+    with st.popover("☰", use_container_width=True):
+        # Dashboard destacado
+        if st.button("📊 Dashboard", type="primary", use_container_width=True):
+            _go("📊 Dashboard")
+            st.rerun()
+
+        st.divider()
+
+        st.markdown("**🍽️ Comidas**")
+        if st.button("🍽 Registro", use_container_width=True):
+            _go("🍽 Registro"); st.rerun()
+        if st.button("➕ Añadir alimento", use_container_width=True):
+            _go("➕ Añadir alimento"); st.rerun()
+        if st.button("👨‍🍳 Chef IA", use_container_width=True):
+            _go("👨‍🍳 Chef IA"); st.rerun()
+
+        st.divider()
+
+        st.markdown("**🏋️ Rutina**")
+        if st.button("🏋️ Rutina IA", use_container_width=True):
+            _go("🏋️ Rutina IA"); st.rerun()
+
+        st.divider()
+
+        st.markdown("**🎯 Objetivos**")
+        if st.button("🎯 Objetivos", use_container_width=True):
+            _go("🎯 Objetivos"); st.rerun()
+
+with colR:
+    # Aquí no pongas nada o deja un placeholder
+    pass
+
+page = st.session_state["page"]
 
 # --- Estilo sidebar (sin romper expanders) ---
 st.sidebar.markdown(
@@ -823,73 +869,7 @@ with st.sidebar.expander("🏋️ Rutina", expanded=False):
 with st.sidebar.expander("🎯 Objetivos", expanded=False):
     st.button("🎯 Objetivos", use_container_width=True, key="nav_objetivos_btn", on_click=_go, args=("🎯 Objetivos",))
 
-import streamlit.components.v1 as components
 
-if st.session_state.get("_close_sidebar_after_nav", False):
-    st.session_state["_close_sidebar_after_nav"] = False
-
-    components.html(
-        """
-        <script>
-        (function () {
-          const doc = window.parent?.document || document;
-          const win = window.parent || window;
-
-          function clickAt(x, y) {
-            const el = doc.elementFromPoint(x, y);
-            if (!el) return false;
-
-            // Dispara eventos tipo click real
-            const opts = { bubbles: true, cancelable: true, clientX: x, clientY: y };
-            el.dispatchEvent(new MouseEvent("mousedown", opts));
-            el.dispatchEvent(new MouseEvent("mouseup", opts));
-            el.dispatchEvent(new MouseEvent("click", opts));
-            return true;
-          }
-
-          function tryCloseByOutsideClick() {
-            // Click “fuera” (lado derecho, arriba). En móvil suele caer en el overlay.
-            const x = Math.max(5, win.innerWidth - 6);
-            const y = 12;
-            return clickAt(x, y);
-          }
-
-          function findToggleAndClick() {
-            // Fallback: intenta el toggle si existe
-            const candidates = [
-              'button[data-testid="collapsedControl"]',
-              'button[data-testid="stSidebarCollapseButton"]',
-              'button[aria-label*="sidebar" i]',
-              'button[title*="sidebar" i]',
-              'button[aria-label*="barra lateral" i]',
-              'button[title*="barra lateral" i]',
-            ];
-            for (const sel of candidates) {
-              const b = doc.querySelector(sel);
-              if (b) { b.click(); return true; }
-            }
-            return false;
-          }
-
-          function run(attempt) {
-            // 1) Primero: click fuera (overlay/backdrop)
-            const okOutside = tryCloseByOutsideClick();
-            if (okOutside) return;
-
-            // 2) Si no, intenta toggle
-            const okToggle = findToggleAndClick();
-            if (okToggle) return;
-
-            // Reintenta un poco por si el DOM tarda
-            if (attempt < 25) setTimeout(() => run(attempt + 1), 80);
-          }
-
-          setTimeout(() => run(0), 120);
-        })();
-        </script>
-        """,
-        height=1,
-    )
 
 # --- Página actual (lo que usa tu app por dentro) ---
 page = st.session_state["page"]
@@ -2663,6 +2643,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
