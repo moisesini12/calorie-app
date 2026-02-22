@@ -1165,7 +1165,7 @@ if page == "📊 Dashboard":
       </div>
     </div>
     """).strip()
-    components.html(progreso_html, height=650, scrolling=False)
+    components.html(progreso_html, height=550, scrolling=False)
 
     # ===== HISTÓRICO + INSIGHTS (TU CÓDIGO ORIGINAL) =====
     hist = daily_totals_last_days(30, user_id=uid)
@@ -2630,6 +2630,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
