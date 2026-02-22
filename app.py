@@ -883,7 +883,7 @@ if st.session_state.get("_close_sidebar_after_nav", False):
         })();
         </script>
         """,
-        height=1,   // 👈 NO 0 (para asegurar que se ejecuta)
+        height=1,   # 👈 NO 0 (para asegurar que se ejecuta)
     )
 
 
@@ -2659,6 +2659,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
