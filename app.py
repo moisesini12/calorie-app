@@ -789,7 +789,7 @@ if st.session_state.get("menu_open", False):
         st.divider()
 
         # ✅ COMIDAS (desplegable ampliable)
-        with st.expander("🍽️ Comidas", expanded=True):
+        with st.expander("🍽️ Comidas", expanded=False):
             if st.button("🍽 Registro", use_container_width=True, key="dlg_reg"):
                 _go("🍽 Registro"); st.rerun()
 
@@ -2590,6 +2590,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
