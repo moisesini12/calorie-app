@@ -1053,7 +1053,7 @@ if page == "📊 Dashboard":
             st.session_state["goto_page"] = "🎯 Objetivos"
             st.rerun()
 
-    st.markdown("<div style='height:12px'></div>", unsafe_allow_html=True)
+    st.markdown("<div style='height:24px'></div>", unsafe_allow_html=True)
 
     # --- Datos del día ---
     rows = list_entries_by_date(selected_date_str, st.session_state["user_id"])
@@ -2762,6 +2762,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
