@@ -1199,7 +1199,7 @@ if page == "📊 Dashboard":
         chart_in_card(
             "🥗 Macros recientes (14 días)",
             macros_chart,
-            height=480
+            height=380
         )
 
 # ==========================================================
@@ -2576,6 +2576,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
