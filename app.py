@@ -446,6 +446,32 @@ def inject_fitness_ui():
     </style>
     """, unsafe_allow_html=True)
 
+# =========================
+# UI helpers (Hero)
+# =========================
+def fm_hero(title: str, subtitle: str = "", pills=None):
+    import textwrap
+    pills = pills or []
+
+    pills_html = "".join([f'<span class="fm-pill">{p}</span>' for p in pills])
+
+    hero_html = textwrap.dedent(f"""
+    <div class="fm-hero">
+      <div class="fm-hero-inner">
+        <div>
+          <div class="fm-hero-title">{title}</div>
+          {"<div class='fm-hero-sub'>" + subtitle + "</div>" if subtitle else ""}
+        </div>
+        <div class="fm-hero-pills">
+          {pills_html}
+        </div>
+      </div>
+    </div>
+    """).strip()
+
+    st.markdown(hero_html, unsafe_allow_html=True)
+    st.markdown("<div style='height:18px'></div>", unsafe_allow_html=True)
+
 
 # ---------------------------
 # Auth
@@ -1199,9 +1225,11 @@ if page == "📊 Dashboard":
 # PÁGINA: REGISTRO  (MULTI-AÑADIDO / “CARRITO”)
 # ==========================================================
 elif page == "🍽 Registro":
-    st.subheader("🍽 Registro")
-    st.caption(f"Día: {selected_date_str}")
-    st.divider()
+    fm_hero(
+        "🍽 Registro",
+        subtitle=f"Día: {selected_date_str}",
+        pills=["🧺 Multi-añadido", "⚡ Rápido"]
+    )
 
     # -------------------------
     # Estado / feedback
@@ -1569,9 +1597,11 @@ elif page == "🎯 Objetivos":
     saved_activity = float(get_setting("activity", 1.55, user_id=uid))
     saved_deficit = float(get_setting("deficit_pct", 20, user_id=uid))
 
-    st.subheader("🎯 Objetivos")
-    st.caption("Calcula y guarda tus objetivos diarios.")
-    st.divider()
+    fm_hero(
+        "🎯 Objetivos",
+        subtitle="Calcula y guarda tus objetivos diarios.",
+        pills=["🧮 Calculadora", "💾 Guarda perfil"]
+    )
 
     col1, col2 = st.columns(2)
     with col1:
@@ -1649,9 +1679,12 @@ elif page == "🎯 Objetivos":
 # PÁGINA: AÑADIR ALIMENTO
 # ==========================================================
 elif page == "➕ Añadir alimento":
-    st.subheader("Gestión de alimentos")
-    st.caption("Aquí puedes añadir alimentos nuevos, editar los existentes o borrarlos de la base de datos.")
-
+    fm_hero(
+        "🍽️ Gestión de alimentos",
+        subtitle="Añade, edita o borra alimentos de tu base de datos.",
+        pills=["➕ Añadir", "✏️ Editar", "🗑️ Borrar"]
+    )
+    
     mode = st.radio("Modo", ["➕ Añadir", "✏️ Editar", "🗑️ Borrar"], horizontal=True, key="food_mode")
     all_foods = list_all_foods()
 
@@ -1773,9 +1806,12 @@ elif page == "👨‍🍳 Chef IA":
             {"role": "system", "content": "Eres un asistente de nutrición. Sé claro, práctico y breve."}
         ]
 
-    st.subheader("👨‍🍳 Chef IA")
-    st.caption("Nutrición + menú + platos con tus alimentos (optimizado para móvil).")
-
+    fm_hero(
+        "👨‍🍳 Chef IA",
+        subtitle="Nutrición + menús + platos con tus alimentos.",
+        pills=["🤖 Chat", "🍽️ Menús", "🥘 Platos"]
+    )
+    
     for m in st.session_state.chat_history:
         if m["role"] == "system":
             continue
@@ -2002,12 +2038,15 @@ elif page == "👨‍🍳 Chef IA":
 # PÁGINA: RUTINA IA
 # ==========================================================
 elif page == "🏋️ Rutina IA":
+    fm_hero(
+        "🏋️ Rutina IA",
+        subtitle="Rutina personalizada según tu material, nivel y objetivos.",
+        pills=["📱 Mobile", "📈 Progresiva"]
+    )
     import json
     from ai_groq import generate_workout_plan_json
 
-    st.subheader("🏋️ Rutina IA")
-    st.caption("Crea una rutina personalizada según tu material, nivel y objetivos. Optimizado para móvil 📱")
-    st.divider()
+
 
     uid = st.session_state["user_id"]
 
@@ -2329,10 +2368,11 @@ elif page == "🏋️ Rutina IA":
 # PÁGINA: IA ALIMENTO (genéricos)
 # ==========================================================
 elif page == "🤖 IA Alimento":
-    st.subheader("🤖 IA Alimento (genéricos)")
-    st.caption("Escribe un alimento (ej. patata) y lo añado con macros por 100g desde USDA FoodData Central.")
-    st.caption("Tip: deja activado 'Solo básicos' para ingredientes (pollo, arroz, patata). Desactívalo si quieres platos.")
-    st.divider()
+    fm_hero(
+        "🤖 IA Alimento",
+        subtitle="Busca un alimento y guárdalo por 100g desde USDA FoodData Central.",
+        pills=["🧪 Básicos", "🍲 Platos"]
+    )
 
     # -------------------------
     # Estado estable
@@ -2555,6 +2595,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
