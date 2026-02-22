@@ -762,14 +762,18 @@ if st.session_state["goto_page"]:
 
 def _go(target_page: str):
     st.session_state["page"] = target_page
-    
+    st.session_state["menu_open"] = False
 
 # =========================
 # NAV (Top Popover) - mobile friendly
 # =========================
 if "page" not in st.session_state:
     st.session_state["page"] = "📊 Dashboard"
-    
+if "menu_open" not in st.session_state:
+    st.session_state["menu_open"] = False
+
+
+
 def _go(target_page: str):
     st.session_state["page"] = target_page
     st.session_state["_close_sidebar_after_nav"] = True
@@ -809,6 +813,53 @@ with colR:
     pass
 
 page = st.session_state["page"]
+
+# =========================
+# TOP MENU (Dialog) ✅
+# =========================
+topL, topR = st.columns([1, 9], vertical_alignment="center")
+with topL:
+    if st.button("☰", key="open_nav_menu", use_container_width=True):
+        st.session_state["menu_open"] = True
+
+# Dialog con navegación (solo si está abierto)
+if st.session_state.get("menu_open", False):
+    @st.dialog("🧭 Menú", width="small")
+    def _nav_dialog():
+        # Dashboard destacado
+        if st.button("📊 Dashboard", type="primary", use_container_width=True, key="dlg_dash"):
+            _go("📊 Dashboard")
+            st.rerun()
+
+        st.divider()
+
+        st.markdown("**🍽️ Comidas**")
+        if st.button("🍽 Registro", use_container_width=True, key="dlg_reg"):
+            _go("🍽 Registro"); st.rerun()
+        if st.button("➕ Añadir alimento", use_container_width=True, key="dlg_addfood"):
+            _go("➕ Añadir alimento"); st.rerun()
+        if st.button("👨‍🍳 Chef IA", use_container_width=True, key="dlg_chef"):
+            _go("👨‍🍳 Chef IA"); st.rerun()
+
+        st.divider()
+
+        st.markdown("**🏋️ Rutina**")
+        if st.button("🏋️ Rutina IA", use_container_width=True, key="dlg_rutina"):
+            _go("🏋️ Rutina IA"); st.rerun()
+
+        st.divider()
+
+        st.markdown("**🎯 Objetivos**")
+        if st.button("🎯 Objetivos", use_container_width=True, key="dlg_obj"):
+            _go("🎯 Objetivos"); st.rerun()
+
+        st.divider()
+
+        if st.button("✖️ Cerrar", use_container_width=True, key="dlg_close"):
+            st.session_state["menu_open"] = False
+            st.rerun()
+
+    _nav_dialog()
 
 # --- Estilo sidebar (sin romper expanders) ---
 st.sidebar.markdown(
@@ -2643,6 +2694,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
