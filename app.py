@@ -727,18 +727,6 @@ with cB:
         st.session_state["goto_page"] = "🎯 Objetivos"
         st.rerun()
 
-# ===== TOP BAR =====
-st.markdown(f"""
-<div class="fm-card">
-  <div class="fm-row">
-    <div>
-      <div class="fm-title">DALE DURO</div>
-      <div class="fm-sub">Usuario: <b>{uid}</b></div>
-    </div>
-    <div class="fm-chip">📅 {selected_date_str}</div>
-  </div>
-</div>
-""", unsafe_allow_html=True)
 
 
 
@@ -1032,7 +1020,7 @@ if page == "📊 Dashboard":
       <div class="fm-hero-inner">
         <div>
           <div class="fm-hero-title">📊 Dashboard</div>
-          <div class="fm-hero-sub">Hoy · <b>{selected_date_str}</b> · Usuario <b>{uid}</b></div>
+          
         </div>
         <div class="fm-hero-pills">
           <span class="fm-pill">🎯 Obj: {target_kcal:.0f} kcal</span>
@@ -2764,6 +2752,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
