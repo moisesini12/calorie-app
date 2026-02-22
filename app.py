@@ -1113,9 +1113,25 @@ if page == "📊 Dashboard":
     """).strip()
     components.html(progreso_html, height=550, scrolling=False)
 
-    # ===== HISTÓRICO + INSIGHTS (TU CÓDIGO ORIGINAL) =====
-    hist = daily_totals_last_days(30, user_id=uid)
-    hist_df = pd.DataFrame(hist, columns=["date", "calories", "protein", "carbs", "fat"])
+
+    def chart_in_card(title: str, chart, height: int = 320, subtitle: str = ""):
+        chart_html = chart.to_html()
+        subtitle_html = f'<div class="fm-progress-sub">{subtitle}</div>' if subtitle else ""
+        html = f"""
+        {DASH_CSS}
+        <div class="fm-section">
+          <div class="fm-section-title">{title}</div>
+          {subtitle_html}
+          <div style="border-radius:14px; overflow:hidden;">
+            {chart_html}
+          </div>
+        </div>
+        """
+        components.html(html, height=height, scrolling=False)
+        
+        # ===== HISTÓRICO + INSIGHTS (TU CÓDIGO ORIGINAL) =====
+        hist = daily_totals_last_days(30, user_id=uid)
+        hist_df = pd.DataFrame(hist, columns=["date", "calories", "protein", "carbs", "fat"])
 
 
 
@@ -2563,6 +2579,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
