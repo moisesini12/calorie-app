@@ -1160,14 +1160,16 @@ if page == "📊 Dashboard":
     st.markdown("</div>", unsafe_allow_html=True)
     st.divider()
 
-    st.subheader("🥗 Macros recientes (14 días)")
+    st.markdown('<div class="fm-section">', unsafe_allow_html=True)
+    st.markdown('<div class="fm-section-title">🥗 Macros recientes (14 días)</div>', unsafe_allow_html=True)
+    
     if hist_df.empty:
         st.caption("Aquí aparecerán tus macros cuando tengas datos.")
     else:
         df14 = hist_df.tail(14).copy()
         df14["date"] = pd.to_datetime(df14["date"])
         long_macros = df14.melt("date", value_vars=["protein", "carbs", "fat"], var_name="macro", value_name="g")
-
+    
         macros_chart = (
             alt.Chart(long_macros)
             .mark_bar()
@@ -1180,6 +1182,7 @@ if page == "📊 Dashboard":
             .properties(height=220)
         )
         st.altair_chart(macros_chart, use_container_width=True)
+
 
 
 
@@ -2560,6 +2563,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
