@@ -1043,6 +1043,8 @@ if page == "📊 Dashboard":
     """, unsafe_allow_html=True)
 
     # Acciones rápidas (móvil-friendly)
+    st.markdown("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
+    
     c1, c2 = st.columns(2)
     with c1:
         if st.button("➕ Añadir comida", type="primary", use_container_width=True):
@@ -2762,6 +2764,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
