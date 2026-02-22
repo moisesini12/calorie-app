@@ -784,12 +784,7 @@ if st.session_state.get("menu_open", False):
             _go("📊 Dashboard")
             st.rerun()
 
-        st.divider()
-
-        # ✅ DASHBOARD: principal, más llamativo
-        if st.button("📊 Dashboard", type="primary", use_container_width=True, key="dlg_dash"):
-            _go("📊 Dashboard")
-            st.rerun()
+  
 
         st.divider()
 
@@ -2595,6 +2590,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
