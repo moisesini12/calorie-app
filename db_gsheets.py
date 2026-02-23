@@ -3,12 +3,13 @@ from __future__ import annotations
 
 import datetime as dt
 import time
+import random
 from typing import Any, Dict, List, Optional, Tuple
 
 import streamlit as st
 import gspread
 from google.oauth2.service_account import Credentials
-
+from gspread.exceptions import APIError
 
 SHEET_ID = st.secrets["SPREADSHEET_ID"]
 TAB_FOODS = "foods"
@@ -19,6 +20,30 @@ SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/drive",
 ]
+
+def _retry_gs(fn, *args, **kwargs):
+    """
+    Reintentos para fallos temporales de Google Sheets:
+    429 rate limit, 500/503 server errors, etc.
+    """
+    max_tries = 6
+    for attempt in range(max_tries):
+        try:
+            return fn(*args, **kwargs)
+        except APIError as e:
+            status = None
+            try:
+                status = getattr(getattr(e, "response", None), "status_code", None)
+            except Exception:
+                status = None
+
+            # Reintentar solo en errores típicamente temporales
+            if status in (429, 500, 503) or status is None:
+                sleep = min(8.0, 0.6 * (2 ** attempt)) + random.random() * 0.25
+                time.sleep(sleep)
+                continue
+            raise
+
 
 # ---- Cache versioning helpers (evita 429 y refresca al escribir) ----
 def _cache_bump(tab_name: str) -> None:
@@ -39,7 +64,7 @@ def _client() -> gspread.Client:
 @st.cache_resource
 def _sh():
     try:
-        return _client().open_by_key(SHEET_ID)
+        return _retry_gs(_client().open_by_key, SHEET_ID)
     except Exception as e:
         import streamlit as st
         import gspread
@@ -65,7 +90,7 @@ def _sh():
 
 def _ws(tab_name: str):
     # NO cachear worksheet: evita estados raros tras errores de API/cuota
-    return _sh().worksheet(tab_name)
+    return _retry_gs(_sh().worksheet, tab_name)
 
 
 
@@ -515,6 +540,7 @@ def set_setting(key: str, value: str, user_id: Optional[str] = None) -> None:
 
     ws.append_row([scoped, value], value_input_option="USER_ENTERED", insert_data_option="INSERT_ROWS")
     _cache_bump(TAB_SETTINGS)
+
 
 
 
