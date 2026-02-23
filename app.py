@@ -455,6 +455,45 @@ def inject_fitness_ui():
     }
 
 
+    /* =========================
+       Medidas corporales: mantener 3 columnas en móvil (swipe)
+       ========================= */
+    .measures-wrap [data-testid="stHorizontalBlock"]{
+      gap: 14px;
+    }
+    
+    /* En móvil: NO apilar, permitir scroll horizontal */
+    @media (max-width: 900px){
+      .measures-wrap [data-testid="stHorizontalBlock"]{
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        -webkit-overflow-scrolling: touch !important;
+        padding-bottom: 6px;
+      }
+    
+      /* Cada "columna" tendrá ancho fijo para que quepan 3 con swipe */
+      .measures-wrap [data-testid="stHorizontalBlock"] > div{
+        flex: 0 0 auto !important;
+        width: 280px !important; /* ajusta 260-320 si quieres */
+      }
+    
+      /* Cards más compactas en móvil */
+      .measures-wrap .fm-measure-card{
+        margin: 6px 0 !important;
+        padding: 10px 10px !important;
+        border-radius: 14px !important;
+      }
+    
+      /* Imagen: limita altura para no comerse la pantalla */
+      .measures-wrap img{
+        max-height: 420px !important;
+        object-fit: contain !important;
+      }
+    }
+
+
+
 
     </style>
     """, unsafe_allow_html=True)
@@ -1648,6 +1687,7 @@ elif page == "🎯 Objetivos":
     # =========================
     st.markdown("### 📏 Medidas corporales")
     with st.expander("Abrir / editar medidas", expanded=True):
+        st.markdown('<div class="measures-wrap">', unsafe_allow_html=True)
         colL, colC, colR = st.columns([1.1, 1.3, 1.1], gap="large")
 
         # Centro: muñeco
@@ -1707,6 +1747,8 @@ elif page == "🎯 Objetivos":
             st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Pantorrilla (D) (cm)</div>', unsafe_allow_html=True)
             calf_r_cm = st.number_input("Pantorrilla Derecha", 20.0, 70.0, float(saved_calf_r), 0.5, key="m_calf_r", label_visibility="collapsed")
             st.markdown('</div>', unsafe_allow_html=True)
+
+        st.markdown('</div>', unsafe_allow_html=True)
 
         # =========================
         # Métricas clave (IMC + ratios + estimaciones)
@@ -2809,6 +2851,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
