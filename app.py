@@ -495,11 +495,11 @@ def inject_fitness_ui():
     /* =========================
        Compactar inputs en MÓVIL (solo dentro de Tabs)
        ========================= */
-    @media (max-width: 800px){
+    @media (max-width: 900px){
     
       /* reduce espacio entre “bloques” dentro de tabs */
       .stTabs [data-testid="stVerticalBlock"] > div{
-        margin-bottom: 2px !important;
+        margin-bottom: 6px !important;
         padding-bottom: 0px !important;
       }
     
@@ -516,9 +516,9 @@ def inject_fitness_ui():
     
       /* input más bajito */
       .stTabs [data-testid="stNumberInput"] input{
-        padding-top: 4px !important;
-        padding-bottom: 4px !important;
-        min-height: 20px !important;
+        padding-top: 8px !important;
+        padding-bottom: 8px !important;
+        min-height: 40px !important;
       }
     
       /* botones +/− más compactos */
@@ -2935,6 +2935,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
