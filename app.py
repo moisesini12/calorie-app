@@ -1689,7 +1689,26 @@ elif page == "🎯 Objetivos":
     compact_mode = st.toggle("📱 Modo móvil compacto (recomendado en móvil)", value=True)
     
     with st.expander("Abrir / editar medidas", expanded=True):
-    
+
+        # Helper: input más estrecho + menos espacio vertical (móvil)
+        def measure_input(title, min_v, max_v, default_v, key):
+            st.markdown(f"**{title}**")
+            c_val, c_pad = st.columns([3, 1])  # <- aquí controlas la “línea azul”
+            with c_val:
+                v = st.number_input(
+                    title,
+                    min_value=float(min_v),
+                    max_value=float(max_v),
+                    value=float(default_v),
+                    step=0.5,
+                    key=key,
+                    label_visibility="collapsed"
+                )
+            # menos aire entre recuadros
+            st.markdown("<div style='height:6px'></div>", unsafe_allow_html=True)
+            return v
+
+        
         if compact_mode:
             # =========================
             # 📱 MODO COMPACTO (tabs)
@@ -1705,50 +1724,19 @@ elif page == "🎯 Objetivos":
                 st.caption("Consejo: mide siempre en las mismas condiciones para que los cambios sean comparables.")
     
             with tabL:
-                st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Cuello (cm)</div>', unsafe_allow_html=True)
-                neck_cm = st.number_input("Cuello", 20.0, 60.0, float(saved_neck), 0.5, key="m_neck", label_visibility="collapsed")
-                st.markdown('</div>', unsafe_allow_html=True)
-    
-                st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Brazo (I) (cm)</div>', unsafe_allow_html=True)
-                arm_l_cm = st.number_input("Brazo Izquierdo", 15.0, 60.0, float(saved_arm_l), 0.5, key="m_arm_l", label_visibility="collapsed")
-                st.markdown('</div>', unsafe_allow_html=True)
-    
-                st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Pecho (cm)</div>', unsafe_allow_html=True)
-                chest_cm = st.number_input("Pecho", 50.0, 160.0, float(saved_chest), 0.5, key="m_chest", label_visibility="collapsed")
-                st.markdown('</div>', unsafe_allow_html=True)
-    
-                st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Muslo (I) (cm)</div>', unsafe_allow_html=True)
-                thigh_l_cm = st.number_input("Muslo Izquierdo", 30.0, 110.0, float(saved_thigh_l), 0.5, key="m_thigh_l", label_visibility="collapsed")
-                st.markdown('</div>', unsafe_allow_html=True)
-    
-                st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Pantorrilla (I) (cm)</div>', unsafe_allow_html=True)
-                calf_l_cm = st.number_input("Pantorrilla Izquierda", 20.0, 70.0, float(saved_calf_l), 0.5, key="m_calf_l", label_visibility="collapsed")
-                st.markdown('</div>', unsafe_allow_html=True)
+                neck_cm   = measure_input("Cuello (cm)", 20, 60, saved_neck, "m_neck")
+                arm_l_cm  = measure_input("Brazo (I) (cm)", 15, 60, saved_arm_l, "m_arm_l")
+                chest_cm  = measure_input("Pecho (cm)", 50, 160, saved_chest, "m_chest")
+                thigh_l_cm= measure_input("Muslo (I) (cm)", 30, 110, saved_thigh_l, "m_thigh_l")
+                calf_l_cm = measure_input("Pantorrilla (I) (cm)", 20, 70, saved_calf_l, "m_calf_l")
     
             with tabR:
-                st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Hombros (cm)</div>', unsafe_allow_html=True)
-                shoulders_cm = st.number_input("Hombros", 60.0, 200.0, float(saved_shoulders), 0.5, key="m_shoulders", label_visibility="collapsed")
-                st.markdown('</div>', unsafe_allow_html=True)
-    
-                st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Brazo (D) (cm)</div>', unsafe_allow_html=True)
-                arm_r_cm = st.number_input("Brazo Derecho", 15.0, 60.0, float(saved_arm_r), 0.5, key="m_arm_r", label_visibility="collapsed")
-                st.markdown('</div>', unsafe_allow_html=True)
-    
-                st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Cintura (cm)</div>', unsafe_allow_html=True)
-                waist_cm = st.number_input("Cintura", 40.0, 200.0, float(saved_waist), 0.5, key="m_waist", label_visibility="collapsed")
-                st.markdown('</div>', unsafe_allow_html=True)
-    
-                st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Cadera (cm)</div>', unsafe_allow_html=True)
-                hip_cm = st.number_input("Cadera", 60.0, 220.0, float(saved_hip), 0.5, key="m_hip", label_visibility="collapsed")
-                st.markdown('</div>', unsafe_allow_html=True)
-    
-                st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Muslo (D) (cm)</div>', unsafe_allow_html=True)
-                thigh_r_cm = st.number_input("Muslo Derecho", 30.0, 110.0, float(saved_thigh_r), 0.5, key="m_thigh_r", label_visibility="collapsed")
-                st.markdown('</div>', unsafe_allow_html=True)
-    
-                st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Pantorrilla (D) (cm)</div>', unsafe_allow_html=True)
-                calf_r_cm = st.number_input("Pantorrilla Derecha", 20.0, 70.0, float(saved_calf_r), 0.5, key="m_calf_r", label_visibility="collapsed")
-                st.markdown('</div>', unsafe_allow_html=True)
+                shoulders_cm = measure_input("Hombros (cm)", 60, 200, saved_shoulders, "m_shoulders")
+                arm_r_cm     = measure_input("Brazo (D) (cm)", 15, 60, saved_arm_r, "m_arm_r")
+                waist_cm     = measure_input("Cintura (cm)", 40, 200, saved_waist, "m_waist")
+                hip_cm       = measure_input("Cadera (cm)", 60, 220, saved_hip, "m_hip")
+                thigh_r_cm   = measure_input("Muslo (D) (cm)", 30, 110, saved_thigh_r, "m_thigh_r")
+                calf_r_cm    = measure_input("Pantorrilla (D) (cm)", 20, 70, saved_calf_r, "m_calf_r")
     
         else:
             # =========================
@@ -2914,6 +2902,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
