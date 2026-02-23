@@ -1,6 +1,6 @@
 # app.py
 
-
+import os, math
 import hashlib, hmac, base64
 from datetime import date
 
@@ -439,7 +439,20 @@ def inject_fitness_ui():
       }
     }
 
-
+    /* ===== Medidas corporales (cards) ===== */
+    .fm-measure-card{
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 16px;
+      padding: 12px 12px;
+      margin: 10px 0;
+    }
+    .fm-measure-title{
+      font-size: 12px;
+      font-weight: 900;
+      color: rgba(226,232,240,0.82);
+      margin-bottom: 6px;
+    }
 
 
 
@@ -1578,6 +1591,20 @@ elif page == "🎯 Objetivos":
     saved_activity = float(get_setting("activity", 1.55, user_id=uid))
     saved_deficit = float(get_setting("deficit_pct", 20, user_id=uid))
 
+    # --- Medidas corporales guardadas (opcional) ---
+    saved_neck = float(get_setting("neck_cm", 40, user_id=uid))
+    saved_shoulders = float(get_setting("shoulders_cm", 117, user_id=uid))
+    saved_chest = float(get_setting("chest_cm", 102, user_id=uid))
+    saved_waist = float(get_setting("waist_cm", 90, user_id=uid))
+    saved_hip = float(get_setting("hip_cm", 93, user_id=uid))
+    saved_arm_l = float(get_setting("arm_l_cm", 34, user_id=uid))
+    saved_arm_r = float(get_setting("arm_r_cm", 34, user_id=uid))
+    saved_thigh_l = float(get_setting("thigh_l_cm", 65, user_id=uid))
+    saved_thigh_r = float(get_setting("thigh_r_cm", 65, user_id=uid))
+    saved_calf_l = float(get_setting("calf_l_cm", 40, user_id=uid))
+    saved_calf_r = float(get_setting("calf_r_cm", 40, user_id=uid))
+
+    
     fm_hero(
         "🎯 Objetivos",
         subtitle="Calcula y guarda tus objetivos diarios.",
@@ -1609,6 +1636,126 @@ elif page == "🎯 Objetivos":
         activity = float(activity_label.split("(")[-1].strip(")"))
         deficit_pct = st.slider("% Déficit (0-30)", 0, 30, int(saved_deficit))
 
+    # =========================
+    # 📏 Medidas corporales (UI tipo captura)
+    # =========================
+    st.markdown("### 📏 Medidas corporales")
+    with st.expander("Abrir / editar medidas", expanded=True):
+        colL, colC, colR = st.columns([1.1, 1.3, 1.1], gap="large")
+
+        # Centro: muñeco
+        with colC:
+            img_path = os.path.join("assets", "body.png")
+            if os.path.exists(img_path):
+                st.image(img_path, use_container_width=True)
+            else:
+                st.info("Pon una imagen en `assets/body.png` para ver el muñeco aquí 🙂")
+
+            st.caption("Consejo: mide siempre en las mismas condiciones para que los cambios sean comparables.")
+
+        # Izquierda
+        with colL:
+            st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Cuello (cm)</div>', unsafe_allow_html=True)
+            neck_cm = st.number_input("Cuello", 20.0, 60.0, float(saved_neck), 0.5, key="m_neck", label_visibility="collapsed")
+            st.markdown('</div>', unsafe_allow_html=True)
+
+            st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Brazo (I) (cm)</div>', unsafe_allow_html=True)
+            arm_l_cm = st.number_input("Brazo Izquierdo", 15.0, 60.0, float(saved_arm_l), 0.5, key="m_arm_l", label_visibility="collapsed")
+            st.markdown('</div>', unsafe_allow_html=True)
+
+            st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Pecho (cm)</div>', unsafe_allow_html=True)
+            chest_cm = st.number_input("Pecho", 50.0, 160.0, float(saved_chest), 0.5, key="m_chest", label_visibility="collapsed")
+            st.markdown('</div>', unsafe_allow_html=True)
+
+            st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Muslo (I) (cm)</div>', unsafe_allow_html=True)
+            thigh_l_cm = st.number_input("Muslo Izquierdo", 30.0, 110.0, float(saved_thigh_l), 0.5, key="m_thigh_l", label_visibility="collapsed")
+            st.markdown('</div>', unsafe_allow_html=True)
+
+            st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Pantorrilla (I) (cm)</div>', unsafe_allow_html=True)
+            calf_l_cm = st.number_input("Pantorrilla Izquierda", 20.0, 70.0, float(saved_calf_l), 0.5, key="m_calf_l", label_visibility="collapsed")
+            st.markdown('</div>', unsafe_allow_html=True)
+
+        # Derecha
+        with colR:
+            st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Hombros (cm)</div>', unsafe_allow_html=True)
+            shoulders_cm = st.number_input("Hombros", 60.0, 200.0, float(saved_shoulders), 0.5, key="m_shoulders", label_visibility="collapsed")
+            st.markdown('</div>', unsafe_allow_html=True)
+
+            st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Brazo (D) (cm)</div>', unsafe_allow_html=True)
+            arm_r_cm = st.number_input("Brazo Derecho", 15.0, 60.0, float(saved_arm_r), 0.5, key="m_arm_r", label_visibility="collapsed")
+            st.markdown('</div>', unsafe_allow_html=True)
+
+            st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Cintura (cm)</div>', unsafe_allow_html=True)
+            waist_cm = st.number_input("Cintura", 40.0, 200.0, float(saved_waist), 0.5, key="m_waist", label_visibility="collapsed")
+            st.markdown('</div>', unsafe_allow_html=True)
+
+            st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Cadera (cm)</div>', unsafe_allow_html=True)
+            hip_cm = st.number_input("Cadera", 60.0, 220.0, float(saved_hip), 0.5, key="m_hip", label_visibility="collapsed")
+            st.markdown('</div>', unsafe_allow_html=True)
+
+            st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Muslo (D) (cm)</div>', unsafe_allow_html=True)
+            thigh_r_cm = st.number_input("Muslo Derecho", 30.0, 110.0, float(saved_thigh_r), 0.5, key="m_thigh_r", label_visibility="collapsed")
+            st.markdown('</div>', unsafe_allow_html=True)
+
+            st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Pantorrilla (D) (cm)</div>', unsafe_allow_html=True)
+            calf_r_cm = st.number_input("Pantorrilla Derecha", 20.0, 70.0, float(saved_calf_r), 0.5, key="m_calf_r", label_visibility="collapsed")
+            st.markdown('</div>', unsafe_allow_html=True)
+
+        # =========================
+        # Métricas clave (IMC + ratios + estimaciones)
+        # =========================
+        # IMC
+        h_m = float(height) / 100.0 if float(height) > 0 else 0.0
+        bmi = (float(weight) / (h_m ** 2)) if h_m > 0 else 0.0
+
+        # Cintura/altura
+        whtr = (float(waist_cm) / float(height)) if float(height) > 0 else 0.0
+
+        # Cintura/cadera
+        whr = (float(waist_cm) / float(hip_cm)) if float(hip_cm) > 0 else 0.0
+
+        # % Grasa US Navy (estimación). Si sexo=F usa cadera.
+        def _navy_bodyfat(sex_local: str, height_cm: float, neck: float, waist: float, hip: float) -> float:
+            # protege contra logs invalidos
+            if height_cm <= 0:
+                return 0.0
+            sex_local = (sex_local or "M").upper().strip()
+
+            try:
+                if sex_local == "M":
+                    x = waist - neck
+                    if x <= 0:
+                        return 0.0
+                    bf = 495.0 / (1.0324 - 0.19077 * math.log10(x) + 0.15456 * math.log10(height_cm)) - 450.0
+                else:
+                    x = waist + hip - neck
+                    if x <= 0:
+                        return 0.0
+                    bf = 495.0 / (1.29579 - 0.35004 * math.log10(x) + 0.22100 * math.log10(height_cm)) - 450.0
+                # clamp razonable
+                return float(max(0.0, min(70.0, bf)))
+            except Exception:
+                return 0.0
+
+        bodyfat_pct = _navy_bodyfat(sex, float(height), float(neck_cm), float(waist_cm), float(hip_cm))
+        fat_kg = float(weight) * (bodyfat_pct / 100.0)
+        lbm_kg = float(weight) - fat_kg
+        ffmi = (lbm_kg / (h_m ** 2)) if h_m > 0 else 0.0
+
+        st.divider()
+        st.markdown("#### 📌 Métricas clave (estimadas)")
+        m1, m2, m3, m4 = st.columns(4)
+        m1.metric("📏 IMC", f"{bmi:.1f}")
+        m2.metric("🧪 % grasa (Navy)", f"{bodyfat_pct:.1f}%")
+        m3.metric("💪 Masa magra", f"{lbm_kg:.1f} kg")
+        m4.metric("🏋️ FFMI", f"{ffmi:.1f}")
+
+        r1, r2 = st.columns(2)
+        r1.metric("📐 Cintura/Altura", f"{whtr:.2f}")
+        r2.metric("📐 Cintura/Cadera", f"{whr:.2f}")
+
+
+    
     if st.button("Calcular y guardar objetivos", type="primary"):
         maintenance, deficit_kcal, protein_g, carbs_g, fat_g = calculate_goals(
             sex=sex,
@@ -1631,7 +1778,76 @@ elif page == "🎯 Objetivos":
         set_setting("target_protein", str(protein_g), user_id=uid)
         set_setting("target_carbs", str(carbs_g), user_id=uid)
         set_setting("target_fat", str(fat_g), user_id=uid)
+        # --- Guardar medidas corporales ---
+        # (si el usuario no abrió el expander, estas variables pueden no existir.
+        #  así que las leemos de session_state con fallback a lo guardado)
+        def _ss(key, fallback):
+            v = st.session_state.get(key, None)
+            return float(v) if v is not None else float(fallback)
 
+        neck_cm_v = _ss("m_neck", saved_neck)
+        shoulders_cm_v = _ss("m_shoulders", saved_shoulders)
+        chest_cm_v = _ss("m_chest", saved_chest)
+        waist_cm_v = _ss("m_waist", saved_waist)
+        hip_cm_v = _ss("m_hip", saved_hip)
+        arm_l_cm_v = _ss("m_arm_l", saved_arm_l)
+        arm_r_cm_v = _ss("m_arm_r", saved_arm_r)
+        thigh_l_cm_v = _ss("m_thigh_l", saved_thigh_l)
+        thigh_r_cm_v = _ss("m_thigh_r", saved_thigh_r)
+        calf_l_cm_v = _ss("m_calf_l", saved_calf_l)
+        calf_r_cm_v = _ss("m_calf_r", saved_calf_r)
+
+        set_setting("neck_cm", str(neck_cm_v), user_id=uid)
+        set_setting("shoulders_cm", str(shoulders_cm_v), user_id=uid)
+        set_setting("chest_cm", str(chest_cm_v), user_id=uid)
+        set_setting("waist_cm", str(waist_cm_v), user_id=uid)
+        set_setting("hip_cm", str(hip_cm_v), user_id=uid)
+        set_setting("arm_l_cm", str(arm_l_cm_v), user_id=uid)
+        set_setting("arm_r_cm", str(arm_r_cm_v), user_id=uid)
+        set_setting("thigh_l_cm", str(thigh_l_cm_v), user_id=uid)
+        set_setting("thigh_r_cm", str(thigh_r_cm_v), user_id=uid)
+        set_setting("calf_l_cm", str(calf_l_cm_v), user_id=uid)
+        set_setting("calf_r_cm", str(calf_r_cm_v), user_id=uid)
+
+        # --- Guardar métricas clave (opcional pero útil para dashboard/coach) ---
+        # Recalcula aquí (para guardar valores consistentes)
+        h_m = float(height) / 100.0 if float(height) > 0 else 0.0
+        bmi_v = (float(weight) / (h_m ** 2)) if h_m > 0 else 0.0
+        whtr_v = (waist_cm_v / float(height)) if float(height) > 0 else 0.0
+        whr_v = (waist_cm_v / hip_cm_v) if hip_cm_v > 0 else 0.0
+
+        def _navy_bodyfat(sex_local: str, height_cm: float, neck: float, waist: float, hip: float) -> float:
+            if height_cm <= 0:
+                return 0.0
+            sex_local = (sex_local or "M").upper().strip()
+            try:
+                if sex_local == "M":
+                    x = waist - neck
+                    if x <= 0:
+                        return 0.0
+                    bf = 495.0 / (1.0324 - 0.19077 * math.log10(x) + 0.15456 * math.log10(height_cm)) - 450.0
+                else:
+                    x = waist + hip - neck
+                    if x <= 0:
+                        return 0.0
+                    bf = 495.0 / (1.29579 - 0.35004 * math.log10(x) + 0.22100 * math.log10(height_cm)) - 450.0
+                return float(max(0.0, min(70.0, bf)))
+            except Exception:
+                return 0.0
+
+        bodyfat_pct_v = _navy_bodyfat(sex, float(height), neck_cm_v, waist_cm_v, hip_cm_v)
+        fat_kg_v = float(weight) * (bodyfat_pct_v / 100.0)
+        lbm_kg_v = float(weight) - fat_kg_v
+        ffmi_v = (lbm_kg_v / (h_m ** 2)) if h_m > 0 else 0.0
+
+        set_setting("bmi", str(bmi_v), user_id=uid)
+        set_setting("bodyfat_percent", str(bodyfat_pct_v), user_id=uid)
+        set_setting("lbm_kg", str(lbm_kg_v), user_id=uid)
+        set_setting("ffmi", str(ffmi_v), user_id=uid)
+        set_setting("whtr", str(whtr_v), user_id=uid)
+        set_setting("whr", str(whr_v), user_id=uid)
+
+        
         st.cache_data.clear()
         st.success("Perfil y objetivos guardados ✅")
         st.rerun()
@@ -2576,6 +2792,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
