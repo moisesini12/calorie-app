@@ -2211,13 +2211,27 @@ elif page == "👨‍🍳 Chef IA":
         fat_obj  = st.number_input("Grasas objetivo (g)", min_value=0.0, max_value=300.0, value=target_f, step=5.0, key="menu_f")
 
         pref = st.selectbox("Preferencia", ["Equilibrado", "Alta proteína", "Baja grasa", "Bajo carb"], key="menu_pref")
+        realista = st.toggle("✅ Menú coherente (porciones realistas)", value=True, key="menu_realista")
 
+
+        
         if st.button("✨ Generar menú", type="primary", use_container_width=True):
-            context = (
-                f"Objetivo diario: {kcal_obj} kcal; Proteína {prot_obj}g; Carbs {carb_obj}g; Grasas {fat_obj}g. "
-                f"Preferencia: {pref}. "
-                "Crea un menú de 4 comidas (Desayuno, Almuerzo, Merienda, Cena)."
-            )
+            context = f"""
+            Objetivo diario: {kcal_obj} kcal; Proteína {prot_obj}g; Carbs {carb_obj}g; Grasas {fat_obj}g.
+            Preferencia: {pref}.
+            
+            Genera un menú de 4 comidas: Desayuno, Almuerzo, Merienda, Cena.
+            REGLAS DE COHERENCIA (obligatorio):
+            - Porciones realistas, evita cantidades absurdas.
+            - Cereales/avena/muesli: máximo 60 g por ración (ideal 30–50 g).
+            - Fruta típica: 80–200 g por ración.
+            - Lácteo/bebida en desayuno si existe en mis alimentos (leche, yogur, queso fresco, bebida vegetal).
+            - Legumbres (lentejas/garbanzos): preferible en Almuerzo. En Cena solo si la cena es ligera o no hay otra opción.
+            - Cena: prioriza proteína + verduras/ensalada o carbs moderados. Evita comidas pesadas.
+            - No repitas el mismo alimento en más de 2 comidas.
+            - Usa SOLO alimentos de la lista permitida.
+            Devuelve JSON válido con la estructura: {{ "meals":[{{"meal":"Desayuno","items":[{{"name":"...","grams":123}}]}}] }}.
+            """.strip()
             raw = generate_menu_json(context, allowed_food_names=allowed)
 
             try:
@@ -2935,94 +2949,6 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
