@@ -495,7 +495,7 @@ def inject_fitness_ui():
     /* =========================
        Compactar inputs en MÓVIL (solo dentro de Tabs)
        ========================= */
-    @media (max-width: 900px){
+    @media (max-width: 800px){
     
       /* reduce espacio entre “bloques” dentro de tabs */
       .stTabs [data-testid="stVerticalBlock"] > div{
@@ -2935,6 +2935,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
