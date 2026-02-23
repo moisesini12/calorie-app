@@ -2333,9 +2333,7 @@ elif page == "👨‍🍳 Chef IA":
                         items.append({"name": booster, "grams": STEP_G})
                         chosen_meal["items"] = items
             
-                    # re-aplica clamps si están activos
-                    if realista:
-                        menu_obj = clamp_menu(menu_obj)
+                    
             
                 return menu_obj
             
@@ -3052,6 +3050,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
