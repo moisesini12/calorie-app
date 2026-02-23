@@ -499,7 +499,7 @@ def inject_fitness_ui():
     
       /* reduce espacio entre “bloques” dentro de tabs */
       .stTabs [data-testid="stVerticalBlock"] > div{
-        margin-bottom: 0px !important;
+        margin-bottom: -2px !important;
         padding-bottom: 0px !important;
       }
     
@@ -2935,6 +2935,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
