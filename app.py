@@ -2243,6 +2243,109 @@ elif page == "👨‍🍳 Chef IA":
 
             totals = {"calories": 0.0, "protein": 0.0, "carbs": 0.0, "fat": 0.0}
 
+            # ===== Ajuste automático: si el menú se queda corto, subir gramos =====
+            MIN_KCAL_RATIO = 0.92  # mínimo 92% del objetivo
+            MAX_KCAL_RATIO = 1.05  # máximo 105% del objetivo
+            STEP_G = 25.0          # incremento por iteración
+            MAX_ITERS = 80         # límite de iteraciones para no colgar
+            
+            def menu_totals(menu_obj: dict) -> dict:
+                t = {"calories": 0.0, "protein": 0.0, "carbs": 0.0, "fat": 0.0}
+                for meal in menu_obj.get("meals", []) or []:
+                    for it in meal.get("items", []) or []:
+                        nm = str(it.get("name", "")).strip()
+                        g = float(it.get("grams", 0) or 0)
+                        if nm in food_map and g > 0:
+                            m = scale_macros(food_map[nm], g)
+                            t["calories"] += float(m["calories"])
+                            t["protein"] += float(m["protein"])
+                            t["carbs"] += float(m["carbs"])
+                            t["fat"] += float(m["fat"])
+                return t
+            
+            def pick_best_booster(allowed_names: list[str]) -> str | None:
+                """
+                Elige un alimento "fácil" para subir kcal sin volverse loco:
+                - Primero carbs (arroz, pan, cereales, pasta, patata…)
+                - Si no hay, grasa (aceite, frutos secos)
+                - Si no hay, proteína (pollo/pavo/atun/huevos)
+                """
+                carbs_kw = ["arroz", "pasta", "fideo", "noodle", "pan", "cereal", "cereales", "avena", "patata", "platano", "uva", "kiwi"]
+                fat_kw   = ["aceite", "nuez", "almendra", "cacahu", "mantequilla", "aguacate"]
+                prot_kw  = ["pollo", "pavo", "atun", "huevo", "yogur", "queso", "carne", "pesc"]
+            
+                def score(nm: str) -> int:
+                    n = nm.lower()
+                    s = 0
+                    if any(k in n for k in carbs_kw): s += 30
+                    if any(k in n for k in fat_kw):   s += 20
+                    if any(k in n for k in prot_kw):  s += 10
+                    # también valora densidad calórica por 100g
+                    if nm in food_map:
+                        try:
+                            s += int(float(food_map[nm]["calories"]) / 10.0)  # kcal/100g -> +0..50
+                        except Exception:
+                            pass
+                    return s
+            
+                cands = [n for n in allowed_names if n in food_map]
+                if not cands:
+                    return None
+                cands.sort(key=score, reverse=True)
+                return cands[0]
+            
+            def boost_menu_to_target(menu_obj: dict, kcal_target: float) -> dict:
+                if kcal_target <= 0:
+                    return menu_obj
+            
+                booster = pick_best_booster(allowed)
+                if booster is None:
+                    return menu_obj
+            
+                # intentamos subir principalmente en Almuerzo/Cena para coherencia
+                meal_order = ["Almuerzo", "Cena", "Desayuno", "Merienda"]
+            
+                for _ in range(MAX_ITERS):
+                    t = menu_totals(menu_obj)
+                    if t["calories"] >= kcal_target * MIN_KCAL_RATIO:
+                        break
+            
+                    # elige a qué comida añadir el booster
+                    chosen_meal = None
+                    for mn in meal_order:
+                        for m in menu_obj.get("meals", []) or []:
+                            if str(m.get("meal", "")).strip() == mn:
+                                chosen_meal = m
+                                break
+                        if chosen_meal:
+                            break
+            
+                    if chosen_meal is None:
+                        break
+            
+                    # si el booster ya está en esa comida, sube gramos, si no, lo añade
+                    items = chosen_meal.get("items", []) or []
+                    found = False
+                    for it in items:
+                        if str(it.get("name", "")).strip() == booster:
+                            it["grams"] = float(it.get("grams", 0) or 0) + STEP_G
+                            found = True
+                            break
+                    if not found:
+                        items.append({"name": booster, "grams": STEP_G})
+                        chosen_meal["items"] = items
+            
+                    # re-aplica clamps si están activos
+                    if realista:
+                        menu_obj = clamp_menu(menu_obj)
+            
+                return menu_obj
+            
+            menu = boost_menu_to_target(menu, float(kcal_obj))
+
+
+
+            
             for meal in menu.get("meals", []):
                 st.markdown(f"### {meal.get('meal','Comida')}")
                 for item in meal.get("items", []):
@@ -2949,6 +3052,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
