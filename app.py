@@ -492,7 +492,41 @@ def inject_fitness_ui():
       }
     }
 
-
+    /* =========================
+       Compactar inputs en MÓVIL (solo dentro de Tabs)
+       ========================= */
+    @media (max-width: 900px){
+    
+      /* reduce espacio entre “bloques” dentro de tabs */
+      .stTabs [data-testid="stVerticalBlock"] > div{
+        margin-bottom: 6px !important;
+        padding-bottom: 0px !important;
+      }
+    
+      /* reduce margen del texto/labels dentro de tabs */
+      .stTabs [data-testid="stMarkdownContainer"] p{
+        margin: 0 0 4px 0 !important;
+        line-height: 1.15 !important;
+      }
+    
+      /* number input: menos aire */
+      .stTabs [data-testid="stNumberInput"]{
+        margin: 0 !important;
+      }
+    
+      /* input más bajito */
+      .stTabs [data-testid="stNumberInput"] input{
+        padding-top: 8px !important;
+        padding-bottom: 8px !important;
+        min-height: 40px !important;
+      }
+    
+      /* botones +/− más compactos */
+      .stTabs [data-testid="stNumberInput"] button{
+        height: 40px !important;
+        min-height: 40px !important;
+      }
+    }
 
 
     </style>
@@ -1692,8 +1726,8 @@ elif page == "🎯 Objetivos":
 
         # Helper: input más estrecho + menos espacio vertical (móvil)
         def measure_input(title, min_v, max_v, default_v, key):
-            st.markdown(f"**{title}**")
-            c_val, c_pad = st.columns([0.5, 0.5])  # <- aquí controlas la “línea azul”
+            st.caption(title)
+            c_val, c_pad = st.columns([2.4, 1])  # <- aquí controlas la “línea azul”
             with c_val:
                 v = st.number_input(
                     title,
@@ -1704,8 +1738,7 @@ elif page == "🎯 Objetivos":
                     key=key,
                     label_visibility="collapsed"
                 )
-            # menos aire entre recuadros
-            st.markdown("<div style='height:4px'></div>", unsafe_allow_html=True)
+
             return v
 
         
@@ -2902,6 +2935,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
