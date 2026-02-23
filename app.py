@@ -2241,8 +2241,6 @@ elif page == "👨‍🍳 Chef IA":
                 st.code(raw)
                 st.stop()
 
-            totals = {"calories": 0.0, "protein": 0.0, "carbs": 0.0, "fat": 0.0}
-
             # ===== Ajuste automático: si el menú se queda corto, subir gramos =====
             MIN_KCAL_RATIO = 0.92  # mínimo 92% del objetivo
             MAX_KCAL_RATIO = 1.05  # máximo 105% del objetivo
@@ -2344,6 +2342,8 @@ elif page == "👨‍🍳 Chef IA":
             menu = boost_menu_to_target(menu, float(kcal_obj))
 
 
+            
+            totals = {"calories": 0.0, "protein": 0.0, "carbs": 0.0, "fat": 0.0}
 
             
             for meal in menu.get("meals", []):
@@ -3052,6 +3052,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
