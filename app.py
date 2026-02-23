@@ -1,6 +1,6 @@
 # app.py
 
-import os, math
+import os, math, json
 import hashlib, hmac, base64
 from datetime import date
 
@@ -1592,18 +1592,25 @@ elif page == "🎯 Objetivos":
     saved_deficit = float(get_setting("deficit_pct", 20, user_id=uid))
 
     # --- Medidas corporales guardadas (opcional) ---
-    saved_neck = float(get_setting("neck_cm", 40, user_id=uid))
-    saved_shoulders = float(get_setting("shoulders_cm", 117, user_id=uid))
-    saved_chest = float(get_setting("chest_cm", 102, user_id=uid))
-    saved_waist = float(get_setting("waist_cm", 90, user_id=uid))
-    saved_hip = float(get_setting("hip_cm", 93, user_id=uid))
-    saved_arm_l = float(get_setting("arm_l_cm", 34, user_id=uid))
-    saved_arm_r = float(get_setting("arm_r_cm", 34, user_id=uid))
-    saved_thigh_l = float(get_setting("thigh_l_cm", 65, user_id=uid))
-    saved_thigh_r = float(get_setting("thigh_r_cm", 65, user_id=uid))
-    saved_calf_l = float(get_setting("calf_l_cm", 40, user_id=uid))
-    saved_calf_r = float(get_setting("calf_r_cm", 40, user_id=uid))
+    # --- Medidas corporales guardadas (desde JSON) ---
+    raw_bm = get_setting("body_metrics_json", "{}", user_id=uid)
+    try:
+        bm = json.loads(raw_bm) if raw_bm else {}
+    except Exception:
+        bm = {}
 
+    measures = bm.get("measures_cm", {}) or {}
+    saved_neck = float(measures.get("neck", 40))
+    saved_shoulders = float(measures.get("shoulders", 117))
+    saved_chest = float(measures.get("chest", 102))
+    saved_waist = float(measures.get("waist", 90))
+    saved_hip = float(measures.get("hip", 93))
+    saved_arm_l = float(measures.get("arm_l", 34))
+    saved_arm_r = float(measures.get("arm_r", 34))
+    saved_thigh_l = float(measures.get("thigh_l", 65))
+    saved_thigh_r = float(measures.get("thigh_r", 65))
+    saved_calf_l = float(measures.get("calf_l", 40))
+    saved_calf_r = float(measures.get("calf_r", 40))
     
     fm_hero(
         "🎯 Objetivos",
@@ -1778,9 +1785,11 @@ elif page == "🎯 Objetivos":
         set_setting("target_protein", str(protein_g), user_id=uid)
         set_setting("target_carbs", str(carbs_g), user_id=uid)
         set_setting("target_fat", str(fat_g), user_id=uid)
-        # --- Guardar medidas corporales ---
-        # (si el usuario no abrió el expander, estas variables pueden no existir.
-        #  así que las leemos de session_state con fallback a lo guardado)
+
+        
+        # =========================
+        # Guardar medidas + métricas en 1 sola key (evita rate limit)
+        # =========================
         def _ss(key, fallback):
             v = st.session_state.get(key, None)
             return float(v) if v is not None else float(fallback)
@@ -1797,20 +1806,7 @@ elif page == "🎯 Objetivos":
         calf_l_cm_v = _ss("m_calf_l", saved_calf_l)
         calf_r_cm_v = _ss("m_calf_r", saved_calf_r)
 
-        set_setting("neck_cm", str(neck_cm_v), user_id=uid)
-        set_setting("shoulders_cm", str(shoulders_cm_v), user_id=uid)
-        set_setting("chest_cm", str(chest_cm_v), user_id=uid)
-        set_setting("waist_cm", str(waist_cm_v), user_id=uid)
-        set_setting("hip_cm", str(hip_cm_v), user_id=uid)
-        set_setting("arm_l_cm", str(arm_l_cm_v), user_id=uid)
-        set_setting("arm_r_cm", str(arm_r_cm_v), user_id=uid)
-        set_setting("thigh_l_cm", str(thigh_l_cm_v), user_id=uid)
-        set_setting("thigh_r_cm", str(thigh_r_cm_v), user_id=uid)
-        set_setting("calf_l_cm", str(calf_l_cm_v), user_id=uid)
-        set_setting("calf_r_cm", str(calf_r_cm_v), user_id=uid)
-
-        # --- Guardar métricas clave (opcional pero útil para dashboard/coach) ---
-        # Recalcula aquí (para guardar valores consistentes)
+        # Métricas clave
         h_m = float(height) / 100.0 if float(height) > 0 else 0.0
         bmi_v = (float(weight) / (h_m ** 2)) if h_m > 0 else 0.0
         whtr_v = (waist_cm_v / float(height)) if float(height) > 0 else 0.0
@@ -1840,12 +1836,33 @@ elif page == "🎯 Objetivos":
         lbm_kg_v = float(weight) - fat_kg_v
         ffmi_v = (lbm_kg_v / (h_m ** 2)) if h_m > 0 else 0.0
 
-        set_setting("bmi", str(bmi_v), user_id=uid)
-        set_setting("bodyfat_percent", str(bodyfat_pct_v), user_id=uid)
-        set_setting("lbm_kg", str(lbm_kg_v), user_id=uid)
-        set_setting("ffmi", str(ffmi_v), user_id=uid)
-        set_setting("whtr", str(whtr_v), user_id=uid)
-        set_setting("whr", str(whr_v), user_id=uid)
+        body_metrics = {
+            "measures_cm": {
+                "neck": neck_cm_v,
+                "shoulders": shoulders_cm_v,
+                "chest": chest_cm_v,
+                "waist": waist_cm_v,
+                "hip": hip_cm_v,
+                "arm_l": arm_l_cm_v,
+                "arm_r": arm_r_cm_v,
+                "thigh_l": thigh_l_cm_v,
+                "thigh_r": thigh_r_cm_v,
+                "calf_l": calf_l_cm_v,
+                "calf_r": calf_r_cm_v,
+            },
+            "metrics": {
+                "bmi": bmi_v,
+                "bodyfat_percent": bodyfat_pct_v,
+                "fat_kg": fat_kg_v,
+                "lbm_kg": lbm_kg_v,
+                "ffmi": ffmi_v,
+                "whtr": whtr_v,
+                "whr": whr_v,
+            }
+        }
+
+        # ✅ UNA sola llamada a Google Sheets
+        set_setting("body_metrics_json", json.dumps(body_metrics, ensure_ascii=False), user_id=uid)
 
         
         st.cache_data.clear()
@@ -2792,6 +2809,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
