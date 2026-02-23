@@ -1693,7 +1693,7 @@ elif page == "🎯 Objetivos":
         # Helper: input más estrecho + menos espacio vertical (móvil)
         def measure_input(title, min_v, max_v, default_v, key):
             st.markdown(f"**{title}**")
-            c_val, c_pad = st.columns([2, 1])  # <- aquí controlas la “línea azul”
+            c_val, c_pad = st.columns([1, 1])  # <- aquí controlas la “línea azul”
             with c_val:
                 v = st.number_input(
                     title,
@@ -1705,7 +1705,7 @@ elif page == "🎯 Objetivos":
                     label_visibility="collapsed"
                 )
             # menos aire entre recuadros
-            st.markdown("<div style='height:6px'></div>", unsafe_allow_html=True)
+            st.markdown("<div style='height:4px'></div>", unsafe_allow_html=True)
             return v
 
         
@@ -2902,6 +2902,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
