@@ -1759,7 +1759,7 @@ elif page == "🎯 Objetivos":
             with colC:
                 img_path = os.path.join("assets", "body.png")
                 if os.path.exists(img_path):
-                    st.image(img_path, width=220)
+                    st.image(img_path, use_container_width=True)
                 else:
                     st.info("Pon una imagen en `assets/body.png` para ver el muñeco aquí 🙂")
                 st.caption("Consejo: mide siempre en las mismas condiciones para que los cambios sean comparables.")
@@ -2914,6 +2914,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
