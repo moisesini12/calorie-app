@@ -1686,67 +1686,130 @@ elif page == "🎯 Objetivos":
     # 📏 Medidas corporales (UI tipo captura)
     # =========================
     st.markdown("### 📏 Medidas corporales")
+    compact_mode = st.toggle("📱 Modo móvil compacto (recomendado en móvil)", value=True)
+    
     with st.expander("Abrir / editar medidas", expanded=True):
-        st.markdown('<div class="measures-wrap">', unsafe_allow_html=True)
-        colL, colC, colR = st.columns([1.1, 1.3, 1.1], gap="large")
+    
+        if compact_mode:
+            # =========================
+            # 📱 MODO COMPACTO (tabs)
+            # =========================
+            tabL, tabC, tabR = st.tabs(["⬅️ Medidas (I)", "🧍‍♂️ Foto", "➡️ Medidas (D)"])
+    
+            with tabC:
+                img_path = os.path.join("assets", "body.png")
+                if os.path.exists(img_path):
+                    st.image(img_path, use_container_width=True)
+                else:
+                    st.info("Pon una imagen en `assets/body.png` para ver el muñeco aquí 🙂")
+                st.caption("Consejo: mide siempre en las mismas condiciones para que los cambios sean comparables.")
+    
+            with tabL:
+                st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Cuello (cm)</div>', unsafe_allow_html=True)
+                neck_cm = st.number_input("Cuello", 20.0, 60.0, float(saved_neck), 0.5, key="m_neck", label_visibility="collapsed")
+                st.markdown('</div>', unsafe_allow_html=True)
+    
+                st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Brazo (I) (cm)</div>', unsafe_allow_html=True)
+                arm_l_cm = st.number_input("Brazo Izquierdo", 15.0, 60.0, float(saved_arm_l), 0.5, key="m_arm_l", label_visibility="collapsed")
+                st.markdown('</div>', unsafe_allow_html=True)
+    
+                st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Pecho (cm)</div>', unsafe_allow_html=True)
+                chest_cm = st.number_input("Pecho", 50.0, 160.0, float(saved_chest), 0.5, key="m_chest", label_visibility="collapsed")
+                st.markdown('</div>', unsafe_allow_html=True)
+    
+                st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Muslo (I) (cm)</div>', unsafe_allow_html=True)
+                thigh_l_cm = st.number_input("Muslo Izquierdo", 30.0, 110.0, float(saved_thigh_l), 0.5, key="m_thigh_l", label_visibility="collapsed")
+                st.markdown('</div>', unsafe_allow_html=True)
+    
+                st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Pantorrilla (I) (cm)</div>', unsafe_allow_html=True)
+                calf_l_cm = st.number_input("Pantorrilla Izquierda", 20.0, 70.0, float(saved_calf_l), 0.5, key="m_calf_l", label_visibility="collapsed")
+                st.markdown('</div>', unsafe_allow_html=True)
+    
+            with tabR:
+                st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Hombros (cm)</div>', unsafe_allow_html=True)
+                shoulders_cm = st.number_input("Hombros", 60.0, 200.0, float(saved_shoulders), 0.5, key="m_shoulders", label_visibility="collapsed")
+                st.markdown('</div>', unsafe_allow_html=True)
+    
+                st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Brazo (D) (cm)</div>', unsafe_allow_html=True)
+                arm_r_cm = st.number_input("Brazo Derecho", 15.0, 60.0, float(saved_arm_r), 0.5, key="m_arm_r", label_visibility="collapsed")
+                st.markdown('</div>', unsafe_allow_html=True)
+    
+                st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Cintura (cm)</div>', unsafe_allow_html=True)
+                waist_cm = st.number_input("Cintura", 40.0, 200.0, float(saved_waist), 0.5, key="m_waist", label_visibility="collapsed")
+                st.markdown('</div>', unsafe_allow_html=True)
+    
+                st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Cadera (cm)</div>', unsafe_allow_html=True)
+                hip_cm = st.number_input("Cadera", 60.0, 220.0, float(saved_hip), 0.5, key="m_hip", label_visibility="collapsed")
+                st.markdown('</div>', unsafe_allow_html=True)
+    
+                st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Muslo (D) (cm)</div>', unsafe_allow_html=True)
+                thigh_r_cm = st.number_input("Muslo Derecho", 30.0, 110.0, float(saved_thigh_r), 0.5, key="m_thigh_r", label_visibility="collapsed")
+                st.markdown('</div>', unsafe_allow_html=True)
+    
+                st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Pantorrilla (D) (cm)</div>', unsafe_allow_html=True)
+                calf_r_cm = st.number_input("Pantorrilla Derecha", 20.0, 70.0, float(saved_calf_r), 0.5, key="m_calf_r", label_visibility="collapsed")
+                st.markdown('</div>', unsafe_allow_html=True)
+    
+        else:
+            # =========================
+            # 🖥️ MODO PC (3 columnas)
+            # =========================
+            colL, colC, colR = st.columns([1.1, 1.3, 1.1], gap="large")
+    
+            with colC:
+                img_path = os.path.join("assets", "body.png")
+                if os.path.exists(img_path):
+                    st.image(img_path, use_container_width=True)
+                else:
+                    st.info("Pon una imagen en `assets/body.png` para ver el muñeco aquí 🙂")
+                st.caption("Consejo: mide siempre en las mismas condiciones para que los cambios sean comparables.")
+    
+            with colL:
+                st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Cuello (cm)</div>', unsafe_allow_html=True)
+                neck_cm = st.number_input("Cuello", 20.0, 60.0, float(saved_neck), 0.5, key="m_neck", label_visibility="collapsed")
+                st.markdown('</div>', unsafe_allow_html=True)
+    
+                st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Brazo (I) (cm)</div>', unsafe_allow_html=True)
+                arm_l_cm = st.number_input("Brazo Izquierdo", 15.0, 60.0, float(saved_arm_l), 0.5, key="m_arm_l", label_visibility="collapsed")
+                st.markdown('</div>', unsafe_allow_html=True)
+    
+                st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Pecho (cm)</div>', unsafe_allow_html=True)
+                chest_cm = st.number_input("Pecho", 50.0, 160.0, float(saved_chest), 0.5, key="m_chest", label_visibility="collapsed")
+                st.markdown('</div>', unsafe_allow_html=True)
+    
+                st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Muslo (I) (cm)</div>', unsafe_allow_html=True)
+                thigh_l_cm = st.number_input("Muslo Izquierdo", 30.0, 110.0, float(saved_thigh_l), 0.5, key="m_thigh_l", label_visibility="collapsed")
+                st.markdown('</div>', unsafe_allow_html=True)
+    
+                st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Pantorrilla (I) (cm)</div>', unsafe_allow_html=True)
+                calf_l_cm = st.number_input("Pantorrilla Izquierda", 20.0, 70.0, float(saved_calf_l), 0.5, key="m_calf_l", label_visibility="collapsed")
+                st.markdown('</div>', unsafe_allow_html=True)
+    
+            with colR:
+                st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Hombros (cm)</div>', unsafe_allow_html=True)
+                shoulders_cm = st.number_input("Hombros", 60.0, 200.0, float(saved_shoulders), 0.5, key="m_shoulders", label_visibility="collapsed")
+                st.markdown('</div>', unsafe_allow_html=True)
+    
+                st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Brazo (D) (cm)</div>', unsafe_allow_html=True)
+                arm_r_cm = st.number_input("Brazo Derecho", 15.0, 60.0, float(saved_arm_r), 0.5, key="m_arm_r", label_visibility="collapsed")
+                st.markdown('</div>', unsafe_allow_html=True)
+    
+                st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Cintura (cm)</div>', unsafe_allow_html=True)
+                waist_cm = st.number_input("Cintura", 40.0, 200.0, float(saved_waist), 0.5, key="m_waist", label_visibility="collapsed")
+                st.markdown('</div>', unsafe_allow_html=True)
+    
+                st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Cadera (cm)</div>', unsafe_allow_html=True)
+                hip_cm = st.number_input("Cadera", 60.0, 220.0, float(saved_hip), 0.5, key="m_hip", label_visibility="collapsed")
+                st.markdown('</div>', unsafe_allow_html=True)
+    
+                st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Muslo (D) (cm)</div>', unsafe_allow_html=True)
+                thigh_r_cm = st.number_input("Muslo Derecho", 30.0, 110.0, float(saved_thigh_r), 0.5, key="m_thigh_r", label_visibility="collapsed")
+                st.markdown('</div>', unsafe_allow_html=True)
+    
+                st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Pantorrilla (D) (cm)</div>', unsafe_allow_html=True)
+                calf_r_cm = st.number_input("Pantorrilla Derecha", 20.0, 70.0, float(saved_calf_r), 0.5, key="m_calf_r", label_visibility="collapsed")
+                st.markdown('</div>', unsafe_allow_html=True)
 
-        # Centro: muñeco
-        with colC:
-            img_path = os.path.join("assets", "body.png")
-            if os.path.exists(img_path):
-                st.image(img_path, use_container_width=True)
-            else:
-                st.info("Pon una imagen en `assets/body.png` para ver el muñeco aquí 🙂")
-
-            st.caption("Consejo: mide siempre en las mismas condiciones para que los cambios sean comparables.")
-
-        # Izquierda
-        with colL:
-            st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Cuello (cm)</div>', unsafe_allow_html=True)
-            neck_cm = st.number_input("Cuello", 20.0, 60.0, float(saved_neck), 0.5, key="m_neck", label_visibility="collapsed")
-            st.markdown('</div>', unsafe_allow_html=True)
-
-            st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Brazo (I) (cm)</div>', unsafe_allow_html=True)
-            arm_l_cm = st.number_input("Brazo Izquierdo", 15.0, 60.0, float(saved_arm_l), 0.5, key="m_arm_l", label_visibility="collapsed")
-            st.markdown('</div>', unsafe_allow_html=True)
-
-            st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Pecho (cm)</div>', unsafe_allow_html=True)
-            chest_cm = st.number_input("Pecho", 50.0, 160.0, float(saved_chest), 0.5, key="m_chest", label_visibility="collapsed")
-            st.markdown('</div>', unsafe_allow_html=True)
-
-            st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Muslo (I) (cm)</div>', unsafe_allow_html=True)
-            thigh_l_cm = st.number_input("Muslo Izquierdo", 30.0, 110.0, float(saved_thigh_l), 0.5, key="m_thigh_l", label_visibility="collapsed")
-            st.markdown('</div>', unsafe_allow_html=True)
-
-            st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Pantorrilla (I) (cm)</div>', unsafe_allow_html=True)
-            calf_l_cm = st.number_input("Pantorrilla Izquierda", 20.0, 70.0, float(saved_calf_l), 0.5, key="m_calf_l", label_visibility="collapsed")
-            st.markdown('</div>', unsafe_allow_html=True)
-
-        # Derecha
-        with colR:
-            st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Hombros (cm)</div>', unsafe_allow_html=True)
-            shoulders_cm = st.number_input("Hombros", 60.0, 200.0, float(saved_shoulders), 0.5, key="m_shoulders", label_visibility="collapsed")
-            st.markdown('</div>', unsafe_allow_html=True)
-
-            st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Brazo (D) (cm)</div>', unsafe_allow_html=True)
-            arm_r_cm = st.number_input("Brazo Derecho", 15.0, 60.0, float(saved_arm_r), 0.5, key="m_arm_r", label_visibility="collapsed")
-            st.markdown('</div>', unsafe_allow_html=True)
-
-            st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Cintura (cm)</div>', unsafe_allow_html=True)
-            waist_cm = st.number_input("Cintura", 40.0, 200.0, float(saved_waist), 0.5, key="m_waist", label_visibility="collapsed")
-            st.markdown('</div>', unsafe_allow_html=True)
-
-            st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Cadera (cm)</div>', unsafe_allow_html=True)
-            hip_cm = st.number_input("Cadera", 60.0, 220.0, float(saved_hip), 0.5, key="m_hip", label_visibility="collapsed")
-            st.markdown('</div>', unsafe_allow_html=True)
-
-            st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Muslo (D) (cm)</div>', unsafe_allow_html=True)
-            thigh_r_cm = st.number_input("Muslo Derecho", 30.0, 110.0, float(saved_thigh_r), 0.5, key="m_thigh_r", label_visibility="collapsed")
-            st.markdown('</div>', unsafe_allow_html=True)
-
-            st.markdown('<div class="fm-measure-card"><div class="fm-measure-title">Pantorrilla (D) (cm)</div>', unsafe_allow_html=True)
-            calf_r_cm = st.number_input("Pantorrilla Derecha", 20.0, 70.0, float(saved_calf_r), 0.5, key="m_calf_r", label_visibility="collapsed")
-            st.markdown('</div>', unsafe_allow_html=True)
 
         st.markdown('</div>', unsafe_allow_html=True)
 
@@ -2851,6 +2914,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
