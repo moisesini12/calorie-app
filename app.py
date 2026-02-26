@@ -1041,6 +1041,7 @@ def render_bottom_nav():
 # =========================
 # CURRENT PAGE
 # =========================
+render_bottom_nav()
 page = st.session_state["page"]
 
 # ==========================================================
@@ -3185,6 +3186,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
