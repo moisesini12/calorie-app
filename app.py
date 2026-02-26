@@ -935,118 +935,107 @@ if st.session_state["goto_page"]:
 
 
 def _go(target_page: str):
-
-    # =========================
-    # POPUPS (Comidas / Perfil)
-    # =========================
-    def _open_foods():
-        st.session_state["food_popup_open"] = True
-    
-    def _open_profile():
-        st.session_state["profile_popup_open"] = True
-    
-    # Popup: Comidas
-    if st.session_state.get("food_popup_open", False):
-        @st.dialog("🍽️ Comidas", width="small")
-        def _dlg_foods():
-            st.caption("Elige qué quieres hacer 👇")
-            if st.button("🍽 Registro", type="primary", use_container_width=True):
-                st.session_state["food_popup_open"] = False
-                _go("🍽 Registro")
-                st.rerun()
-    
-            if st.button("➕ Añadir alimento", use_container_width=True):
-                st.session_state["food_popup_open"] = False
-                _go("➕ Añadir alimento")
-                st.rerun()
-    
-            if st.button("👨‍🍳 Chef IA", use_container_width=True):
-                st.session_state["food_popup_open"] = False
-                _go("👨‍🍳 Chef IA")
-                st.rerun()
-    
-            st.divider()
-            if st.button("✖️ Cerrar", use_container_width=True):
-                st.session_state["food_popup_open"] = False
-                st.rerun()
-    
-        _dlg_foods()
-    
-    # Popup: Perfil (fecha + logout)
-    if st.session_state.get("profile_popup_open", False):
-        @st.dialog("👤 Perfil", width="small")
-        def _dlg_profile():
-            st.caption(f"Sesión: **{st.session_state['user_id']}**")
-    
-            d = st.date_input("📅 Día", value=st.session_state["selected_date"])
-            if d != st.session_state["selected_date"]:
-                _set_date(d)
-                st.toast("Fecha actualizada ✅")
-                st.rerun()
-    
-            st.divider()
-    
-            if st.button("🚪 Cerrar sesión", type="primary", use_container_width=True):
-                st.session_state["auth_ok"] = False
-                st.session_state["user_id"] = ""
-                st.session_state["profile_popup_open"] = False
-                st.rerun()
-    
-            if st.button("✖️ Cerrar", use_container_width=True):
-                st.session_state["profile_popup_open"] = False
-                st.rerun()
-    
-        _dlg_profile()
-    
-    # =========================
-    # BOTTOM NAV (Instagram-like)
-    # =========================
-    def render_bottom_nav():
-        # Mapeo bonito -> páginas internas
-        # Home (principal)
-        # Comidas abre popup
-        # Objetivos directo
-        # Rutina directo (si lo quieres apuntar a Objetivos, cambia 1 línea abajo)
-        # Perfil abre popup
-    
-        with st.container():
-            st.markdown('<div class="fm-bottom-nav"><div class="fm-inner">', unsafe_allow_html=True)
-    
-            selected = option_menu(
-                menu_title=None,
-                options=["🏠", "🍽️", "🎯", "🏋️", "👤"],
-                icons=["house-fill", "egg-fried", "bullseye", "activity", "person-circle"],
-                orientation="horizontal",
-                key="fm_bottom_nav",
-                styles={
-                    "container": {"padding": "0px", "background-color": "transparent"},
-                    "icon": {"font-size": "18px"},
-                    "nav-link": {"padding": "10px 10px", "margin": "0px", "border-radius": "999px"},
-                    "nav-link-selected": {"border-radius": "999px"},
-                },
-            )
-    
-            st.markdown("</div></div>", unsafe_allow_html=True)
-    
-        if selected == "🏠":
-            _go("📊 Dashboard")
-        elif selected == "🍽️":
-            _open_foods()
-        elif selected == "🎯":
-            _go("🎯 Objetivos")
-        elif selected == "🏋️":
-            _go("🏋️ Rutina IA")  # <- si quieres que este botón abra Objetivos: pon "🎯 Objetivos"
-        elif selected == "👤":
-            _open_profile()
-    
-    # Render SIEMPRE al final del “header/estado”, antes de pintar página
-    render_bottom_nav()
-
-    
     """Cambia de página."""
     st.session_state["page"] = target_page
 
+# =========================
+# POPUPS (Comidas / Perfil)
+# =========================
+def _open_foods():
+    st.session_state["food_popup_open"] = True
 
+def _open_profile():
+    st.session_state["profile_popup_open"] = True
+
+
+# Popup: Comidas
+if st.session_state.get("food_popup_open", False):
+    @st.dialog("🍽️ Comidas", width="small")
+    def _dlg_foods():
+        st.caption("Elige qué quieres hacer 👇")
+
+        if st.button("🍽 Registro", type="primary", use_container_width=True):
+            st.session_state["food_popup_open"] = False
+            _go("🍽 Registro")
+            st.rerun()
+
+        if st.button("➕ Añadir alimento", use_container_width=True):
+            st.session_state["food_popup_open"] = False
+            _go("➕ Añadir alimento")
+            st.rerun()
+
+        if st.button("👨‍🍳 Chef IA", use_container_width=True):
+            st.session_state["food_popup_open"] = False
+            _go("👨‍🍳 Chef IA")
+            st.rerun()
+
+        st.divider()
+        if st.button("✖️ Cerrar", use_container_width=True):
+            st.session_state["food_popup_open"] = False
+            st.rerun()
+
+    _dlg_foods()
+
+
+# Popup: Perfil (fecha + logout)
+if st.session_state.get("profile_popup_open", False):
+    @st.dialog("👤 Perfil", width="small")
+    def _dlg_profile():
+        st.caption(f"Sesión: **{st.session_state['user_id']}**")
+
+        d = st.date_input("📅 Día", value=st.session_state["selected_date"])
+        if d != st.session_state["selected_date"]:
+            st.session_state["selected_date"] = d
+            st.toast("Fecha actualizada ✅")
+            st.rerun()
+
+        st.divider()
+
+        if st.button("🚪 Cerrar sesión", type="primary", use_container_width=True):
+            st.session_state["auth_ok"] = False
+            st.session_state["user_id"] = ""
+            st.session_state["profile_popup_open"] = False
+            st.rerun()
+
+        if st.button("✖️ Cerrar", use_container_width=True):
+            st.session_state["profile_popup_open"] = False
+            st.rerun()
+
+    _dlg_profile()
+
+
+# =========================
+# BOTTOM NAV (Instagram-like)
+# =========================
+def render_bottom_nav():
+    st.markdown('<div class="fm-bottom-nav"><div class="fm-inner">', unsafe_allow_html=True)
+
+    selected = option_menu(
+        menu_title=None,
+        options=["🏠", "🍽️", "🎯", "🏋️", "👤"],
+        icons=["house-fill", "egg-fried", "bullseye", "activity", "person-circle"],
+        orientation="horizontal",
+        key="fm_bottom_nav",
+        styles={
+            "container": {"padding": "0px", "background-color": "transparent"},
+            "icon": {"font-size": "18px"},
+            "nav-link": {"padding": "10px 10px", "margin": "0px", "border-radius": "999px"},
+            "nav-link-selected": {"border-radius": "999px"},
+        },
+    )
+
+    st.markdown("</div></div>", unsafe_allow_html=True)
+
+    if selected == "🏠":
+        _go("📊 Dashboard")
+    elif selected == "🍽️":
+        _open_foods()
+    elif selected == "🎯":
+        _go("🎯 Objetivos")
+    elif selected == "🏋️":
+        _go("🏋️ Rutina IA")
+    elif selected == "👤":
+        _open_profile()
 
 
 # =========================
@@ -3196,6 +3185,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
