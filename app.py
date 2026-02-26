@@ -930,9 +930,9 @@ if "menu_open" not in st.session_state:
 
 # Atajos internos (si algún botón pone goto_page)
 if st.session_state["goto_page"]:
-    st.session_state["page"] = st.session_state["goto_page"]
+    _go(st.session_state["goto_page"])   # ✅ usa _go para cerrar popups
     st.session_state["goto_page"] = None
-
+    st.rerun()
 
 def _go(target_page: str):
     """Cambia de página y cierra popups."""
@@ -1017,7 +1017,7 @@ def render_bottom_nav():
         options=["🏠", "🍽️", "🎯", "🏋️", "👤"],
         icons=["house-fill", "egg-fried", "bullseye", "activity", "person-circle"],
         orientation="horizontal",
-        key="fm_bottom_nav",
+        key="fm_bottom_nav_ui",
         styles={
             "container": {"padding": "0px", "background-color": "transparent"},
             "icon": {"font-size": "18px"},
@@ -1053,22 +1053,7 @@ def render_bottom_nav():
 
 
 
-# =========================
-# Sync bottom nav -> page (ANTES de renderizar option_menu)
-# =========================
-page_to_tab = {
-    "📊 Dashboard": "🏠",
-    "🍽 Registro": "🍽️",
-    "➕ Añadir alimento": "🍽️",
-    "👨‍🍳 Chef IA": "🍽️",
-    "🤖 IA Alimento": "🍽️",
-    "🎯 Objetivos": "🎯",
-    "🏋️ Rutina IA": "🏋️",
-}
 
-desired_tab = page_to_tab.get(st.session_state.get("page", "📊 Dashboard"), "🏠")
-if st.session_state.get("fm_bottom_nav") != desired_tab:
-    st.session_state["fm_bottom_nav"] = desired_tab
 
 # =========================
 # CURRENT PAGE
@@ -3219,6 +3204,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
