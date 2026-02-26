@@ -935,8 +935,23 @@ if st.session_state["goto_page"]:
 
 
 def _go(target_page: str):
-    """Cambia de página."""
+    """Cambia de página + sincroniza nav + cierra popups."""
     st.session_state["page"] = target_page
+
+    # Cierra popups al navegar
+    st.session_state["food_popup_open"] = False
+    st.session_state["profile_popup_open"] = False
+
+    # Sincroniza selección del bottom nav con la página actual
+    page_to_tab = {
+        "📊 Dashboard": "🏠",
+        "🍽 Registro": "🍽️",
+        "➕ Añadir alimento": "🍽️",
+        "👨‍🍳 Chef IA": "🍽️",
+        "🎯 Objetivos": "🎯",
+        "🏋️ Rutina IA": "🏋️",
+    }
+    st.session_state["fm_bottom_nav"] = page_to_tab.get(target_page, "🏠")
 
 # =========================
 # POPUPS (Comidas / Perfil)
@@ -1010,12 +1025,17 @@ if st.session_state.get("profile_popup_open", False):
 def render_bottom_nav():
     st.markdown('<div class="fm-bottom-nav"><div class="fm-inner">', unsafe_allow_html=True)
 
+    tabs = ["🏠", "🍽️", "🎯", "🏋️", "👤"]
+    current = st.session_state.get("fm_bottom_nav", "🏠")
+    default_idx = tabs.index(current) if current in tabs else 0
+    
     selected = option_menu(
         menu_title=None,
-        options=["🏠", "🍽️", "🎯", "🏋️", "👤"],
+        options=tabs,
         icons=["house-fill", "egg-fried", "bullseye", "activity", "person-circle"],
         orientation="horizontal",
         key="fm_bottom_nav",
+        default_index=default_idx,
         styles={
             "container": {"padding": "0px", "background-color": "transparent"},
             "icon": {"font-size": "18px"},
@@ -3186,6 +3206,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
