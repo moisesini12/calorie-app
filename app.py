@@ -1009,7 +1009,7 @@ if st.session_state.get("profile_popup_open", False):
 # BOTTOM NAV (Instagram-like)
 # =========================
 def render_bottom_nav():
-    # ✅ para que el menú no se quede “pegado” en 🍽️/👤
+    # ===== Sync page -> tab (ANTES del widget) =====
     page_to_index = {
         "📊 Dashboard": 0,
         "🍽 Registro": 1,
@@ -1019,17 +1019,22 @@ def render_bottom_nav():
         "🎯 Objetivos": 2,
         "🏋️ Rutina IA": 3,
     }
+    options = ["🏠", "🍽️", "🎯", "🏋️", "👤"]
     default_index = page_to_index.get(st.session_state.get("page", "📊 Dashboard"), 0)
+    desired = options[default_index]
+
+    # ✅ Si el menú se quedó “pegado” en otra opción, lo corregimos ANTES de crear el widget
+    if st.session_state.get("fm_bottom_nav_ui") != desired:
+        st.session_state["fm_bottom_nav_ui"] = desired
 
     st.markdown('<div class="fm-bottom-nav"><div class="fm-inner">', unsafe_allow_html=True)
 
     selected = option_menu(
         menu_title=None,
-        options=["🏠", "🍽️", "🎯", "🏋️", "👤"],
+        options=options,
         icons=["house-fill", "egg-fried", "bullseye", "activity", "person-circle"],
         orientation="horizontal",
-        key="fm_bottom_nav_ui",          # ✅ key separado
-        default_index=default_index,     # ✅ sincroniza sin tocar session_state
+        key="fm_bottom_nav_ui",
         styles={
             "container": {"padding": "0px", "background-color": "transparent"},
             "icon": {"font-size": "18px"},
@@ -1040,17 +1045,21 @@ def render_bottom_nav():
 
     st.markdown("</div></div>", unsafe_allow_html=True)
 
-    # ✅ nada de rerun aquí
-    if selected == "🏠":
-        _go("📊 Dashboard")
-    elif selected == "🍽️":
-        _open_foods()
-    elif selected == "🎯":
-        _go("🎯 Objetivos")
-    elif selected == "🏋️":
-        _go("🏋️ Rutina IA")
-    elif selected == "👤":
-        _open_profile()
+    # ===== Acción SOLO si hubo cambio (click real) =====
+    last = st.session_state.get("_fm_nav_last", desired)
+    if selected != last:
+        st.session_state["_fm_nav_last"] = selected
+
+        if selected == "🏠":
+            _go("📊 Dashboard")
+        elif selected == "🍽️":
+            _open_foods()
+        elif selected == "🎯":
+            _go("🎯 Objetivos")
+        elif selected == "🏋️":
+            _go("🏋️ Rutina IA")
+        elif selected == "👤":
+            _open_profile()
 
 
 
@@ -3204,6 +3213,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
