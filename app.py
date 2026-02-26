@@ -1012,17 +1012,12 @@ if st.session_state.get("profile_popup_open", False):
 def render_bottom_nav():
     st.markdown('<div class="fm-bottom-nav"><div class="fm-inner">', unsafe_allow_html=True)
 
-    tabs = ["🏠", "🍽️", "🎯", "🏋️", "👤"]
-    current = st.session_state.get("fm_bottom_nav", "🏠")
-    default_idx = tabs.index(current) if current in tabs else 0
-    
     selected = option_menu(
         menu_title=None,
-        options=tabs,
+        options=["🏠", "🍽️", "🎯", "🏋️", "👤"],
         icons=["house-fill", "egg-fried", "bullseye", "activity", "person-circle"],
         orientation="horizontal",
         key="fm_bottom_nav",
-        default_index=default_idx,
         styles={
             "container": {"padding": "0px", "background-color": "transparent"},
             "icon": {"font-size": "18px"},
@@ -1033,15 +1028,25 @@ def render_bottom_nav():
 
     st.markdown("</div></div>", unsafe_allow_html=True)
 
+    # helper: navega SOLO si cambia
+    def nav_to(p):
+        if st.session_state.get("page") != p:
+            _go(p)
+            st.rerun()
+
     if selected == "🏠":
-        _go("📊 Dashboard")
+        nav_to("📊 Dashboard")
+
     elif selected == "🍽️":
         _open_foods()
         st.rerun()
+
     elif selected == "🎯":
-        _go("🎯 Objetivos")
+        nav_to("🎯 Objetivos")
+
     elif selected == "🏋️":
-        _go("🏋️ Rutina IA")
+        nav_to("🏋️ Rutina IA")
+
     elif selected == "👤":
         _open_profile()
         st.rerun()
@@ -1069,6 +1074,7 @@ if st.session_state.get("fm_bottom_nav") != desired_tab:
 # CURRENT PAGE
 # =========================
 render_bottom_nav()
+
 page = st.session_state["page"]
 
 # ==========================================================
@@ -3213,6 +3219,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
