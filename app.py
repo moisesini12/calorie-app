@@ -930,9 +930,8 @@ if "menu_open" not in st.session_state:
 
 # Atajos internos (si algún botón pone goto_page)
 if st.session_state["goto_page"]:
-    _go(st.session_state["goto_page"])   # ✅ usa _go para cerrar popups
+    _go(st.session_state["goto_page"])
     st.session_state["goto_page"] = None
-    st.rerun()
 
 def _go(target_page: str):
     """Cambia de página y cierra popups."""
@@ -1010,6 +1009,18 @@ if st.session_state.get("profile_popup_open", False):
 # BOTTOM NAV (Instagram-like)
 # =========================
 def render_bottom_nav():
+    # ✅ para que el menú no se quede “pegado” en 🍽️/👤
+    page_to_index = {
+        "📊 Dashboard": 0,
+        "🍽 Registro": 1,
+        "➕ Añadir alimento": 1,
+        "👨‍🍳 Chef IA": 1,
+        "🤖 IA Alimento": 1,
+        "🎯 Objetivos": 2,
+        "🏋️ Rutina IA": 3,
+    }
+    default_index = page_to_index.get(st.session_state.get("page", "📊 Dashboard"), 0)
+
     st.markdown('<div class="fm-bottom-nav"><div class="fm-inner">', unsafe_allow_html=True)
 
     selected = option_menu(
@@ -1017,7 +1028,8 @@ def render_bottom_nav():
         options=["🏠", "🍽️", "🎯", "🏋️", "👤"],
         icons=["house-fill", "egg-fried", "bullseye", "activity", "person-circle"],
         orientation="horizontal",
-        key="fm_bottom_nav_ui",
+        key="fm_bottom_nav_ui",          # ✅ key separado
+        default_index=default_index,     # ✅ sincroniza sin tocar session_state
         styles={
             "container": {"padding": "0px", "background-color": "transparent"},
             "icon": {"font-size": "18px"},
@@ -1028,29 +1040,17 @@ def render_bottom_nav():
 
     st.markdown("</div></div>", unsafe_allow_html=True)
 
-    # helper: navega SOLO si cambia
-    def nav_to(p):
-        if st.session_state.get("page") != p:
-            _go(p)
-            st.rerun()
-
+    # ✅ nada de rerun aquí
     if selected == "🏠":
-        nav_to("📊 Dashboard")
-
+        _go("📊 Dashboard")
     elif selected == "🍽️":
         _open_foods()
-        st.rerun()
-
     elif selected == "🎯":
-        nav_to("🎯 Objetivos")
-
+        _go("🎯 Objetivos")
     elif selected == "🏋️":
-        nav_to("🏋️ Rutina IA")
-
+        _go("🏋️ Rutina IA")
     elif selected == "👤":
         _open_profile()
-        st.rerun()
-
 
 
 
@@ -3204,6 +3204,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
