@@ -7,7 +7,7 @@ from datetime import date
 import streamlit as st
 import pandas as pd
 import requests
-
+from streamlit_option_menu import option_menu
 
 
 from db_gsheets import (
@@ -528,6 +528,98 @@ def inject_fitness_ui():
       }
     }
 
+    /* =========================
+       Bottom Nav (Instagram-like)
+       ========================= */
+    .block-container{
+      /* ya lo tienes, pero lo reforzamos para que no tape contenido */
+      padding-bottom: 110px !important;
+    }
+
+    .fm-bottom-nav{
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 9999;
+      padding: 10px 12px 18px 12px;
+      background: rgba(11,16,32,0.86);
+      backdrop-filter: blur(14px);
+      border-top: 1px solid rgba(255,255,255,0.10);
+    }
+
+    .fm-bottom-nav .fm-inner{
+      max-width: 1100px;
+      margin: 0 auto;
+      border-radius: 22px;
+      padding: 10px 10px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.04));
+      border: 1px solid rgba(255,255,255,0.10);
+      box-shadow: 0 18px 45px rgba(0,0,0,0.45);
+    }
+
+    /* option-menu tweaks */
+    .fm-bottom-nav ul{
+      display:flex !important;
+      justify-content: space-between !important;
+      align-items:center !important;
+      gap: 6px !important;
+    }
+
+    .fm-bottom-nav li{
+      flex: 1 1 0 !important;
+      min-width: 0 !important;
+    }
+
+    .fm-bottom-nav a{
+      border-radius: 999px !important;
+      padding: 10px 10px !important;
+      text-align:center !important;
+      font-weight: 950 !important;
+      color: rgba(255,255,255,0.80) !important;
+      border: 1px solid rgba(255,255,255,0.08) !important;
+      background: rgba(255,255,255,0.04) !important;
+    }
+
+    .fm-bottom-nav a:hover{
+      background: rgba(255,255,255,0.07) !important;
+      border-color: rgba(255,255,255,0.12) !important;
+    }
+
+    /* seleccionado */
+    .fm-bottom-nav .nav-link.active{
+      background: linear-gradient(135deg, rgba(139,92,246,0.42), rgba(34,211,238,0.24)) !important;
+      border-color: rgba(255,255,255,0.16) !important;
+      color: rgba(255,255,255,0.92) !important;
+      box-shadow: 0 12px 28px rgba(0,0,0,0.35) !important;
+    }
+
+    /* HOME (primer botón) más grande + rosita */
+    .fm-bottom-nav li:nth-child(1) a{
+      transform: translateY(-6px);
+      padding: 13px 10px !important;
+      background: linear-gradient(135deg, rgba(255,79,216,0.92), rgba(139,92,246,0.92)) !important;
+      color: #0b1020 !important;
+      border: none !important;
+      box-shadow: 0 18px 38px rgba(0,0,0,0.45) !important;
+    }
+
+    .fm-bottom-nav li:nth-child(1) a .icon{
+      filter: drop-shadow(0 8px 18px rgba(0,0,0,0.35));
+    }
+
+    /* reduce texto/iconos */
+    .fm-bottom-nav .nav-link span{
+      font-size: 16px !important;
+      font-weight: 950 !important;
+    }
+
+    /* (Opcional) ocultar sidebar si quieres look app total */
+    /* section[data-testid="stSidebar"]{ display:none; } */
+
+
+
+
 
     </style>
     """, unsafe_allow_html=True)
@@ -807,27 +899,22 @@ require_login()
 uid = st.session_state["user_id"]
 
 # =========================
-# SIDEBAR (solo sesión + fecha)
+# SESSION UI STATE (fecha + dialogs)
 # =========================
-st.sidebar.markdown("""
-<div class="sb-brand">
-  <div class="sb-logo">FM</div>
-  <div class="sb-title">
-    <div class="sb-name">FitMacro</div>
-    <div class="sb-sub">Fitness macros tracker</div>
-  </div>
-</div>
-""", unsafe_allow_html=True)
+if "selected_date" not in st.session_state:
+    st.session_state["selected_date"] = date.today()
 
-st.sidebar.caption(f"👤 Sesión: **{uid}**")
+def _set_date(d: date):
+    st.session_state["selected_date"] = d
 
-if st.sidebar.button("🚪 Cerrar sesión", use_container_width=True):
-    st.session_state["auth_ok"] = False
-    st.session_state["user_id"] = ""
-    st.rerun()
-
-selected_date = st.sidebar.date_input("📅 Día", value=date.today())
+selected_date = st.session_state["selected_date"]
 selected_date_str = selected_date.isoformat()
+
+if "food_popup_open" not in st.session_state:
+    st.session_state["food_popup_open"] = False
+
+if "profile_popup_open" not in st.session_state:
+    st.session_state["profile_popup_open"] = False
 
 # =========================
 # NAV STATE
@@ -848,59 +935,118 @@ if st.session_state["goto_page"]:
 
 
 def _go(target_page: str):
-    """Cambia de página y cierra el menú."""
-    st.session_state["page"] = target_page
-    st.session_state["menu_open"] = False
 
-
-# =========================
-# TOP MENU (Dialog) - mobile proof ✅
-# =========================
-topL, topR = st.columns([1, 9], vertical_alignment="center")
-with topL:
-    if st.button("☰", key="open_nav_menu", use_container_width=True):
-        st.session_state["menu_open"] = True
-
-# (opcional) aquí puedes poner algo en topR si quieres
-
-if st.session_state.get("menu_open", False):
-    @st.dialog("🧭 Menú", width="small")
-    def _nav_dialog():
-        if st.button("📊 Dashboard", type="primary", use_container_width=True, key="dlg_dash"):
+    # =========================
+    # POPUPS (Comidas / Perfil)
+    # =========================
+    def _open_foods():
+        st.session_state["food_popup_open"] = True
+    
+    def _open_profile():
+        st.session_state["profile_popup_open"] = True
+    
+    # Popup: Comidas
+    if st.session_state.get("food_popup_open", False):
+        @st.dialog("🍽️ Comidas", width="small")
+        def _dlg_foods():
+            st.caption("Elige qué quieres hacer 👇")
+            if st.button("🍽 Registro", type="primary", use_container_width=True):
+                st.session_state["food_popup_open"] = False
+                _go("🍽 Registro")
+                st.rerun()
+    
+            if st.button("➕ Añadir alimento", use_container_width=True):
+                st.session_state["food_popup_open"] = False
+                _go("➕ Añadir alimento")
+                st.rerun()
+    
+            if st.button("👨‍🍳 Chef IA", use_container_width=True):
+                st.session_state["food_popup_open"] = False
+                _go("👨‍🍳 Chef IA")
+                st.rerun()
+    
+            st.divider()
+            if st.button("✖️ Cerrar", use_container_width=True):
+                st.session_state["food_popup_open"] = False
+                st.rerun()
+    
+        _dlg_foods()
+    
+    # Popup: Perfil (fecha + logout)
+    if st.session_state.get("profile_popup_open", False):
+        @st.dialog("👤 Perfil", width="small")
+        def _dlg_profile():
+            st.caption(f"Sesión: **{st.session_state['user_id']}**")
+    
+            d = st.date_input("📅 Día", value=st.session_state["selected_date"])
+            if d != st.session_state["selected_date"]:
+                _set_date(d)
+                st.toast("Fecha actualizada ✅")
+                st.rerun()
+    
+            st.divider()
+    
+            if st.button("🚪 Cerrar sesión", type="primary", use_container_width=True):
+                st.session_state["auth_ok"] = False
+                st.session_state["user_id"] = ""
+                st.session_state["profile_popup_open"] = False
+                st.rerun()
+    
+            if st.button("✖️ Cerrar", use_container_width=True):
+                st.session_state["profile_popup_open"] = False
+                st.rerun()
+    
+        _dlg_profile()
+    
+    # =========================
+    # BOTTOM NAV (Instagram-like)
+    # =========================
+    def render_bottom_nav():
+        # Mapeo bonito -> páginas internas
+        # Home (principal)
+        # Comidas abre popup
+        # Objetivos directo
+        # Rutina directo (si lo quieres apuntar a Objetivos, cambia 1 línea abajo)
+        # Perfil abre popup
+    
+        with st.container():
+            st.markdown('<div class="fm-bottom-nav"><div class="fm-inner">', unsafe_allow_html=True)
+    
+            selected = option_menu(
+                menu_title=None,
+                options=["🏠", "🍽️", "🎯", "🏋️", "👤"],
+                icons=["house-fill", "egg-fried", "bullseye", "activity", "person-circle"],
+                orientation="horizontal",
+                key="fm_bottom_nav",
+                styles={
+                    "container": {"padding": "0px", "background-color": "transparent"},
+                    "icon": {"font-size": "18px"},
+                    "nav-link": {"padding": "10px 10px", "margin": "0px", "border-radius": "999px"},
+                    "nav-link-selected": {"border-radius": "999px"},
+                },
+            )
+    
+            st.markdown("</div></div>", unsafe_allow_html=True)
+    
+        if selected == "🏠":
             _go("📊 Dashboard")
-            st.rerun()
+        elif selected == "🍽️":
+            _open_foods()
+        elif selected == "🎯":
+            _go("🎯 Objetivos")
+        elif selected == "🏋️":
+            _go("🏋️ Rutina IA")  # <- si quieres que este botón abra Objetivos: pon "🎯 Objetivos"
+        elif selected == "👤":
+            _open_profile()
+    
+    # Render SIEMPRE al final del “header/estado”, antes de pintar página
+    render_bottom_nav()
 
-  
+    
+    """Cambia de página."""
+    st.session_state["page"] = target_page
 
-        st.divider()
 
-        # ✅ COMIDAS (desplegable ampliable)
-        with st.expander("🍽️ Comidas", expanded=False):
-            if st.button("🍽 Registro", use_container_width=True, key="dlg_reg"):
-                _go("🍽 Registro"); st.rerun()
-
-            if st.button("➕ Añadir alimento", use_container_width=True, key="dlg_addfood"):
-                _go("➕ Añadir alimento"); st.rerun()
-
-            if st.button("👨‍🍳 Chef IA", use_container_width=True, key="dlg_chef"):
-                _go("👨‍🍳 Chef IA"); st.rerun()
-
-        # ✅ RUTINA (desplegable ampliable)
-        with st.expander("🏋️ Rutina", expanded=False):
-            if st.button("🏋️ Rutina IA", use_container_width=True, key="dlg_rutina"):
-                _go("🏋️ Rutina IA"); st.rerun()
-
-        # ✅ OBJETIVOS (desplegable ampliable)
-        with st.expander("🎯 Objetivos", expanded=False):
-            if st.button("🎯 Objetivos", use_container_width=True, key="dlg_obj"):
-                _go("🎯 Objetivos"); st.rerun()
-
-        st.divider()
-        if st.button("✖️ Cerrar", use_container_width=True, key="dlg_close"):
-            st.session_state["menu_open"] = False
-            st.rerun()
-
-    _nav_dialog()
 
 
 # =========================
@@ -3050,6 +3196,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
