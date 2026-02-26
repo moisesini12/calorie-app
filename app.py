@@ -935,23 +935,10 @@ if st.session_state["goto_page"]:
 
 
 def _go(target_page: str):
-    """Cambia de página + sincroniza nav + cierra popups."""
+    """Cambia de página y cierra popups."""
     st.session_state["page"] = target_page
-
-    # Cierra popups al navegar
     st.session_state["food_popup_open"] = False
     st.session_state["profile_popup_open"] = False
-
-    # Sincroniza selección del bottom nav con la página actual
-    page_to_tab = {
-        "📊 Dashboard": "🏠",
-        "🍽 Registro": "🍽️",
-        "➕ Añadir alimento": "🍽️",
-        "👨‍🍳 Chef IA": "🍽️",
-        "🎯 Objetivos": "🎯",
-        "🏋️ Rutina IA": "🏋️",
-    }
-    st.session_state["fm_bottom_nav"] = page_to_tab.get(target_page, "🏠")
 
 # =========================
 # POPUPS (Comidas / Perfil)
@@ -1050,13 +1037,33 @@ def render_bottom_nav():
         _go("📊 Dashboard")
     elif selected == "🍽️":
         _open_foods()
+        st.rerun()
     elif selected == "🎯":
         _go("🎯 Objetivos")
     elif selected == "🏋️":
         _go("🏋️ Rutina IA")
     elif selected == "👤":
         _open_profile()
+        st.rerun()
 
+
+
+# =========================
+# Sync bottom nav -> page (ANTES de renderizar option_menu)
+# =========================
+page_to_tab = {
+    "📊 Dashboard": "🏠",
+    "🍽 Registro": "🍽️",
+    "➕ Añadir alimento": "🍽️",
+    "👨‍🍳 Chef IA": "🍽️",
+    "🤖 IA Alimento": "🍽️",
+    "🎯 Objetivos": "🎯",
+    "🏋️ Rutina IA": "🏋️",
+}
+
+desired_tab = page_to_tab.get(st.session_state.get("page", "📊 Dashboard"), "🏠")
+if st.session_state.get("fm_bottom_nav") != desired_tab:
+    st.session_state["fm_bottom_nav"] = desired_tab
 
 # =========================
 # CURRENT PAGE
@@ -3206,6 +3213,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
