@@ -931,10 +931,13 @@ if "menu_open" not in st.session_state:
     st.session_state["menu_open"] = False
 
 def _go(target_page: str):
-    """Cambia de página y cierra popups."""
+    """Cambia de página y cierra popups. Además sincroniza el bottom-nav."""
     st.session_state["page"] = target_page
     st.session_state["food_popup_open"] = False
     st.session_state["profile_popup_open"] = False
+
+    # ✅ clave: cuando cambiamos page desde código, pedimos sync del nav
+    st.session_state["_nav_sync"] = True
 
 # Atajos internos (si algún botón pone goto_page)
 if st.session_state["goto_page"]:
@@ -1051,14 +1054,28 @@ def render_bottom_nav():
         "🏋️ Rutina IA": "🏋️",
     }
 
+    tab_to_page = {
+        "🏠": "📊 Dashboard",
+        "🍽️": "🍽 Registro",   # al tocar comidas: vas a Registro
+        "🎯": "🎯 Objetivos",
+        "🏋️": "🏋️ Rutina IA",
+        "👤": None,           # abre perfil
+    }
+
     options = ["🏠", "🍽️", "🎯", "🏋️", "👤"]
     icons   = ["house-fill", "egg-fried", "bullseye", "activity", "person-circle"]
 
     current_page = st.session_state.get("page", "📊 Dashboard")
     desired = page_to_tab.get(current_page, "🏠")
 
-    # ✅ Importante: NO forzar st.session_state["fm_bottom_nav_ui"] antes del widget
-    default_index = options.index(desired)
+    # ✅ Sync SOLO cuando el cambio de page vino de tu código (_go)
+    if st.session_state.get("_nav_sync", False):
+        st.session_state["fm_bottom_nav_ui"] = desired
+        st.session_state["_nav_sync"] = False
+
+    # ✅ Si no existe la key del widget aún, inicialízala
+    if "fm_bottom_nav_ui" not in st.session_state:
+        st.session_state["fm_bottom_nav_ui"] = desired
 
     st.markdown('<div class="fm-bottom-nav"><div class="fm-inner">', unsafe_allow_html=True)
 
@@ -1068,7 +1085,6 @@ def render_bottom_nav():
         icons=icons,
         orientation="horizontal",
         key="fm_bottom_nav_ui",
-        default_index=default_index,
         styles={
             "container": {"padding": "0px", "background-color": "transparent"},
             "icon": {"font-size": "18px"},
@@ -1079,29 +1095,21 @@ def render_bottom_nav():
 
     st.markdown("</div></div>", unsafe_allow_html=True)
 
-    # ✅ Si el usuario no cambió de tab, no hacemos nada
-    if selected == desired:
+    # ✅ Detectar click real: comparar con el último seleccionado
+    prev = st.session_state.get("_fm_nav_prev", None)
+    st.session_state["_fm_nav_prev"] = selected
+
+    if prev is None or selected == prev:
         return
 
-    # ✅ Si cambió, navegamos
-    if selected == "🏠":
-        _go("📊 Dashboard")
-        st.rerun()
-
-    elif selected == "🍽️":
-        _go("🍽 Registro")
-        st.rerun()
-
-    elif selected == "🎯":
-        _go("🎯 Objetivos")
-        st.rerun()
-
-    elif selected == "🏋️":
-        _go("🏋️ Rutina IA")
-        st.rerun()
-
-    elif selected == "👤":
+    # ✅ Acciones
+    if selected == "👤":
         _open_profile()
+        st.rerun()
+
+    target_page = tab_to_page.get(selected)
+    if target_page:
+        _go(target_page)
         st.rerun()
 
 
@@ -3256,6 +3264,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
