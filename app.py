@@ -1112,12 +1112,13 @@ if page == "📊 Dashboard":
     st.markdown("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
     c1, c2 = st.columns(2)
     with c1:
-        if st.button("➕ Añadir comida", type="primary", use_container_width=True):
-            st.session_state["goto_page"] = "🍽 Registro"
+        if st.button("➕ Añadir comida", type="primary", use_container_width=True, key="dash_add_food"):
+            _go("🍽 Registro")
             st.rerun()
+    
     with c2:
-        if st.button("🎯 Cambiar objetivos", use_container_width=True):
-            st.session_state["goto_page"] = "🎯 Objetivos"
+        if st.button("🎯 Cambiar objetivos", use_container_width=True, key="dash_go_goals"):
+            _go("🎯 Objetivos")
             st.rerun()
 
     st.markdown("<div style='height:24px'></div>", unsafe_allow_html=True)
@@ -3219,6 +3220,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
