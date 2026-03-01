@@ -1812,10 +1812,7 @@ elif page == "🍽 Registro":
         # Preview rápido
         if food and grams > 0:
         
-            # 🔍 DEBUG TEMPORAL
-            st.write("GRAMS RAW:", grams)
-            st.write("FOOD PROTEIN RAW:", food.get("protein"))
-            st.write("FOOD DICT:", food)
+
         
             macros = scale_macros(food, float(grams))
         
@@ -1913,14 +1910,13 @@ elif page == "🍽 Registro":
                     "name": nm,
                     "grams": float(gr),
                 
-                    # 🔬 TEST
-                    "calories": 999,
-                    "protein": 999,
-                    "carbs": 999,
-                    "fat": 999,
+                    # ✅ usar macros ya calculadas en el carrito
+                    "calories": float(it.get("calories", 0.0)),
+                    "protein": float(it.get("protein", 0.0)),
+                    "carbs": float(it.get("carbs", 0.0)),
+                    "fat": float(it.get("fat", 0.0)),
                 }
 
-                st.write("ENTRY QUE SE VA A GUARDAR:", entry)
                 new_id = add_entry(entry)
                 new_ids.append(new_id)
     
@@ -3504,6 +3500,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
