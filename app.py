@@ -787,11 +787,7 @@ def inject_fitness_ui():
         transform: scale(1.15);
     }
     
-    /* Quitar fondo rojo enorme del activo */
-    iframe[title*="streamlit_option_menu"] li[aria-selected="true"],
-    iframe[src*="streamlit_option_menu"] li[aria-selected="true"]{
-        background: transparent !important;
-    }
+
 
 
 
@@ -801,7 +797,11 @@ def inject_fitness_ui():
 
     </style>
     """, unsafe_allow_html=True)
-
+#    /* Quitar fondo rojo enorme del activo */
+#    iframe[title*="streamlit_option_menu"] li[aria-selected="true"],
+  #  iframe[src*="streamlit_option_menu"] li[aria-selected="true"]{
+ #       background: transparent !important;
+ #   }
 # =========================
 # UI helpers (Hero)
 # =========================
@@ -3497,6 +3497,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
