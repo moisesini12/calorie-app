@@ -728,6 +728,18 @@ def inject_fitness_ui():
       padding: 0 !important;
     }
 
+    /* Reduce espacio antes del primer card */
+    section.main > div{
+      padding-top: 0.5rem !important;
+    }
+
+
+
+
+
+
+
+
 
 
 
@@ -3372,6 +3384,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
