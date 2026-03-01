@@ -1740,12 +1740,12 @@ elif page == "🍽 Registro":
         st.error("No hay categorías. Revisa la pestaña foods.")
         st.stop()
 
-    # Construye un map global nombre -> food (para calcular macros y para guardar)
-    # (Tu app asume nombres únicos; si hay duplicados, habría que usar id)
+    # ✅ Map seguro: (categoria, nombre) -> food (evita bugs por nombres duplicados)
     food_map = {}
     for c in categories:
         for f in list_foods_by_category(c):
-            food_map[f["name"]] = f
+            key = (str(c), str(f["name"]))
+            food_map[key] = f   
 
     # -------------------------
     # UI: carrito (añadir varios)
@@ -1823,6 +1823,7 @@ elif page == "🍽 Registro":
         try:
             item = {
                 "meal": str(meal),
+                "category": str(category),          # ✅ clave
                 "name": str(food["name"]),
                 "grams": float(grams),
             }
@@ -1843,6 +1844,7 @@ elif page == "🍽 Registro":
             new_ids = []
             for it in st.session_state["pending_entries"]:
                 nm = str(it.get("name", "")).strip()
+                cat = str(it.get("category", "")).strip()
                 gr = float(it.get("grams", 0))
                 ml = str(it.get("meal", "")).strip()
 
@@ -1902,10 +1904,12 @@ elif page == "🍽 Registro":
         # Totales del carrito (opcional pero útil)
         tot = {"calories": 0.0, "protein": 0.0, "carbs": 0.0, "fat": 0.0}
         for it in pending:
-            nm = str(it.get("name", ""))
+            nm = str(it.get("name", "")).strip()
+            cat = str(it.get("category", "")).strip()
             gr = float(it.get("grams", 0))
-            if nm in food_map and gr > 0:
-                mm = scale_macros(food_map[nm], gr)
+            key = (cat, nm)
+            if key in food_map and gr > 0:
+                mm = scale_macros(food_map[key], gr)
                 tot["calories"] += float(mm.get("calories", 0))
                 tot["protein"] += float(mm.get("protein", 0))
                 tot["carbs"] += float(mm.get("carbs", 0))
@@ -3439,6 +3443,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
