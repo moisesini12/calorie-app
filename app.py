@@ -2485,6 +2485,16 @@ elif page == "➕ Añadir alimento":
     )
     render_food_subnav()    
     mode = st.radio("Modo", ["➕ Añadir", "✏️ Editar", "🗑️ Borrar"], horizontal=True, key="food_mode")
+        CATEGORIAS_FIJAS = [
+        "🥩 Proteina Animal",
+        "🌱 Proteina Vegetal",
+        "🍚 Carbohidratos",
+        "🥑 Grasas Saludables",
+        "🥦 Fruta y verdura",
+        "🥤 Bebidas",
+        "🍔 Porqueria",
+        "🍽️ Platos ya hechos",
+    ]
     all_foods = list_all_foods()
 
     if mode == "➕ Añadir":
@@ -2492,7 +2502,11 @@ elif page == "➕ Añadir alimento":
             col1, col2 = st.columns(2)
             with col1:
                 name = st.text_input("Nombre del alimento")
-                category = st.text_input("Categoría", value="Carbohidratos")
+                category = st.selectbox(
+                    "Categoría",
+                    options=CATEGORIAS_FIJAS,
+                    index=2  # Carbohidratos por defecto
+                )
             with col2:
                 calories = st.number_input("Kcal por 100g", min_value=0.0, value=100.0, step=1.0)
                 protein = st.number_input("Proteína por 100g", min_value=0.0, value=0.0, step=0.1)
@@ -3509,6 +3523,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
