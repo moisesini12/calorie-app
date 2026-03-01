@@ -742,7 +742,7 @@ def inject_fitness_ui():
     
     /* Mata margen del primer elemento real */
     .block-container > div:first-child{
-      margin-top: -10px !important;
+      margin-top: -50px !important;
       padding-top: 0 !important;
     }
     
@@ -761,7 +761,7 @@ def inject_fitness_ui():
     
     /* Elimina posible margen del primer card */
     section.main > div:first-child{
-      margin-top: -40px !important;
+      margin-top: -15px !important;
     }
 
 
@@ -3413,6 +3413,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
