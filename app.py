@@ -2485,7 +2485,7 @@ elif page == "➕ Añadir alimento":
     )
     render_food_subnav()    
     mode = st.radio("Modo", ["➕ Añadir", "✏️ Editar", "🗑️ Borrar"], horizontal=True, key="food_mode")
-        CATEGORIAS_FIJAS = [
+    CATEGORIAS_FIJAS = [
         "🥩 Proteina Animal",
         "🌱 Proteina Vegetal",
         "🍚 Carbohidratos",
@@ -2495,6 +2495,7 @@ elif page == "➕ Añadir alimento":
         "🍔 Porqueria",
         "🍽️ Platos ya hechos",
     ]
+            
     all_foods = list_all_foods()
 
     if mode == "➕ Añadir":
@@ -3523,6 +3524,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
