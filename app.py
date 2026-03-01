@@ -1844,11 +1844,7 @@ elif page == "🍽 Registro":
                 f"G {macros['fat']:.1f}"
             )        
         
-        _m = scale_macros(food, grams)
-        st.caption(
-            f"Preview: **{food['name']}** — {grams:.0f} g · "
-            f"{_m['calories']:.0f} kcal · P {_m['protein']:.1f} · C {_m['carbs']:.1f} · G {_m['fat']:.1f}"
-        )
+
     except Exception:
         pass
 
@@ -3535,6 +3531,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
