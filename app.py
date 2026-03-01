@@ -613,7 +613,28 @@ def inject_fitness_ui():
     /* (Opcional) ocultar sidebar si quieres look app total */
     /* section[data-testid="stSidebar"]{ display:none; } */
 
-
+    /* ===== FORCE bottom nav (hard override) ===== */
+    .fm-bottom-nav{
+      position: fixed !important;
+      left: 0 !important;
+      right: 0 !important;
+      top: auto !important;
+      bottom: 0 !important; /* pegada abajo */
+      z-index: 999999 !important;
+      margin: 0 !important;
+    
+      /* look */
+      padding: 8px 12px !important;
+      padding-right: 90px !important; /* NO tapar botones abajo derecha */
+      background: rgba(11,16,32,0.92) !important;
+      backdrop-filter: blur(14px) !important;
+      border-top: 1px solid rgba(255,255,255,0.10) !important;
+    }
+    
+    /* espacio para que el contenido no quede debajo */
+    .block-container{
+      padding-bottom: 95px !important;
+    }
 
 
 
@@ -1071,7 +1092,7 @@ def render_bottom_nav():
     if "fm_bottom_nav_ui" not in st.session_state:
         st.session_state["fm_bottom_nav_ui"] = desired
 
-    st.markdown('<div class="fm-bottom-nav"><div class="fm-inner">', unsafe_allow_html=True)
+    st.markdown('<div class="fm-bottom-nav">', unsafe_allow_html=True)
 
     selected = option_menu(
         menu_title=None,
@@ -1087,7 +1108,7 @@ def render_bottom_nav():
         },
     )
 
-    st.markdown("</div></div>", unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
 
     # ✅ Detectar click real: comparar con el último seleccionado
     prev = st.session_state.get("_fm_nav_prev", None)
@@ -3258,6 +3279,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
