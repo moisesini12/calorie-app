@@ -1873,28 +1873,16 @@ elif page == "🍽 Registro":
                 if ml not in ["Desayuno", "Almuerzo", "Merienda", "Cena"]:
                     ml = "Almuerzo"
                 
-                # ✅ Resolver alimento (DEFINITIVO):
-                # 1) por food_id (único)
-                # 2) fallback por (cat, name)
-                # 3) último fallback por name (solo si no hay otra)
-                base_food = None
-                
-                # 1) ID manda
-                if fid and fid in food_by_id:
-                    base_food = food_by_id[fid]
-                
-                # 2) fallback (cat, name)
-                if base_food is None and cat:
-                    key = (cat, nm)
-                    if key in food_map:
-                        base_food = food_map[key]
-                
-                # 3) último fallback por nombre
+                # ✅ Resolver alimento SIEMPRE por ID (robusto)
+                fid = int(it.get("food_id", 0) or 0)
+                base_food = food_by_id.get(fid)
+
+                # fallback (solo por si viene algún item viejo sin food_id)
                 if base_food is None:
-                    matches = [f for (c2, n2), f in food_map.items() if str(n2).strip() == nm]
-                    if matches:
-                        base_food = matches[0]
-                
+                    if cat:
+                        key = (cat, nm)
+                        base_food = food_map.get(key)
+
                 if base_food is None:
                     continue
 
@@ -1948,16 +1936,27 @@ elif page == "🍽 Registro":
         # Totales del carrito (opcional pero útil)
         tot = {"calories": 0.0, "protein": 0.0, "carbs": 0.0, "fat": 0.0}
         for it in pending:
-            nm = str(it.get("name", "")).strip()
-            cat = str(it.get("category", "")).strip()
-            gr = float(it.get("grams", 0))
-            key = (cat, nm)
-            if key in food_map and gr > 0:
-                mm = scale_macros(food_map[key], gr)
-                tot["calories"] += float(mm.get("calories", 0))
-                tot["protein"] += float(mm.get("protein", 0))
-                tot["carbs"] += float(mm.get("carbs", 0))
-                tot["fat"] += float(mm.get("fat", 0))
+            gr = float(it.get("grams", 0) or 0)
+            if gr <= 0:
+                continue
+
+            fid = int(it.get("food_id", 0) or 0)
+            base_food = food_by_id.get(fid)
+
+            # fallback por si hay items viejos sin id
+            if base_food is None:
+                nm = str(it.get("name", "")).strip()
+                cat = str(it.get("category", "")).strip()
+                base_food = food_map.get((cat, nm))
+
+            if base_food is None:
+                continue
+
+            mm = scale_macros(base_food, gr)
+            tot["calories"] += float(mm.get("calories", 0))
+            tot["protein"] += float(mm.get("protein", 0))
+            tot["carbs"] += float(mm.get("carbs", 0))
+            tot["fat"] += float(mm.get("fat", 0))
 
         c1, c2, c3, c4 = st.columns(4)
         c1.metric("🔥 kcal (pendientes)", f"{tot['calories']:.0f}")
@@ -3498,6 +3497,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
