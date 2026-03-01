@@ -713,7 +713,7 @@ def inject_fitness_ui():
     
     /* Quita el padding top general de Streamlit */
     .block-container{
-      padding-top: -1rem !important;
+      padding-top: 0rem !important;
     }
     
     /* Quita margen superior del primer bloque */
@@ -730,7 +730,7 @@ def inject_fitness_ui():
 
     /* Reduce espacio antes del primer card */
     section.main > div{
-      padding-top: 0.1rem !important;
+      padding-top: 0rem !important;
     }
 
 
@@ -3384,6 +3384,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
