@@ -1685,10 +1685,7 @@ if page == "📊 Dashboard":
             height=380
         )
 
-if "ALL_FOODS_CACHE" not in st.session_state:
-    st.session_state["ALL_FOODS_CACHE"] = list_all_foods()
 
-all_foods = st.session_state["ALL_FOODS_CACHE"]
 # ==========================================================
 # PÁGINA: REGISTRO  (MULTI-AÑADIDO / “CARRITO”)
 # ==========================================================
@@ -1752,6 +1749,12 @@ elif page == "🍽 Registro":
         st.error("No hay categorías. Revisa la pestaña foods.")
         st.stop()
 
+    if "ALL_FOODS_CACHE" not in st.session_state:
+        st.session_state["ALL_FOODS_CACHE"] = list_all_foods()
+    
+    all_foods = st.session_state["ALL_FOODS_CACHE"]
+
+    
     # ✅ Map seguro:
     # - food_map: (categoria, nombre) -> food
     # - food_by_id: id -> food (el bueno para editar / futuro)
@@ -3506,6 +3509,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
