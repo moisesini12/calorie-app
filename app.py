@@ -642,24 +642,28 @@ def inject_fitness_ui():
        ========================= */
     
     /* Target the option_menu iframe by its title (Streamlit components use iframe) */
-    iframe[title="streamlit_option_menu.option_menu"]{
+    /* ===== Bottom nav: compatible PC + móvil ===== */
+    iframe[title*="streamlit_option_menu"],
+    iframe[src*="streamlit_option_menu"]{
       position: fixed !important;
       left: 0 !important;
-      right: 90px !important;  /* ✅ deja hueco para iconos flotantes abajo derecha */
-      bottom: 0 !important;
+      right: calc(90px + env(safe-area-inset-right, 0px)) !important; /* hueco botones derecha */
+      bottom: env(safe-area-inset-bottom, 0px) !important;
       width: auto !important;
-      height: 74px !important; /* ajusta si lo quieres más alto/bajo */
+      height: 74px !important;
       z-index: 999999 !important;
       border: 0 !important;
     }
+
+    /* Reduce el hueco que deja el componente en el layout (sin :has) */
+    div[data-testid="stComponent"] iframe[title*="streamlit_option_menu"],
+    div[data-testid="stComponent"] iframe[src*="streamlit_option_menu"]{
+      margin: 0 !important;
+    }
+
     
     /* El contenedor del componente que Streamlit pone en el flujo:
        lo “colapsamos” para que no deje un hueco arriba */
-    div[data-testid="stComponent"]:has(> iframe[title="streamlit_option_menu.option_menu"]){
-      height: 0 !important;
-      padding: 0 !important;
-      margin: 0 !important;
-    }
     
     /* Para que el contenido no quede debajo de la barra */
     .block-container{
@@ -3314,6 +3318,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
