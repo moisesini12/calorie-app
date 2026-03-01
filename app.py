@@ -764,7 +764,34 @@ def inject_fitness_ui():
       margin-top: -15px !important;
     }
 
-
+    /* ===== LIMPIAR ICONOS DUPLICADOS ===== */
+    
+    /* Oculta iconos secundarios (gris/duplicado) */
+    iframe[title*="streamlit_option_menu"] li span:nth-child(2),
+    iframe[src*="streamlit_option_menu"] li span:nth-child(2){
+        display: none !important;
+    }
+    
+    /* Iconos normales (inactivos) */
+    iframe[title*="streamlit_option_menu"] li span:first-child,
+    iframe[src*="streamlit_option_menu"] li span:first-child{
+        color: rgba(255,255,255,0.75) !important;
+        font-size: 20px !important;
+        transition: all 0.25s ease !important;
+    }
+    
+    /* ICONO ACTIVO (rosa fitmacro) */
+    iframe[title*="streamlit_option_menu"] li[aria-selected="true"] span:first-child,
+    iframe[src*="streamlit_option_menu"] li[aria-selected="true"] span:first-child{
+        color: #ff4d8d !important;
+        transform: scale(1.15);
+    }
+    
+    /* Quitar fondo rojo enorme del activo */
+    iframe[title*="streamlit_option_menu"] li[aria-selected="true"],
+    iframe[src*="streamlit_option_menu"] li[aria-selected="true"]{
+        background: transparent !important;
+    }
 
 
 
@@ -3412,6 +3439,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
