@@ -619,15 +619,6 @@ def inject_fitness_ui():
 
     }
 
-    /* Mata cualquier mini-widget fijo en esquina inferior derecha (NO afecta tu barra completa) */
-    div[style*="position: fixed"][style*="right: 0"][style*="bottom: 0"]{
-      display: none !important;
-    }
-    
-    /* Variante por si usan inset */
-    div[style*="position: fixed"][style*="inset"][style*="auto 0px 0px auto"]{
-      display: none !important;
-    }
 
 
 
@@ -3272,6 +3263,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
