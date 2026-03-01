@@ -10,6 +10,7 @@ import requests
 from streamlit_option_menu import option_menu
 
 
+
 from db_gsheets import (
     init_db, seed_foods_if_empty,
     list_categories, list_foods_by_category, add_food,
@@ -21,6 +22,16 @@ from db_gsheets import (
 from core import scale_macros, calculate_goals
 from your_foods import FOODS
 
+CATEGORIAS_FIJAS = [
+    "🥩 Proteina Animal",
+    "🌱 Proteina Vegetal",
+    "🍚 Carbohidratos",
+    "🥑 Grasas Saludables",
+    "🥦 Fruta y verdura",
+    "🥤 Bebidas",
+    "🍔 Porqueria",
+    "🍽️ Platos ya hechos",
+]
 
 # ✅ SIEMPRE lo primero (y SOLO una vez)
 st.set_page_config(
@@ -3524,6 +3535,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
