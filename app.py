@@ -1057,9 +1057,8 @@ def render_bottom_nav():
     current_page = st.session_state.get("page", "📊 Dashboard")
     desired = page_to_tab.get(current_page, "🏠")
 
-    # Sync page -> tab antes del widget
-    if st.session_state.get("fm_bottom_nav_ui") != desired:
-        st.session_state["fm_bottom_nav_ui"] = desired
+    # ✅ Importante: NO forzar st.session_state["fm_bottom_nav_ui"] antes del widget
+    default_index = options.index(desired)
 
     st.markdown('<div class="fm-bottom-nav"><div class="fm-inner">', unsafe_allow_html=True)
 
@@ -1069,6 +1068,7 @@ def render_bottom_nav():
         icons=icons,
         orientation="horizontal",
         key="fm_bottom_nav_ui",
+        default_index=default_index,
         styles={
             "container": {"padding": "0px", "background-color": "transparent"},
             "icon": {"font-size": "18px"},
@@ -1079,18 +1079,16 @@ def render_bottom_nav():
 
     st.markdown("</div></div>", unsafe_allow_html=True)
 
-    # Acción SOLO si cambió selección (click real)
-    last = st.session_state.get("_fm_nav_last", None)
-    if selected == last:
+    # ✅ Si el usuario no cambió de tab, no hacemos nada
+    if selected == desired:
         return
-    st.session_state["_fm_nav_last"] = selected
 
+    # ✅ Si cambió, navegamos
     if selected == "🏠":
         _go("📊 Dashboard")
         st.rerun()
 
     elif selected == "🍽️":
-        # ✅ al tocar comidas, entras a Registro
         _go("🍽 Registro")
         st.rerun()
 
@@ -1105,7 +1103,6 @@ def render_bottom_nav():
     elif selected == "👤":
         _open_profile()
         st.rerun()
-
 
 
 
@@ -3259,6 +3256,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
