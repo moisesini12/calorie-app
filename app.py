@@ -709,7 +709,24 @@ def inject_fitness_ui():
       display: none !important;
     }
 
-
+    /* ===== Compactar parte superior ===== */
+    
+    /* Quita el padding top general de Streamlit */
+    .block-container{
+      padding-top: 1rem !important;
+    }
+    
+    /* Quita margen superior del primer bloque */
+    .block-container > div:first-child{
+      margin-top: 0 !important;
+      padding-top: 0 !important;
+    }
+    
+    /* Elimina espacio extra del header interno */
+    div[data-testid="stHeader"]{
+      height: 0 !important;
+      padding: 0 !important;
+    }
 
 
 
@@ -3355,6 +3372,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
