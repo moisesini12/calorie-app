@@ -619,31 +619,7 @@ def inject_fitness_ui():
 
 
 
-    /* ===== Bottom Nav con st.button (en vez de option_menu) ===== */
-    .fm-bottom-nav .stButton > button{
-      width: 100% !important;
-      border-radius: 999px !important;
-      padding: 10px 10px !important;
-      font-weight: 950 !important;
-      border: 1px solid rgba(255,255,255,0.08) !important;
-      background: rgba(255,255,255,0.04) !important;
-      color: rgba(255,255,255,0.86) !important;
-    }
-    
-    .fm-bottom-nav .stButton > button:hover{
-      background: rgba(255,255,255,0.07) !important;
-      border-color: rgba(255,255,255,0.12) !important;
-    }
-    
-    /* “Home” más grande/rosita como lo tenías */
-    .fm-bottom-nav [data-testid="column"]:nth-child(1) .stButton > button{
-      transform: translateY(-6px);
-      padding: 13px 10px !important;
-      background: linear-gradient(135deg, rgba(255,79,216,0.92), rgba(139,92,246,0.92)) !important;
-      color: #0b1020 !important;
-      border: none !important;
-      box-shadow: 0 18px 38px rgba(0,0,0,0.45) !important;
-    }
+
 
 
 
@@ -3269,6 +3245,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
