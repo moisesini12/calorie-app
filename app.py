@@ -1685,6 +1685,10 @@ if page == "📊 Dashboard":
             height=380
         )
 
+if "ALL_FOODS_CACHE" not in st.session_state:
+    st.session_state["ALL_FOODS_CACHE"] = list_all_foods()
+
+all_foods = st.session_state["ALL_FOODS_CACHE"]
 # ==========================================================
 # PÁGINA: REGISTRO  (MULTI-AÑADIDO / “CARRITO”)
 # ==========================================================
@@ -1877,7 +1881,7 @@ elif page == "🍽 Registro":
     
             st.session_state["pending_entries"].append(item)
             st.toast("Añadido a la lista ✅")
-            st.rerun()
+
     
         except Exception as e:
             st.error("No pude añadir el item a la lista.")
@@ -3502,6 +3506,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
