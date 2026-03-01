@@ -624,10 +624,6 @@ def inject_fitness_ui():
         display: none !important;
     }
     
-    /* Oculta botón desplegable lateral */
-    button[kind="header"] {
-        display: none !important;
-    }
 
 
 
@@ -3273,6 +3269,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
