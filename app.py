@@ -1912,11 +1912,12 @@ elif page == "🍽 Registro":
                     "meal": ml,
                     "name": nm,
                     "grams": float(gr),
-    
-                    "calories": float(it.get("calories", 0.0)),
-                    "protein": float(it.get("protein", 0.0)),
-                    "carbs": float(it.get("carbs", 0.0)),
-                    "fat": float(it.get("fat", 0.0)),
+                
+                    # 🔬 TEST
+                    "calories": 999,
+                    "protein": 999,
+                    "carbs": 999,
+                    "fat": 999,
                 }
 
                 st.write("ENTRY QUE SE VA A GUARDAR:", entry)
@@ -3503,6 +3504,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
