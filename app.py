@@ -1751,20 +1751,22 @@ elif page == "🍽 Registro":
     # ✅ Map seguro:
     # - food_map: (categoria, nombre) -> food
     # - food_by_id: id -> food (el bueno para editar / futuro)
+    # Leer TODOS los alimentos UNA sola vez
+    all_foods = list_all_foods()
+    
     food_map = {}
     food_by_id = {}
     
-    for c in categories:
-        c_key = str(c).strip()
-        for f in list_foods_by_category(c):
-            name_key = str(f.get("name", "")).strip()
+    for f in all_foods:
+        c_key = str(f.get("category", "")).strip()
+        name_key = str(f.get("name", "")).strip()
     
-            food_map[(c_key, name_key)] = f
+        food_map[(c_key, name_key)] = f
     
-            try:
-                food_by_id[int(f.get("id"))] = f
-            except Exception:
-                pass
+        try:
+            food_by_id[int(f.get("id"))] = f
+        except Exception:
+            pass
 
     # -------------------------
     # UI: carrito (añadir varios)
@@ -3500,6 +3502,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
