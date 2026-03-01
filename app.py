@@ -619,6 +619,32 @@ def inject_fitness_ui():
 
 
 
+    /* ===== Bottom Nav con st.button (en vez de option_menu) ===== */
+    .fm-bottom-nav .stButton > button{
+      width: 100% !important;
+      border-radius: 999px !important;
+      padding: 10px 10px !important;
+      font-weight: 950 !important;
+      border: 1px solid rgba(255,255,255,0.08) !important;
+      background: rgba(255,255,255,0.04) !important;
+      color: rgba(255,255,255,0.86) !important;
+    }
+    
+    .fm-bottom-nav .stButton > button:hover{
+      background: rgba(255,255,255,0.07) !important;
+      border-color: rgba(255,255,255,0.12) !important;
+    }
+    
+    /* “Home” más grande/rosita como lo tenías */
+    .fm-bottom-nav [data-testid="column"]:nth-child(1) .stButton > button{
+      transform: translateY(-6px);
+      padding: 13px 10px !important;
+      background: linear-gradient(135deg, rgba(255,79,216,0.92), rgba(139,92,246,0.92)) !important;
+      color: #0b1020 !important;
+      border: none !important;
+      box-shadow: 0 18px 38px rgba(0,0,0,0.45) !important;
+    }
+
 
 
     </style>
@@ -1009,36 +1035,35 @@ if st.session_state.get("profile_popup_open", False):
 # BOTTOM NAV (Instagram-like)
 # =========================
 def render_bottom_nav():
-    page_to_index = {
-        "📊 Dashboard": 0,
-        "🍽 Registro": 1,
-        "➕ Añadir alimento": 1,
-        "👨‍🍳 Chef IA": 1,
-        "🤖 IA Alimento": 1,
-        "🎯 Objetivos": 2,
-        "🏋️ Rutina IA": 3,
-    }
-    options = ["🏠", "🍽️", "🎯", "🏋️", "👤"]
-
-    current_page = st.session_state.get("page", "📊 Dashboard")
-    default_index = page_to_index.get(current_page, 0)
-
     st.markdown('<div class="fm-bottom-nav"><div class="fm-inner">', unsafe_allow_html=True)
 
-    selected = option_menu(
-        menu_title=None,
-        options=options,
-        icons=["house-fill", "egg-fried", "bullseye", "activity", "person-circle"],
-        orientation="horizontal",
-        key="fm_bottom_nav_ui",
-        default_index=default_index,
-        styles={
-            "container": {"padding": "0px", "background-color": "transparent"},
-            "icon": {"font-size": "18px"},
-            "nav-link": {"padding": "10px 10px", "margin": "0px", "border-radius": "999px"},
-            "nav-link-selected": {"border-radius": "999px"},
-        },
-    )
+    # 5 botones en columnas (cada click SIEMPRE ejecuta, aunque sea la misma página)
+    c1, c2, c3, c4, c5 = st.columns(5)
+
+    with c1:
+        if st.button("🏠", key="nav_home", use_container_width=True):
+            _go("📊 Dashboard")
+            st.rerun()
+
+    with c2:
+        if st.button("🍽️", key="nav_foods", use_container_width=True):
+            _open_foods()
+            st.rerun()
+
+    with c3:
+        if st.button("🎯", key="nav_goals", use_container_width=True):
+            _go("🎯 Objetivos")
+            st.rerun()
+
+    with c4:
+        if st.button("🏋️", key="nav_workout", use_container_width=True):
+            _go("🏋️ Rutina IA")
+            st.rerun()
+
+    with c5:
+        if st.button("👤", key="nav_profile", use_container_width=True):
+            _open_profile()
+            st.rerun()
 
     st.markdown("</div></div>", unsafe_allow_html=True)
 
@@ -3220,6 +3245,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
