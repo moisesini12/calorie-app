@@ -1035,37 +1035,61 @@ if st.session_state.get("profile_popup_open", False):
 # BOTTOM NAV (Instagram-like)
 # =========================
 def render_bottom_nav():
+    # ===== Sync page -> tab (ANTES del widget) =====
+    page_to_index = {
+        "📊 Dashboard": 0,
+        "🍽 Registro": 1,
+        "➕ Añadir alimento": 1,
+        "👨‍🍳 Chef IA": 1,
+        "🤖 IA Alimento": 1,
+        "🎯 Objetivos": 2,
+        "🏋️ Rutina IA": 3,
+    }
+
+    # ✅ Añadimos un botón extra: refrescar
+    options = ["🏠", "🍽️", "🎯", "🏋️", "👤", "🔄"]
+    icons   = ["house-fill", "egg-fried", "bullseye", "activity", "person-circle", "arrow-clockwise"]
+
+    default_index = page_to_index.get(st.session_state.get("page", "📊 Dashboard"), 0)
+    desired = options[default_index]
+
+    # ✅ Sincroniza UI si se queda “pegado”
+    if st.session_state.get("fm_bottom_nav_ui") != desired:
+        st.session_state["fm_bottom_nav_ui"] = desired
+
     st.markdown('<div class="fm-bottom-nav"><div class="fm-inner">', unsafe_allow_html=True)
 
-    # 5 botones en columnas (cada click SIEMPRE ejecuta, aunque sea la misma página)
-    c1, c2, c3, c4, c5 = st.columns(5)
-
-    with c1:
-        if st.button("🏠", key="nav_home", use_container_width=True):
-            _go("📊 Dashboard")
-            st.rerun()
-
-    with c2:
-        if st.button("🍽️", key="nav_foods", use_container_width=True):
-            _open_foods()
-            st.rerun()
-
-    with c3:
-        if st.button("🎯", key="nav_goals", use_container_width=True):
-            _go("🎯 Objetivos")
-            st.rerun()
-
-    with c4:
-        if st.button("🏋️", key="nav_workout", use_container_width=True):
-            _go("🏋️ Rutina IA")
-            st.rerun()
-
-    with c5:
-        if st.button("👤", key="nav_profile", use_container_width=True):
-            _open_profile()
-            st.rerun()
+    selected = option_menu(
+        menu_title=None,
+        options=options,
+        icons=icons,
+        orientation="horizontal",
+        key="fm_bottom_nav_ui",
+        styles={
+            "container": {"padding": "0px", "background-color": "transparent"},
+            "icon": {"font-size": "18px"},
+            "nav-link": {"padding": "10px 10px", "margin": "0px", "border-radius": "999px"},
+            "nav-link-selected": {"border-radius": "999px"},
+        },
+    )
 
     st.markdown("</div></div>", unsafe_allow_html=True)
+
+    # ===== Acciones =====
+    if selected == "🏠":
+        _go("📊 Dashboard")
+    elif selected == "🍽️":
+        _open_foods()
+    elif selected == "🎯":
+        _go("🎯 Objetivos")
+    elif selected == "🏋️":
+        _go("🏋️ Rutina IA")
+    elif selected == "👤":
+        _open_profile()
+    elif selected == "🔄":
+        # ✅ Fuerza “reentrar” a la página actual (sirve aunque ya estés en ella)
+        _go(st.session_state.get("page", "📊 Dashboard"))
+        st.rerun()
 
     # Acción SOLO si cambia (click real)
     last = st.session_state.get("_fm_nav_last", options[default_index])
@@ -3245,6 +3269,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
