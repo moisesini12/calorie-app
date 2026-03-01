@@ -2014,10 +2014,22 @@ elif page == "🍽 Registro":
                 st.write("")
                 st.write("")
 
-            # Reusar el food_map global (ya lo hemos construido arriba)
-            base_food = food_map.get(row["name"])
+            # ✅ Buscar alimento de forma robusta:
+            # 1) Si existe clave exacta (category,name) en futuras mejoras
+            # 2) Fallback: buscar por nombre en cualquier categoría (para entradas antiguas)
+            base_food = None
+            
+            row_name = str(row["name"]).strip()
+            
+            # Fallback: busca por nombre ignorando categoría
+            matches = [f for (cat, nm), f in food_map.items() if str(nm).strip() == row_name]
+            
+            if matches:
+                # si hay varios duplicados, nos quedamos con el primero (mejor que romper)
+                base_food = matches[0]
+            
             if base_food is None:
-                st.error("No encuentro este alimento en la base de datos (quizá lo borraste).")
+                st.error("No encuentro este alimento en la base de datos (quizá lo borraste o hay un nombre raro).")
             else:
                 if st.button("Guardar cambios", type="primary", key=f"save_entry_{selected_id}"):
                     macros = scale_macros(base_food, float(new_grams))
@@ -2033,7 +2045,7 @@ elif page == "🍽 Registro":
                     st.cache_data.clear()
                     st.success("Entrada actualizada ✅")
                     st.rerun()
-
+            
                 st.warning("⚠️ Borrar elimina la entrada (no se puede deshacer).")
                 confirm_del = st.checkbox("Confirmo que quiero borrar esta entrada", key=f"confirm_del_{selected_id}")
                 if st.button("Borrar entrada", disabled=not confirm_del, key=f"del_entry_{selected_id}"):
@@ -2041,7 +2053,6 @@ elif page == "🍽 Registro":
                     st.cache_data.clear()
                     st.success("Entrada borrada ✅")
                     st.rerun()
-
 
 
 # ==========================================================
@@ -3443,6 +3454,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
