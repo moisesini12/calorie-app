@@ -533,30 +533,26 @@ def inject_fitness_ui():
        ========================= */
     .block-container{
       /* ya lo tienes, pero lo reforzamos para que no tape contenido */
-      padding-bottom: 110px !important;
+      padding-bottom: 90px !important;
     }
 
+    
     .fm-bottom-nav{
       position: fixed;
       left: 0;
       right: 0;
       bottom: 0;
-      z-index: 9999;
-      padding: 10px 12px 18px 12px;
-      background: rgba(11,16,32,0.86);
+      z-index: 1000;   /* bajamos prioridad */
+      padding: 8px 12px;
+      background: rgba(11,16,32,0.92);
       backdrop-filter: blur(14px);
       border-top: 1px solid rgba(255,255,255,0.10);
     }
 
-    .fm-bottom-nav .fm-inner{
-      max-width: 1100px;
-      margin: 0 auto;
-      border-radius: 22px;
-      padding: 10px 10px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.04));
-      border: 1px solid rgba(255,255,255,0.10);
-      box-shadow: 0 18px 45px rgba(0,0,0,0.45);
+    .fm-bottom-nav{
+      padding-right: 80px; /* espacio para botón flotante derecha */
     }
+
 
     /* option-menu tweaks */
     .fm-bottom-nav ul{
@@ -3263,6 +3259,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
