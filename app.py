@@ -935,6 +935,10 @@ inject_fitness_ui()
 # =========================
 FDC_BASE = "https://api.nal.usda.gov/fdc/v1"
 
+
+
+
+
 def _fdc_key() -> str:
     # Usa tu key real en secrets; fallback a DEMO_KEY para pruebas
     return st.secrets.get("FDC_API_KEY", "v9pKcIdiVPg2mrWKcmMNgcdTUr4bqgLavV9Gb4TD")
@@ -3483,6 +3487,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
