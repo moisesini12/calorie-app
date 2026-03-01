@@ -1848,14 +1848,30 @@ elif page == "🍽 Registro":
                 gr = float(it.get("grams", 0))
                 ml = str(it.get("meal", "")).strip()
 
-                if not nm or nm not in food_map:
+                # ✅ Resolver alimento:
+                # - Si tenemos category, intentamos (cat, name)
+                # - Si no, fallback: busca por nombre en cualquier categoría
+                base_food = None
+                
+                key = (cat, nm)
+                if cat and key in food_map:
+                    base_food = food_map[key]
+                else:
+                    matches = [f for (c2, n2), f in food_map.items() if str(n2).strip() == nm]
+                    if matches:
+                        base_food = matches[0]
+                
+                if base_food is None:
                     continue
+
+                
+                if not nm:
+                    continue        
                 if gr <= 0:
                     continue
                 if ml not in ["Desayuno", "Almuerzo", "Merienda", "Cena"]:
                     ml = "Almuerzo"
 
-                base_food = food_map[nm]
                 macros = scale_macros(base_food, gr)
 
                 entry = {
@@ -3454,6 +3470,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
