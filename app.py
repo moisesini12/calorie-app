@@ -705,7 +705,9 @@ def inject_fitness_ui():
       padding-bottom: 95px !important;
     }
 
-
+    header[data-testid="stHeader"]{
+      display: none !important;
+    }
 
 
 
@@ -3353,6 +3355,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
