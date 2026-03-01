@@ -1872,23 +1872,24 @@ elif page == "🍽 Registro":
                 if ml not in ["Desayuno", "Almuerzo", "Merienda", "Cena"]:
                     ml = "Almuerzo"
                 
-                # ✅ Resolver alimento:
-                # - Si tenemos category, intentamos (cat, name)
-                # - Si no, fallback: busca por nombre en cualquier categoría
-                base_food = None
-                
-                if cat:
-                    key = (cat, nm)
-                    if key in food_map:
-                        base_food = food_map[key]
-                
+                # ✅ Resolver alimento por ID (único, no se confunde nunca)
+                fid = int(it.get("food_id", 0) or 0)
+                base_food = food_by_id.get(fid)
+
+                # Fallback por si ese item viejo no trae id
+                if base_food is None and cat:
+                    base_food = food_map.get((cat, nm))
+
                 if base_food is None:
                     matches = [f for (c2, n2), f in food_map.items() if str(n2).strip() == nm]
                     if matches:
                         base_food = matches[0]
-                
+
                 if base_food is None:
                     continue
+
+                # ✅ Asegura que el nombre guardado sea el real del alimento encontrado
+                nm = str(base_food.get("name", nm)).strip()
                 macros = scale_macros(base_food, gr)
 
                 entry = {
@@ -3487,6 +3488,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
