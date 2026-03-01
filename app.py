@@ -1918,7 +1918,8 @@ elif page == "🍽 Registro":
                     "carbs": float(it.get("carbs", 0.0)),
                     "fat": float(it.get("fat", 0.0)),
                 }
-    
+
+                st.write("ENTRY QUE SE VA A GUARDAR:", entry)
                 new_id = add_entry(entry)
                 new_ids.append(new_id)
     
@@ -3502,6 +3503,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
