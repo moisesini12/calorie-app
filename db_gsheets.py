@@ -93,6 +93,25 @@ def _ws(tab_name: str):
     return _retry_gs(_sh().worksheet, tab_name)
 
 
+def _norm_col(s: str) -> str:
+    s = (s or "").strip().lower()
+    s = s.replace("í", "i").replace("ó", "o").replace("á", "a").replace("é", "e").replace("ú", "u")
+    s = s.replace(" ", "_")
+    return s
+
+def _row_to_dict(header: list, row: list) -> dict:
+    h = [_norm_col(x) for x in header]
+    out = {}
+    for i, k in enumerate(h):
+        if not k:
+            continue
+        out[k] = row[i] if i < len(row) else ""
+    return out
+
+def _dict_to_row(header: list, data: dict) -> list:
+    h = [_norm_col(x) for x in header]
+    return [data.get(k, "") for k in h]
+
 
 def _to_float(x: Any, default: float = 0.0) -> float:
     try:
@@ -540,6 +559,7 @@ def set_setting(key: str, value: str, user_id: Optional[str] = None) -> None:
 
     ws.append_row([scoped, value], value_input_option="USER_ENTERED", insert_data_option="INSERT_ROWS")
     _cache_bump(TAB_SETTINGS)
+
 
 
 
