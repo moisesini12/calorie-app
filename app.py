@@ -643,18 +643,53 @@ def inject_fitness_ui():
     
     /* Target the option_menu iframe by its title (Streamlit components use iframe) */
     /* ===== Bottom nav: compatible PC + móvil ===== */
+    /* =========================
+       Bottom nav: look PRO
+       (we style the iframe container itself)
+       ========================= */
+    
+    /* Ajustes generales */
+    :root{
+      --nav-h: 76px;
+      --nav-pad-x: 10px;
+      --nav-pad-y: 10px;
+      --nav-radius: 26px;
+      --nav-bg: rgba(15, 23, 42, 0.55);   /* azul oscuro translúcido */
+      --nav-stroke: rgba(255,255,255,0.10);
+      --nav-shadow: 0 18px 45px rgba(0,0,0,0.55);
+    }
+    
+    /* El iframe del option_menu */
     iframe[title*="streamlit_option_menu"],
     iframe[src*="streamlit_option_menu"]{
       position: fixed !important;
-      left: 0 !important;
-      right: calc(90px + env(safe-area-inset-right, 0px)) !important; /* hueco botones derecha */
-      bottom: env(safe-area-inset-bottom, 0px) !important;
+    
+      /* centrado tipo “dock” */
+      left: var(--nav-pad-x) !important;
+      right: calc(90px + env(safe-area-inset-right, 0px) + var(--nav-pad-x)) !important;
+      bottom: calc(env(safe-area-inset-bottom, 0px) + var(--nav-pad-y)) !important;
+    
+      height: var(--nav-h) !important;
       width: auto !important;
-      height: 74px !important;
+    
       z-index: 999999 !important;
-      border: 0 !important;
+    
+      /* look */
+      border: 1px solid var(--nav-stroke) !important;
+      border-radius: var(--nav-radius) !important;
+      background: var(--nav-bg) !important;
+      box-shadow: var(--nav-shadow) !important;
+      backdrop-filter: blur(14px) !important;
+      -webkit-backdrop-filter: blur(14px) !important;
+    
+      overflow: hidden !important; /* para que el contenido no sobresalga */
     }
-
+    
+    /* Para que el contenido de la página no quede debajo */
+    .block-container{
+      padding-bottom: calc(var(--nav-h) + 34px) !important;
+    }
+    
     /* Reduce el hueco que deja el componente en el layout (sin :has) */
     div[data-testid="stComponent"] iframe[title*="streamlit_option_menu"],
     div[data-testid="stComponent"] iframe[src*="streamlit_option_menu"]{
@@ -3318,6 +3353,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
