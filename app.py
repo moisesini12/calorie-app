@@ -1007,11 +1007,40 @@ if st.session_state.get("profile_popup_open", False):
     _dlg_profile()
 
 
+
+# =========================
+# FOOD SUBNAV (mini-bar)
+# =========================
+FOOD_PAGES = {"🍽 Registro", "➕ Añadir alimento", "👨‍🍳 Chef IA", "🤖 IA Alimento"}
+
+def render_food_subnav():
+    """Mini-bar de navegación SOLO para el módulo de comida."""
+    if st.session_state.get("page") not in FOOD_PAGES:
+        return
+
+    # un pelín de espacio para que no se pegue visualmente
+    st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
+
+    c1, c2, c3 = st.columns(3)
+    with c1:
+        if st.button("🍽 Registro", use_container_width=True, key="subnav_food_reg"):
+            _go("🍽 Registro")
+            st.rerun()
+
+    with c2:
+        if st.button("➕ Añadir alimento", use_container_width=True, key="subnav_food_add"):
+            _go("➕ Añadir alimento")
+            st.rerun()
+
+    with c3:
+        if st.button("👨‍🍳 Chef IA", use_container_width=True, key="subnav_food_chef"):
+            _go("👨‍🍳 Chef IA")
+            st.rerun()
+
 # =========================
 # BOTTOM NAV (Instagram-like)
 # =========================
 def render_bottom_nav():
-    # ===== Mapeo page -> tab =====
     page_to_tab = {
         "📊 Dashboard": "🏠",
         "🍽 Registro": "🍽️",
@@ -1025,12 +1054,11 @@ def render_bottom_nav():
     options = ["🏠", "🍽️", "🎯", "🏋️", "👤"]
     icons   = ["house-fill", "egg-fried", "bullseye", "activity", "person-circle"]
 
-    # ===== Sync page -> UI (ANTES del widget) =====
-    desired = page_to_tab.get(st.session_state.get("page", "📊 Dashboard"), "🏠")
+    current_page = st.session_state.get("page", "📊 Dashboard")
+    desired = page_to_tab.get(current_page, "🏠")
 
-    # Solo “forzamos” la pestaña del widget cuando la page cambió de verdad
-    if st.session_state.get("_fm_page_synced") != st.session_state.get("page"):
-        st.session_state["_fm_page_synced"] = st.session_state.get("page")
+    # Sync page -> tab antes del widget
+    if st.session_state.get("fm_bottom_nav_ui") != desired:
         st.session_state["fm_bottom_nav_ui"] = desired
 
     st.markdown('<div class="fm-bottom-nav"><div class="fm-inner">', unsafe_allow_html=True)
@@ -1051,11 +1079,10 @@ def render_bottom_nav():
 
     st.markdown("</div></div>", unsafe_allow_html=True)
 
-    # ===== Acciones SOLO si hubo click real (cambio de selección) =====
-    last = st.session_state.get("_fm_nav_last", selected)
+    # Acción SOLO si cambió selección (click real)
+    last = st.session_state.get("_fm_nav_last", None)
     if selected == last:
         return
-
     st.session_state["_fm_nav_last"] = selected
 
     if selected == "🏠":
@@ -1063,7 +1090,8 @@ def render_bottom_nav():
         st.rerun()
 
     elif selected == "🍽️":
-        st.session_state["food_popup_open"] = True
+        # ✅ al tocar comidas, entras a Registro
+        _go("🍽 Registro")
         st.rerun()
 
     elif selected == "🎯":
@@ -1075,34 +1103,8 @@ def render_bottom_nav():
         st.rerun()
 
     elif selected == "👤":
-        st.session_state["profile_popup_open"] = True
+        _open_profile()
         st.rerun()
-
-    
-    # Acción SOLO si cambia (click real)
-    last = st.session_state.get("_fm_nav_last", options[default_index])
-    if selected != last:
-        st.session_state["_fm_nav_last"] = selected
-
-        if selected == "🏠":
-            _go("📊 Dashboard")
-            st.rerun()
-
-        elif selected == "🍽️":
-            st.session_state["food_popup_open"] = True
-            st.rerun()
-
-        elif selected == "🎯":
-            _go("🎯 Objetivos")
-            st.rerun()
-
-        elif selected == "🏋️":
-            _go("🏋️ Rutina IA")
-            st.rerun()
-
-        elif selected == "👤":
-            st.session_state["profile_popup_open"] = True
-            st.rerun()
 
 
 
@@ -1111,9 +1113,9 @@ def render_bottom_nav():
 # CURRENT PAGE
 # =========================
 render_bottom_nav()
+render_food_subnav()  # ✅ mini-bar SOLO en páginas comida
 
 page = st.session_state["page"]
-
 # ==========================================================
 # PÁGINA: DASHBOARD
 # ==========================================================
@@ -3257,6 +3259,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
