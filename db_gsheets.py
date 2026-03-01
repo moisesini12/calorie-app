@@ -179,7 +179,7 @@ def _norm_date(d: Any) -> str:
     return s
 
 
-@st.cache_data(ttl=300)
+
 def _get_all_records_cached(tab_name: str, version: int):
     ws = _ws(tab_name)
     values = ws.get_all_values()
@@ -606,6 +606,7 @@ def set_setting(key: str, value: str, user_id: Optional[str] = None) -> None:
 
     ws.append_row([scoped, value], value_input_option="USER_ENTERED", insert_data_option="INSERT_ROWS")
     _cache_bump(TAB_SETTINGS)
+
 
 
 
