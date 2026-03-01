@@ -1740,12 +1740,23 @@ elif page == "🍽 Registro":
         st.error("No hay categorías. Revisa la pestaña foods.")
         st.stop()
 
-    # ✅ Map seguro: (categoria, nombre) -> food (evita bugs por nombres duplicados)
+    # ✅ Map seguro:
+    # - food_map: (categoria, nombre) -> food
+    # - food_by_id: id -> food (el bueno para editar / futuro)
     food_map = {}
+    food_by_id = {}
+    
     for c in categories:
+        c_key = str(c).strip()
         for f in list_foods_by_category(c):
-            key = (str(c), str(f["name"]))
-            food_map[key] = f   
+            name_key = str(f.get("name", "")).strip()
+    
+            food_map[(c_key, name_key)] = f
+    
+            try:
+                food_by_id[int(f.get("id"))] = f
+            except Exception:
+                pass
 
     # -------------------------
     # UI: carrito (añadir varios)
@@ -1823,8 +1834,9 @@ elif page == "🍽 Registro":
         try:
             item = {
                 "meal": str(meal),
-                "category": str(category),          # ✅ clave
                 "name": str(food["name"]),
+                "category": str(category),                 # ✅ clave
+                "food_id": int(food.get("id", 0) or 0),    # ✅ clave (único)
                 "grams": float(grams),
             }
             st.session_state["pending_entries"].append(item)
@@ -1848,30 +1860,31 @@ elif page == "🍽 Registro":
                 gr = float(it.get("grams", 0))
                 ml = str(it.get("meal", "")).strip()
 
+                # Validaciones rápidas primero
+                if not nm:
+                    continue
+                if gr <= 0:
+                    continue
+                if ml not in ["Desayuno", "Almuerzo", "Merienda", "Cena"]:
+                    ml = "Almuerzo"
+                
                 # ✅ Resolver alimento:
                 # - Si tenemos category, intentamos (cat, name)
                 # - Si no, fallback: busca por nombre en cualquier categoría
                 base_food = None
                 
-                key = (cat, nm)
-                if cat and key in food_map:
-                    base_food = food_map[key]
-                else:
+                if cat:
+                    key = (cat, nm)
+                    if key in food_map:
+                        base_food = food_map[key]
+                
+                if base_food is None:
                     matches = [f for (c2, n2), f in food_map.items() if str(n2).strip() == nm]
                     if matches:
                         base_food = matches[0]
                 
                 if base_food is None:
                     continue
-
-                
-                if not nm:
-                    continue        
-                if gr <= 0:
-                    continue
-                if ml not in ["Desayuno", "Almuerzo", "Merienda", "Cena"]:
-                    ml = "Almuerzo"
-
                 macros = scale_macros(base_food, gr)
 
                 entry = {
@@ -3470,6 +3483,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
