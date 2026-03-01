@@ -403,13 +403,47 @@ def add_entry(entry: Dict[str, Any]) -> int:
 
     return new_id
 
+@st.cache_data(ttl=300)
+def _get_entries_records_cached(version: int) -> List[Dict[str, Any]]:
+    """
+    Lee la pestaña entries por POSICIÓN (A..J), no por nombre de columna.
+    Evita bugs si el header está en español, con tildes o en orden distinto.
+    """
+    ws = _ws(TAB_ENTRIES)
+    values = ws.get_all_values()
+    if not values or len(values) < 2:
+        return []
 
+    out: List[Dict[str, Any]] = []
+    for row in values[1:]:
+        # Asegura 10 columnas (A..J)
+        while len(row) < 10:
+            row.append("")
+
+        out.append({
+            "id": row[0],
+            "user_id": row[1],
+            "entry_date": row[2],
+            "meal": row[3],
+            "name": row[4],
+            "grams": row[5],
+            "calories": row[6],
+            "protein": row[7],
+            "carbs": row[8],
+            "fat": row[9],
+        })
+
+    return out
+
+
+def _get_entries_records() -> List[Dict[str, Any]]:
+    return _get_entries_records_cached(_cache_ver(TAB_ENTRIES))
 
 
 
 
 def list_entries_by_date(entry_date: str, user_id: Optional[str] = None) -> List[Dict[str, Any]]:
-    rows = _get_all_records(TAB_ENTRIES)
+    rows = _get_entries_records()
     target = _norm_date(entry_date)
 
     out = []
@@ -477,7 +511,7 @@ def delete_entry_by_id(entry_id: int) -> None:
 
 
 def daily_totals_last_days(days: int = 30, user_id: Optional[str] = None) -> List[Tuple[str, float, float, float, float]]:
-    rows = _get_all_records(TAB_ENTRIES)
+    rows = _get_entries_records()
     today = dt.date.today()
     start = today - dt.timedelta(days=days - 1)
 
@@ -572,6 +606,7 @@ def set_setting(key: str, value: str, user_id: Optional[str] = None) -> None:
 
     ws.append_row([scoped, value], value_input_option="USER_ENTERED", insert_data_option="INSERT_ROWS")
     _cache_bump(TAB_SETTINGS)
+
 
 
 
