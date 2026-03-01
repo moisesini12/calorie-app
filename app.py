@@ -636,6 +636,41 @@ def inject_fitness_ui():
       padding-bottom: 95px !important;
     }
 
+    /* =========================
+       FIX: option_menu is an iframe/component (not inside your div)
+       So we pin the iframe itself to the bottom.
+       ========================= */
+    
+    /* Target the option_menu iframe by its title (Streamlit components use iframe) */
+    iframe[title="streamlit_option_menu.option_menu"]{
+      position: fixed !important;
+      left: 0 !important;
+      right: 90px !important;  /* ✅ deja hueco para iconos flotantes abajo derecha */
+      bottom: 0 !important;
+      width: auto !important;
+      height: 74px !important; /* ajusta si lo quieres más alto/bajo */
+      z-index: 999999 !important;
+      border: 0 !important;
+    }
+    
+    /* El contenedor del componente que Streamlit pone en el flujo:
+       lo “colapsamos” para que no deje un hueco arriba */
+    div[data-testid="stComponent"]:has(> iframe[title="streamlit_option_menu.option_menu"]){
+      height: 0 !important;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+    
+    /* Para que el contenido no quede debajo de la barra */
+    .block-container{
+      padding-bottom: 95px !important;
+    }
+
+
+
+
+
+
 
 
     </style>
@@ -3279,6 +3314,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
