@@ -333,20 +333,20 @@ def inject_fitness_ui():
       gap: 12px;
     }
 
-/* =========================
-   MOBILE UPGRADE (Dashboard)
-   ========================= */
-@media (max-width: 900px){
-  /* Menos “aire” arriba: se siente más app */
-  .block-container{
-    padding-top:56px !important;
-  }
-
-  /* Títulos un pelín más compactos en móvil */
-  h1, h2, h3{
-    letter-spacing: -0.02em !important;
-  }
-}
+    /* =========================
+       MOBILE UPGRADE (Dashboard)
+       ========================= */
+    @media (max-width: 900px){
+      /* Menos “aire” arriba: se siente más app */
+      .block-container{
+        padding-top:56px !important;
+      }
+    
+      /* Títulos un pelín más compactos en móvil */
+      h1, h2, h3{
+        letter-spacing: -0.02em !important;
+      }
+    }
 
     /* ===== HERO (cabecera dashboard) ===== */
     .fm-hero{
@@ -613,7 +613,6 @@ def inject_fitness_ui():
     /* (Opcional) ocultar sidebar si quieres look app total */
     /* section[data-testid="stSidebar"]{ display:none; } */
 
-    }
 
 
 
@@ -3259,6 +3258,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
