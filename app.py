@@ -733,7 +733,36 @@ def inject_fitness_ui():
       padding-top: 0rem !important;
     }
 
-
+    /* ===== ULTRA COMPACT TOP ===== */
+    
+    /* Elimina TODO el padding superior */
+    .block-container{
+      padding-top: 0.2rem !important;
+    }
+    
+    /* Mata margen del primer elemento real */
+    .block-container > div:first-child{
+      margin-top: -10px !important;
+      padding-top: 0 !important;
+    }
+    
+    /* Ajuste fino del contenedor principal */
+    section.main{
+      padding-top: 0 !important;
+    }
+    
+    /* Header invisible de Streamlit */
+    header[data-testid="stHeader"]{
+      height: 0 !important;
+      min-height: 0 !important;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+    
+    /* Elimina posible margen del primer card */
+    section.main > div:first-child{
+      margin-top: -15px !important;
+    }
 
 
 
@@ -3384,6 +3413,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
