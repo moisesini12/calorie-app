@@ -1267,7 +1267,6 @@ def render_bottom_nav():
 # CURRENT PAGE
 # =========================
 render_bottom_nav()
-render_food_subnav()  # ✅ mini-bar SOLO en páginas comida
 
 page = st.session_state["page"]
 # ==========================================================
@@ -1660,7 +1659,7 @@ elif page == "🍽 Registro":
         subtitle=f"Día: {selected_date_str}",
         pills=["🧺 Multi-añadido", "⚡ Rápido"]
     )
-
+    render_food_subnav()
     # -------------------------
     # Estado / feedback
     # -------------------------
@@ -2387,7 +2386,7 @@ elif page == "➕ Añadir alimento":
         subtitle="Añade, edita o borra alimentos de tu base de datos.",
         pills=["➕ Añadir", "✏️ Editar", "🗑️ Borrar"]
     )
-    
+    render_food_subnav()    
     mode = st.radio("Modo", ["➕ Añadir", "✏️ Editar", "🗑️ Borrar"], horizontal=True, key="food_mode")
     all_foods = list_all_foods()
 
@@ -2514,7 +2513,7 @@ elif page == "👨‍🍳 Chef IA":
         subtitle="Nutrición + menús + platos con tus alimentos.",
         pills=["🤖 Chat", "🍽️ Menús", "🥘 Platos"]
     )
-    
+    render_food_subnav()    
     for m in st.session_state.chat_history:
         if m["role"] == "system":
             continue
@@ -3413,6 +3412,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
