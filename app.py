@@ -930,16 +930,16 @@ if "page" not in st.session_state:
 if "menu_open" not in st.session_state:
     st.session_state["menu_open"] = False
 
-# Atajos internos (si algún botón pone goto_page)
-if st.session_state["goto_page"]:
-    _go(st.session_state["goto_page"])
-    st.session_state["goto_page"] = None
-
 def _go(target_page: str):
     """Cambia de página y cierra popups."""
     st.session_state["page"] = target_page
     st.session_state["food_popup_open"] = False
     st.session_state["profile_popup_open"] = False
+
+# Atajos internos (si algún botón pone goto_page)
+if st.session_state["goto_page"]:
+    _go(st.session_state["goto_page"])
+    st.session_state["goto_page"] = None
 
 # =========================
 # POPUPS (Comidas / Perfil)
@@ -1011,26 +1011,26 @@ if st.session_state.get("profile_popup_open", False):
 # BOTTOM NAV (Instagram-like)
 # =========================
 def render_bottom_nav():
-    # ===== Sync page -> tab (ANTES del widget) =====
-    page_to_index = {
-        "📊 Dashboard": 0,
-        "🍽 Registro": 1,
-        "➕ Añadir alimento": 1,
-        "👨‍🍳 Chef IA": 1,
-        "🤖 IA Alimento": 1,
-        "🎯 Objetivos": 2,
-        "🏋️ Rutina IA": 3,
+    # ===== Mapeo page -> tab =====
+    page_to_tab = {
+        "📊 Dashboard": "🏠",
+        "🍽 Registro": "🍽️",
+        "➕ Añadir alimento": "🍽️",
+        "👨‍🍳 Chef IA": "🍽️",
+        "🤖 IA Alimento": "🍽️",
+        "🎯 Objetivos": "🎯",
+        "🏋️ Rutina IA": "🏋️",
     }
 
-    # ✅ Añadimos un botón extra: refrescar
-    options = ["🏠", "🍽️", "🎯", "🏋️", "👤", "🔄"]
-    icons   = ["house-fill", "egg-fried", "bullseye", "activity", "person-circle", "arrow-clockwise"]
+    options = ["🏠", "🍽️", "🎯", "🏋️", "👤"]
+    icons   = ["house-fill", "egg-fried", "bullseye", "activity", "person-circle"]
 
-    default_index = page_to_index.get(st.session_state.get("page", "📊 Dashboard"), 0)
-    desired = options[default_index]
+    # ===== Sync page -> UI (ANTES del widget) =====
+    desired = page_to_tab.get(st.session_state.get("page", "📊 Dashboard"), "🏠")
 
-    # ✅ Sincroniza UI si se queda “pegado”
-    if st.session_state.get("fm_bottom_nav_ui") != desired:
+    # Solo “forzamos” la pestaña del widget cuando la page cambió de verdad
+    if st.session_state.get("_fm_page_synced") != st.session_state.get("page"):
+        st.session_state["_fm_page_synced"] = st.session_state.get("page")
         st.session_state["fm_bottom_nav_ui"] = desired
 
     st.markdown('<div class="fm-bottom-nav"><div class="fm-inner">', unsafe_allow_html=True)
@@ -1051,22 +1051,34 @@ def render_bottom_nav():
 
     st.markdown("</div></div>", unsafe_allow_html=True)
 
-    # ===== Acciones =====
+    # ===== Acciones SOLO si hubo click real (cambio de selección) =====
+    last = st.session_state.get("_fm_nav_last", selected)
+    if selected == last:
+        return
+
+    st.session_state["_fm_nav_last"] = selected
+
     if selected == "🏠":
         _go("📊 Dashboard")
-    elif selected == "🍽️":
-        _open_foods()
-    elif selected == "🎯":
-        _go("🎯 Objetivos")
-    elif selected == "🏋️":
-        _go("🏋️ Rutina IA")
-    elif selected == "👤":
-        _open_profile()
-    elif selected == "🔄":
-        # ✅ Fuerza “reentrar” a la página actual (sirve aunque ya estés en ella)
-        _go(st.session_state.get("page", "📊 Dashboard"))
         st.rerun()
 
+    elif selected == "🍽️":
+        st.session_state["food_popup_open"] = True
+        st.rerun()
+
+    elif selected == "🎯":
+        _go("🎯 Objetivos")
+        st.rerun()
+
+    elif selected == "🏋️":
+        _go("🏋️ Rutina IA")
+        st.rerun()
+
+    elif selected == "👤":
+        st.session_state["profile_popup_open"] = True
+        st.rerun()
+
+    
     # Acción SOLO si cambia (click real)
     last = st.session_state.get("_fm_nav_last", options[default_index])
     if selected != last:
@@ -3245,6 +3257,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
