@@ -617,13 +617,6 @@ def inject_fitness_ui():
     /* (Opcional) ocultar sidebar si quieres look app total */
     /* section[data-testid="stSidebar"]{ display:none; } */
 
-    /* Oculta menú flotante inferior derecho */
-    [data-testid="stToolbar"],
-    [data-testid="stDecoration"],
-    [data-testid="stStatusWidget"] {
-        display: none !important;
-    }
-    
 
 
 
@@ -3269,6 +3262,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
