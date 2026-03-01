@@ -1861,6 +1861,7 @@ elif page == "🍽 Registro":
             for it in st.session_state["pending_entries"]:
                 nm = str(it.get("name", "")).strip()
                 cat = str(it.get("category", "")).strip()
+                fid = int(it.get("food_id", 0) or 0)   # ✅ NUEVO: id real del alimento
                 gr = float(it.get("grams", 0))
                 ml = str(it.get("meal", "")).strip()
 
@@ -1872,19 +1873,28 @@ elif page == "🍽 Registro":
                 if ml not in ["Desayuno", "Almuerzo", "Merienda", "Cena"]:
                     ml = "Almuerzo"
                 
-                # ✅ Resolver alimento por ID (único, no se confunde nunca)
-                fid = int(it.get("food_id", 0) or 0)
-                base_food = food_by_id.get(fid)
-
-                # Fallback por si ese item viejo no trae id
+                # ✅ Resolver alimento (DEFINITIVO):
+                # 1) por food_id (único)
+                # 2) fallback por (cat, name)
+                # 3) último fallback por name (solo si no hay otra)
+                base_food = None
+                
+                # 1) ID manda
+                if fid and fid in food_by_id:
+                    base_food = food_by_id[fid]
+                
+                # 2) fallback (cat, name)
                 if base_food is None and cat:
-                    base_food = food_map.get((cat, nm))
-
+                    key = (cat, nm)
+                    if key in food_map:
+                        base_food = food_map[key]
+                
+                # 3) último fallback por nombre
                 if base_food is None:
                     matches = [f for (c2, n2), f in food_map.items() if str(n2).strip() == nm]
                     if matches:
                         base_food = matches[0]
-
+                
                 if base_food is None:
                     continue
 
@@ -3488,6 +3498,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
