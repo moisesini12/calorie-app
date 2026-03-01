@@ -137,6 +137,19 @@ def _to_float(x: Any, default: float = 0.0) -> float:
         return default
 
 
+def _pick(d: dict, *keys: str, default: Any = "") -> Any:
+    """
+    Devuelve el primer valor existente en d para cualquiera de las keys.
+    Útil si el Sheet tiene headers tipo 'Proteínas' en vez de 'protein'.
+    """
+    for k in keys:
+        if k in d:
+            v = d.get(k, default)
+            if v is not None and str(v).strip() != "":
+                return v
+    return default
+
+
 def _to_int(x: Any, default: int = 0) -> int:
     try:
         if x is None or x == "":
@@ -265,13 +278,13 @@ def list_foods_by_category(category: str) -> List[Dict[str, Any]]:
     for f in foods:
         if str(f.get("category", "")).strip() == category:
             out.append({
-                "id": _to_int(f.get("id")),
-                "name": str(f.get("name", "")).strip(),
-                "category": str(f.get("category", "")).strip(),
-                "calories": _to_float(f.get("calories")),
-                "protein": _to_float(f.get("protein")),
-                "carbs": _to_float(f.get("carbs")),
-                "fat": _to_float(f.get("fat")),
+                "id": _to_int(_pick(f, "id", "ID", default=0)),
+                "name": str(_pick(f, "name", "Nombre", default="")).strip(),
+                "category": str(_pick(f, "category", "Categoria", "Categoría", default="")).strip(),
+                "calories": _to_float(_pick(f, "calories", "kcal", "Calorías", "Calorias", default=0)),
+                "protein": _to_float(_pick(f, "protein", "proteina", "proteínas", "proteinas", "Proteínas", "Proteinas", default=0)),
+                "carbs": _to_float(_pick(f, "carbs", "carbohidratos", "Carbohidratos", default=0)),
+                "fat": _to_float(_pick(f, "fat", "grasas", "Grasas", default=0)),
             })
     return out
 
@@ -281,13 +294,13 @@ def list_all_foods() -> List[Dict[str, Any]]:
     out = []
     for f in foods:
         out.append({
-            "id": _to_int(f.get("id")),
-            "name": str(f.get("name", "")).strip(),
-            "category": str(f.get("category", "")).strip(),
-            "calories": _to_float(f.get("calories")),
-            "protein": _to_float(f.get("protein")),
-            "carbs": _to_float(f.get("carbs")),
-            "fat": _to_float(f.get("fat")),
+            "id": _to_int(_pick(f, "id", "ID", default=0)),
+            "name": str(_pick(f, "name", "Nombre", default="")).strip(),
+            "category": str(_pick(f, "category", "Categoria", "Categoría", default="")).strip(),
+            "calories": _to_float(_pick(f, "calories", "kcal", "Calorías", "Calorias", default=0)),
+            "protein": _to_float(_pick(f, "protein", "proteina", "proteínas", "proteinas", "Proteínas", "Proteinas", default=0)),
+            "carbs": _to_float(_pick(f, "carbs", "carbohidratos", "Carbohidratos", default=0)),
+            "fat": _to_float(_pick(f, "fat", "grasas", "Grasas", default=0)),
         })
     out.sort(key=lambda x: (x["category"], x["name"]))
     return out
@@ -417,7 +430,7 @@ def list_entries_by_date(entry_date: str, user_id: Optional[str] = None) -> List
             "name": str(r.get("name", "")).strip(),
             "grams": _to_float(r.get("grams")),
             "calories": _to_float(r.get("calories")),
-            "protein": _to_float(r.get("protein")),
+            "protein": _to_float(_pick(r, "protein", "proteina", "proteínas", "proteinas", "Proteínas", "Proteinas", default=0)),
             "carbs": _to_float(r.get("carbs")),
             "fat": _to_float(r.get("fat")),
         })
@@ -559,6 +572,7 @@ def set_setting(key: str, value: str, user_id: Optional[str] = None) -> None:
 
     ws.append_row([scoped, value], value_input_option="USER_ENTERED", insert_data_option="INSERT_ROWS")
     _cache_bump(TAB_SETTINGS)
+
 
 
 
