@@ -618,6 +618,30 @@ def inject_fitness_ui():
     /* section[data-testid="stSidebar"]{ display:none; } */
 
 
+    /* ===== Streamlit UI killers (bottom-right widgets) ===== */
+    
+    /* Status widget (muchas versiones) */
+    [data-testid="stStatusWidget"] { 
+      display: none !important; 
+    }
+    
+    /* Toolbar / deploy button (según build) */
+    [data-testid="stToolbar"] { 
+      display: none !important; 
+    }
+    [data-testid="stAppToolbar"] { 
+      display: none !important; 
+    }
+    [data-testid="stDeployButton"] { 
+      display: none !important; 
+    }
+    
+    /* A veces viene como un contenedor fijo sin testid claro */
+    div:has(> [data-testid="stStatusWidget"]) {
+      display: none !important;
+    }
+
+
 
 
 
@@ -3262,6 +3286,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
