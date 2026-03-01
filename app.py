@@ -1808,6 +1808,25 @@ elif page == "🍽 Registro":
 
     # Preview macros del item actual (solo visual, no guarda)
     try:
+        
+    # Preview rápido
+    if food and grams > 0:
+    
+        # 🔍 DEBUG TEMPORAL
+        st.write("GRAMS RAW:", grams)
+        st.write("FOOD PROTEIN RAW:", food.get("protein"))
+        st.write("FOOD DICT:", food)
+    
+        macros = scale_macros(food, float(grams))
+    
+        st.caption(
+            f"Preview: {food['name']} — {grams:.0f} g • "
+            f"{macros['calories']:.0f} kcal • "
+            f"P {macros['protein']:.1f} • "
+            f"C {macros['carbs']:.1f} • "
+            f"G {macros['fat']:.1f}"
+        )        
+        
         _m = scale_macros(food, grams)
         st.caption(
             f"Preview: **{food['name']}** — {grams:.0f} g · "
@@ -3483,6 +3502,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
