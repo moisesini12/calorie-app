@@ -1836,16 +1836,27 @@ elif page == "🍽 Registro":
     # -------------------------
     if add_to_list:
         try:
+            # ✅ Calcula macros AQUÍ (con el food real del selectbox)
+            macros_now = scale_macros(food, float(grams))
+    
             item = {
-                "meal": str(meal),
-                "name": str(food["name"]),
-                "category": str(category),                 # ✅ clave
-                "food_id": int(food.get("id", 0) or 0),    # ✅ clave (único)
+                "meal": str(meal).strip(),
+                "name": str(food.get("name", "")).strip(),
+                "category": str(category).strip(),
+                "food_id": int(food.get("id", 0) or 0),
                 "grams": float(grams),
+    
+                # ✅ Guardamos macros ya calculadas (no recalcular en commit)
+                "calories": float(macros_now.get("calories", 0.0)),
+                "protein": float(macros_now.get("protein", 0.0)),
+                "carbs": float(macros_now.get("carbs", 0.0)),
+                "fat": float(macros_now.get("fat", 0.0)),
             }
+    
             st.session_state["pending_entries"].append(item)
             st.toast("Añadido a la lista ✅")
             st.rerun()
+    
         except Exception as e:
             st.error("No pude añadir el item a la lista.")
             st.exception(e)
@@ -1860,64 +1871,50 @@ elif page == "🍽 Registro":
             new_ids = []
             for it in st.session_state["pending_entries"]:
                 nm = str(it.get("name", "")).strip()
-                cat = str(it.get("category", "")).strip()
-                fid = int(it.get("food_id", 0) or 0)   # ✅ NUEVO: id real del alimento
-                gr = float(it.get("grams", 0))
+                gr = float(it.get("grams", 0) or 0)
                 ml = str(it.get("meal", "")).strip()
-
-                # Validaciones rápidas primero
+    
+                # Validaciones rápidas
                 if not nm:
                     continue
                 if gr <= 0:
                     continue
                 if ml not in ["Desayuno", "Almuerzo", "Merienda", "Cena"]:
                     ml = "Almuerzo"
-                
-                # ✅ Resolver alimento SIEMPRE por ID (robusto)
-                fid = int(it.get("food_id", 0) or 0)
-                base_food = food_by_id.get(fid)
-
-                # fallback (solo por si viene algún item viejo sin food_id)
-                if base_food is None:
-                    if cat:
-                        key = (cat, nm)
-                        base_food = food_map.get(key)
-
-                if base_food is None:
-                    continue
-
-                # ✅ Asegura que el nombre guardado sea el real del alimento encontrado
-                nm = str(base_food.get("name", nm)).strip()
-                macros = scale_macros(base_food, gr)
-
+    
+                # ✅ NO RECALCULAR: usamos macros guardadas en el carrito
                 entry = {
                     "user_id": st.session_state["user_id"],
                     "entry_date": selected_date_str,
                     "meal": ml,
                     "name": nm,
                     "grams": float(gr),
-                    **macros,
+    
+                    "calories": float(it.get("calories", 0.0)),
+                    "protein": float(it.get("protein", 0.0)),
+                    "carbs": float(it.get("carbs", 0.0)),
+                    "fat": float(it.get("fat", 0.0)),
                 }
-
+    
                 new_id = add_entry(entry)
                 new_ids.append(new_id)
-
+    
             st.cache_data.clear()
-
+    
             # feedback
             st.session_state["_just_added"] = True
             st.session_state["_last_add_ids"] = new_ids
             if new_ids:
                 st.session_state["_last_add_id"] = new_ids[-1]
-
+    
             # limpia carrito
             st.session_state["pending_entries"] = []
             st.rerun()
-
+    
         except Exception as e:
             st.error("❌ Error guardando el lote en Google Sheets")
             st.exception(e)
-
+            
     # -------------------------
     # Mostrar pendientes (carrito)
     # -------------------------
@@ -1933,31 +1930,16 @@ elif page == "🍽 Registro":
 
         st.dataframe(pend_df, use_container_width=True, hide_index=True)
 
-        # Totales del carrito (opcional pero útil)
+        # Totales del carrito (opcional pero útil) ✅ SIN recalcular
         tot = {"calories": 0.0, "protein": 0.0, "carbs": 0.0, "fat": 0.0}
+        
         for it in pending:
-            gr = float(it.get("grams", 0) or 0)
-            if gr <= 0:
-                continue
+            tot["calories"] += float(it.get("calories", 0.0) or 0.0)
+            tot["protein"]  += float(it.get("protein", 0.0) or 0.0)
+            tot["carbs"]    += float(it.get("carbs", 0.0) or 0.0)
+            tot["fat"]      += float(it.get("fat", 0.0) or 0.0)
 
-            fid = int(it.get("food_id", 0) or 0)
-            base_food = food_by_id.get(fid)
-
-            # fallback por si hay items viejos sin id
-            if base_food is None:
-                nm = str(it.get("name", "")).strip()
-                cat = str(it.get("category", "")).strip()
-                base_food = food_map.get((cat, nm))
-
-            if base_food is None:
-                continue
-
-            mm = scale_macros(base_food, gr)
-            tot["calories"] += float(mm.get("calories", 0))
-            tot["protein"] += float(mm.get("protein", 0))
-            tot["carbs"] += float(mm.get("carbs", 0))
-            tot["fat"] += float(mm.get("fat", 0))
-
+        
         c1, c2, c3, c4 = st.columns(4)
         c1.metric("🔥 kcal (pendientes)", f"{tot['calories']:.0f}")
         c2.metric("🥩 P (pendientes)", f"{tot['protein']:.1f} g")
@@ -3497,6 +3479,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
