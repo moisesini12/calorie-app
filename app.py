@@ -654,8 +654,8 @@ def inject_fitness_ui():
       --nav-pad-x: 10px;
       --nav-pad-y: 10px;
       --nav-radius: 26px;
-      --nav-bg: rgba(15, 23, 42, 0.55);   /* azul oscuro translúcido */
-      --nav-stroke: rgba(255,255,255,0.10);
+      --nav-bg: rgba(139, 92, 246, 0.18);   /* azul oscuro translúcido */
+      --nav-stroke: rgba(139,92,246,0.25);
       --nav-shadow: 0 18px 45px rgba(0,0,0,0.55);
     }
     
@@ -3353,6 +3353,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
