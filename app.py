@@ -51,11 +51,11 @@ def inject_fitness_ui():
        ========================================================= */
 
     :root{
-      /* Background gradients (coral/orange/pink) */
-      --bgA:#ff6b6b;   /* coral */
-      --bgB:#ff8a3d;   /* orange */
-      --bgC:#ff4fa3;   /* pink accent glow */
-      --bgD:#ffd1b3;   /* soft highlight */
+      /* Background gradients (softer / muted coral) */
+      --bgA:#e85d5d;   /* muted coral */
+      --bgB:#e97a3a;   /* softer orange */
+      --bgC:#e0558e;   /* muted pink glow */
+      --bgD:#f4c2aa;   /* soft warm highlight */
 
       /* Surfaces (white cards) */
       --surface:#ffffff;
@@ -88,10 +88,10 @@ def inject_fitness_ui():
     /* ---------- App background (like image) ---------- */
     html, body, [data-testid="stAppViewContainer"]{
       background:
-        radial-gradient(900px 600px at 10% 10%, rgba(255,255,255,0.28) 0%, transparent 60%),
-        radial-gradient(900px 600px at 85% 25%, rgba(255,209,179,0.55) 0%, transparent 55%),
-        radial-gradient(900px 700px at 55% 95%, rgba(255,79,163,0.22) 0%, transparent 60%),
-        linear-gradient(180deg, var(--bgA) 0%, var(--bgB) 55%, #ff5a8b 100%) !important;
+        radial-gradient(900px 600px at 10% 10%, rgba(255,255,255,0.18) 0%, transparent 60%),
+        radial-gradient(900px 600px at 85% 25%, rgba(244,194,170,0.35) 0%, transparent 55%),
+        radial-gradient(900px 700px at 55% 95%, rgba(224,85,142,0.18) 0%, transparent 60%),
+        linear-gradient(180deg, var(--bgA) 0%, var(--bgB) 60%, #c94e74 100%) !important;
       color: #fff !important; /* outside cards */
     }
 
@@ -3211,6 +3211,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
