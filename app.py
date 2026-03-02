@@ -245,7 +245,7 @@ details summary{
 
 :root{
   --nav-h: 70px;
-  --nav-top: env(safe-area-inset-top, 0px);
+  --nav-top: env(safe-area-inset-top, + 14px);
 }
 
 /* Barra navegación */
@@ -3130,6 +3130,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
