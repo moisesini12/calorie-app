@@ -3044,10 +3044,14 @@ elif page == "🏋️ Rutina IA":
     has_plan = bool(plan)
 
     # ======================================================
-    # Layout: 2 columnas si hay rutina, si no 1 columna
+    # Layout MOBILE-FIRST:
+    # - Si hay plan -> Tabs "Perfil" / "Rutina" (como app)
+    # - Si no hay plan -> normal (solo Perfil)
     # ======================================================
     if has_plan:
-        col_left, col_right = st.columns([1.05, 1.45], gap="large")
+        tab_profile, tab_plan = st.tabs(["🧬 Perfil", "📅 Rutina"])
+        col_left = tab_profile
+        col_right = tab_plan
     else:
         col_left = st.container()
         col_right = None
@@ -3584,6 +3588,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
