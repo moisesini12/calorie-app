@@ -44,382 +44,311 @@ st.set_page_config(
 
 def inject_fitness_ui():
     st.markdown(r"""
-    <style>
-    /* =========================================================
-       FITMACRO — THEME "CORAL ORANGE" (like the mockup)
-       Mobile-first ALWAYS (PC = phone centered)
-       ========================================================= */
+<style>
+/* =========================
+   FITMACRO - WARM FITNESS THEME (MOBILE FIRST)
+   Inspirado en el estilo de tu imagen: coral / naranja / melocotón
+   Fondo más apagado + texto negro con buen contraste
+   ========================= */
 
-    :root{
-      /* Background gradients (softer / muted coral) */
-      --bgA:#e85d5d;   /* muted coral */
-      --bgB:#e97a3a;   /* softer orange */
-      --bgC:#e0558e;   /* muted pink glow */
-      --bgD:#f4c2aa;   /* soft warm highlight */
+:root{
+  /* Fondo (apagado) */
+  --bg0: #f6c1ad;   /* melocotón suave */
+  --bg1: #f2a489;   /* coral apagado */
+  --bg2: #ee8e73;   /* naranja coral */
+  --bg3: #e77d64;   /* más profundo */
 
-      /* Surfaces (white cards) */
-      --surface:#ffffff;
-      --surface2:#f7f8fc;
+  /* Superficies */
+  --surface: rgba(255,255,255,0.88);
+  --surface2: rgba(255,255,255,0.78);
+  --stroke: rgba(0,0,0,0.08);
 
-      /* Text (dark on white) */
-      --txt:#111827;      /* gray-900 */
-      --muted:#6b7280;    /* gray-500 */
-      --muted2:#94a3b8;   /* slate-400 */
+  /* Texto (negro, como pediste) */
+  --txt: rgba(12,12,14,0.95);
+  --muted: rgba(20,20,24,0.62);
 
-      /* Accents */
-      --accent:#ff6b6b;   /* coral */
-      --accent2:#ff8a3d;  /* orange */
-      --accent3:#ff4fa3;  /* pink */
-      --good:#16a34a;
+  /* Acentos */
+  --a1: #ff7a59;  /* coral */
+  --a2: #ffb36b;  /* naranja suave */
+  --a3: #ff4d6d;  /* rosa */
+  --ok: #22c55e;  /* verde */
 
-      /* Borders & shadows */
-      --stroke: rgba(17,24,39,0.10);
-      --shadow: 0 18px 55px rgba(17,24,39,0.18);
-      --shadow2: 0 10px 26px rgba(17,24,39,0.14);
+  /* Radios / sombras */
+  --r12: 12px;
+  --r16: 16px;
+  --r20: 20px;
+  --shadow: 0 18px 50px rgba(0,0,0,0.18);
+  --shadow2: 0 10px 26px rgba(0,0,0,0.14);
 
-      /* Phone shell */
-      --phone-w: 460px;
+  --nav-h: 74px;
+}
 
-      /* Bottom dock */
-      --nav-h: 74px;
-      --nav-radius: 26px;
-    }
+/* ===== APP BACKGROUND ===== */
+html, body, [data-testid="stAppViewContainer"]{
+  background:
+    radial-gradient(900px 650px at 18% 12%, rgba(255,255,255,0.25) 0%, transparent 60%),
+    radial-gradient(900px 650px at 85% 20%, rgba(255,255,255,0.18) 0%, transparent 62%),
+    linear-gradient(180deg, var(--bg0) 0%, var(--bg1) 35%, var(--bg2) 70%, var(--bg3) 100%) !important;
+  color: var(--txt) !important;
+}
 
-    /* ---------- App background (like image) ---------- */
-    html, body, [data-testid="stAppViewContainer"]{
-      background:
-        radial-gradient(900px 600px at 10% 10%, rgba(255,255,255,0.18) 0%, transparent 60%),
-        radial-gradient(900px 600px at 85% 25%, rgba(244,194,170,0.35) 0%, transparent 55%),
-        radial-gradient(900px 700px at 55% 95%, rgba(224,85,142,0.18) 0%, transparent 60%),
-        linear-gradient(180deg, var(--bgA) 0%, var(--bgB) 60%, #c94e74 100%) !important;
-      color: #fff !important; /* outside cards */
-    }
+/* ===== CONTAINER ===== */
+.block-container{
+  max-width: 1100px;
+  padding-top: 18px;
+  padding-bottom: calc(var(--nav-h) + 34px);
+}
 
-    /* ---------- Always mobile layout ---------- */
-    section[data-testid="stSidebar"]{ display:none !important; }
+/* ===== Tipografía general (negra) ===== */
+h1, h2, h3, h4, h5, h6,
+p, li, span, label, small{
+  color: var(--txt) !important;
+}
+[data-testid="stCaptionContainer"], .stCaption{
+  color: var(--muted) !important;
+  font-weight: 700 !important;
+}
 
-    header[data-testid="stHeader"]{
-      height: 0 !important;
-      min-height: 0 !important;
-      padding: 0 !important;
-      margin: 0 !important;
-      border: 0 !important;
-      background: transparent !important;
-    }
-    section.main > div{ padding-top: 0 !important; }
+/* ===== Cards base ===== */
+.fm-card, .fm-section, .fm-table-card, .wk-card{
+  background: linear-gradient(180deg, var(--surface), var(--surface2));
+  border: 1px solid var(--stroke);
+  border-radius: 22px;
+  padding: 16px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(10px);
+}
 
-    .block-container{
-      max-width: var(--phone-w) !important;
-      margin: 0 auto !important;
-      padding: 14px 14px !important;
-      padding-bottom: calc(var(--nav-h) + 34px + env(safe-area-inset-bottom, 0px)) !important;
-    }
+/* Cards separadas */
+.fm-card + .fm-card,
+.fm-section + .fm-section,
+.wk-card + .wk-card{
+  margin-top: 14px;
+}
 
-    /* ---------- App typography ---------- */
-    h1,h2,h3,h4{ letter-spacing:-0.02em !important; }
-    h1{ font-size: 28px !important; font-weight: 950 !important; color:#fff !important; }
-    h2{ font-size: 20px !important; font-weight: 950 !important; color:#fff !important; }
-    h3{ font-size: 16px !important; font-weight: 900 !important; color:#fff !important; }
-    .stCaption, [data-testid="stCaptionContainer"]{
-      color: rgba(255,255,255,0.88) !important;
-      font-weight: 750 !important;
-    }
+/* ===== Chips / Pills ===== */
+.fm-chip, .fm-pill, .wk-chip{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.70);
+  border: 1px solid rgba(0,0,0,0.08);
+  color: rgba(12,12,14,0.88) !important;
+  font-size: 12px;
+  font-weight: 900;
+  white-space: nowrap;
+  box-shadow: 0 8px 18px rgba(0,0,0,0.08);
+}
 
-    /* =========================================================
-       HERO (top coral/orange header)
-       ========================================================= */
-    .fm-hero{
-      border-radius: 24px;
-      padding: 14px 14px;
-      background:
-        radial-gradient(900px 400px at 10% 0%, rgba(255,255,255,0.22) 0%, transparent 60%),
-        linear-gradient(135deg, rgba(255,107,107,0.92), rgba(255,138,61,0.90));
-      border: 1px solid rgba(255,255,255,0.28);
-      box-shadow: 0 22px 60px rgba(0,0,0,0.18);
-      overflow: hidden;
-    }
-    .fm-hero-title{
-      font-size: 24px;
-      font-weight: 950;
-      margin: 0;
-      color: #fff;
-    }
-    .fm-hero-sub{
-      margin-top: 6px;
-      font-size: 12px;
-      font-weight: 800;
-      color: rgba(255,255,255,0.92);
-    }
-    .fm-pill{
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      padding: 8px 10px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.22);
-      border: 1px solid rgba(255,255,255,0.26);
-      color: #fff;
-      font-size: 12px;
-      font-weight: 950;
-      white-space: nowrap;
-    }
-    .fm-pill.hot{
-      background: rgba(255,255,255,0.95);
-      border: none;
-      color: #ff4f7a;
-      box-shadow: 0 10px 26px rgba(0,0,0,0.14);
-    }
+/* ===== Inputs (blancos, texto negro) ===== */
+input, textarea, div[data-baseweb="select"] > div{
+  background: rgba(255,255,255,0.85) !important;
+  border: 1px solid rgba(0,0,0,0.10) !important;
+  border-radius: 16px !important;
+  color: rgba(12,12,14,0.95) !important;
+  font-weight: 800 !important;
+  box-shadow: 0 10px 22px rgba(0,0,0,0.10);
+}
 
-    /* =========================================================
-       WHITE CARDS (main look)
-       ========================================================= */
-    .fm-card, .fm-section, .fm-table-card, details{
-      background: var(--surface) !important;
-      border: 1px solid var(--stroke) !important;
-      border-radius: 22px !important;
-      box-shadow: var(--shadow2) !important;
-      backdrop-filter: none !important;
-    }
-    .fm-card{ padding: 16px !important; }
-    .fm-section{ padding: 16px !important; margin: 14px 0 !important; }
-    .fm-table-card{ padding: 10px !important; }
+textarea{ line-height: 1.25 !important; }
 
-    /* All text inside cards -> dark, high contrast */
-    .fm-card *, .fm-section *, .fm-table-card *, details *{
-      color: var(--txt) !important;
-    }
-    .fm-sub{ color: var(--muted) !important; }
+/* Labels un pelín más oscuros */
+[data-testid="stWidgetLabel"]{
+  color: rgba(12,12,14,0.90) !important;
+  font-weight: 900 !important;
+}
 
-    /* Fix Streamlit markdown inside */
-    .fm-card .stMarkdown, .fm-section .stMarkdown, details .stMarkdown{
-      color: var(--txt) !important;
-    }
+/* ===== Buttons (estilo app: cápsula, pequeños y “pro”) ===== */
+.stButton > button, div[data-testid="stFormSubmitButton"] button{
+  border-radius: 999px !important;
+  font-weight: 950 !important;
+  border: 1px solid rgba(0,0,0,0.10) !important;
+  background: rgba(255,255,255,0.78) !important;
+  color: rgba(12,12,14,0.92) !important;
+  box-shadow: 0 14px 26px rgba(0,0,0,0.12);
+  padding: 0.55rem 1.0rem !important;
+}
 
-    /* =========================================================
-       Inputs (soft gray)
-       ========================================================= */
-    label{
-      color: rgba(17,24,39,0.78) !important;
-      font-weight: 900 !important;
-    }
-    input, textarea, div[data-baseweb="select"] > div{
-      background: var(--surface2) !important;
-      border: 1px solid rgba(17,24,39,0.14) !important;
-      border-radius: 16px !important;
-      color: var(--txt) !important;
-      font-weight: 750 !important;
-      box-shadow: none !important;
-    }
+/* Primary = coral -> naranja */
+.stButton > button[kind="primary"], div[data-testid="stFormSubmitButton"] button{
+  background: linear-gradient(135deg, rgba(255,77,109,0.98), rgba(255,179,107,0.98)) !important;
+  color: rgba(12,12,14,0.92) !important; /* texto negro */
+  border: none !important;
+  box-shadow: 0 18px 40px rgba(0,0,0,0.18);
+}
 
-    /* =========================================================
-       Buttons (coral primary)
-       ========================================================= */
-    .stButton > button, div[data-testid="stFormSubmitButton"] button{
-      border-radius: 999px !important;
-      font-weight: 950 !important;
-      padding: 10px 14px !important;
-      min-height: 42px !important;
+/* Botones pequeños (para acciones tipo guardar/borrar) */
+.fm-btn-small .stButton > button{
+  padding: 0.35rem 0.75rem !important;
+  font-size: 12px !important;
+  box-shadow: 0 10px 18px rgba(0,0,0,0.10);
+}
 
-      background: rgba(255,255,255,0.94) !important;
-      color: rgba(255,107,107,0.98) !important;
-      border: 1px solid rgba(17,24,39,0.10) !important;
-      box-shadow: 0 10px 24px rgba(17,24,39,0.12) !important;
-    }
-    .stButton > button[kind="primary"], div[data-testid="stFormSubmitButton"] button{
-      background: linear-gradient(135deg, var(--accent), var(--accent2)) !important;
-      color: #fff !important;
-      border: none !important;
-      box-shadow: 0 16px 34px rgba(17,24,39,0.20) !important;
-    }
+/* ===== Expander ===== */
+details{
+  background: linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,255,255,0.75)) !important;
+  border: 1px solid rgba(0,0,0,0.08) !important;
+  border-radius: 18px !important;
+  box-shadow: 0 14px 30px rgba(0,0,0,0.12);
+}
+details summary{
+  color: rgba(12,12,14,0.92) !important;
+  font-weight: 950 !important;
+}
 
-    /* =========================================================
-       Expanders (white)
-       ========================================================= */
-    details{ overflow: hidden !important; }
-    summary{
-      padding: 14px 14px !important;
-      font-weight: 950 !important;
-    }
+/* ===== Hero ===== */
+.fm-hero{
+  position: relative;
+  border-radius: 26px;
+  padding: 16px 16px;
+  border: 1px solid rgba(0,0,0,0.08);
+  background:
+    radial-gradient(900px 420px at 20% 20%, rgba(255,255,255,0.35) 0%, transparent 55%),
+    linear-gradient(135deg, rgba(255,77,109,0.70), rgba(255,179,107,0.70));
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.fm-hero-title{
+  font-size: 24px;
+  font-weight: 1000;
+  letter-spacing: -0.03em;
+  margin: 0;
+  color: rgba(12,12,14,0.95) !important;
+}
+.fm-hero-sub{
+  margin-top: 6px;
+  font-size: 12px;
+  font-weight: 850;
+  color: rgba(12,12,14,0.70) !important;
+}
 
-    /* =========================================================
-       Tables (white + coral header)
-       ========================================================= */
-    .fm-table-scroll{
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      border-radius: 16px;
-    }
-    .fm-table-scroll table{
-      width: 100%;
-      min-width: 820px;
-      border-collapse: separate !important;
-      border-spacing: 0 !important;
-      border-radius: 16px !important;
-      overflow: hidden !important;
-    }
-    .fm-table-scroll thead th{
-      background: linear-gradient(135deg, rgba(255,107,107,0.95), rgba(255,138,61,0.90)) !important;
-      color: #fff !important;
-      font-weight: 950 !important;
-      padding: 12px 12px !important;
-      border: none !important;
-      text-align: left !important;
-    }
-    .fm-table-scroll tbody td{
-      background: #fff !important;
-      color: var(--txt) !important;
-      font-weight: 750 !important;
-      padding: 12px 12px !important;
-      border-top: 1px solid rgba(17,24,39,0.06) !important;
-    }
-    .fm-table-scroll tbody tr:nth-child(even) td{
-      background: #fff7f5 !important; /* subtle warm stripe */
-    }
+/* ===== Table (warm) ===== */
+.fm-table-scroll{
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 16px;
+}
+.fm-table-scroll table{
+  width: 100%;
+  min-width: 820px;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  overflow: hidden !important;
+  border-radius: 16px !important;
+}
+.fm-table-scroll thead th{
+  background: linear-gradient(135deg, rgba(255,77,109,0.90), rgba(255,179,107,0.90)) !important;
+  color: rgba(12,12,14,0.92) !important;
+  font-weight: 1000 !important;
+  padding: 12px 12px !important;
+  border: none !important;
+  text-align: left !important;
+}
+.fm-table-scroll tbody td{
+  background: rgba(255,255,255,0.82) !important;
+  color: rgba(12,12,14,0.92) !important;
+  font-weight: 850 !important;
+  padding: 12px 12px !important;
+  border: none !important;
+}
+.fm-table-scroll tbody tr:nth-child(even) td{ background: rgba(255,255,255,0.74) !important; }
+.fm-table-scroll tbody tr:hover td{
+  background: rgba(255,179,107,0.22) !important;
+  transition: background 0.12s ease;
+}
 
-    /* =========================================================
-       Progress bars (coral/orange)
-       ========================================================= */
-    .fm-bar{
-      height: 12px;
-      border-radius: 999px;
-      background: rgba(17,24,39,0.08);
-      border: 1px solid rgba(17,24,39,0.08);
-      overflow: hidden;
-    }
-    .fm-bar > span{
-      display:block;
-      height:100%;
-      width:0%;
-      border-radius:999px;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-    }
+/* ===== Divider ===== */
+.fm-divider{
+  height:1px;
+  background: rgba(0,0,0,0.08);
+  margin: 10px 0;
+}
 
-    /* =========================================================
-       Bottom dock (option_menu iframe) — WHITE bar
-       ========================================================= */
-    iframe[title*="streamlit_option_menu"],
-    iframe[src*="streamlit_option_menu"]{
-      position: fixed !important;
+/* ===== MOBILE-FIRST: ocultar sidebar y compactar ===== */
+@media (max-width: 900px){
+  section[data-testid="stSidebar"]{ display:none !important; }
 
-      left: 12px !important;
-      right: calc(78px + env(safe-area-inset-right, 0px) + 12px) !important;
-      bottom: calc(env(safe-area-inset-bottom, 0px) + 12px) !important;
+  .block-container{
+    padding-top: 12px !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
 
-      height: var(--nav-h) !important;
-      width: auto !important;
+  h1{ font-size: 28px !important; }
+  h2{ font-size: 22px !important; }
+}
 
-      z-index: 999999 !important;
+/* ===== FAB (+) ===== */
+.fm-fab{
+  position: fixed;
+  right: 16px;
+  bottom: calc(var(--nav-h) + 18px);
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-decoration:none !important;
+  font-size: 32px;
+  font-weight: 1000;
+  color: rgba(12,12,14,0.92) !important;
+  background: linear-gradient(135deg, rgba(255,77,109,0.98), rgba(255,179,107,0.98));
+  box-shadow: 0 18px 40px rgba(0,0,0,0.22);
+  border: 1px solid rgba(0,0,0,0.10);
+  z-index: 999999;
+}
+.fm-fab:active{ transform: translateY(1px) scale(0.98); }
 
-      border: 1px solid rgba(17,24,39,0.10) !important;
-      border-radius: var(--nav-radius) !important;
-      background: rgba(255,255,255,0.98) !important;
-      box-shadow: var(--shadow) !important;
-      overflow: hidden !important;
-    }
+/* ===== Bottom nav (option_menu iframe pin) ===== */
+iframe[title*="streamlit_option_menu"],
+iframe[src*="streamlit_option_menu"]{
+  position: fixed !important;
+  left: 10px !important;
+  right: calc(86px + env(safe-area-inset-right, 0px) + 10px) !important;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 10px) !important;
+  height: var(--nav-h) !important;
+  width: auto !important;
+  z-index: 999999 !important;
 
-    /* remove duplicated icon span */
-    iframe[title*="streamlit_option_menu"] li span:nth-child(2),
-    iframe[src*="streamlit_option_menu"] li span:nth-child(2){
-      display:none !important;
-    }
+  border: 1px solid rgba(0,0,0,0.10) !important;
+  border-radius: 26px !important;
+  background: rgba(255,255,255,0.72) !important;
+  box-shadow: 0 18px 45px rgba(0,0,0,0.18) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  overflow: hidden !important;
+}
 
-    /* icon base */
-    iframe[title*="streamlit_option_menu"] li span:first-child,
-    iframe[src*="streamlit_option_menu"] li span:first-child{
-      color: rgba(17,24,39,0.60) !important;
-      font-size: 20px !important;
-      transition: all 0.2s ease !important;
-    }
+/* Evita hueco en el layout */
+div[data-testid="stComponent"] iframe[title*="streamlit_option_menu"],
+div[data-testid="stComponent"] iframe[src*="streamlit_option_menu"]{
+  margin: 0 !important;
+}
 
-    /* active icon */
-    iframe[title*="streamlit_option_menu"] li[aria-selected="true"] span:first-child,
-    iframe[src*="streamlit_option_menu"] li[aria-selected="true"] span:first-child{
-      color: var(--accent) !important;
-      transform: scale(1.10);
-    }
-    iframe[title*="streamlit_option_menu"] li[aria-selected="true"],
-    iframe[src*="streamlit_option_menu"] li[aria-selected="true"]{
-      background: transparent !important;
-    }
+/* ===== DEBUG badge (opcional) ===== */
+.fm-css-debug-badge{
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: 999999999;
+  padding: 8px 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.85);
+  color: rgba(12,12,14,0.92);
+  border: 1px solid rgba(0,0,0,0.10);
+  font-weight: 1000;
+  font-size: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.16);
+}
+</style>
+    """, unsafe_allow_html=True)
 
-    /* =========================================================
-       FAB (+) coral/orange
-       ========================================================= */
-    .fm-fab{
-      position: fixed;
-      right: 16px;
-      bottom: calc(var(--nav-h) + 18px + env(safe-area-inset-bottom, 0px));
-      width: 56px;
-      height: 56px;
-      border-radius: 999px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      text-decoration:none !important;
-
-      font-size: 34px;
-      font-weight: 950;
-      color: #fff !important;
-
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      box-shadow: 0 20px 52px rgba(17,24,39,0.24);
-      border: 1px solid rgba(255,255,255,0.18);
-      z-index: 999999;
-    }
-    .fm-fab:active{ transform: translateY(1px) scale(0.98); }
-
-    /* =========================================================
-       Debug badge (prove CSS loaded)
-       ========================================================= */
-    .fm-css-debug-badge{
-      position: fixed;
-      top: 10px;
-      right: 10px;
-      z-index: 999999999;
-      padding: 8px 10px;
-      border-radius: 999px;
-      background: #22c55e;
-      color: #0b1020;
-      font-weight: 950;
-      font-size: 12px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.16);
-    }
-
-    /* =========================================================
-       FORCE DARK TEXT ON CORAL BACKGROUND
-       (subtitles, helper text, previews, etc.)
-       ========================================================= */
-    
-    /* Subtítulos tipo descripción */
-    .fm-sub,
-    .stMarkdown p,
-    .stMarkdown small,
-    [data-testid="stMarkdownContainer"] p,
-    [data-testid="stMarkdownContainer"] small {
-        color: #111827 !important;
-    }
-    
-    /* Textos tipo preview */
-    div:has(> span:contains("Preview")),
-    div:has(> p:contains("Preview")),
-    .stMarkdown {
-        color: #111827 !important;
-    }
-    
-    /* Labels pequeños */
-    label,
-    small {
-        color: #111827 !important;
-    }
-    
-    /* Cualquier texto dentro de bloques no blancos */
-    section.main > div:not(.fm-card):not(.fm-section) * {
-        color: #111827 !important;
-    }
-
-
-    
-    </style>
+    # Si quieres ver un indicador de que el CSS está cargado:
+    # st.markdown('<div class="fm-css-debug-badge">CSS OK</div>', unsafe_allow_html=True)
 
 
 
@@ -3243,6 +3172,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
