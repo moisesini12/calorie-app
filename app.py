@@ -885,9 +885,25 @@ def inject_fitness_ui():
     }
 
 
+    /* === DEBUG VISIBLE (si esto no aparece, tu CSS NO se está cargando) === */
+    .fm-css-debug-badge{
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      z-index: 999999999;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: #22c55e;
+      color: #0b1020;
+      font-weight: 950;
+      font-size: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+
+
     </style>
     """, unsafe_allow_html=True)
-
+st.markdown('<div class="fm-css-debug-badge">CSS OK ✅</div>', unsafe_allow_html=True)
 
 
 #    header[data-testid="stHeader"]{
@@ -3706,6 +3722,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
