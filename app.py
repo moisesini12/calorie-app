@@ -240,43 +240,41 @@ details summary{
 }
 
 /* =========================
-   TOP NAV FIXED (APP STYLE)
+   TOP NAV FIXED (SAFE AREA)
    ========================= */
-
 :root{
   --nav-h: 70px;
+  --nav-top: calc(env(safe-area-inset-top, 0px) + 10px); /* baja la barra */
 }
 
-/* El iframe del option_menu */
 iframe[title*="streamlit_option_menu"],
 iframe[src*="streamlit_option_menu"]{
-
   position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
+
+  top: var(--nav-top) !important;   /* 👈 aquí la bajamos */
+  left: 10px !important;
+  right: 10px !important;
   bottom: auto !important;
 
   height: var(--nav-h) !important;
-  width: 100% !important;
+  width: auto !important;
 
   z-index: 999999 !important;
 
-  background: #0f172a !important;
-  border: none !important;
-  border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+  background: rgba(15, 23, 42, 0.92) !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  border-radius: 22px !important;
+  box-shadow: 0 18px 45px rgba(0,0,0,0.60) !important;
 
-  box-shadow: 0 12px 35px rgba(0,0,0,0.6) !important;
-  border-radius: 0 !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+
+  overflow: hidden !important;
 }
 
-/* Empuja el contenido hacia abajo */
+/* Empuja el contenido para que no quede debajo */
 .block-container{
-  padding-top: calc(var(--nav-h) + 20px) !important;
-}
-
-/* Elimina hueco inferior antiguo */
-.block-container{
+  padding-top: calc(var(--nav-top) + var(--nav-h) + 18px) !important;
   padding-bottom: 60px !important;
 }
 
@@ -305,16 +303,24 @@ section[data-testid="stSidebar"]{
   display: none !important;
 }
 
+/* =========================
+   HIDE STREAMLIT OVERLAYS
+   (+ / - / toolbars)
+   ========================= */
+div[data-testid="stElementToolbar"],
+div[data-testid="stToolbar"],
+div[data-testid="stDecoration"],
+div[data-testid="stStatusWidget"],
+button[title="View fullscreen"],
+button[title="Exit fullscreen"]{
+  display: none !important;
+}
+
+
+
 </style>
     """, unsafe_allow_html=True)
 
-    # Si quieres ver un indicador de que el CSS está cargado:
-    # st.markdown('<div class="fm-css-debug-badge">CSS OK</div>', unsafe_allow_html=True)
-
-
-
-
-st.markdown('<div class="fm-css-debug-badge">CSS OK ✅</div>', unsafe_allow_html=True)
 
 
 #    header[data-testid="stHeader"]{
@@ -3133,6 +3139,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
