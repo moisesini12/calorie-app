@@ -153,6 +153,25 @@ p, span, li, label{
   border-radius: 999px;
 }
 
+/* ===== PILLS (alias de chip para el hero) ===== */
+.fm-pill{
+  background: rgba(34,211,238,0.12);
+  border: 1px solid rgba(34,211,238,0.25);
+  color: var(--primary);
+  font-weight: 900;
+  padding: 6px 10px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.fm-pill.hot{
+  background: rgba(245,158,11,0.14);
+  border-color: rgba(245,158,11,0.30);
+  color: var(--warning);
+}
+
 /* ===== INPUTS ===== */
 input, textarea, div[data-baseweb="select"] > div{
   background: #0f172a !important;
@@ -1744,7 +1763,7 @@ elif page == "🍽 Registro":
     # REGISTRO DEL DÍA (TU TABLA ACTUAL: intacta)
     # ======================================================
     st.subheader("Registro")
-    rows = list_entries_by_date(selected_date_str, st.session_state["user_id"])
+    rows = cached_list_entries_by_date(selected_date_str, st.session_state["user_id"])
     df = pd.DataFrame(rows, columns=["id", "meal", "name", "grams", "calories", "protein", "carbs", "fat"])
 
     if df.empty:
@@ -3330,6 +3349,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
