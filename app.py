@@ -45,305 +45,230 @@ st.set_page_config(
 def inject_fitness_ui():
     st.markdown(r"""
 <style>
+
 /* =========================
-   FITMACRO - WARM FITNESS THEME (MOBILE FIRST)
-   Inspirado en el estilo de tu imagen: coral / naranja / melocotón
-   Fondo más apagado + texto negro con buen contraste
+   DARK NEON PRO THEME
+   Mobile-first. Alto contraste.
    ========================= */
 
 :root{
-  /* Fondo (apagado) */
-  --bg0: #f6c1ad;   /* melocotón suave */
-  --bg1: #f2a489;   /* coral apagado */
-  --bg2: #ee8e73;   /* naranja coral */
-  --bg3: #e77d64;   /* más profundo */
+  /* Fondo */
+  --bg0: #0b0f19;
+  --bg1: #0e1422;
+  --bg2: #111827;
 
   /* Superficies */
-  --surface: rgba(255,255,255,0.88);
-  --surface2: rgba(255,255,255,0.78);
-  --stroke: rgba(0,0,0,0.08);
+  --card: #161f2e;
+  --card-soft: #1c2638;
+  --stroke: rgba(255,255,255,0.06);
 
-  /* Texto (negro, como pediste) */
-  --txt: rgba(12,12,14,0.95);
-  --muted: rgba(20,20,24,0.62);
+  /* Texto */
+  --txt: #f8fafc;
+  --muted: #9ca3af;
 
   /* Acentos */
-  --a1: #ff7a59;  /* coral */
-  --a2: #ffb36b;  /* naranja suave */
-  --a3: #ff4d6d;  /* rosa */
-  --ok: #22c55e;  /* verde */
+  --primary: #22d3ee;     /* cyan eléctrico */
+  --primary-strong: #06b6d4;
+  --success: #22c55e;
+  --danger: #ef4444;
+  --warning: #f59e0b;
 
-  /* Radios / sombras */
-  --r12: 12px;
-  --r16: 16px;
-  --r20: 20px;
-  --shadow: 0 18px 50px rgba(0,0,0,0.18);
-  --shadow2: 0 10px 26px rgba(0,0,0,0.14);
-
-  --nav-h: 74px;
+  --radius: 18px;
+  --shadow: 0 20px 60px rgba(0,0,0,0.6);
 }
 
 /* ===== APP BACKGROUND ===== */
 html, body, [data-testid="stAppViewContainer"]{
   background:
-    radial-gradient(900px 650px at 18% 12%, rgba(255,255,255,0.25) 0%, transparent 60%),
-    radial-gradient(900px 650px at 85% 20%, rgba(255,255,255,0.18) 0%, transparent 62%),
-    linear-gradient(180deg, var(--bg0) 0%, var(--bg1) 35%, var(--bg2) 70%, var(--bg3) 100%) !important;
+    radial-gradient(800px 600px at 10% 10%, rgba(34,211,238,0.08), transparent 60%),
+    radial-gradient(900px 700px at 90% 20%, rgba(59,130,246,0.08), transparent 60%),
+    linear-gradient(180deg, var(--bg0) 0%, var(--bg1) 50%, var(--bg2) 100%) !important;
   color: var(--txt) !important;
 }
 
 /* ===== CONTAINER ===== */
 .block-container{
   max-width: 1100px;
-  padding-top: 18px;
-  padding-bottom: calc(var(--nav-h) + 34px);
+  padding-top: 20px;
+  padding-bottom: 120px;
 }
 
-/* ===== Tipografía general (negra) ===== */
-h1, h2, h3, h4, h5, h6,
-p, li, span, label, small{
+/* ===== TIPOGRAFÍA ===== */
+h1,h2,h3,h4,h5,h6{
   color: var(--txt) !important;
-}
-[data-testid="stCaptionContainer"], .stCaption{
-  color: var(--muted) !important;
-  font-weight: 700 !important;
-}
-
-/* ===== Cards base ===== */
-.fm-card, .fm-section, .fm-table-card, .wk-card{
-  background: linear-gradient(180deg, var(--surface), var(--surface2));
-  border: 1px solid var(--stroke);
-  border-radius: 22px;
-  padding: 16px;
-  box-shadow: var(--shadow);
-  backdrop-filter: blur(10px);
-}
-
-/* Cards separadas */
-.fm-card + .fm-card,
-.fm-section + .fm-section,
-.wk-card + .wk-card{
-  margin-top: 14px;
-}
-
-/* ===== Chips / Pills ===== */
-.fm-chip, .fm-pill, .wk-chip{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  padding: 7px 10px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.70);
-  border: 1px solid rgba(0,0,0,0.08);
-  color: rgba(12,12,14,0.88) !important;
-  font-size: 12px;
-  font-weight: 900;
-  white-space: nowrap;
-  box-shadow: 0 8px 18px rgba(0,0,0,0.08);
-}
-
-/* ===== Inputs (blancos, texto negro) ===== */
-input, textarea, div[data-baseweb="select"] > div{
-  background: rgba(255,255,255,0.85) !important;
-  border: 1px solid rgba(0,0,0,0.10) !important;
-  border-radius: 16px !important;
-  color: rgba(12,12,14,0.95) !important;
-  font-weight: 800 !important;
-  box-shadow: 0 10px 22px rgba(0,0,0,0.10);
-}
-
-textarea{ line-height: 1.25 !important; }
-
-/* Labels un pelín más oscuros */
-[data-testid="stWidgetLabel"]{
-  color: rgba(12,12,14,0.90) !important;
   font-weight: 900 !important;
+  letter-spacing: -0.02em;
 }
 
-/* ===== Buttons (estilo app: cápsula, pequeños y “pro”) ===== */
-.stButton > button, div[data-testid="stFormSubmitButton"] button{
-  border-radius: 999px !important;
-  font-weight: 950 !important;
-  border: 1px solid rgba(0,0,0,0.10) !important;
-  background: rgba(255,255,255,0.78) !important;
-  color: rgba(12,12,14,0.92) !important;
-  box-shadow: 0 14px 26px rgba(0,0,0,0.12);
-  padding: 0.55rem 1.0rem !important;
+p, span, li, label{
+  color: var(--txt) !important;
+  font-weight: 500;
 }
 
-/* Primary = coral -> naranja */
-.stButton > button[kind="primary"], div[data-testid="stFormSubmitButton"] button{
-  background: linear-gradient(135deg, rgba(255,77,109,0.98), rgba(255,179,107,0.98)) !important;
-  color: rgba(12,12,14,0.92) !important; /* texto negro */
-  border: none !important;
-  box-shadow: 0 18px 40px rgba(0,0,0,0.18);
+.stCaption, [data-testid="stCaptionContainer"]{
+  color: var(--muted) !important;
+  font-weight: 600 !important;
 }
 
-/* Botones pequeños (para acciones tipo guardar/borrar) */
-.fm-btn-small .stButton > button{
-  padding: 0.35rem 0.75rem !important;
-  font-size: 12px !important;
-  box-shadow: 0 10px 18px rgba(0,0,0,0.10);
-}
-
-/* ===== Expander ===== */
-details{
-  background: linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,255,255,0.75)) !important;
-  border: 1px solid rgba(0,0,0,0.08) !important;
-  border-radius: 18px !important;
-  box-shadow: 0 14px 30px rgba(0,0,0,0.12);
-}
-details summary{
-  color: rgba(12,12,14,0.92) !important;
-  font-weight: 950 !important;
-}
-
-/* ===== Hero ===== */
-.fm-hero{
-  position: relative;
-  border-radius: 26px;
-  padding: 16px 16px;
-  border: 1px solid rgba(0,0,0,0.08);
-  background:
-    radial-gradient(900px 420px at 20% 20%, rgba(255,255,255,0.35) 0%, transparent 55%),
-    linear-gradient(135deg, rgba(255,77,109,0.70), rgba(255,179,107,0.70));
+/* ===== CARDS ===== */
+.fm-card, .fm-section, .wk-card, .fm-table-card{
+  background: linear-gradient(180deg, var(--card), var(--card-soft));
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius);
+  padding: 18px;
   box-shadow: var(--shadow);
-  overflow: hidden;
-}
-.fm-hero-title{
-  font-size: 24px;
-  font-weight: 1000;
-  letter-spacing: -0.03em;
-  margin: 0;
-  color: rgba(12,12,14,0.95) !important;
-}
-.fm-hero-sub{
-  margin-top: 6px;
-  font-size: 12px;
-  font-weight: 850;
-  color: rgba(12,12,14,0.70) !important;
 }
 
-/* ===== Table (warm) ===== */
-.fm-table-scroll{
-  overflow-x: auto;
-  overflow-y: hidden;
-  -webkit-overflow-scrolling: touch;
-  border-radius: 16px;
+/* ===== HERO ===== */
+.fm-hero{
+  border-radius: 22px;
+  padding: 18px;
+  background: linear-gradient(135deg, #0f172a, #111827);
+  border: 1px solid rgba(34,211,238,0.2);
+  box-shadow: 0 0 0 1px rgba(34,211,238,0.1),
+              0 30px 80px rgba(0,0,0,0.7);
 }
+
+.fm-hero-title{
+  font-size: 26px;
+  font-weight: 950;
+  color: var(--txt);
+}
+
+.fm-hero-sub{
+  color: var(--muted);
+  font-weight: 600;
+}
+
+/* ===== CHIPS ===== */
+.fm-chip, .wk-chip{
+  background: rgba(34,211,238,0.12);
+  border: 1px solid rgba(34,211,238,0.25);
+  color: var(--primary);
+  font-weight: 800;
+  padding: 6px 10px;
+  border-radius: 999px;
+}
+
+/* ===== INPUTS ===== */
+input, textarea, div[data-baseweb="select"] > div{
+  background: #0f172a !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  border-radius: 14px !important;
+  color: var(--txt) !important;
+  font-weight: 600 !important;
+}
+
+input:focus, textarea:focus{
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 2px rgba(34,211,238,0.25) !important;
+}
+
+/* ===== BUTTONS ===== */
+.stButton > button,
+div[data-testid="stFormSubmitButton"] button{
+  border-radius: 999px !important;
+  font-weight: 800 !important;
+  padding: 0.55rem 1.2rem !important;
+  background: #111827 !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  color: var(--txt) !important;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+}
+
+/* PRIMARY */
+.stButton > button[kind="primary"],
+div[data-testid="stFormSubmitButton"] button{
+  background: linear-gradient(135deg, var(--primary), var(--primary-strong)) !important;
+  color: #001018 !important;
+  border: none !important;
+  box-shadow: 0 15px 40px rgba(34,211,238,0.4);
+}
+
+/* HOVER */
+.stButton > button:hover{
+  transform: translateY(-1px);
+}
+
+/* ===== TABLE ===== */
 .fm-table-scroll table{
   width: 100%;
-  min-width: 820px;
-  border-collapse: separate !important;
-  border-spacing: 0 !important;
-  overflow: hidden !important;
-  border-radius: 16px !important;
+  border-collapse: collapse;
 }
+
 .fm-table-scroll thead th{
-  background: linear-gradient(135deg, rgba(255,77,109,0.90), rgba(255,179,107,0.90)) !important;
-  color: rgba(12,12,14,0.92) !important;
-  font-weight: 1000 !important;
-  padding: 12px 12px !important;
-  border: none !important;
-  text-align: left !important;
+  background: #0f172a !important;
+  color: var(--primary) !important;
+  font-weight: 900 !important;
+  border-bottom: 1px solid var(--stroke);
+  padding: 12px;
 }
+
 .fm-table-scroll tbody td{
-  background: rgba(255,255,255,0.82) !important;
-  color: rgba(12,12,14,0.92) !important;
-  font-weight: 850 !important;
-  padding: 12px 12px !important;
-  border: none !important;
-}
-.fm-table-scroll tbody tr:nth-child(even) td{ background: rgba(255,255,255,0.74) !important; }
-.fm-table-scroll tbody tr:hover td{
-  background: rgba(255,179,107,0.22) !important;
-  transition: background 0.12s ease;
+  background: transparent !important;
+  color: var(--txt) !important;
+  border-bottom: 1px solid var(--stroke);
+  padding: 12px;
 }
 
-/* ===== Divider ===== */
-.fm-divider{
-  height:1px;
-  background: rgba(0,0,0,0.08);
-  margin: 10px 0;
+.fm-table-scroll tbody tr:hover{
+  background: rgba(34,211,238,0.06) !important;
 }
 
-/* ===== MOBILE-FIRST: ocultar sidebar y compactar ===== */
-@media (max-width: 900px){
-  section[data-testid="stSidebar"]{ display:none !important; }
-
-  .block-container{
-    padding-top: 12px !important;
-    padding-left: 12px !important;
-    padding-right: 12px !important;
-  }
-
-  h1{ font-size: 28px !important; }
-  h2{ font-size: 22px !important; }
+/* ===== EXPANDER ===== */
+details{
+  background: var(--card);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius);
 }
 
-/* ===== FAB (+) ===== */
-.fm-fab{
-  position: fixed;
-  right: 16px;
-  bottom: calc(var(--nav-h) + 18px);
-  width: 56px;
-  height: 56px;
+details summary{
+  font-weight: 800;
+  color: var(--txt);
+}
+
+/* ===== PROGRESS BARS ===== */
+.fm-bar{
+  background: rgba(255,255,255,0.08);
   border-radius: 999px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  text-decoration:none !important;
-  font-size: 32px;
-  font-weight: 1000;
-  color: rgba(12,12,14,0.92) !important;
-  background: linear-gradient(135deg, rgba(255,77,109,0.98), rgba(255,179,107,0.98));
-  box-shadow: 0 18px 40px rgba(0,0,0,0.22);
-  border: 1px solid rgba(0,0,0,0.10);
-  z-index: 999999;
+  height: 12px;
 }
-.fm-fab:active{ transform: translateY(1px) scale(0.98); }
 
-/* ===== Bottom nav (option_menu iframe pin) ===== */
+.fm-bar > span{
+  background: linear-gradient(90deg, var(--primary), #3b82f6);
+  border-radius: 999px;
+}
+
+/* ===== BOTTOM NAV ===== */
 iframe[title*="streamlit_option_menu"],
 iframe[src*="streamlit_option_menu"]{
   position: fixed !important;
-  left: 10px !important;
-  right: calc(86px + env(safe-area-inset-right, 0px) + 10px) !important;
-  bottom: calc(env(safe-area-inset-bottom, 0px) + 10px) !important;
-  height: var(--nav-h) !important;
-  width: auto !important;
+  left: 12px !important;
+  right: 12px !important;
+  bottom: 12px !important;
+  height: 70px !important;
+  border-radius: 22px !important;
+  background: #111827 !important;
+  border: 1px solid rgba(255,255,255,0.06) !important;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.7) !important;
   z-index: 999999 !important;
-
-  border: 1px solid rgba(0,0,0,0.10) !important;
-  border-radius: 26px !important;
-  background: rgba(255,255,255,0.72) !important;
-  box-shadow: 0 18px 45px rgba(0,0,0,0.18) !important;
-  backdrop-filter: blur(14px) !important;
-  -webkit-backdrop-filter: blur(14px) !important;
-  overflow: hidden !important;
 }
 
-/* Evita hueco en el layout */
-div[data-testid="stComponent"] iframe[title*="streamlit_option_menu"],
-div[data-testid="stComponent"] iframe[src*="streamlit_option_menu"]{
-  margin: 0 !important;
+/* ===== MOBILE FIRST ===== */
+@media (max-width: 900px){
+  section[data-testid="stSidebar"]{
+    display: none !important;
+  }
+
+  .block-container{
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+  }
+
+  h1{ font-size: 26px !important; }
+  h2{ font-size: 20px !important; }
 }
 
-/* ===== DEBUG badge (opcional) ===== */
-.fm-css-debug-badge{
-  position: fixed;
-  top: 10px;
-  right: 10px;
-  z-index: 999999999;
-  padding: 8px 10px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.85);
-  color: rgba(12,12,14,0.92);
-  border: 1px solid rgba(0,0,0,0.10);
-  font-weight: 1000;
-  font-size: 12px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.16);
-}
 </style>
     """, unsafe_allow_html=True)
 
@@ -3172,6 +3097,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
