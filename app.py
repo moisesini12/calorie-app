@@ -244,7 +244,7 @@ details summary{
    ========================= */
 
 :root{
-  --nav-h: 100px;
+  --nav-h: 70px;
   --nav-top: calc(env(safe-area-inset-top, 0px) + 16px);
 }
 
@@ -255,8 +255,8 @@ iframe[src*="streamlit_option_menu"]{
   position: fixed !important;
 
   top: var(--nav-top) !important;
-  left: 32px !important;
-  right: 32px !important;
+  left: 40px !important;
+  right: 40px !important;
   bottom: auto !important;
 
   height: var(--nav-h) !important;
@@ -3133,6 +3133,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
