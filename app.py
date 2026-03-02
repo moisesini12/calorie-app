@@ -269,7 +269,7 @@ iframe[src*="streamlit_option_menu"]{
   border-bottom: 1px solid rgba(255,255,255,0.06) !important;
 
   border-radius: 0 !important;
-  box-shadow: 0 10px 35px rgba(0,0,0,0.6) !important;
+  box-shadow: none;
 
   overflow: hidden !important;
 }
@@ -3130,6 +3130,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
