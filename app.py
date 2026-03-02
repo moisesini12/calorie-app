@@ -239,19 +239,45 @@ details summary{
   border-radius: 999px;
 }
 
-/* ===== BOTTOM NAV ===== */
+/* =========================
+   TOP NAV FIXED (APP STYLE)
+   ========================= */
+
+:root{
+  --nav-h: 70px;
+}
+
+/* El iframe del option_menu */
 iframe[title*="streamlit_option_menu"],
 iframe[src*="streamlit_option_menu"]{
+
   position: fixed !important;
-  left: 12px !important;
-  right: 12px !important;
-  bottom: 12px !important;
-  height: 70px !important;
-  border-radius: 22px !important;
-  background: #111827 !important;
-  border: 1px solid rgba(255,255,255,0.06) !important;
-  box-shadow: 0 25px 60px rgba(0,0,0,0.7) !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: auto !important;
+
+  height: var(--nav-h) !important;
+  width: 100% !important;
+
   z-index: 999999 !important;
+
+  background: #0f172a !important;
+  border: none !important;
+  border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+
+  box-shadow: 0 12px 35px rgba(0,0,0,0.6) !important;
+  border-radius: 0 !important;
+}
+
+/* Empuja el contenido hacia abajo */
+.block-container{
+  padding-top: calc(var(--nav-h) + 20px) !important;
+}
+
+/* Elimina hueco inferior antiguo */
+.block-container{
+  padding-bottom: 60px !important;
 }
 
 /* ===== MOBILE FIRST ===== */
@@ -267,6 +293,16 @@ iframe[src*="streamlit_option_menu"]{
 
   h1{ font-size: 26px !important; }
   h2{ font-size: 20px !important; }
+}
+
+
+
+header[data-testid="stHeader"]{
+  display: none !important;
+}
+
+section[data-testid="stSidebar"]{
+  display: none !important;
 }
 
 </style>
@@ -3097,6 +3133,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
