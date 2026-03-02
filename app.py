@@ -255,8 +255,8 @@ iframe[src*="streamlit_option_menu"]{
   position: fixed !important;
 
   top: var(--nav-top) !important;
-  left: 40px !important;
-  right: 40px !important;
+  left: 60px !important;
+  right: 60px !important;
   bottom: auto !important;
 
   height: var(--nav-h) !important;
@@ -3133,6 +3133,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
