@@ -857,29 +857,30 @@ if st.session_state.get("profile_popup_open", False):
 FOOD_PAGES = {"🍽 Registro", "➕ Añadir alimento", "👨‍🍳 Chef IA", "🤖 IA Alimento"}
 
 def render_food_subnav():
-    """Mini-bar de navegación SOLO para el módulo de comida."""
-    if st.session_state.get("page") not in FOOD_PAGES:
-        return
+    # estado de pestaña interna (subpágina)
+    if "reg_subpage" not in st.session_state:
+        st.session_state["reg_subpage"] = "Registro"
 
-    # un pelín de espacio para que no se pegue visualmente
-    st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
+    st.markdown('<div class="fm-subnav">', unsafe_allow_html=True)
 
-    c1, c2, c3 = st.columns(3)
+    c1, c2, c3 = st.columns(3, gap="small")
+
     with c1:
-        if st.button("🍽 Registro", use_container_width=True, key="subnav_food_reg"):
-            _go("🍽 Registro")
+        if st.button("🍽 Registro", use_container_width=True, key="subnav_registro"):
+            st.session_state["reg_subpage"] = "Registro"
             st.rerun()
 
     with c2:
-        if st.button("➕ Añadir alimento", use_container_width=True, key="subnav_food_add"):
-            _go("➕ Añadir alimento")
+        if st.button("➕ Añadir alimento", use_container_width=True, key="subnav_add"):
+            st.session_state["reg_subpage"] = "Añadir"
             st.rerun()
 
     with c3:
-        if st.button("👨‍🍳 Chef IA", use_container_width=True, key="subnav_food_chef"):
-            _go("👨‍🍳 Chef IA")
+        if st.button("🧑‍🍳 Chef IA", use_container_width=True, key="subnav_chef"):
+            st.session_state["reg_subpage"] = "Chef"
             st.rerun()
 
+    st.markdown("</div>", unsafe_allow_html=True)
 # =========================
 # BOTTOM NAV (Instagram-like)
 # =========================
@@ -3227,6 +3228,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
