@@ -256,8 +256,8 @@ iframe[src*="streamlit_option_menu"]{
   position: fixed !important;
 
   top: var(--nav-top) !important;
-  left: 12px !important;
-  right: 12px !important;
+  left: 60px !important;
+  right: 60px !important;
   bottom: auto !important;
 
   height: var(--nav-h) !important;
@@ -279,7 +279,7 @@ iframe[src*="streamlit_option_menu"]{
 
 /* Ajustar contenido debajo: hueco casi nulo */
 .block-container{
-  padding-top: calc(var(--nav-top) + var(--nav-h) - 58px) !important;
+  padding-top: calc(var(--nav-top) + var(--nav-h) - 70px) !important;
   padding-left: 14px !important;
   padding-right: 14px !important;
   padding-bottom: 80px !important;
@@ -3219,6 +3219,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
