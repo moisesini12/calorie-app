@@ -441,7 +441,39 @@ div[data-testid="stDateInput"] input{
   }
 }
 
+/* =========================
+   SUBNAV (Registro): 3 botones en 1 fila SIEMPRE
+   ========================= */
 
+/* El wrapper que tú ya metes con st.markdown('<div class="fm-subnav">') */
+.fm-subnav{
+  margin-top: 10px;
+}
+
+/* Forzamos que el row de columns NO se parta y tenga scroll si hiciera falta */
+.fm-subnav [data-testid="stHorizontalBlock"]{
+  display: flex !important;
+  flex-wrap: nowrap !important;              /* <- clave: no columnas en vertical */
+  gap: 10px !important;
+  overflow-x: auto !important;               /* por si un móvil ultra pequeño */
+  -webkit-overflow-scrolling: touch !important;
+  padding-bottom: 6px !important;
+}
+
+/* Cada columna ocupa 1/3 del ancho (y no se encoge a nada) */
+.fm-subnav [data-testid="stHorizontalBlock"] > div{
+  flex: 1 1 0 !important;
+  min-width: 0 !important;
+}
+
+/* Los botones llenan su “hueco” */
+.fm-subnav .stButton > button{
+  width: 100% !important;
+  min-height: 52px !important;
+  border-radius: 999px !important;
+  font-weight: 900 !important;
+  white-space: nowrap !important;
+}
 
 </style>
 """, unsafe_allow_html=True)
@@ -3298,6 +3330,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
