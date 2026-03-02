@@ -811,10 +811,36 @@ def inject_fitness_ui():
     </style>
     """, unsafe_allow_html=True)
 
+
+
 #    header[data-testid="stHeader"]{
 #      display: none !important;
 #   }
 
+
+# =========================
+# Cache helpers (Google Sheets)
+# =========================
+
+@st.cache_data(ttl=30, show_spinner=False)
+def cached_list_categories():
+    return list_categories()
+
+@st.cache_data(ttl=30, show_spinner=False)
+def cached_list_all_foods():
+    return list_all_foods()
+
+@st.cache_data(ttl=30, show_spinner=False)
+def cached_list_foods_by_category(category: str):
+    return list_foods_by_category(category)
+
+@st.cache_data(ttl=15, show_spinner=False)
+def cached_list_entries_by_date(date_str: str, user_id: str):
+    return list_entries_by_date(date_str, user_id)
+
+@st.cache_data(ttl=30, show_spinner=False)
+def cached_daily_totals_last_days(days: int, user_id: str):
+    return daily_totals_last_days(days, user_id=user_id)
 
 
 # =========================
@@ -955,8 +981,11 @@ FDC_BASE = "https://api.nal.usda.gov/fdc/v1"
 
 
 def _fdc_key() -> str:
-    # Usa tu key real en secrets; fallback a DEMO_KEY para pruebas
-    return st.secrets.get("FDC_API_KEY", "v9pKcIdiVPg2mrWKcmMNgcdTUr4bqgLavV9Gb4TD")
+    key = st.secrets.get("FDC_API_KEY", "")
+    if not key:
+        st.error("Falta `FDC_API_KEY` en secrets.toml. No puedo consultar USDA FDC.")
+        st.stop()
+    return key
 
 def fdc_search_generic_foods(query: str, page_size: int = 8, include_fndds: bool = False):
     """
@@ -1362,7 +1391,7 @@ if page == "📊 Dashboard":
     st.markdown("<div style='height:24px'></div>", unsafe_allow_html=True)
 
     # --- Datos del día ---
-    rows = list_entries_by_date(selected_date_str, st.session_state["user_id"])
+    rows = cached_list_entries_by_date(selected_date_str, st.session_state["user_id"])
 
     total_kcal = sum(float(r["calories"]) for r in rows) if rows else 0.0
     total_protein = sum(float(r["protein"]) for r in rows) if rows else 0.0
@@ -1631,7 +1660,7 @@ if page == "📊 Dashboard":
     components.html(progreso_html, height=550, scrolling=False)
 
     # ===== HISTÓRICO =====
-    hist = daily_totals_last_days(30, user_id=uid)
+    hist = cached_daily_totals_last_days(30, user_id=uid)
     hist_df = pd.DataFrame(hist, columns=["date", "calories", "protein", "carbs", "fat"])
 
     # ===== CHART: Últimos 30 días =====
@@ -1755,22 +1784,12 @@ elif page == "🍽 Registro":
     # -------------------------
     # Datos base
     # -------------------------
-    categories = list_categories()
+    categories = cached_list_categories()
     if not categories:
         st.error("No hay categorías. Revisa la pestaña foods.")
         st.stop()
-
-    if "ALL_FOODS_CACHE" not in st.session_state:
-        st.session_state["ALL_FOODS_CACHE"] = list_all_foods()
     
-    all_foods = st.session_state["ALL_FOODS_CACHE"]
-
-    
-    # ✅ Map seguro:
-    # - food_map: (categoria, nombre) -> food
-    # - food_by_id: id -> food (el bueno para editar / futuro)
-    # Leer TODOS los alimentos UNA sola vez
-    all_foods = list_all_foods()
+    all_foods = cached_list_all_foods()
     
     food_map = {}
     food_by_id = {}
@@ -1797,7 +1816,7 @@ elif page == "🍽 Registro":
     with colA:
         category = st.selectbox("Categoría", categories, key="reg_category_cart")
     with colB:
-        foods_in_cat = list_foods_by_category(category)
+        foods_in_cat = cached_list_foods_by_category(category)
         if not foods_in_cat:
             st.warning("Esa categoría no tiene alimentos.")
             st.stop()
@@ -3542,6 +3561,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
