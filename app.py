@@ -43,6 +43,9 @@ st.set_page_config(
 
 
 def inject_fitness_ui():
+    # =========================
+    # 1) CSS
+    # =========================
     st.markdown(r"""
 <style>
 
@@ -242,21 +245,19 @@ details summary{
 /* =========================
    TOP NAV FLOATING CARD
    ========================= */
-
 :root{
   --nav-h: 75px;
-  --nav-top: calc(env(safe-area-inset-top, 0px) + 16px);
+  --nav-top: calc(env(safe-area-inset-top, 0px) + 14px);
 }
 
 /* NAV como card flotante */
 iframe[title*="streamlit_option_menu"],
 iframe[src*="streamlit_option_menu"]{
-
   position: fixed !important;
 
   top: var(--nav-top) !important;
-  left: 60px !important;
-  right: 60px !important;
+  left: 12px !important;
+  right: 12px !important;
   bottom: auto !important;
 
   height: var(--nav-h) !important;
@@ -276,97 +277,27 @@ iframe[src*="streamlit_option_menu"]{
   overflow: hidden !important;
 }
 
-/* Ajustar contenido debajo */
+/* Ajustar contenido debajo: hueco casi nulo */
 .block-container{
-  padding-top: calc(var(--nav-top) + var(--nav-h) - 60px) !important;
-  padding-left: 20px !important;
-  padding-right: 20px !important;
-  padding-bottom: 60px !important;
+  padding-top: calc(var(--nav-top) + var(--nav-h) - 58px) !important;
+  padding-left: 14px !important;
+  padding-right: 14px !important;
+  padding-bottom: 80px !important;
 }
 
 /* ===== MOBILE FIRST ===== */
 @media (max-width: 900px){
-  section[data-testid="stSidebar"]{
-    display: none !important;
-  }
-
-  .block-container{
-    padding-left: 14px !important;
-    padding-right: 14px !important;
-  }
-
+  section[data-testid="stSidebar"]{ display: none !important; }
   h1{ font-size: 26px !important; }
   h2{ font-size: 20px !important; }
 }
 
-
-
-header[data-testid="stHeader"]{
-  display: none !important;
-}
-
-section[data-testid="stSidebar"]{
-  display: none !important;
-}
-
-/* ===== Registro: selector de semana tipo app ===== */
-.wk-strip{
-  margin-top: 8px;
-}
-
-.wk-strip button{
-  border-radius: 14px !important;
-  padding: 10px 6px !important;
-  font-weight: 950 !important;
-  line-height: 1.05 !important;
-  white-space: pre-line !important; /* permite L\n12 */
-  background: rgba(255,255,255,0.06) !important;
-  border: 1px solid rgba(255,255,255,0.12) !important;
-}
-
-/* “pseudo-selección”: como Streamlit no sabe cuál está seleccionado visualmente,
-   lo marcamos con un highlight usando el foco del último click y el estado general */
-.wk-strip button:focus{
-  outline: none !important;
-  box-shadow: 0 0 0 2px rgba(34,211,238,0.35), 0 18px 45px rgba(0,0,0,0.35) !important;
-  border-color: rgba(34,211,238,0.35) !important;
-}
-
-/* Botones flecha compactos */
-button[kind="secondary"]{
-  min-height: 42px !important;
-}
-
-/* ===== Week strip responsive fix ===== */
-
-.wk-scroll{
-  display: flex;
-  overflow-x: auto;
-  gap: 8px;
-  padding-bottom: 4px;
-  -webkit-overflow-scrolling: touch;
-}
-
-.wk-scroll > div{
-  min-width: 54px !important;   /* tamaño fijo para que no colapse */
-  flex: 0 0 auto !important;    /* evita que se apilen */
-}
-
-.wk-scroll button{
-  border-radius: 14px !important;
-  padding: 8px 4px !important;
-  font-size: 12px !important;
-  font-weight: 900 !important;
-  white-space: pre-line !important;
-  line-height: 1.05 !important;
-}
+/* Ocultar header Streamlit */
+header[data-testid="stHeader"]{ display: none !important; }
 
 /* =========================
    REGISTRO: week strip = SIEMPRE 1 fila (PC y móvil)
    ========================= */
-
-/* El bloque de columns de Streamlit es un stHorizontalBlock.
-   Aquí le forzamos NO WRAP + scroll horizontal */
 .reg-weekstrip [data-testid="stHorizontalBlock"]{
   flex-wrap: nowrap !important;
   overflow-x: auto !important;
@@ -376,14 +307,12 @@ button[kind="secondary"]{
   padding-bottom: 6px !important;
 }
 
-/* Cada “columna” dentro del row: ancho fijo para que no colapse */
 .reg-weekstrip [data-testid="stHorizontalBlock"] > div{
   flex: 0 0 auto !important;
-  width: 58px !important;       /* ajusta 52–66 si quieres */
+  width: 58px !important;
   min-width: 58px !important;
 }
 
-/* Botones compactos y consistentes */
 .reg-weekstrip .stButton > button{
   width: 58px !important;
   min-width: 58px !important;
@@ -392,51 +321,35 @@ button[kind="secondary"]{
   font-size: 12px !important;
   font-weight: 900 !important;
   line-height: 1.05 !important;
-  white-space: pre-line !important; /* permite 2 líneas */
+  white-space: pre-line !important;
 }
 
-/* MODO DURO: impedir focus en el input */
-div[data-testid="stDateInput"] input{
-  caret-color: transparent !important;
-  pointer-events: none !important;
-}
-
-div[data-testid="stDateInput"]{
-  pointer-events: auto !important;
-}
-
-/* Date input: look de botón */
+/* ===== Date input: NO bloquear click (nada de pointer-events:none) ===== */
 div[data-testid="stDateInput"] input{
   cursor: pointer !important;
+  caret-color: transparent !important;
 }
 
-
-
-
-
-
-
-
-
-
 </style>
+""", unsafe_allow_html=True)
 
-
-st.markdown(
-"""
+    # =========================
+    # 2) JS: evitar teclado pero mantener click
+    # =========================
+    st.markdown(
+        """
 <script>
 (function(){
-  // aplica cada 300ms por si Streamlit re-renderiza
   const tick = () => {
     const inputs = window.parent.document.querySelectorAll('div[data-testid="stDateInput"] input');
     inputs.forEach(inp => {
-      // evita teclado: readonly pero mantiene el picker
+      // readonly evita teclado pero mantiene el selector
       inp.setAttribute('readonly', 'readonly');
 
-      // si el móvil intenta abrir teclado por focus, lo cerramos
+      // si Android intenta enfocar y abre teclado, lo cortamos
       inp.onfocus = () => { inp.blur(); };
 
-      // bonus: evita que aparezca el cursor
+      // sin cursor
       inp.style.caretColor = 'transparent';
     });
   };
@@ -444,10 +357,9 @@ st.markdown(
   setInterval(tick, 300);
 })();
 </script>
-""",
-unsafe_allow_html=True
-)
-    """, unsafe_allow_html=True)
+        """,
+        unsafe_allow_html=True
+    )
 
 
 
