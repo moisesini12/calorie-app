@@ -240,50 +240,47 @@ details summary{
 }
 
 /* =========================
-   TOP NAV FIXED (SAFE AREA)
+   TOP NAV FULL WIDTH
    ========================= */
+
 :root{
   --nav-h: 70px;
-  --nav-top: calc(env(safe-area-inset-top, 0px) + 10px); /* baja la barra */
+  --nav-top: env(safe-area-inset-top, 0px);
 }
 
+/* Barra navegación */
 iframe[title*="streamlit_option_menu"],
 iframe[src*="streamlit_option_menu"]{
+
   position: fixed !important;
 
-  top: var(--nav-top) !important;   /* 👈 aquí la bajamos */
-  left: 10px !important;
-  right: 10px !important;
+  top: var(--nav-top) !important;
+  left: 0 !important;
+  right: 0 !important;
   bottom: auto !important;
 
   height: var(--nav-h) !important;
-  width: auto !important;
+  width: 100% !important;
 
   z-index: 999999 !important;
 
-  background: rgba(15, 23, 42, 0.92) !important;
-  border: 1px solid rgba(255,255,255,0.08) !important;
-  border-radius: 22px !important;
-  box-shadow: 0 18px 45px rgba(0,0,0,0.60) !important;
+  background: #0f172a !important;
+  border: none !important;
+  border-bottom: 1px solid rgba(255,255,255,0.06) !important;
 
-  backdrop-filter: blur(14px) !important;
-  -webkit-backdrop-filter: blur(14px) !important;
+  border-radius: 0 !important;
+  box-shadow: 0 10px 35px rgba(0,0,0,0.6) !important;
 
   overflow: hidden !important;
 }
 
-/* ===== Layout compacto debajo de la top nav ===== */
+/* Contenido pegado justo debajo */
 .block-container{
-  padding-top: calc(var(--nav-top) + var(--nav-h) - 75px) !important;
+  padding-top: calc(var(--nav-top) + var(--nav-h) - 6px) !important;
+  padding-left: 14px !important;
+  padding-right: 14px !important;
   padding-bottom: 60px !important;
 }
-
-/* Elimina margen extra del primer elemento */
-.block-container > div:first-child{
-  margin-top: 0 !important;
-  padding-top: 0 !important;
-}
-
 /* ===== MOBILE FIRST ===== */
 @media (max-width: 900px){
   section[data-testid="stSidebar"]{
@@ -3133,6 +3130,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
