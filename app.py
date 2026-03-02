@@ -361,7 +361,39 @@ button[kind="secondary"]{
   line-height: 1.05 !important;
 }
 
+/* =========================
+   REGISTRO: week strip = SIEMPRE 1 fila (PC y móvil)
+   ========================= */
 
+/* El bloque de columns de Streamlit es un stHorizontalBlock.
+   Aquí le forzamos NO WRAP + scroll horizontal */
+.reg-weekstrip [data-testid="stHorizontalBlock"]{
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  gap: 8px !important;
+  padding-bottom: 6px !important;
+}
+
+/* Cada “columna” dentro del row: ancho fijo para que no colapse */
+.reg-weekstrip [data-testid="stHorizontalBlock"] > div{
+  flex: 0 0 auto !important;
+  width: 58px !important;       /* ajusta 52–66 si quieres */
+  min-width: 58px !important;
+}
+
+/* Botones compactos y consistentes */
+.reg-weekstrip .stButton > button{
+  width: 58px !important;
+  min-width: 58px !important;
+  padding: 8px 6px !important;
+  border-radius: 14px !important;
+  font-size: 12px !important;
+  font-weight: 900 !important;
+  line-height: 1.05 !important;
+  white-space: pre-line !important; /* permite 2 líneas */
+}
 
 </style>
     """, unsafe_allow_html=True)
@@ -3257,6 +3289,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
