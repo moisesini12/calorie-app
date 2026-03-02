@@ -339,6 +339,74 @@ div[data-testid="stDateInput"] input{
   width: 100% !important;
 }
 
+/* =========================
+   REGISTRO — DAY STRIP (scroll real)
+   ========================= */
+.reg-daystrip [role="radiogroup"]{
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  gap: 10px !important;
+
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+
+  padding: 6px 2px 10px 2px !important;
+  scrollbar-width: none;              /* firefox */
+}
+.reg-daystrip [role="radiogroup"]::-webkit-scrollbar{
+  display: none;                       /* chrome/safari */
+}
+
+/* Cada opción = chip */
+.reg-daystrip label{
+  margin: 0 !important;
+}
+
+.reg-daystrip label > div{
+  /* Streamlit mete wrappers raros: forzamos */
+  margin: 0 !important;
+}
+
+/* La “tarjeta” clicable del radio */
+.reg-daystrip label[data-baseweb="radio"]{
+  flex: 0 0 auto !important;          /* NO se aplila jamás */
+  width: 64px !important;             /* tamaño chip */
+  min-width: 64px !important;
+  border-radius: 16px !important;
+
+  background: rgba(255,255,255,0.06) !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+  padding: 10px 8px !important;
+
+  text-align: center !important;
+}
+
+/* Ocultamos el circulito del radio y nos quedamos con el “chip” */
+.reg-daystrip label[data-baseweb="radio"] input{
+  display: none !important;
+}
+
+/* Texto en 2 líneas */
+.reg-daystrip label[data-baseweb="radio"] span{
+  white-space: pre-line !important;
+  line-height: 1.05 !important;
+  font-weight: 900 !important;
+  font-size: 12px !important;
+}
+
+/* Seleccionado: highlight PRO */
+.reg-daystrip label[data-baseweb="radio"][aria-checked="true"]{
+  border-color: rgba(34,211,238,0.50) !important;
+  box-shadow: 0 0 0 2px rgba(34,211,238,0.20) !important;
+  background: rgba(34,211,238,0.10) !important;
+}
+.reg-daystrip label[data-baseweb="radio"][aria-checked="true"] span{
+  color: var(--primary) !important;
+}
+
+
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -1331,77 +1399,65 @@ elif page == "🍽 Registro":
     )
 
     # ==========================
-    # Selector de día (Registro) — Week strip con scroll
-    # (1 fila siempre: PC y móvil)
+    # Selector de día (Registro) — SCROLL REAL (chips)
     # ==========================
     today = date.today()
-    
-    # Ajusta aquí el rango total que quieres permitir (para el "más días")
     DAYS_BACK = 30
     
-    # Persistimos la fecha seleccionada
+    # lista de fechas (hoy -> atrás)
+    date_options = [today - timedelta(days=i) for i in range(DAYS_BACK + 1)]
+    
+    # session state
     if "reg_selected_date" not in st.session_state:
         st.session_state["reg_selected_date"] = today.isoformat()
     
-    # Parse robusto
+    # fecha actual (robusto)
     try:
         current_date = datetime.strptime(st.session_state["reg_selected_date"], "%Y-%m-%d").date()
     except Exception:
         current_date = today
     
-    # --- Barra visible: últimos 7 días (hoy hacia atrás) ---
-    strip_days = 7
-    strip_dates = [today - timedelta(days=i) for i in range(strip_days)]
-    strip_dates = list(reversed(strip_dates))  # para que vaya de “antiguo -> hoy”
+    # índice actual
+    try:
+        idx = date_options.index(current_date)
+    except ValueError:
+        idx = 0
     
     def _dow_es(d: date) -> str:
-        # Lun, Mar, Mié...
         dias = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"]
         return dias[d.weekday()]
     
-    def _chip_label(d: date, selected: bool) -> str:
-        # 2 líneas: "Lun" y "12"
-        # marcamos el seleccionado con un punto (no depende de CSS)
-        dot = "●" if selected else " "
-        return f"{dot} {_dow_es(d)}\n{d.day:02d}"
+    def _label(d: date) -> str:
+        # 2 líneas: día de la semana + día del mes
+        # (esto + CSS = chip perfecto)
+        if d == today:
+            return f"Hoy\n{d.day:02d}"
+        if d == today - timedelta(days=1):
+            return f"Ayer\n{d.day:02d}"
+        return f"{_dow_es(d)}\n{d.day:02d}"
     
-    st.markdown("<div class='reg-weekstrip'>", unsafe_allow_html=True)
+    labels = [_label(d) for d in date_options]
     
-    cols = st.columns(len(strip_dates), gap="small")
-    for i, d in enumerate(strip_dates):
-        selected = (d == current_date)
-        with cols[i]:
-            if st.button(_chip_label(d, selected), use_container_width=True, key=f"reg_day_btn_{d.isoformat()}"):
-                st.session_state["reg_selected_date"] = d.isoformat()
-                st.rerun()
+    st.markdown("<div class='reg-daystrip'>", unsafe_allow_html=True)
+    
+    picked_label = st.radio(
+        "Seleccionar día",
+        labels,
+        index=idx,
+        horizontal=True,
+        label_visibility="collapsed",
+        key="reg_day_radio",
+    )
     
     st.markdown("</div>", unsafe_allow_html=True)
     
-    # --- (Opcional) selector extendido en desplegable (por si quieres días más atrás)
-    #     Esto NO molesta: es compacto y te salva si quieres ir más atrás que 7 días
-    with st.expander("📅 Más días", expanded=False):
-        date_options = [today - timedelta(days=i) for i in range(DAYS_BACK + 1)]
-        # invertimos para que salgan de más reciente a más antiguo
-        date_options = list(date_options)
+    # traducir label -> fecha
+    picked_idx = labels.index(picked_label)
+    selected_date = date_options[picked_idx]
     
-        # índice actual
-        try:
-            idx = date_options.index(current_date)
-        except ValueError:
-            idx = 0
+    st.session_state["reg_selected_date"] = selected_date.isoformat()
     
-        picked = st.selectbox(
-            "Seleccionar día",
-            [d.isoformat() for d in date_options],
-            index=idx,
-            key="reg_day_select_iso",
-            help="Para ir más atrás que la barra de 7 días."
-        )
-        if picked and picked != st.session_state["reg_selected_date"]:
-            st.session_state["reg_selected_date"] = picked
-            st.rerun()
-    
-    # ✅ Esta es LA fecha oficial del Registro
+    # ✅ Usa esto en TODO el Registro
     selected_date_str = st.session_state["reg_selected_date"]
     REG_DATE = selected_date_str
     
@@ -3266,6 +3322,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
