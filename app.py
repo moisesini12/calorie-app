@@ -337,6 +337,31 @@ button[kind="secondary"]{
   min-height: 42px !important;
 }
 
+/* ===== Week strip responsive fix ===== */
+
+.wk-scroll{
+  display: flex;
+  overflow-x: auto;
+  gap: 8px;
+  padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.wk-scroll > div{
+  min-width: 54px !important;   /* tamaño fijo para que no colapse */
+  flex: 0 0 auto !important;    /* evita que se apilen */
+}
+
+.wk-scroll button{
+  border-radius: 14px !important;
+  padding: 8px 4px !important;
+  font-size: 12px !important;
+  font-weight: 900 !important;
+  white-space: pre-line !important;
+  line-height: 1.05 !important;
+}
+
+
 
 </style>
     """, unsafe_allow_html=True)
@@ -1346,21 +1371,20 @@ elif page == "🍽 Registro":
     dow = ["L", "M", "X", "J", "V", "S", "D"]
     
     # Tira horizontal (si no cabe)
-    st.markdown("<div class='wk-strip'>", unsafe_allow_html=True)
+    st.markdown("<div class='wk-scroll'>", unsafe_allow_html=True)
     
-    cols = st.columns(7)
+    cols = st.columns(7, gap="small")
+    
     for i, d in enumerate(week_days):
         is_sel = (d == selected_date)
         label_day = dow[i]
         num = d.day
     
-        # Botón por día
-        # Truco: usamos label distinto si está seleccionado para que se vea "pill"
         btn_label = f"{label_day}\n{num}"
         key = f"wk_day_{d.isoformat()}"
     
         with cols[i]:
-            if st.button(btn_label, use_container_width=True, key=key):
+            if st.button(btn_label, key=key, use_container_width=True):
                 st.session_state["reg_selected_date"] = d.isoformat()
                 st.rerun()
     
@@ -3233,6 +3257,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
