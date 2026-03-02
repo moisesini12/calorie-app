@@ -405,7 +405,10 @@ div[data-testid="stDateInput"]{
   pointer-events: auto !important;
 }
 
-
+/* Date input: look de botón */
+div[data-testid="stDateInput"] input{
+  cursor: pointer !important;
+}
 
 
 
@@ -417,6 +420,33 @@ div[data-testid="stDateInput"]{
 
 
 </style>
+
+
+st.markdown(
+"""
+<script>
+(function(){
+  // aplica cada 300ms por si Streamlit re-renderiza
+  const tick = () => {
+    const inputs = window.parent.document.querySelectorAll('div[data-testid="stDateInput"] input');
+    inputs.forEach(inp => {
+      // evita teclado: readonly pero mantiene el picker
+      inp.setAttribute('readonly', 'readonly');
+
+      // si el móvil intenta abrir teclado por focus, lo cerramos
+      inp.onfocus = () => { inp.blur(); };
+
+      // bonus: evita que aparezca el cursor
+      inp.style.caretColor = 'transparent';
+    });
+  };
+  tick();
+  setInterval(tick, 300);
+})();
+</script>
+""",
+unsafe_allow_html=True
+)
     """, unsafe_allow_html=True)
 
 
@@ -3277,6 +3307,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
