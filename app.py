@@ -46,30 +46,39 @@ def inject_fitness_ui():
     st.markdown(r"""
     <style>
     :root{
-      --bg0:#0b1020;
-      --bg1:#0e1630;
-      --card: rgba(255,255,255,0.06);
-      --stroke: rgba(255,255,255,0.10);
-      --txt: rgba(255,255,255,0.92);
+      /* APP PURPLE THEME */
+      --bg0:#07081a;
+      --bg1:#0b0f2a;
+    
+      --card: rgba(255,255,255,0.08);
+      --card2: rgba(255,255,255,0.06);
+      --stroke: rgba(255,255,255,0.12);
+    
+      --txt: rgba(255,255,255,0.94);
       --muted: rgba(226,232,240,0.72);
-      --pink:#ff4fd8;
-      --purple:#8b5cf6;
-      --cyan:#22d3ee;
-      --green:#22c55e;
+    
+      --p1:#a855f7; /* purple */
+      --p2:#ec4899; /* pink */
+      --p3:#22d3ee; /* cyan */
+    
+      --r12: 12px;
       --r16: 16px;
       --r20: 20px;
-      --shadow: 0 18px 45px rgba(0,0,0,0.40);
+    
+      --shadow: 0 18px 45px rgba(0,0,0,0.55);
+      --shadow2: 0 10px 24px rgba(0,0,0,0.40);
+    
+      --nav-h: 74px;
     }
 
     html, body, [data-testid="stAppViewContainer"]{
       background:
-        radial-gradient(900px 700px at 80% 10%, rgba(139,92,246,0.18) 0%, transparent 62%),
-        radial-gradient(900px 700px at 10% 30%, rgba(255,79,216,0.12) 0%, transparent 62%),
-        radial-gradient(900px 700px at 60% 90%, rgba(34,211,238,0.10) 0%, transparent 62%),
+        radial-gradient(900px 700px at 15% 10%, rgba(168,85,247,0.22) 0%, transparent 62%),
+        radial-gradient(900px 700px at 85% 20%, rgba(236,72,153,0.16) 0%, transparent 60%),
+        radial-gradient(900px 700px at 55% 95%, rgba(34,211,238,0.10) 0%, transparent 60%),
         linear-gradient(180deg, var(--bg0) 0%, var(--bg1) 100%) !important;
       color: var(--txt) !important;
     }
-
     .block-container{
       max-width: 1100px;
       padding-top: 60px;
@@ -803,9 +812,77 @@ def inject_fitness_ui():
         background: transparent !important;
     }
 
+    /* =========================
+       MOBILE-FIRST APP SHELL
+       ========================= */
+    @media (max-width: 900px){
+      /* fuera sidebar -> look app real */
+      section[data-testid="stSidebar"]{
+        display:none !important;
+      }
+    
+      /* menos aire arriba */
+      .block-container{
+        padding-top: 10px !important;
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+      }
+    
+      /* títulos más “app” */
+      h1{ font-size: 28px !important; }
+      h2{ font-size: 22px !important; }
+    }
+    
+    /* Cards más consistentes */
+    .fm-card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.06));
+      border: 1px solid var(--stroke);
+      border-radius: var(--r20);
+      padding: 16px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+    
+    /* Botones secundarios “quietos” */
+    .stButton > button{
+      border-radius: 999px !important;
+      font-weight: 850 !important;
+      border: 1px solid rgba(255,255,255,0.12) !important;
+      background: rgba(255,255,255,0.05) !important;
+      color: rgba(255,255,255,0.92) !important;
+    }
+    .stButton > button[kind="primary"]{
+      background: linear-gradient(135deg, rgba(236,72,153,0.95), rgba(168,85,247,0.95)) !important;
+      color: #0b1020 !important;
+      border: none !important;
+      box-shadow: 0 16px 34px rgba(0,0,0,0.35);
+    }
 
-
-
+    /* =========================
+       FAB (+) like mobile apps
+       ========================= */
+    .fm-fab{
+      position: fixed;
+      right: 18px;
+      bottom: calc(var(--nav-h) + 18px);
+      width: 58px;
+      height: 58px;
+      border-radius: 999px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-decoration:none !important;
+      font-size: 34px;
+      font-weight: 950;
+      color: #0b1020 !important;
+      background: linear-gradient(135deg, rgba(236,72,153,0.96), rgba(168,85,247,0.96));
+      box-shadow: 0 18px 40px rgba(0,0,0,0.55);
+      border: 1px solid rgba(255,255,255,0.14);
+      z-index: 999999;
+    }
+    .fm-fab:active{
+      transform: translateY(1px) scale(0.98);
+    }
 
 
     </style>
@@ -1177,6 +1254,29 @@ def _open_foods():
 def _open_profile():
     st.session_state["profile_popup_open"] = True
 
+# =========================
+# FAB (Floating Action Button) via query params (mobile-first)
+# =========================
+def _handle_fab_query():
+    try:
+        qp = st.query_params
+        fab = qp.get("fab", None)
+    except Exception:
+        # compat viejo
+        qp = st.experimental_get_query_params()
+        fab = (qp.get("fab", [None]) or [None])[0]
+
+    if fab == "foods":
+        # abrir popup comidas y limpiar query
+        st.session_state["food_popup_open"] = True
+        try:
+            st.query_params.clear()
+        except Exception:
+            st.experimental_set_query_params()
+
+        st.rerun()
+
+_handle_fab_query()
 
 # Popup: Comidas
 if st.session_state.get("food_popup_open", False):
@@ -1342,7 +1442,17 @@ def render_bottom_nav():
 # CURRENT PAGE
 # =========================
 render_bottom_nav()
-
+# =========================
+# FAB render (solo visual)
+# =========================
+st.markdown(
+    """
+    <a class="fm-fab" href="?fab=foods" aria-label="Añadir comida">
+      +
+    </a>
+    """,
+    unsafe_allow_html=True
+)
 page = st.session_state["page"]
 # ==========================================================
 # PÁGINA: DASHBOARD
@@ -3596,6 +3706,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
