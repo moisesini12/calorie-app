@@ -329,6 +329,15 @@ div[data-testid="stDateInput"] input{
   cursor: pointer !important;
   caret-color: transparent !important;
 }
+/* Asegura que el wrapper no corte el scroll */
+.reg-weekstrip{
+  overflow: visible !important;
+}
+
+/* El contenedor interno no debe recortar el overflow horizontal */
+.reg-weekstrip [data-testid="stHorizontalBlock"]{
+  width: 100% !important;
+}
 
 </style>
 """, unsafe_allow_html=True)
@@ -3257,6 +3266,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
