@@ -46,79 +46,61 @@ def inject_fitness_ui():
     st.markdown(r"""
     <style>
     /* =========================================================
-       FITMACRO — MOBILE-FIRST "APP" THEME (RADICAL)
-       - En PC se ve como teléfono centrado (para diseñar siempre móvil)
-       - Bottom nav (option_menu iframe) + FAB
-       - Cards, inputs, tablas, expanders, tabs, etc.
+       FITMACRO — STYLE "PHOTO" (Purple + White Cards)
+       Mobile-first ALWAYS (PC = phone centered)
        ========================================================= */
 
     :root{
-      /* Core palette (purple app) */
-      --bg0:#07061a;
-      --bg1:#0b1030;
-      --bg2:#0a1338;
+      /* Purple app background like mockup */
+      --bgA:#6d28d9;   /* deep purple */
+      --bgB:#7c3aed;   /* violet */
+      --bgC:#a78bfa;   /* lilac glow */
 
-      --txt: rgba(255,255,255,0.93);
-      --muted: rgba(226,232,240,0.72);
-      --muted2: rgba(226,232,240,0.58);
+      /* Surfaces (WHITE cards) */
+      --surface:#ffffff;
+      --surface2:#f6f7fb;
 
-      --stroke: rgba(255,255,255,0.12);
-      --stroke2: rgba(255,255,255,0.09);
+      /* Text (dark inside cards) */
+      --txt:#0f172a;        /* slate-900 */
+      --muted:#475569;      /* slate-600 */
 
-      --cardA: rgba(255,255,255,0.08);
-      --cardB: rgba(255,255,255,0.05);
+      /* Accents */
+      --accent:#7c3aed;     /* main purple */
+      --accent2:#a855f7;    /* pinky purple */
+      --good:#16a34a;
 
-      --p1:#a855f7; /* purple */
-      --p2:#ec4899; /* pink */
-      --p3:#22d3ee; /* cyan */
-      --g1:#22c55e; /* green */
-
-      --r16: 16px;
-      --r20: 20px;
-      --r24: 24px;
-      --shadow1: 0 18px 45px rgba(0,0,0,0.55);
-      --shadow2: 0 10px 26px rgba(0,0,0,0.38);
+      /* Borders & shadows */
+      --stroke: rgba(15,23,42,0.10);
+      --shadow: 0 16px 40px rgba(17,24,39,0.20);
+      --shadow2: 0 8px 22px rgba(17,24,39,0.14);
 
       /* Phone shell */
-      --phone-w: 480px;
+      --phone-w: 460px;
 
-      /* Bottom dock */
+      /* Bottom bar */
       --nav-h: 74px;
-      --nav-pad-x: 12px;
-      --nav-pad-y: 12px;
-      --nav-radius: 26px;
-      --dock-bg: rgba(15, 18, 45, 0.82);
-      --dock-stroke: rgba(168,85,247,0.22);
-      --dock-shadow: 0 20px 55px rgba(0,0,0,0.60);
+      --nav-radius: 24px;
     }
 
-    /* ---------- App background ---------- */
+    /* ---------- Background (purple app) ---------- */
     html, body, [data-testid="stAppViewContainer"]{
       background:
-        radial-gradient(900px 700px at 18% 12%, rgba(168,85,247,0.24) 0%, transparent 62%),
-        radial-gradient(900px 700px at 86% 18%, rgba(236,72,153,0.18) 0%, transparent 60%),
-        radial-gradient(900px 700px at 58% 96%, rgba(34,211,238,0.11) 0%, transparent 60%),
-        linear-gradient(180deg, var(--bg0) 0%, var(--bg1) 50%, var(--bg2) 100%) !important;
-      color: var(--txt) !important;
+        radial-gradient(800px 500px at 20% 0%, rgba(255,255,255,0.25) 0%, transparent 60%),
+        radial-gradient(900px 600px at 80% 20%, rgba(167,139,250,0.40) 0%, transparent 55%),
+        linear-gradient(180deg, var(--bgA) 0%, var(--bgB) 55%, #5b21b6 100%) !important;
+      color: #fff !important; /* fuera de cards */
     }
 
-    /* ---------- HARD: always mobile-first shell (even on desktop) ---------- */
+    /* ---------- ALWAYS design mobile ---------- */
     section[data-testid="stSidebar"]{ display:none !important; }
 
-    /* Streamlit main container -> phone */
     .block-container{
       max-width: var(--phone-w) !important;
-      margin-left:auto !important;
-      margin-right:auto !important;
-      padding-top: 14px !important;
-      padding-left: 14px !important;
-      padding-right: 14px !important;
-
-      /* deja hueco para dock + safe-area */
+      margin: 0 auto !important;
+      padding: 14px 14px !important;
       padding-bottom: calc(var(--nav-h) + 34px + env(safe-area-inset-bottom, 0px)) !important;
     }
 
-    /* Quita el header interno de Streamlit (ese hueco raro arriba) */
     header[data-testid="stHeader"]{
       height: 0 !important;
       min-height: 0 !important;
@@ -127,395 +109,236 @@ def inject_fitness_ui():
       border: 0 !important;
       background: transparent !important;
     }
+    section.main > div{ padding-top: 0 !important; }
 
-    /* Evita “aire” extra antes del primer bloque */
-    section.main > div{
-      padding-top: 0 !important;
-    }
+    /* ---------- Make Streamlit text feel like app ---------- */
+    h1,h2,h3,h4{ letter-spacing:-0.02em !important; }
+    h1{ font-size: 28px !important; font-weight: 950 !important; color:#fff !important; }
+    h2{ font-size: 20px !important; font-weight: 950 !important; color:#fff !important; }
+    h3{ font-size: 16px !important; font-weight: 900 !important; color:#fff !important; }
+    .stCaption, [data-testid="stCaptionContainer"]{ color: rgba(255,255,255,0.82) !important; font-weight: 700 !important; }
 
-    /* ---------- Typography (app-like) ---------- */
-    h1, h2, h3, h4{
-      color: rgba(255,255,255,0.94) !important;
-      letter-spacing: -0.03em !important;
-    }
-    h1{ font-size: 1.65rem !important; font-weight: 950 !important; margin-bottom: 6px !important; }
-    h2{ font-size: 1.25rem !important; font-weight: 950 !important; margin-top: 10px !important; }
-    h3{ font-size: 1.10rem !important; font-weight: 900 !important; }
-    p, li{ color: rgba(255,255,255,0.86) !important; }
-    small, .stCaption, [data-testid="stCaptionContainer"]{
-      color: var(--muted) !important;
-      font-weight: 700 !important;
-    }
-
-    /* ---------- Helpers (tus clases) ---------- */
-    .fm-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
-    .fm-title{ font-weight: 950; letter-spacing:-0.03em; }
-    .fm-sub{ color: var(--muted); font-size: 12px; font-weight: 750; }
-    .fm-big{ font-size: 30px; font-weight: 950; letter-spacing:-0.05em; }
-
-    .fm-chip{
-      display:inline-flex; align-items:center; gap:6px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.10);
-      color: rgba(255,255,255,0.88);
-      font-size: 12px;
-      font-weight: 900;
-      white-space: nowrap;
-    }
-
-    .fm-divider{
-      height:1px;
-      background: rgba(255,255,255,0.08);
-      margin: 12px 0;
-    }
-
-    /* ---------- Cards (core) ---------- */
-    .fm-card, .fm-section, .fm-table-card{
-      background: linear-gradient(180deg, var(--cardA), var(--cardB));
-      border: 1px solid var(--stroke);
-      border-radius: var(--r24);
-      box-shadow: var(--shadow2);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-    }
-    .fm-card{ padding: 16px; }
-    .fm-section{ padding: 16px; margin: 14px 0; }
-    .fm-table-card{ padding: 10px; }
-
-    .fm-card + .fm-card{ margin-top: 12px; }
-
-    .fm-section-title{
-      font-size: 18px;
-      font-weight: 950;
-      letter-spacing:-0.02em;
-      margin: 0 0 10px 0;
-    }
-
-    /* Accent variants (si las usas) */
-    .fm-accent-pink{
-      border-color: rgba(236,72,153,0.22) !important;
-      box-shadow: var(--shadow2), 0 0 0 1px rgba(236,72,153,0.10) !important;
-      background: linear-gradient(180deg, rgba(236,72,153,0.12), var(--cardB)) !important;
-    }
-    .fm-accent-purple{
-      border-color: rgba(168,85,247,0.22) !important;
-      box-shadow: var(--shadow2), 0 0 0 1px rgba(168,85,247,0.10) !important;
-      background: linear-gradient(180deg, rgba(168,85,247,0.12), var(--cardB)) !important;
-    }
-    .fm-accent-cyan{
-      border-color: rgba(34,211,238,0.22) !important;
-      box-shadow: var(--shadow2), 0 0 0 1px rgba(34,211,238,0.10) !important;
-      background: linear-gradient(180deg, rgba(34,211,238,0.10), var(--cardB)) !important;
-    }
-    .fm-accent-green{
-      border-color: rgba(34,197,94,0.22) !important;
-      box-shadow: var(--shadow2), 0 0 0 1px rgba(34,197,94,0.10) !important;
-      background: linear-gradient(180deg, rgba(34,197,94,0.10), var(--cardB)) !important;
-    }
-
-    /* ---------- Hero ---------- */
+    /* =========================================================
+       HERO (top purple bar like mockup)
+       ========================================================= */
     .fm-hero{
-      position: relative;
-      border-radius: 26px;
+      border-radius: 22px;
       padding: 14px 14px;
-      border: 1px solid rgba(255,255,255,0.10);
-      background:
-        radial-gradient(900px 420px at 18% 20%, rgba(236,72,153,0.16) 0%, transparent 55%),
-        radial-gradient(900px 520px at 88% 30%, rgba(34,211,238,0.12) 0%, transparent 60%),
-        linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.04));
-      box-shadow: var(--shadow1);
-      overflow: hidden;
-    }
-    .fm-hero:after{
-      content:"";
-      position:absolute;
-      inset:-2px;
-      background: linear-gradient(135deg, rgba(236,72,153,0.10), rgba(168,85,247,0.09), rgba(34,211,238,0.09));
-      filter: blur(18px);
-      opacity: 0.85;
-      pointer-events:none;
-    }
-    .fm-hero-inner{
-      position: relative;
-      display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap: 10px;
-      z-index: 2;
+      background: rgba(255,255,255,0.14);
+      border: 1px solid rgba(255,255,255,0.22);
+      box-shadow: 0 18px 50px rgba(0,0,0,0.18);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
     }
     .fm-hero-title{
-      font-size: 22px;
+      font-size: 24px;
       font-weight: 950;
-      letter-spacing: -0.03em;
       margin: 0;
-      color: rgba(255,255,255,0.95);
+      color: #fff;
     }
     .fm-hero-sub{
       margin-top: 6px;
       font-size: 12px;
-      font-weight: 800;
-      color: rgba(226,232,240,0.76);
-    }
-    .fm-hero-pills{
-      display:flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      justify-content:flex-end;
+      font-weight: 750;
+      color: rgba(255,255,255,0.86);
     }
     .fm-pill{
       display:inline-flex;
       align-items:center;
-      justify-content:center;
-      gap: 6px;
+      gap:6px;
       padding: 8px 10px;
       border-radius: 999px;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.10);
-      color: rgba(255,255,255,0.92);
+      background: rgba(255,255,255,0.20);
+      border: 1px solid rgba(255,255,255,0.26);
+      color: #fff;
       font-size: 12px;
-      font-weight: 950;
+      font-weight: 900;
       white-space: nowrap;
     }
     .fm-pill.hot{
-      background: linear-gradient(135deg, rgba(236,72,153,0.95), rgba(168,85,247,0.95));
+      background: rgba(255,255,255,0.95);
       border: none;
-      color: #0b1020;
-      box-shadow: 0 12px 28px rgba(0,0,0,0.35);
+      color: var(--accent);
+      box-shadow: 0 10px 26px rgba(0,0,0,0.16);
     }
 
-    /* ---------- Inputs (app) ---------- */
-    label{ color: rgba(226,232,240,0.80) !important; font-weight: 850 !important; }
+    /* =========================================================
+       WHITE CARDS (the big visual change)
+       ========================================================= */
+    .fm-card, .fm-section, .fm-table-card, details{
+      background: var(--surface) !important;
+      border: 1px solid var(--stroke) !important;
+      border-radius: 22px !important;
+      box-shadow: var(--shadow2) !important;
+      backdrop-filter: none !important;
+    }
+    .fm-card{ padding: 16px !important; }
+    .fm-section{ padding: 16px !important; margin: 14px 0 !important; }
+    .fm-table-card{ padding: 10px !important; }
+
+    /* All text inside cards -> dark */
+    .fm-card *, .fm-section *, .fm-table-card *, details *{
+      color: var(--txt) !important;
+    }
+    .fm-sub{ color: var(--muted) !important; }
+
+    /* Streamlit elements inside cards also dark */
+    .fm-card .stMarkdown, .fm-section .stMarkdown, details .stMarkdown{
+      color: var(--txt) !important;
+    }
+
+    /* =========================================================
+       Inputs (white, like mockup)
+       ========================================================= */
+    label{ color: rgba(15,23,42,0.80) !important; font-weight: 850 !important; }
 
     input, textarea, div[data-baseweb="select"] > div{
-      background: rgba(255,255,255,0.06) !important;
-      border: 1px solid rgba(255,255,255,0.12) !important;
+      background: var(--surface2) !important;
+      border: 1px solid rgba(15,23,42,0.14) !important;
       border-radius: 16px !important;
       color: var(--txt) !important;
       font-weight: 750 !important;
+      box-shadow: none !important;
     }
     textarea{ line-height: 1.25 !important; }
 
-    /* ---------- Buttons (default smaller, more “app”) ---------- */
+    /* =========================================================
+       Buttons (mockup style)
+       Primary = purple pill, Secondary = light pill
+       ========================================================= */
     .stButton > button, div[data-testid="stFormSubmitButton"] button{
       border-radius: 999px !important;
       font-weight: 950 !important;
-      border: 1px solid rgba(255,255,255,0.12) !important;
-      background: rgba(255,255,255,0.05) !important;
-      color: rgba(255,255,255,0.92) !important;
-
       padding: 10px 14px !important;
       min-height: 42px !important;
-      box-shadow: none !important;
-    }
-    .stButton > button:active{ transform: translateY(1px) scale(0.99); }
 
+      background: rgba(255,255,255,0.92) !important;
+      color: var(--accent) !important;
+      border: 1px solid rgba(15,23,42,0.10) !important;
+      box-shadow: 0 10px 22px rgba(17,24,39,0.12) !important;
+    }
     .stButton > button[kind="primary"], div[data-testid="stFormSubmitButton"] button{
-      background: linear-gradient(135deg, rgba(236,72,153,0.95), rgba(168,85,247,0.95)) !important;
-      color: #0b1020 !important;
+      background: linear-gradient(135deg, var(--accent), var(--accent2)) !important;
+      color: #fff !important;
       border: none !important;
-      box-shadow: 0 16px 34px rgba(0,0,0,0.35) !important;
+      box-shadow: 0 14px 30px rgba(17,24,39,0.22) !important;
     }
 
-    /* Mini-actions (para botones que quieras “pequeñitos”) */
-    .fm-btn-mini{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap: 6px;
-      padding: 6px 10px !important;
-      min-height: 30px !important;
-      font-size: 12px !important;
-      font-weight: 950 !important;
-      border-radius: 999px !important;
-      border: 1px solid rgba(255,255,255,0.12) !important;
-      background: rgba(255,255,255,0.05) !important;
-      color: rgba(255,255,255,0.92) !important;
-    }
-
-    /* ---------- Expanders (cards) ---------- */
+    /* =========================================================
+       Expanders (white card)
+       ========================================================= */
     details{
-      border-radius: 20px !important;
-      border: 1px solid rgba(255,255,255,0.10) !important;
-      background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.04)) !important;
-      box-shadow: var(--shadow2) !important;
       overflow: hidden !important;
     }
     summary{
       padding: 14px 14px !important;
       font-weight: 950 !important;
-      color: rgba(255,255,255,0.92) !important;
     }
 
-    /* ---------- Tabs ---------- */
-    .stTabs [data-baseweb="tab-list"]{
-      gap: 8px !important;
-    }
-    .stTabs [data-baseweb="tab"]{
-      border-radius: 999px !important;
-      padding: 8px 12px !important;
-      background: rgba(255,255,255,0.05) !important;
-      border: 1px solid rgba(255,255,255,0.10) !important;
-      color: rgba(255,255,255,0.86) !important;
-      font-weight: 900 !important;
-    }
-    .stTabs [aria-selected="true"]{
-      background: linear-gradient(135deg, rgba(168,85,247,0.40), rgba(34,211,238,0.18)) !important;
-      border-color: rgba(255,255,255,0.16) !important;
-      color: rgba(255,255,255,0.95) !important;
-      box-shadow: 0 12px 28px rgba(0,0,0,0.35) !important;
-    }
-
-    /* ---------- Table (tu tabla FitMacro) ---------- */
+    /* =========================================================
+       Tables (white, simple)
+       ========================================================= */
     .fm-table-scroll{
       overflow-x: auto;
-      overflow-y: hidden;
       -webkit-overflow-scrolling: touch;
       border-radius: 16px;
     }
-    .fm-table-scroll::-webkit-scrollbar{ height: 10px; }
-    .fm-table-scroll::-webkit-scrollbar-track{ background: rgba(255,255,255,0.06); border-radius: 999px; }
-    .fm-table-scroll::-webkit-scrollbar-thumb{ background: rgba(255,255,255,0.16); border-radius: 999px; }
-
     .fm-table-scroll table{
       width: 100%;
       min-width: 820px;
       border-collapse: separate !important;
       border-spacing: 0 !important;
-      overflow: hidden !important;
       border-radius: 16px !important;
+      overflow: hidden !important;
     }
     .fm-table-scroll thead th{
-      background: linear-gradient(135deg, rgba(236,72,153,0.55), rgba(168,85,247,0.55)) !important;
-      color: rgba(255,255,255,0.94) !important;
+      background: linear-gradient(135deg, rgba(124,58,237,0.95), rgba(168,85,247,0.85)) !important;
+      color: #fff !important;
       font-weight: 950 !important;
       padding: 12px 12px !important;
       border: none !important;
       text-align: left !important;
     }
     .fm-table-scroll tbody td{
-      background: rgba(255,255,255,0.06) !important;
-      color: rgba(255,255,255,0.90) !important;
+      background: #fff !important;
+      color: var(--txt) !important;
       font-weight: 750 !important;
       padding: 12px 12px !important;
-      border: none !important;
+      border-top: 1px solid rgba(15,23,42,0.06) !important;
     }
-    .fm-table-scroll tbody tr:nth-child(even) td{ background: rgba(255,255,255,0.045) !important; }
-    .fm-table-scroll tbody tr:hover td{
-      background: rgba(34,211,238,0.10) !important;
-      transition: background 0.12s ease;
+    .fm-table-scroll tbody tr:nth-child(even) td{
+      background: #fbfbfe !important;
     }
 
-    /* ---------- Dashboard HTML helpers ---------- */
-    .fm-metric-label{
-      font-size: 12px;
-      font-weight: 900;
-      color: rgba(226,232,240,0.82);
-      display:flex;
-      align-items:center;
-      gap:6px;
-      margin-bottom: 6px;
-    }
-    .fm-metric-value{
-      font-size: 30px;
-      font-weight: 950;
-      letter-spacing: -0.05em;
-      color: rgba(255,255,255,0.92);
-      line-height: 1.05;
-    }
-
-    .fm-progress-row{ display:flex; align-items:center; justify-content:space-between; gap:14px; }
-    .fm-progress-left{ flex: 1; min-width: 0; }
-    .fm-progress-right{ width: 150px; text-align:right; flex: 0 0 auto; }
-
-    .fm-progress-title{ font-weight: 950; color: rgba(255,255,255,0.92); margin-bottom: 6px; }
-    .fm-progress-sub{ color: rgba(226,232,240,0.72); font-size: 12px; font-weight: 800; margin-bottom: 10px; }
-
+    /* =========================================================
+       Progress bars (clean)
+       ========================================================= */
     .fm-bar{
       height: 12px;
       border-radius: 999px;
-      background: rgba(255,255,255,0.10);
-      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(15,23,42,0.08);
+      border: 1px solid rgba(15,23,42,0.08);
       overflow: hidden;
     }
     .fm-bar > span{
       display:block;
-      height: 100%;
-      width: 0%;
-      border-radius: 999px;
-      background: rgba(168,85,247,0.88);
-    }
-    .fm-bar.pink  > span{ background: rgba(236,72,153,0.92); }
-    .fm-bar.purple> span{ background: rgba(168,85,247,0.92); }
-    .fm-bar.cyan  > span{ background: rgba(34,211,238,0.92); }
-    .fm-bar.green > span{ background: rgba(34,197,94,0.92); }
-
-    .fm-rem-caption{ color: rgba(226,232,240,0.72); font-size: 12px; font-weight: 900; margin-bottom: 4px; }
-    .fm-rem-value{ font-size: 28px; font-weight: 950; letter-spacing:-0.05em; color: rgba(255,255,255,0.92); line-height: 1.05; }
-
-    /* ---------- Measures (swipe) ---------- */
-    .measures-wrap [data-testid="stHorizontalBlock"]{ gap: 14px; flex-wrap: nowrap !important; overflow-x: auto !important; overflow-y:hidden !important; -webkit-overflow-scrolling: touch !important; padding-bottom: 6px; }
-    .measures-wrap [data-testid="stHorizontalBlock"] > div{ flex: 0 0 auto !important; width: 280px !important; }
-    .fm-measure-card{
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.10);
-      border-radius: 16px;
-      padding: 12px 12px;
-      margin: 8px 0;
-    }
-    .fm-measure-title{
-      font-size: 12px;
-      font-weight: 950;
-      color: rgba(226,232,240,0.82);
-      margin-bottom: 6px;
+      height:100%;
+      width:0%;
+      border-radius:999px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
     }
 
-    /* ---------- Bottom nav (option_menu iframe pinned) ---------- */
+    /* =========================================================
+       Bottom nav (option_menu iframe) -> WHITE dock like mockup
+       ========================================================= */
     iframe[title*="streamlit_option_menu"],
     iframe[src*="streamlit_option_menu"]{
       position: fixed !important;
 
-      left: var(--nav-pad-x) !important;
-      right: calc(78px + env(safe-area-inset-right, 0px) + var(--nav-pad-x)) !important;
-      bottom: calc(env(safe-area-inset-bottom, 0px) + var(--nav-pad-y)) !important;
+      left: 12px !important;
+      right: calc(78px + env(safe-area-inset-right, 0px) + 12px) !important;
+      bottom: calc(env(safe-area-inset-bottom, 0px) + 12px) !important;
 
       height: var(--nav-h) !important;
       width: auto !important;
 
       z-index: 999999 !important;
 
-      border: 1px solid var(--dock-stroke) !important;
+      border: 1px solid rgba(15,23,42,0.10) !important;
       border-radius: var(--nav-radius) !important;
-      background: var(--dock-bg) !important;
-      box-shadow: var(--dock-shadow) !important;
-      backdrop-filter: blur(16px) !important;
-      -webkit-backdrop-filter: blur(16px) !important;
+      background: rgba(255,255,255,0.96) !important;
+      box-shadow: var(--shadow) !important;
       overflow: hidden !important;
     }
 
-    /* Limpia iconos duplicados en option_menu */
+    /* hide duplicated icon spans */
     iframe[title*="streamlit_option_menu"] li span:nth-child(2),
     iframe[src*="streamlit_option_menu"] li span:nth-child(2){
       display:none !important;
     }
+
+    /* icon base */
     iframe[title*="streamlit_option_menu"] li span:first-child,
     iframe[src*="streamlit_option_menu"] li span:first-child{
-      color: rgba(255,255,255,0.78) !important;
+      color: rgba(15,23,42,0.70) !important;
       font-size: 20px !important;
-      transition: all 0.25s ease !important;
+      transition: all 0.2s ease !important;
     }
+
+    /* active icon */
     iframe[title*="streamlit_option_menu"] li[aria-selected="true"] span:first-child,
     iframe[src*="streamlit_option_menu"] li[aria-selected="true"] span:first-child{
-      color: rgba(236,72,153,0.98) !important;
-      transform: scale(1.12);
+      color: var(--accent) !important;
+      transform: scale(1.10);
     }
     iframe[title*="streamlit_option_menu"] li[aria-selected="true"],
     iframe[src*="streamlit_option_menu"] li[aria-selected="true"]{
       background: transparent !important;
     }
 
-    /* ---------- FAB (+) ---------- */
+    /* =========================================================
+       FAB (+) purple like mockup
+       ========================================================= */
     .fm-fab{
       position: fixed;
       right: 16px;
@@ -530,16 +353,18 @@ def inject_fitness_ui():
 
       font-size: 34px;
       font-weight: 950;
-      color: #0b1020 !important;
+      color: #fff !important;
 
-      background: linear-gradient(135deg, rgba(236,72,153,0.97), rgba(168,85,247,0.97));
-      box-shadow: 0 18px 45px rgba(0,0,0,0.62);
-      border: 1px solid rgba(255,255,255,0.14);
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 18px 45px rgba(17,24,39,0.28);
+      border: 1px solid rgba(255,255,255,0.18);
       z-index: 999999;
     }
     .fm-fab:active{ transform: translateY(1px) scale(0.98); }
 
-    /* ---------- Debug badge ---------- */
+    /* =========================================================
+       Debug badge (so we KNOW css is applied)
+       ========================================================= */
     .fm-css-debug-badge{
       position: fixed;
       top: 10px;
@@ -551,9 +376,13 @@ def inject_fitness_ui():
       color: #0b1020;
       font-weight: 950;
       font-size: 12px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.18);
     }
+
     </style>
+
+    <!-- debug badge: if you don't see this, CSS isn't loading -->
+    <div class="fm-css-debug-badge">CSS PHOTO OK ✅</div>
     """, unsafe_allow_html=True)
 
 
@@ -3377,6 +3206,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
