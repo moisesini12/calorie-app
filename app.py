@@ -384,11 +384,43 @@ def inject_fitness_ui():
       font-size: 12px;
       box-shadow: 0 10px 25px rgba(0,0,0,0.16);
     }
+
+    /* =========================================================
+       FORCE DARK TEXT ON CORAL BACKGROUND
+       (subtitles, helper text, previews, etc.)
+       ========================================================= */
+    
+    /* Subtítulos tipo descripción */
+    .fm-sub,
+    .stMarkdown p,
+    .stMarkdown small,
+    [data-testid="stMarkdownContainer"] p,
+    [data-testid="stMarkdownContainer"] small {
+        color: #111827 !important;
+    }
+    
+    /* Textos tipo preview */
+    div:has(> span:contains("Preview")),
+    div:has(> p:contains("Preview")),
+    .stMarkdown {
+        color: #111827 !important;
+    }
+    
+    /* Labels pequeños */
+    label,
+    small {
+        color: #111827 !important;
+    }
+    
+    /* Cualquier texto dentro de bloques no blancos */
+    section.main > div:not(.fm-card):not(.fm-section) * {
+        color: #111827 !important;
+    }
+
+
+    
     </style>
 
-    <!-- Debug badge: if you don't see this, CSS isn't loading -->
-    <div class="fm-css-debug-badge">CSS CORAL OK ✅</div>
-    """, unsafe_allow_html=True)
 
 
 
@@ -3211,6 +3243,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
