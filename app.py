@@ -3262,15 +3262,7 @@ elif page == "🏋️ Rutina IA":
         with col_right:
             lvl, days_v, mins_v, goal_v = _plan_meta_from_profile()
 
-            # ===== Resumen superior (bloque “producto”) =====
-            st.markdown(f"## 🗓️ {plan.get('plan_name','Rutina personalizada')}")
-            summary_txt = str(plan.get("summary", "")).strip()
-            if summary_txt:
-                st.caption(summary_txt)
 
-            # “chips” resumen rápidos
-            chips = f"**{days_v} días** · **{mins_v} min** · **{lvl}** · **{goal_v}**"
-            st.markdown(chips)
 
             # Acciones pequeñas tipo “app”: arriba derecha
             head_l, head_r = st.columns([6, 1.4], gap="small")
@@ -3604,6 +3596,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
