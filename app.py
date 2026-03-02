@@ -1322,61 +1322,79 @@ elif page == "🍽 Registro":
     )
 
     # ==========================
-    # Selector de día (Registro) — tipo app (sin teclado)
+    # Selector de día (Registro) — Week strip con scroll
+    # (1 fila siempre: PC y móvil)
     # ==========================
-    from datetime import date, timedelta
-    
     today = date.today()
     
-    # Semana ancla (lunes). Persistente.
-    if "reg_week_anchor" not in st.session_state:
-        st.session_state["reg_week_anchor"] = (today - timedelta(days=today.weekday())).isoformat()
+    # Ajusta aquí el rango total que quieres permitir (para el "más días")
+    DAYS_BACK = 30
     
-    # Día seleccionado persistente.
+    # Persistimos la fecha seleccionada
     if "reg_selected_date" not in st.session_state:
         st.session_state["reg_selected_date"] = today.isoformat()
     
-    week_anchor = date.fromisoformat(st.session_state["reg_week_anchor"])
-    selected_date = date.fromisoformat(st.session_state["reg_selected_date"])
+    # Parse robusto
+    try:
+        current_date = datetime.strptime(st.session_state["reg_selected_date"], "%Y-%m-%d").date()
+    except Exception:
+        current_date = today
     
-    # Header: “Seleccionar día” + flechas
-    c_prev, c_title, c_next = st.columns([1, 3, 1])
-    with c_prev:
-        if st.button("◀", key="wk_prev", use_container_width=True):
-            week_anchor = week_anchor - timedelta(days=7)
-            st.session_state["reg_week_anchor"] = week_anchor.isoformat()
-            st.rerun()
-    with c_title:
-        st.markdown(f"**Seleccionar día**  ·  {week_anchor.strftime('%B %Y')}")
-    with c_next:
-        if st.button("▶", key="wk_next", use_container_width=True):
-            week_anchor = week_anchor + timedelta(days=7)
-            st.session_state["reg_week_anchor"] = week_anchor.isoformat()
-            st.rerun()
+    # --- Barra visible: últimos 7 días (hoy hacia atrás) ---
+    strip_days = 7
+    strip_dates = [today - timedelta(days=i) for i in range(strip_days)]
+    strip_dates = list(reversed(strip_dates))  # para que vaya de “antiguo -> hoy”
     
-    # 7 días (L..D)
-    days = [week_anchor + timedelta(days=i) for i in range(7)]
-    dow = ["L", "M", "X", "J", "V", "S", "D"]
+    def _dow_es(d: date) -> str:
+        # Lun, Mar, Mié...
+        dias = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"]
+        return dias[d.weekday()]
     
-    st.markdown('<div class="reg-weekstrip">', unsafe_allow_html=True)
-    cols = st.columns(7)
-    for i, d in enumerate(days):
-        label = f"{dow[i]}\n{d.day}"
-        is_sel = (d == selected_date)
+    def _chip_label(d: date, selected: bool) -> str:
+        # 2 líneas: "Lun" y "12"
+        # marcamos el seleccionado con un punto (no depende de CSS)
+        dot = "●" if selected else " "
+        return f"{dot} {_dow_es(d)}\n{d.day:02d}"
     
-        # Truco: en el label marcamos selección visual con emoji
-        # (si quieres selección más “pro”, luego lo refinamos con CSS/JS)
-        btn_label = f"✅ {label}" if is_sel else label
+    st.markdown("<div class='reg-weekstrip'>", unsafe_allow_html=True)
     
+    cols = st.columns(len(strip_dates), gap="small")
+    for i, d in enumerate(strip_dates):
+        selected = (d == current_date)
         with cols[i]:
-            if st.button(btn_label, key=f"wk_day_{d.isoformat()}", use_container_width=True):
+            if st.button(_chip_label(d, selected), use_container_width=True, key=f"reg_day_btn_{d.isoformat()}"):
                 st.session_state["reg_selected_date"] = d.isoformat()
                 st.rerun()
+    
     st.markdown("</div>", unsafe_allow_html=True)
     
-    # ✅ Usa esta variable en TODO tu Registro
-    REG_DATE = st.session_state["reg_selected_date"]
-    selected_date_str = REG_DATE  # para que tu código actual funcione igual
+    # --- (Opcional) selector extendido en desplegable (por si quieres días más atrás)
+    #     Esto NO molesta: es compacto y te salva si quieres ir más atrás que 7 días
+    with st.expander("📅 Más días", expanded=False):
+        date_options = [today - timedelta(days=i) for i in range(DAYS_BACK + 1)]
+        # invertimos para que salgan de más reciente a más antiguo
+        date_options = list(date_options)
+    
+        # índice actual
+        try:
+            idx = date_options.index(current_date)
+        except ValueError:
+            idx = 0
+    
+        picked = st.selectbox(
+            "Seleccionar día",
+            [d.isoformat() for d in date_options],
+            index=idx,
+            key="reg_day_select_iso",
+            help="Para ir más atrás que la barra de 7 días."
+        )
+        if picked and picked != st.session_state["reg_selected_date"]:
+            st.session_state["reg_selected_date"] = picked
+            st.rerun()
+    
+    # ✅ Esta es LA fecha oficial del Registro
+    selected_date_str = st.session_state["reg_selected_date"]
+    REG_DATE = selected_date_str
     
     render_food_subnav()
     # -------------------------
@@ -3239,6 +3257,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
