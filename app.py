@@ -272,10 +272,16 @@ iframe[src*="streamlit_option_menu"]{
   overflow: hidden !important;
 }
 
-/* Empuja el contenido para que no quede debajo */
+/* ===== Layout compacto debajo de la top nav ===== */
 .block-container{
-  padding-top: calc(var(--nav-top) + var(--nav-h) + 18px) !important;
+  padding-top: calc(var(--nav-top) + var(--nav-h) - 8px) !important;
   padding-bottom: 60px !important;
+}
+
+/* Elimina margen extra del primer elemento */
+.block-container > div:first-child{
+  margin-top: 0 !important;
+  padding-top: 0 !important;
 }
 
 /* ===== MOBILE FIRST ===== */
@@ -3127,6 +3133,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
