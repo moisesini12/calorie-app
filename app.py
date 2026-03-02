@@ -395,6 +395,23 @@ button[kind="secondary"]{
   white-space: pre-line !important; /* permite 2 líneas */
 }
 
+/* ===== date_input: desactivar teclado en móvil ===== */
+
+/* Hace que el campo de fecha no sea editable */
+input[type="date"]{
+  pointer-events: none !important;
+}
+
+/* Pero permitimos abrir el calendario */
+div[data-testid="stDateInput"]{
+  pointer-events: auto !important;
+}
+
+/* Cursor tipo botón */
+div[data-testid="stDateInput"] input{
+  cursor: pointer !important;
+}
+
 </style>
     """, unsafe_allow_html=True)
 
@@ -3256,6 +3273,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
