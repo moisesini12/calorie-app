@@ -274,7 +274,7 @@ iframe[src*="streamlit_option_menu"]{
 
 /* ===== Layout compacto debajo de la top nav ===== */
 .block-container{
-  padding-top: calc(var(--nav-top) + var(--nav-h) - 8px) !important;
+  padding-top: calc(var(--nav-top) + var(--nav-h) - 20px) !important;
   padding-bottom: 60px !important;
 }
 
@@ -3133,6 +3133,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
