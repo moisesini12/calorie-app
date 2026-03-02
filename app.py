@@ -339,7 +339,38 @@ div[data-testid="stDateInput"] input{
   width: 100% !important;
 }
 
+/* =========================================
+   REGISTRO TABLE: scroll horizontal independiente
+   ========================================= */
+.fm-table-card{
+  overflow: hidden !important;      /* recorta bordes redondos */
+}
 
+.fm-table-scroll{
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  border-radius: 14px !important;
+}
+
+/* fuerza a que la tabla “quiera” ser más ancha que el móvil */
+.fm-table-scroll table{
+  width: 100% !important;
+  min-width: 900px !important;      /* ajusta 800–1100 según columnas */
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+}
+
+/* scrollbar bonito (opcional) */
+.fm-table-scroll::-webkit-scrollbar{ height: 10px; }
+.fm-table-scroll::-webkit-scrollbar-track{
+  background: rgba(255,255,255,0.06);
+  border-radius: 999px;
+}
+.fm-table-scroll::-webkit-scrollbar-thumb{
+  background: rgba(255,255,255,0.16);
+  border-radius: 999px;
+}
 
 
 </style>
@@ -3196,6 +3227,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
