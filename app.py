@@ -372,6 +372,76 @@ div[data-testid="stDateInput"] input{
   border-radius: 999px;
 }
 
+/* =========================
+   SUBNAV (Registro): 3 botones tipo “segmented control”
+   ========================= */
+
+.fm-subnav{
+  margin-top: 8px;
+  margin-bottom: 10px;
+}
+
+/* Contenedor: hace que los 3 botones parezcan una sola pieza */
+.fm-subnav [data-testid="stHorizontalBlock"]{
+  background: rgba(15, 23, 42, 0.55);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 22px;
+  padding: 8px;
+  gap: 8px !important;
+  box-shadow: 0 18px 45px rgba(0,0,0,0.45);
+}
+
+/* Cada columna ocupa su tercio y sin rarezas */
+.fm-subnav [data-testid="stHorizontalBlock"] > div{
+  flex: 1 1 0 !important;
+  min-width: 0 !important;
+}
+
+/* Botones: compactos, mismo alto, centrados */
+.fm-subnav .stButton > button{
+  width: 100% !important;
+  min-height: 44px !important;
+  height: 44px !important;
+  padding: 0 10px !important;
+  border-radius: 16px !important;
+  font-weight: 950 !important;
+  font-size: 14px !important;
+  background: rgba(255,255,255,0.06) !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
+  color: rgba(255,255,255,0.92) !important;
+  box-shadow: none !important;
+}
+
+/* Hover suave */
+.fm-subnav .stButton > button:hover{
+  background: rgba(255,255,255,0.08) !important;
+  border-color: rgba(255,255,255,0.14) !important;
+  transform: none !important;
+}
+
+/* MÓVIL: aún más compactos */
+@media (max-width: 900px){
+  .fm-subnav{
+    margin-top: 6px;
+    margin-bottom: 8px;
+  }
+
+  .fm-subnav [data-testid="stHorizontalBlock"]{
+    border-radius: 20px;
+    padding: 7px;
+    gap: 7px !important;
+  }
+
+  .fm-subnav .stButton > button{
+    min-height: 42px !important;
+    height: 42px !important;
+    border-radius: 15px !important;
+    font-size: 13px !important;
+    padding: 0 8px !important;
+  }
+}
+
+
 
 </style>
 """, unsafe_allow_html=True)
@@ -3228,6 +3298,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
