@@ -240,47 +240,50 @@ details summary{
 }
 
 /* =========================
-   TOP NAV FULL WIDTH
+   TOP NAV FLOATING CARD
    ========================= */
 
 :root{
   --nav-h: 70px;
-  --nav-top: calc(env(safe-area-inset-top, 0px) + 14px);
+  --nav-top: calc(env(safe-area-inset-top, 0px) + 16px);
 }
 
-/* Barra navegación */
+/* NAV como card flotante */
 iframe[title*="streamlit_option_menu"],
 iframe[src*="streamlit_option_menu"]{
 
   position: fixed !important;
 
   top: var(--nav-top) !important;
-  left: 0 !important;
-  right: 0 !important;
+  left: 16px !important;
+  right: 16px !important;
   bottom: auto !important;
 
   height: var(--nav-h) !important;
-  width: 100% !important;
+  width: auto !important;
 
   z-index: 999999 !important;
 
-  background: #0f172a !important;
-  border: none !important;
-  border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+  background: rgba(15, 23, 42, 0.92) !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  border-radius: 22px !important;
 
-  border-radius: 0 !important;
-  box-shadow: none;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.65) !important;
+
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
 
   overflow: hidden !important;
 }
 
-/* Contenido pegado justo debajo */
+/* Ajustar contenido debajo */
 .block-container{
-  padding-top: calc(var(--nav-top) + var(--nav-h) - 60px) !important;
+  padding-top: calc(var(--nav-top) + var(--nav-h) - 6px) !important;
   padding-left: 14px !important;
   padding-right: 14px !important;
   padding-bottom: 60px !important;
 }
+
 /* ===== MOBILE FIRST ===== */
 @media (max-width: 900px){
   section[data-testid="stSidebar"]{
@@ -3130,6 +3133,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
