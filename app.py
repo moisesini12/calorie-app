@@ -2,7 +2,7 @@
 
 import os, math, json
 import hashlib, hmac, base64
-from datetime import date
+from datetime import date, datetime, timedelta
 
 import streamlit as st
 import pandas as pd
@@ -1267,11 +1267,66 @@ if page == "📊 Dashboard":
 # PÁGINA: REGISTRO  (MULTI-AÑADIDO / “CARRITO”)
 # ==========================================================
 elif page == "🍽 Registro":
+    selected_date_str = st.session_state.get("reg_selected_date", date.today().isoformat())
+    
     fm_hero(
         "🍽 Registro",
         subtitle=f"Día: {selected_date_str}",
         pills=["🧺 Multi-añadido", "⚡ Rápido"]
     )
+    # ==========================
+    # Selector de día (Registro)
+    # ==========================
+    today = date.today()
+    
+    # Cuántos días atrás quieres permitir (ajústalo a gusto)
+    DAYS_BACK = 30
+    
+    # Lista de fechas: hoy, ayer, etc.
+    date_options = [today - timedelta(days=i) for i in range(DAYS_BACK + 1)]
+    
+    def _label_for(d: date) -> str:
+        if d == today:
+            return f"Hoy — {d.isoformat()}"
+        if d == today - timedelta(days=1):
+            return f"Ayer — {d.isoformat()}"
+        # Ej: lun 2026-03-02
+        return f"{d.strftime('%a').capitalize()} — {d.isoformat()}"
+    
+    labels = [_label_for(d) for d in date_options]
+    
+    # Persistencia en session_state (para que no “salte” al rerun)
+    if "reg_selected_date" not in st.session_state:
+        st.session_state["reg_selected_date"] = today.isoformat()
+    
+    # Encuentra el índice actual según lo guardado
+    try:
+        current_date = datetime.strptime(st.session_state["reg_selected_date"], "%Y-%m-%d").date()
+    except Exception:
+        current_date = today
+    
+    try:
+        idx = date_options.index(current_date)
+    except ValueError:
+        idx = 0  # por defecto hoy
+    
+    sel_label = st.selectbox(
+        "Seleccionar día",
+        labels,
+        index=idx,
+        key="reg_day_select",
+    )
+    
+    # Traduce el label seleccionado a fecha real
+    selected_date = date_options[labels.index(sel_label)]
+    st.session_state["reg_selected_date"] = selected_date.isoformat()
+    
+    # ✅ Usa esta variable en TODO tu Registro a partir de aquí
+    REG_DATE = selected_date.isoformat()
+    
+    # ✅ compatibilidad: el resto de tu página ya usa selected_date_str
+    selected_date_str = REG_DATE
+    
     render_food_subnav()
     # -------------------------
     # Estado / feedback
@@ -3133,6 +3188,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
