@@ -676,7 +676,7 @@ def fdc_search_generic_foods(query: str, page_size: int = 8, include_fndds: bool
 
 def fdc_get_macros_per_100g(fdc_id: int):
     """
-    Lee detalle del alimento y extrae kcal/prote/carb/fat (por 100g típicamente).
+    Lee detalle del alimento y extrae kcal/prote/carb/fat (por 100g tipicamente).
     """
     url = f"{FDC_BASE}/food/{int(fdc_id)}"
     params = {"api_key": _fdc_key()}
@@ -3243,6 +3243,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
