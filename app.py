@@ -244,7 +244,7 @@ details summary{
    ========================= */
 
 :root{
-  --nav-h: 70px;
+  --nav-h: 10px;
   --nav-top: calc(env(safe-area-inset-top, 0px) + 16px);
 }
 
@@ -3133,6 +3133,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
