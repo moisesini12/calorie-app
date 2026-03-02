@@ -1322,41 +1322,61 @@ elif page == "🍽 Registro":
     )
 
     # ==========================
-    # Selector de día (Registro)  ✅ CALENDARIO (móvil friendly)
+    # Selector de día (Registro) — tipo app (sin teclado)
     # ==========================
     from datetime import date, timedelta
     
     today = date.today()
-    DAYS_BACK = 30
     
-    min_d = today - timedelta(days=DAYS_BACK)
-    max_d = today
+    # Semana ancla (lunes). Persistente.
+    if "reg_week_anchor" not in st.session_state:
+        st.session_state["reg_week_anchor"] = (today - timedelta(days=today.weekday())).isoformat()
     
-    # Persistencia
+    # Día seleccionado persistente.
     if "reg_selected_date" not in st.session_state:
         st.session_state["reg_selected_date"] = today.isoformat()
     
-    # Convertimos lo guardado a date
-    try:
-        current_date = date.fromisoformat(st.session_state["reg_selected_date"])
-    except Exception:
-        current_date = today
+    week_anchor = date.fromisoformat(st.session_state["reg_week_anchor"])
+    selected_date = date.fromisoformat(st.session_state["reg_selected_date"])
     
-    # Input calendario (queda como “Seleccionar día”)
-    selected_date = st.date_input(
-        "Seleccionar día",
-        value=current_date,
-        min_value=min_d,
-        max_value=max_d,
-        key="reg_date_input",
-    )
+    # Header: “Seleccionar día” + flechas
+    c_prev, c_title, c_next = st.columns([1, 3, 1])
+    with c_prev:
+        if st.button("◀", key="wk_prev", use_container_width=True):
+            week_anchor = week_anchor - timedelta(days=7)
+            st.session_state["reg_week_anchor"] = week_anchor.isoformat()
+            st.rerun()
+    with c_title:
+        st.markdown(f"**Seleccionar día**  ·  {week_anchor.strftime('%B %Y')}")
+    with c_next:
+        if st.button("▶", key="wk_next", use_container_width=True):
+            week_anchor = week_anchor + timedelta(days=7)
+            st.session_state["reg_week_anchor"] = week_anchor.isoformat()
+            st.rerun()
     
-    # Guardar + string final
-    st.session_state["reg_selected_date"] = selected_date.isoformat()
+    # 7 días (L..D)
+    days = [week_anchor + timedelta(days=i) for i in range(7)]
+    dow = ["L", "M", "X", "J", "V", "S", "D"]
     
-    # ✅ Usa esto para todo el registro
-    selected_date_str = selected_date.isoformat()
-    REG_DATE = selected_date_str
+    st.markdown('<div class="reg-weekstrip">', unsafe_allow_html=True)
+    cols = st.columns(7)
+    for i, d in enumerate(days):
+        label = f"{dow[i]}\n{d.day}"
+        is_sel = (d == selected_date)
+    
+        # Truco: en el label marcamos selección visual con emoji
+        # (si quieres selección más “pro”, luego lo refinamos con CSS/JS)
+        btn_label = f"✅ {label}" if is_sel else label
+    
+        with cols[i]:
+            if st.button(btn_label, key=f"wk_day_{d.isoformat()}", use_container_width=True):
+                st.session_state["reg_selected_date"] = d.isoformat()
+                st.rerun()
+    st.markdown("</div>", unsafe_allow_html=True)
+    
+    # ✅ Usa esta variable en TODO tu Registro
+    REG_DATE = st.session_state["reg_selected_date"]
+    selected_date_str = REG_DATE  # para que tu código actual funcione igual
     
     render_food_subnav()
     # -------------------------
@@ -3219,6 +3239,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
