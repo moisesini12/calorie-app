@@ -46,60 +46,57 @@ def inject_fitness_ui():
     st.markdown(r"""
     <style>
     /* =========================================================
-       FITMACRO — STYLE "PHOTO" (Purple + White Cards)
+       FITMACRO — THEME "CORAL ORANGE" (like the mockup)
        Mobile-first ALWAYS (PC = phone centered)
        ========================================================= */
 
     :root{
-      /* Purple app background like mockup */
-      --bgA:#6d28d9;   /* deep purple */
-      --bgB:#7c3aed;   /* violet */
-      --bgC:#a78bfa;   /* lilac glow */
+      /* Background gradients (coral/orange/pink) */
+      --bgA:#ff6b6b;   /* coral */
+      --bgB:#ff8a3d;   /* orange */
+      --bgC:#ff4fa3;   /* pink accent glow */
+      --bgD:#ffd1b3;   /* soft highlight */
 
-      /* Surfaces (WHITE cards) */
+      /* Surfaces (white cards) */
       --surface:#ffffff;
-      --surface2:#f6f7fb;
+      --surface2:#f7f8fc;
 
-      /* Text (dark inside cards) */
-      --txt:#0f172a;        /* slate-900 */
-      --muted:#475569;      /* slate-600 */
+      /* Text (dark on white) */
+      --txt:#111827;      /* gray-900 */
+      --muted:#6b7280;    /* gray-500 */
+      --muted2:#94a3b8;   /* slate-400 */
 
       /* Accents */
-      --accent:#7c3aed;     /* main purple */
-      --accent2:#a855f7;    /* pinky purple */
+      --accent:#ff6b6b;   /* coral */
+      --accent2:#ff8a3d;  /* orange */
+      --accent3:#ff4fa3;  /* pink */
       --good:#16a34a;
 
       /* Borders & shadows */
-      --stroke: rgba(15,23,42,0.10);
-      --shadow: 0 16px 40px rgba(17,24,39,0.20);
-      --shadow2: 0 8px 22px rgba(17,24,39,0.14);
+      --stroke: rgba(17,24,39,0.10);
+      --shadow: 0 18px 55px rgba(17,24,39,0.18);
+      --shadow2: 0 10px 26px rgba(17,24,39,0.14);
 
       /* Phone shell */
       --phone-w: 460px;
 
-      /* Bottom bar */
+      /* Bottom dock */
       --nav-h: 74px;
-      --nav-radius: 24px;
+      --nav-radius: 26px;
     }
 
-    /* ---------- Background (purple app) ---------- */
+    /* ---------- App background (like image) ---------- */
     html, body, [data-testid="stAppViewContainer"]{
       background:
-        radial-gradient(800px 500px at 20% 0%, rgba(255,255,255,0.25) 0%, transparent 60%),
-        radial-gradient(900px 600px at 80% 20%, rgba(167,139,250,0.40) 0%, transparent 55%),
-        linear-gradient(180deg, var(--bgA) 0%, var(--bgB) 55%, #5b21b6 100%) !important;
-      color: #fff !important; /* fuera de cards */
+        radial-gradient(900px 600px at 10% 10%, rgba(255,255,255,0.28) 0%, transparent 60%),
+        radial-gradient(900px 600px at 85% 25%, rgba(255,209,179,0.55) 0%, transparent 55%),
+        radial-gradient(900px 700px at 55% 95%, rgba(255,79,163,0.22) 0%, transparent 60%),
+        linear-gradient(180deg, var(--bgA) 0%, var(--bgB) 55%, #ff5a8b 100%) !important;
+      color: #fff !important; /* outside cards */
     }
 
-    /* ---------- ALWAYS design mobile ---------- */
+    /* ---------- Always mobile layout ---------- */
     section[data-testid="stSidebar"]{ display:none !important; }
-
-    .block-container{
-      max-width: var(--phone-w) !important;
-      margin: 0 auto !important;
-      padding: 14px 14px !important;
-      padding-bottom: calc(var(--nav-h) + 34px + env(safe-area-inset-bottom, 0px)) !important;
-    }
 
     header[data-testid="stHeader"]{
       height: 0 !important;
@@ -111,24 +108,35 @@ def inject_fitness_ui():
     }
     section.main > div{ padding-top: 0 !important; }
 
-    /* ---------- Make Streamlit text feel like app ---------- */
+    .block-container{
+      max-width: var(--phone-w) !important;
+      margin: 0 auto !important;
+      padding: 14px 14px !important;
+      padding-bottom: calc(var(--nav-h) + 34px + env(safe-area-inset-bottom, 0px)) !important;
+    }
+
+    /* ---------- App typography ---------- */
     h1,h2,h3,h4{ letter-spacing:-0.02em !important; }
     h1{ font-size: 28px !important; font-weight: 950 !important; color:#fff !important; }
     h2{ font-size: 20px !important; font-weight: 950 !important; color:#fff !important; }
     h3{ font-size: 16px !important; font-weight: 900 !important; color:#fff !important; }
-    .stCaption, [data-testid="stCaptionContainer"]{ color: rgba(255,255,255,0.82) !important; font-weight: 700 !important; }
+    .stCaption, [data-testid="stCaptionContainer"]{
+      color: rgba(255,255,255,0.88) !important;
+      font-weight: 750 !important;
+    }
 
     /* =========================================================
-       HERO (top purple bar like mockup)
+       HERO (top coral/orange header)
        ========================================================= */
     .fm-hero{
-      border-radius: 22px;
+      border-radius: 24px;
       padding: 14px 14px;
-      background: rgba(255,255,255,0.14);
-      border: 1px solid rgba(255,255,255,0.22);
-      box-shadow: 0 18px 50px rgba(0,0,0,0.18);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      background:
+        radial-gradient(900px 400px at 10% 0%, rgba(255,255,255,0.22) 0%, transparent 60%),
+        linear-gradient(135deg, rgba(255,107,107,0.92), rgba(255,138,61,0.90));
+      border: 1px solid rgba(255,255,255,0.28);
+      box-shadow: 0 22px 60px rgba(0,0,0,0.18);
+      overflow: hidden;
     }
     .fm-hero-title{
       font-size: 24px;
@@ -139,8 +147,8 @@ def inject_fitness_ui():
     .fm-hero-sub{
       margin-top: 6px;
       font-size: 12px;
-      font-weight: 750;
-      color: rgba(255,255,255,0.86);
+      font-weight: 800;
+      color: rgba(255,255,255,0.92);
     }
     .fm-pill{
       display:inline-flex;
@@ -148,22 +156,22 @@ def inject_fitness_ui():
       gap:6px;
       padding: 8px 10px;
       border-radius: 999px;
-      background: rgba(255,255,255,0.20);
+      background: rgba(255,255,255,0.22);
       border: 1px solid rgba(255,255,255,0.26);
       color: #fff;
       font-size: 12px;
-      font-weight: 900;
+      font-weight: 950;
       white-space: nowrap;
     }
     .fm-pill.hot{
       background: rgba(255,255,255,0.95);
       border: none;
-      color: var(--accent);
-      box-shadow: 0 10px 26px rgba(0,0,0,0.16);
+      color: #ff4f7a;
+      box-shadow: 0 10px 26px rgba(0,0,0,0.14);
     }
 
     /* =========================================================
-       WHITE CARDS (the big visual change)
+       WHITE CARDS (main look)
        ========================================================= */
     .fm-card, .fm-section, .fm-table-card, details{
       background: var(--surface) !important;
@@ -176,35 +184,35 @@ def inject_fitness_ui():
     .fm-section{ padding: 16px !important; margin: 14px 0 !important; }
     .fm-table-card{ padding: 10px !important; }
 
-    /* All text inside cards -> dark */
+    /* All text inside cards -> dark, high contrast */
     .fm-card *, .fm-section *, .fm-table-card *, details *{
       color: var(--txt) !important;
     }
     .fm-sub{ color: var(--muted) !important; }
 
-    /* Streamlit elements inside cards also dark */
+    /* Fix Streamlit markdown inside */
     .fm-card .stMarkdown, .fm-section .stMarkdown, details .stMarkdown{
       color: var(--txt) !important;
     }
 
     /* =========================================================
-       Inputs (white, like mockup)
+       Inputs (soft gray)
        ========================================================= */
-    label{ color: rgba(15,23,42,0.80) !important; font-weight: 850 !important; }
-
+    label{
+      color: rgba(17,24,39,0.78) !important;
+      font-weight: 900 !important;
+    }
     input, textarea, div[data-baseweb="select"] > div{
       background: var(--surface2) !important;
-      border: 1px solid rgba(15,23,42,0.14) !important;
+      border: 1px solid rgba(17,24,39,0.14) !important;
       border-radius: 16px !important;
       color: var(--txt) !important;
       font-weight: 750 !important;
       box-shadow: none !important;
     }
-    textarea{ line-height: 1.25 !important; }
 
     /* =========================================================
-       Buttons (mockup style)
-       Primary = purple pill, Secondary = light pill
+       Buttons (coral primary)
        ========================================================= */
     .stButton > button, div[data-testid="stFormSubmitButton"] button{
       border-radius: 999px !important;
@@ -212,31 +220,29 @@ def inject_fitness_ui():
       padding: 10px 14px !important;
       min-height: 42px !important;
 
-      background: rgba(255,255,255,0.92) !important;
-      color: var(--accent) !important;
-      border: 1px solid rgba(15,23,42,0.10) !important;
-      box-shadow: 0 10px 22px rgba(17,24,39,0.12) !important;
+      background: rgba(255,255,255,0.94) !important;
+      color: rgba(255,107,107,0.98) !important;
+      border: 1px solid rgba(17,24,39,0.10) !important;
+      box-shadow: 0 10px 24px rgba(17,24,39,0.12) !important;
     }
     .stButton > button[kind="primary"], div[data-testid="stFormSubmitButton"] button{
       background: linear-gradient(135deg, var(--accent), var(--accent2)) !important;
       color: #fff !important;
       border: none !important;
-      box-shadow: 0 14px 30px rgba(17,24,39,0.22) !important;
+      box-shadow: 0 16px 34px rgba(17,24,39,0.20) !important;
     }
 
     /* =========================================================
-       Expanders (white card)
+       Expanders (white)
        ========================================================= */
-    details{
-      overflow: hidden !important;
-    }
+    details{ overflow: hidden !important; }
     summary{
       padding: 14px 14px !important;
       font-weight: 950 !important;
     }
 
     /* =========================================================
-       Tables (white, simple)
+       Tables (white + coral header)
        ========================================================= */
     .fm-table-scroll{
       overflow-x: auto;
@@ -252,7 +258,7 @@ def inject_fitness_ui():
       overflow: hidden !important;
     }
     .fm-table-scroll thead th{
-      background: linear-gradient(135deg, rgba(124,58,237,0.95), rgba(168,85,247,0.85)) !important;
+      background: linear-gradient(135deg, rgba(255,107,107,0.95), rgba(255,138,61,0.90)) !important;
       color: #fff !important;
       font-weight: 950 !important;
       padding: 12px 12px !important;
@@ -264,20 +270,20 @@ def inject_fitness_ui():
       color: var(--txt) !important;
       font-weight: 750 !important;
       padding: 12px 12px !important;
-      border-top: 1px solid rgba(15,23,42,0.06) !important;
+      border-top: 1px solid rgba(17,24,39,0.06) !important;
     }
     .fm-table-scroll tbody tr:nth-child(even) td{
-      background: #fbfbfe !important;
+      background: #fff7f5 !important; /* subtle warm stripe */
     }
 
     /* =========================================================
-       Progress bars (clean)
+       Progress bars (coral/orange)
        ========================================================= */
     .fm-bar{
       height: 12px;
       border-radius: 999px;
-      background: rgba(15,23,42,0.08);
-      border: 1px solid rgba(15,23,42,0.08);
+      background: rgba(17,24,39,0.08);
+      border: 1px solid rgba(17,24,39,0.08);
       overflow: hidden;
     }
     .fm-bar > span{
@@ -289,7 +295,7 @@ def inject_fitness_ui():
     }
 
     /* =========================================================
-       Bottom nav (option_menu iframe) -> WHITE dock like mockup
+       Bottom dock (option_menu iframe) — WHITE bar
        ========================================================= */
     iframe[title*="streamlit_option_menu"],
     iframe[src*="streamlit_option_menu"]{
@@ -304,14 +310,14 @@ def inject_fitness_ui():
 
       z-index: 999999 !important;
 
-      border: 1px solid rgba(15,23,42,0.10) !important;
+      border: 1px solid rgba(17,24,39,0.10) !important;
       border-radius: var(--nav-radius) !important;
-      background: rgba(255,255,255,0.96) !important;
+      background: rgba(255,255,255,0.98) !important;
       box-shadow: var(--shadow) !important;
       overflow: hidden !important;
     }
 
-    /* hide duplicated icon spans */
+    /* remove duplicated icon span */
     iframe[title*="streamlit_option_menu"] li span:nth-child(2),
     iframe[src*="streamlit_option_menu"] li span:nth-child(2){
       display:none !important;
@@ -320,7 +326,7 @@ def inject_fitness_ui():
     /* icon base */
     iframe[title*="streamlit_option_menu"] li span:first-child,
     iframe[src*="streamlit_option_menu"] li span:first-child{
-      color: rgba(15,23,42,0.70) !important;
+      color: rgba(17,24,39,0.60) !important;
       font-size: 20px !important;
       transition: all 0.2s ease !important;
     }
@@ -337,7 +343,7 @@ def inject_fitness_ui():
     }
 
     /* =========================================================
-       FAB (+) purple like mockup
+       FAB (+) coral/orange
        ========================================================= */
     .fm-fab{
       position: fixed;
@@ -356,14 +362,14 @@ def inject_fitness_ui():
       color: #fff !important;
 
       background: linear-gradient(135deg, var(--accent), var(--accent2));
-      box-shadow: 0 18px 45px rgba(17,24,39,0.28);
+      box-shadow: 0 20px 52px rgba(17,24,39,0.24);
       border: 1px solid rgba(255,255,255,0.18);
       z-index: 999999;
     }
     .fm-fab:active{ transform: translateY(1px) scale(0.98); }
 
     /* =========================================================
-       Debug badge (so we KNOW css is applied)
+       Debug badge (prove CSS loaded)
        ========================================================= */
     .fm-css-debug-badge{
       position: fixed;
@@ -376,13 +382,12 @@ def inject_fitness_ui():
       color: #0b1020;
       font-weight: 950;
       font-size: 12px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.16);
     }
-
     </style>
 
-    <!-- debug badge: if you don't see this, CSS isn't loading -->
-    <div class="fm-css-debug-badge">CSS PHOTO OK ✅</div>
+    <!-- Debug badge: if you don't see this, CSS isn't loading -->
+    <div class="fm-css-debug-badge">CSS CORAL OK ✅</div>
     """, unsafe_allow_html=True)
 
 
@@ -3206,6 +3211,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
