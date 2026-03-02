@@ -303,18 +303,6 @@ section[data-testid="stSidebar"]{
   display: none !important;
 }
 
-/* =========================
-   HIDE STREAMLIT OVERLAYS
-   (+ / - / toolbars)
-   ========================= */
-div[data-testid="stElementToolbar"],
-div[data-testid="stToolbar"],
-div[data-testid="stDecoration"],
-div[data-testid="stStatusWidget"],
-button[title="View fullscreen"],
-button[title="Exit fullscreen"]{
-  display: none !important;
-}
 
 
 
@@ -3139,6 +3127,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
