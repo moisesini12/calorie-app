@@ -45,51 +45,114 @@ st.set_page_config(
 def inject_fitness_ui():
     st.markdown(r"""
     <style>
+    /* =========================================================
+       FITMACRO — MOBILE-FIRST "APP" THEME (RADICAL)
+       - En PC se ve como teléfono centrado (para diseñar siempre móvil)
+       - Bottom nav (option_menu iframe) + FAB
+       - Cards, inputs, tablas, expanders, tabs, etc.
+       ========================================================= */
+
     :root{
-      /* APP PURPLE THEME */
-      --bg0:#07081a;
-      --bg1:#0b0f2a;
-    
-      --card: rgba(255,255,255,0.08);
-      --card2: rgba(255,255,255,0.06);
-      --stroke: rgba(255,255,255,0.12);
-    
-      --txt: rgba(255,255,255,0.94);
+      /* Core palette (purple app) */
+      --bg0:#07061a;
+      --bg1:#0b1030;
+      --bg2:#0a1338;
+
+      --txt: rgba(255,255,255,0.93);
       --muted: rgba(226,232,240,0.72);
-    
+      --muted2: rgba(226,232,240,0.58);
+
+      --stroke: rgba(255,255,255,0.12);
+      --stroke2: rgba(255,255,255,0.09);
+
+      --cardA: rgba(255,255,255,0.08);
+      --cardB: rgba(255,255,255,0.05);
+
       --p1:#a855f7; /* purple */
       --p2:#ec4899; /* pink */
       --p3:#22d3ee; /* cyan */
-    
-      --r12: 12px;
+      --g1:#22c55e; /* green */
+
       --r16: 16px;
       --r20: 20px;
-    
-      --shadow: 0 18px 45px rgba(0,0,0,0.55);
-      --shadow2: 0 10px 24px rgba(0,0,0,0.40);
-    
+      --r24: 24px;
+      --shadow1: 0 18px 45px rgba(0,0,0,0.55);
+      --shadow2: 0 10px 26px rgba(0,0,0,0.38);
+
+      /* Phone shell */
+      --phone-w: 480px;
+
+      /* Bottom dock */
       --nav-h: 74px;
+      --nav-pad-x: 12px;
+      --nav-pad-y: 12px;
+      --nav-radius: 26px;
+      --dock-bg: rgba(15, 18, 45, 0.82);
+      --dock-stroke: rgba(168,85,247,0.22);
+      --dock-shadow: 0 20px 55px rgba(0,0,0,0.60);
     }
 
+    /* ---------- App background ---------- */
     html, body, [data-testid="stAppViewContainer"]{
       background:
-        radial-gradient(900px 700px at 15% 10%, rgba(168,85,247,0.22) 0%, transparent 62%),
-        radial-gradient(900px 700px at 85% 20%, rgba(236,72,153,0.16) 0%, transparent 60%),
-        radial-gradient(900px 700px at 55% 95%, rgba(34,211,238,0.10) 0%, transparent 60%),
-        linear-gradient(180deg, var(--bg0) 0%, var(--bg1) 100%) !important;
+        radial-gradient(900px 700px at 18% 12%, rgba(168,85,247,0.24) 0%, transparent 62%),
+        radial-gradient(900px 700px at 86% 18%, rgba(236,72,153,0.18) 0%, transparent 60%),
+        radial-gradient(900px 700px at 58% 96%, rgba(34,211,238,0.11) 0%, transparent 60%),
+        linear-gradient(180deg, var(--bg0) 0%, var(--bg1) 50%, var(--bg2) 100%) !important;
       color: var(--txt) !important;
     }
+
+    /* ---------- HARD: always mobile-first shell (even on desktop) ---------- */
+    section[data-testid="stSidebar"]{ display:none !important; }
+
+    /* Streamlit main container -> phone */
     .block-container{
-      max-width: 1100px;
-      padding-top: 60px;
-      padding-bottom: 90px;
+      max-width: var(--phone-w) !important;
+      margin-left:auto !important;
+      margin-right:auto !important;
+      padding-top: 14px !important;
+      padding-left: 14px !important;
+      padding-right: 14px !important;
+
+      /* deja hueco para dock + safe-area */
+      padding-bottom: calc(var(--nav-h) + 34px + env(safe-area-inset-bottom, 0px)) !important;
     }
 
-    /* Layout helpers */
+    /* Quita el header interno de Streamlit (ese hueco raro arriba) */
+    header[data-testid="stHeader"]{
+      height: 0 !important;
+      min-height: 0 !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      border: 0 !important;
+      background: transparent !important;
+    }
+
+    /* Evita “aire” extra antes del primer bloque */
+    section.main > div{
+      padding-top: 0 !important;
+    }
+
+    /* ---------- Typography (app-like) ---------- */
+    h1, h2, h3, h4{
+      color: rgba(255,255,255,0.94) !important;
+      letter-spacing: -0.03em !important;
+    }
+    h1{ font-size: 1.65rem !important; font-weight: 950 !important; margin-bottom: 6px !important; }
+    h2{ font-size: 1.25rem !important; font-weight: 950 !important; margin-top: 10px !important; }
+    h3{ font-size: 1.10rem !important; font-weight: 900 !important; }
+    p, li{ color: rgba(255,255,255,0.86) !important; }
+    small, .stCaption, [data-testid="stCaptionContainer"]{
+      color: var(--muted) !important;
+      font-weight: 700 !important;
+    }
+
+    /* ---------- Helpers (tus clases) ---------- */
     .fm-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
-    .fm-title{ font-weight: 900; letter-spacing:-0.02em; }
-    .fm-sub{ color: var(--muted); font-size: 12px; font-weight: 650; }
-    .fm-big{ font-size: 32px; font-weight: 950; letter-spacing:-0.04em; }
+    .fm-title{ font-weight: 950; letter-spacing:-0.03em; }
+    .fm-sub{ color: var(--muted); font-size: 12px; font-weight: 750; }
+    .fm-big{ font-size: 30px; font-weight: 950; letter-spacing:-0.05em; }
+
     .fm-chip{
       display:inline-flex; align-items:center; gap:6px;
       padding: 6px 10px;
@@ -98,117 +161,218 @@ def inject_fitness_ui():
       border: 1px solid rgba(255,255,255,0.10);
       color: rgba(255,255,255,0.88);
       font-size: 12px;
-      font-weight: 800;
+      font-weight: 900;
       white-space: nowrap;
     }
+
     .fm-divider{
-      height:1px; background: rgba(255,255,255,0.08);
-      margin: 10px 0;
+      height:1px;
+      background: rgba(255,255,255,0.08);
+      margin: 12px 0;
     }
 
-    /* Cards */
-    .fm-card{
-      background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.05));
-      border: 1px solid rgba(255,255,255,0.10);
-      border-radius: 18px;
-      padding: 16px;
-      box-shadow: 0 18px 45px rgba(0,0,0,0.40);
-      backdrop-filter: blur(12px);
+    /* ---------- Cards (core) ---------- */
+    .fm-card, .fm-section, .fm-table-card{
+      background: linear-gradient(180deg, var(--cardA), var(--cardB));
+      border: 1px solid var(--stroke);
+      border-radius: var(--r24);
+      box-shadow: var(--shadow2);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
     }
-    .fm-card + .fm-card{ margin-top: 14px; }
+    .fm-card{ padding: 16px; }
+    .fm-section{ padding: 16px; margin: 14px 0; }
+    .fm-table-card{ padding: 10px; }
 
-    .fm-mini{ border-radius: 18px; padding: 14px 14px; }
+    .fm-card + .fm-card{ margin-top: 12px; }
 
-    .fm-accent-pink{
-      border-color: rgba(255,79,216,0.22);
-      box-shadow: 0 18px 45px rgba(0,0,0,0.40), 0 0 0 1px rgba(255,79,216,0.10);
-      background: linear-gradient(180deg, rgba(255,79,216,0.12), rgba(255,255,255,0.05));
-    }
-    .fm-accent-purple{
-      border-color: rgba(139,92,246,0.22);
-      box-shadow: 0 18px 45px rgba(0,0,0,0.40), 0 0 0 1px rgba(139,92,246,0.10);
-      background: linear-gradient(180deg, rgba(139,92,246,0.12), rgba(255,255,255,0.05));
-    }
-    .fm-accent-cyan{
-      border-color: rgba(34,211,238,0.22);
-      box-shadow: 0 18px 45px rgba(0,0,0,0.40), 0 0 0 1px rgba(34,211,238,0.10);
-      background: linear-gradient(180deg, rgba(34,211,238,0.10), rgba(255,255,255,0.05));
-    }
-    .fm-accent-green{
-      border-color: rgba(34,197,94,0.22);
-      box-shadow: 0 18px 45px rgba(0,0,0,0.40), 0 0 0 1px rgba(34,197,94,0.10);
-      background: linear-gradient(180deg, rgba(34,197,94,0.10), rgba(255,255,255,0.05));
-    }
-
-    /* Inputs */
-    input, textarea, div[data-baseweb="select"] > div{
-      background: rgba(255,255,255,0.06) !important;
-      border: 1px solid rgba(255,255,255,0.10) !important;
-      border-radius: 14px !important;
-      color: var(--txt) !important;
-      font-weight: 650 !important;
-    }
-
-    /* Buttons */
-    .stButton > button, div[data-testid="stFormSubmitButton"] button{
-      border-radius: 999px !important;
-      font-weight: 900 !important;
-      border: 1px solid rgba(255,255,255,0.10) !important;
-    }
-    .stButton > button[kind="primary"], div[data-testid="stFormSubmitButton"] button{
-      background: linear-gradient(135deg, rgba(255,79,216,0.92), rgba(139,92,246,0.92)) !important;
-      color: #0b1020 !important;
-      border: none !important;
-      box-shadow: 0 16px 34px rgba(0,0,0,0.35);
-    }
-
-    /* Sidebar brand */
-    .sb-brand{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      padding: 12px 12px;
-      margin: 6px 0 12px 0;
-      border-radius: 18px;
-      background: linear-gradient(135deg, rgba(255,79,216,0.12), rgba(139,92,246,0.12));
-      border: 1px solid rgba(255,255,255,0.10);
-      box-shadow: 0 18px 46px rgba(0,0,0,0.45);
-    }
-    .sb-logo{
-      width:44px;height:44px;
-      border-radius: 14px;
-      background: linear-gradient(135deg, rgba(255,79,216,0.92), rgba(139,92,246,0.92));
-      display:flex;align-items:center;justify-content:center;
-      font-weight: 950;
-      color: #0b1020;
-    }
-    .sb-title .sb-name{
+    .fm-section-title{
       font-size: 18px;
       font-weight: 950;
-      color: rgba(255,255,255,0.92);
-      line-height: 1.05;
-    }
-    .sb-title .sb-sub{
-      font-size: 12px;
-      font-weight: 650;
-      color: rgba(226,232,240,0.70);
-      margin-top: 2px;
+      letter-spacing:-0.02em;
+      margin: 0 0 10px 0;
     }
 
-    /* ===== Tabla FitMacro (dark) + scroll independiente ===== */
-    .fm-table-card{
-      background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.05));
-      border: 1px solid rgba(255,255,255,0.10);
-      border-radius: 18px;
-      padding: 10px;
-      box-shadow: 0 18px 45px rgba(0,0,0,0.40);
-      backdrop-filter: blur(12px);
+    /* Accent variants (si las usas) */
+    .fm-accent-pink{
+      border-color: rgba(236,72,153,0.22) !important;
+      box-shadow: var(--shadow2), 0 0 0 1px rgba(236,72,153,0.10) !important;
+      background: linear-gradient(180deg, rgba(236,72,153,0.12), var(--cardB)) !important;
     }
+    .fm-accent-purple{
+      border-color: rgba(168,85,247,0.22) !important;
+      box-shadow: var(--shadow2), 0 0 0 1px rgba(168,85,247,0.10) !important;
+      background: linear-gradient(180deg, rgba(168,85,247,0.12), var(--cardB)) !important;
+    }
+    .fm-accent-cyan{
+      border-color: rgba(34,211,238,0.22) !important;
+      box-shadow: var(--shadow2), 0 0 0 1px rgba(34,211,238,0.10) !important;
+      background: linear-gradient(180deg, rgba(34,211,238,0.10), var(--cardB)) !important;
+    }
+    .fm-accent-green{
+      border-color: rgba(34,197,94,0.22) !important;
+      box-shadow: var(--shadow2), 0 0 0 1px rgba(34,197,94,0.10) !important;
+      background: linear-gradient(180deg, rgba(34,197,94,0.10), var(--cardB)) !important;
+    }
+
+    /* ---------- Hero ---------- */
+    .fm-hero{
+      position: relative;
+      border-radius: 26px;
+      padding: 14px 14px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background:
+        radial-gradient(900px 420px at 18% 20%, rgba(236,72,153,0.16) 0%, transparent 55%),
+        radial-gradient(900px 520px at 88% 30%, rgba(34,211,238,0.12) 0%, transparent 60%),
+        linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.04));
+      box-shadow: var(--shadow1);
+      overflow: hidden;
+    }
+    .fm-hero:after{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: linear-gradient(135deg, rgba(236,72,153,0.10), rgba(168,85,247,0.09), rgba(34,211,238,0.09));
+      filter: blur(18px);
+      opacity: 0.85;
+      pointer-events:none;
+    }
+    .fm-hero-inner{
+      position: relative;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap: 10px;
+      z-index: 2;
+    }
+    .fm-hero-title{
+      font-size: 22px;
+      font-weight: 950;
+      letter-spacing: -0.03em;
+      margin: 0;
+      color: rgba(255,255,255,0.95);
+    }
+    .fm-hero-sub{
+      margin-top: 6px;
+      font-size: 12px;
+      font-weight: 800;
+      color: rgba(226,232,240,0.76);
+    }
+    .fm-hero-pills{
+      display:flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content:flex-end;
+    }
+    .fm-pill{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap: 6px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.10);
+      color: rgba(255,255,255,0.92);
+      font-size: 12px;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+    .fm-pill.hot{
+      background: linear-gradient(135deg, rgba(236,72,153,0.95), rgba(168,85,247,0.95));
+      border: none;
+      color: #0b1020;
+      box-shadow: 0 12px 28px rgba(0,0,0,0.35);
+    }
+
+    /* ---------- Inputs (app) ---------- */
+    label{ color: rgba(226,232,240,0.80) !important; font-weight: 850 !important; }
+
+    input, textarea, div[data-baseweb="select"] > div{
+      background: rgba(255,255,255,0.06) !important;
+      border: 1px solid rgba(255,255,255,0.12) !important;
+      border-radius: 16px !important;
+      color: var(--txt) !important;
+      font-weight: 750 !important;
+    }
+    textarea{ line-height: 1.25 !important; }
+
+    /* ---------- Buttons (default smaller, more “app”) ---------- */
+    .stButton > button, div[data-testid="stFormSubmitButton"] button{
+      border-radius: 999px !important;
+      font-weight: 950 !important;
+      border: 1px solid rgba(255,255,255,0.12) !important;
+      background: rgba(255,255,255,0.05) !important;
+      color: rgba(255,255,255,0.92) !important;
+
+      padding: 10px 14px !important;
+      min-height: 42px !important;
+      box-shadow: none !important;
+    }
+    .stButton > button:active{ transform: translateY(1px) scale(0.99); }
+
+    .stButton > button[kind="primary"], div[data-testid="stFormSubmitButton"] button{
+      background: linear-gradient(135deg, rgba(236,72,153,0.95), rgba(168,85,247,0.95)) !important;
+      color: #0b1020 !important;
+      border: none !important;
+      box-shadow: 0 16px 34px rgba(0,0,0,0.35) !important;
+    }
+
+    /* Mini-actions (para botones que quieras “pequeñitos”) */
+    .fm-btn-mini{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap: 6px;
+      padding: 6px 10px !important;
+      min-height: 30px !important;
+      font-size: 12px !important;
+      font-weight: 950 !important;
+      border-radius: 999px !important;
+      border: 1px solid rgba(255,255,255,0.12) !important;
+      background: rgba(255,255,255,0.05) !important;
+      color: rgba(255,255,255,0.92) !important;
+    }
+
+    /* ---------- Expanders (cards) ---------- */
+    details{
+      border-radius: 20px !important;
+      border: 1px solid rgba(255,255,255,0.10) !important;
+      background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.04)) !important;
+      box-shadow: var(--shadow2) !important;
+      overflow: hidden !important;
+    }
+    summary{
+      padding: 14px 14px !important;
+      font-weight: 950 !important;
+      color: rgba(255,255,255,0.92) !important;
+    }
+
+    /* ---------- Tabs ---------- */
+    .stTabs [data-baseweb="tab-list"]{
+      gap: 8px !important;
+    }
+    .stTabs [data-baseweb="tab"]{
+      border-radius: 999px !important;
+      padding: 8px 12px !important;
+      background: rgba(255,255,255,0.05) !important;
+      border: 1px solid rgba(255,255,255,0.10) !important;
+      color: rgba(255,255,255,0.86) !important;
+      font-weight: 900 !important;
+    }
+    .stTabs [aria-selected="true"]{
+      background: linear-gradient(135deg, rgba(168,85,247,0.40), rgba(34,211,238,0.18)) !important;
+      border-color: rgba(255,255,255,0.16) !important;
+      color: rgba(255,255,255,0.95) !important;
+      box-shadow: 0 12px 28px rgba(0,0,0,0.35) !important;
+    }
+
+    /* ---------- Table (tu tabla FitMacro) ---------- */
     .fm-table-scroll{
       overflow-x: auto;
       overflow-y: hidden;
       -webkit-overflow-scrolling: touch;
-      border-radius: 14px;
+      border-radius: 16px;
     }
     .fm-table-scroll::-webkit-scrollbar{ height: 10px; }
     .fm-table-scroll::-webkit-scrollbar-track{ background: rgba(255,255,255,0.06); border-radius: 999px; }
@@ -220,12 +384,12 @@ def inject_fitness_ui():
       border-collapse: separate !important;
       border-spacing: 0 !important;
       overflow: hidden !important;
-      border-radius: 14px !important;
+      border-radius: 16px !important;
     }
     .fm-table-scroll thead th{
-      background: linear-gradient(135deg, rgba(255,79,216,0.55), rgba(139,92,246,0.55)) !important;
-      color: rgba(255,255,255,0.92) !important;
-      font-weight: 900 !important;
+      background: linear-gradient(135deg, rgba(236,72,153,0.55), rgba(168,85,247,0.55)) !important;
+      color: rgba(255,255,255,0.94) !important;
+      font-weight: 950 !important;
       padding: 12px 12px !important;
       border: none !important;
       text-align: left !important;
@@ -233,7 +397,7 @@ def inject_fitness_ui():
     .fm-table-scroll tbody td{
       background: rgba(255,255,255,0.06) !important;
       color: rgba(255,255,255,0.90) !important;
-      font-weight: 650 !important;
+      font-weight: 750 !important;
       padding: 12px 12px !important;
       border: none !important;
     }
@@ -243,10 +407,10 @@ def inject_fitness_ui():
       transition: background 0.12s ease;
     }
 
-    /* ===== DASHBOARD: Totales mini-cards (HTML) ===== */
+    /* ---------- Dashboard HTML helpers ---------- */
     .fm-metric-label{
       font-size: 12px;
-      font-weight: 800;
+      font-weight: 900;
       color: rgba(226,232,240,0.82);
       display:flex;
       align-items:center;
@@ -254,37 +418,20 @@ def inject_fitness_ui():
       margin-bottom: 6px;
     }
     .fm-metric-value{
-      font-size: 34px;
+      font-size: 30px;
       font-weight: 950;
-      letter-spacing: -0.04em;
+      letter-spacing: -0.05em;
       color: rgba(255,255,255,0.92);
       line-height: 1.05;
     }
 
-    /* ===== DASHBOARD: Progress rows (HTML) ===== */
-    .fm-progress-row{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:14px;
-    }
+    .fm-progress-row{ display:flex; align-items:center; justify-content:space-between; gap:14px; }
     .fm-progress-left{ flex: 1; min-width: 0; }
-    .fm-progress-right{
-      width: 160px;
-      text-align:right;
-      flex: 0 0 auto;
-    }
-    .fm-progress-title{
-      font-weight: 900;
-      color: rgba(255,255,255,0.92);
-      margin-bottom: 6px;
-    }
-    .fm-progress-sub{
-      color: rgba(226,232,240,0.72);
-      font-size: 12px;
-      font-weight: 700;
-      margin-bottom: 10px;
-    }
+    .fm-progress-right{ width: 150px; text-align:right; flex: 0 0 auto; }
+
+    .fm-progress-title{ font-weight: 950; color: rgba(255,255,255,0.92); margin-bottom: 6px; }
+    .fm-progress-sub{ color: rgba(226,232,240,0.72); font-size: 12px; font-weight: 800; margin-bottom: 10px; }
+
     .fm-bar{
       height: 12px;
       border-radius: 999px;
@@ -297,595 +444,102 @@ def inject_fitness_ui():
       height: 100%;
       width: 0%;
       border-radius: 999px;
-      background: rgba(139,92,246,0.85);
+      background: rgba(168,85,247,0.88);
     }
-    .fm-rem-caption{
-      color: rgba(226,232,240,0.72);
-      font-size: 12px;
-      font-weight: 800;
-      margin-bottom: 4px;
-    }
-    .fm-rem-value{
-      font-size: 32px;
-      font-weight: 950;
-      letter-spacing:-0.04em;
-      color: rgba(255,255,255,0.92);
-      line-height: 1.05;
-    }
+    .fm-bar.pink  > span{ background: rgba(236,72,153,0.92); }
+    .fm-bar.purple> span{ background: rgba(168,85,247,0.92); }
+    .fm-bar.cyan  > span{ background: rgba(34,211,238,0.92); }
+    .fm-bar.green > span{ background: rgba(34,197,94,0.92); }
 
-    /* Per-macro bar colors */
-    .fm-bar.pink > span{ background: rgba(255,79,216,0.90); }
-    .fm-bar.purple > span{ background: rgba(139,92,246,0.90); }
-    .fm-bar.cyan > span{ background: rgba(34,211,238,0.90); }
-    .fm-bar.green > span{ background: rgba(34,197,94,0.90); }
+    .fm-rem-caption{ color: rgba(226,232,240,0.72); font-size: 12px; font-weight: 900; margin-bottom: 4px; }
+    .fm-rem-value{ font-size: 28px; font-weight: 950; letter-spacing:-0.05em; color: rgba(255,255,255,0.92); line-height: 1.05; }
 
-    /* ===== Secciones en una sola "card" (evita cards vacías) ===== */
-    .fm-section{
-      background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.05));
-      border: 1px solid rgba(255,255,255,0.10);
-      border-radius: 18px;
-      padding: 16px;
-      box-shadow: 0 18px 45px rgba(0,0,0,0.40);
-      backdrop-filter: blur(12px);
-      margin: 14px 0;
-    }
-    
-    .fm-section-title{
-      font-size: 20px;
-      font-weight: 950;
-      letter-spacing:-0.02em;
-      margin: 0 0 10px 0;
-    }
-    
-    .fm-grid-4{
-      display:grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 12px;
-    }
-    
-    @media (max-width: 900px){
-      .fm-grid-4{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    }
-    
-    .fm-progress-stack{
-      display:flex;
-      flex-direction:column;
-      gap: 12px;
-    }
-
-    /* =========================
-       MOBILE UPGRADE (Dashboard)
-       ========================= */
-    @media (max-width: 900px){
-      /* Menos “aire” arriba: se siente más app */
-      .block-container{
-        padding-top:56px !important;
-      }
-    
-      /* Títulos un pelín más compactos en móvil */
-      h1, h2, h3{
-        letter-spacing: -0.02em !important;
-      }
-    }
-
-    /* ===== HERO (cabecera dashboard) ===== */
-    .fm-hero{
-      position: relative;
-      border-radius: 22px;
-      padding: 16px 16px;
-      border: 1px solid rgba(255,255,255,0.10);
-      background:
-        radial-gradient(900px 400px at 15% 20%, rgba(255,79,216,0.16) 0%, transparent 55%),
-        radial-gradient(900px 500px at 85% 30%, rgba(34,211,238,0.12) 0%, transparent 60%),
-        linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.04));
-      box-shadow: 0 18px 45px rgba(0,0,0,0.45);
-      overflow: hidden;
-    }
-    
-    .fm-hero:after{
-      content:"";
-      position:absolute;
-      inset:-2px;
-      background: linear-gradient(135deg, rgba(255,79,216,0.10), rgba(139,92,246,0.08), rgba(34,211,238,0.08));
-      filter: blur(18px);
-      opacity: 0.8;
-      pointer-events:none;
-    }
-    
-    .fm-hero-inner{
-      position: relative;
-      display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap: 12px;
-      z-index: 2;
-    }
-    
-    .fm-hero-title{
-      font-size: 24px;
-      font-weight: 950;
-      letter-spacing: -0.03em;
-      margin: 0;
-      color: rgba(255,255,255,0.95);
-    }
-    
-    .fm-hero-sub{
-      margin-top: 6px;
-      font-size: 12px;
-      font-weight: 750;
-      color: rgba(226,232,240,0.75);
-    }
-    
-    .fm-hero-pills{
-      display:flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      justify-content:flex-end;
-    }
-    
-    .fm-pill{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap: 6px;
-      padding: 8px 10px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.10);
-      color: rgba(255,255,255,0.92);
-      font-size: 12px;
-      font-weight: 900;
-      white-space: nowrap;
-    }
-    
-    .fm-pill.hot{
-      background: linear-gradient(135deg, rgba(255,79,216,0.92), rgba(139,92,246,0.92));
-      border: none;
-      color: #0b1020;
-      box-shadow: 0 12px 28px rgba(0,0,0,0.35);
-    }
-    
-    /* En móvil: hero más “apretado” y bonito */
-    @media (max-width: 900px){
-      .fm-hero{
-        padding: 14px 14px;
-        border-radius: 20px;
-      }
-      .fm-hero-title{
-        font-size: 22px;
-      }
-      .fm-hero-pills{
-        justify-content:flex-start;
-      }
-    }
-
-    /* ===== Medidas corporales (cards) ===== */
+    /* ---------- Measures (swipe) ---------- */
+    .measures-wrap [data-testid="stHorizontalBlock"]{ gap: 14px; flex-wrap: nowrap !important; overflow-x: auto !important; overflow-y:hidden !important; -webkit-overflow-scrolling: touch !important; padding-bottom: 6px; }
+    .measures-wrap [data-testid="stHorizontalBlock"] > div{ flex: 0 0 auto !important; width: 280px !important; }
     .fm-measure-card{
       background: rgba(255,255,255,0.06);
       border: 1px solid rgba(255,255,255,0.10);
       border-radius: 16px;
       padding: 12px 12px;
-      margin: 10px 0;
+      margin: 8px 0;
     }
     .fm-measure-title{
       font-size: 12px;
-      font-weight: 900;
+      font-weight: 950;
       color: rgba(226,232,240,0.82);
       margin-bottom: 6px;
     }
 
-
-    /* =========================
-       Medidas corporales: mantener 3 columnas en móvil (swipe)
-       ========================= */
-    .measures-wrap [data-testid="stHorizontalBlock"]{
-      gap: 14px;
-    }
-    
-    /* En móvil: NO apilar, permitir scroll horizontal */
-    @media (max-width: 900px){
-      .measures-wrap [data-testid="stHorizontalBlock"]{
-        flex-wrap: nowrap !important;
-        overflow-x: auto !important;
-        overflow-y: hidden !important;
-        -webkit-overflow-scrolling: touch !important;
-        padding-bottom: 6px;
-      }
-    
-      /* Cada "columna" tendrá ancho fijo para que quepan 3 con swipe */
-      .measures-wrap [data-testid="stHorizontalBlock"] > div{
-        flex: 0 0 auto !important;
-        width: 280px !important; /* ajusta 260-320 si quieres */
-      }
-    
-      /* Cards más compactas en móvil */
-      .measures-wrap .fm-measure-card{
-        margin: 6px 0 !important;
-        padding: 10px 10px !important;
-        border-radius: 14px !important;
-      }
-    
-      /* Imagen: limita altura para no comerse la pantalla */
-      .measures-wrap img{
-        max-height: 420px !important;
-        object-fit: contain !important;
-      }
-    }
-
-    /* =========================
-       Compactar inputs en MÓVIL (solo dentro de Tabs)
-       ========================= */
-    @media (max-width: 900px){
-    
-      /* reduce espacio entre “bloques” dentro de tabs */
-      .stTabs [data-testid="stVerticalBlock"] > div{
-        margin-bottom: -10px !important;
-        padding-bottom: 0px !important;
-      }
-    
-      /* reduce margen del texto/labels dentro de tabs */
-      .stTabs [data-testid="stMarkdownContainer"] p{
-        margin: 0 0 4px 0 !important;
-        line-height: 1.15 !important;
-      }
-    
-      /* number input: menos aire */
-      .stTabs [data-testid="stNumberInput"]{
-        margin: 0 !important;
-      }
-    
-      /* input más bajito */
-      .stTabs [data-testid="stNumberInput"] input{
-        padding-top: 8px !important;
-        padding-bottom: 8px !important;
-        min-height: 40px !important;
-      }
-    
-      /* botones +/− más compactos */
-      .stTabs [data-testid="stNumberInput"] button{
-        height: 40px !important;
-        min-height: 40px !important;
-      }
-    }
-
-    /* =========================
-       Bottom Nav (Instagram-like)
-       ========================= */
-    .block-container{
-      /* ya lo tienes, pero lo reforzamos para que no tape contenido */
-      padding-bottom: 90px !important;
-    }
-
-    
-    .fm-bottom-nav{
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 1000;   /* bajamos prioridad */
-      padding: 8px 12px;
-      background: rgba(11,16,32,0.92);
-      backdrop-filter: blur(14px);
-      border-top: 1px solid rgba(255,255,255,0.10);
-    }
-
-    .fm-bottom-nav{
-      padding-right: 80px; /* espacio para botón flotante derecha */
-    }
-
-
-    /* option-menu tweaks */
-    .fm-bottom-nav ul{
-      display:flex !important;
-      justify-content: space-between !important;
-      align-items:center !important;
-      gap: 6px !important;
-    }
-
-    .fm-bottom-nav li{
-      flex: 1 1 0 !important;
-      min-width: 0 !important;
-    }
-
-    .fm-bottom-nav a{
-      border-radius: 999px !important;
-      padding: 10px 10px !important;
-      text-align:center !important;
-      font-weight: 950 !important;
-      color: rgba(255,255,255,0.80) !important;
-      border: 1px solid rgba(255,255,255,0.08) !important;
-      background: rgba(255,255,255,0.04) !important;
-    }
-
-    .fm-bottom-nav a:hover{
-      background: rgba(255,255,255,0.07) !important;
-      border-color: rgba(255,255,255,0.12) !important;
-    }
-
-    /* seleccionado */
-    .fm-bottom-nav .nav-link.active{
-      background: linear-gradient(135deg, rgba(139,92,246,0.42), rgba(34,211,238,0.24)) !important;
-      border-color: rgba(255,255,255,0.16) !important;
-      color: rgba(255,255,255,0.92) !important;
-      box-shadow: 0 12px 28px rgba(0,0,0,0.35) !important;
-    }
-
-    /* HOME (primer botón) más grande + rosita */
-    .fm-bottom-nav li:nth-child(1) a{
-      transform: translateY(-6px);
-      padding: 13px 10px !important;
-      background: linear-gradient(135deg, rgba(255,79,216,0.92), rgba(139,92,246,0.92)) !important;
-      color: #0b1020 !important;
-      border: none !important;
-      box-shadow: 0 18px 38px rgba(0,0,0,0.45) !important;
-    }
-
-    .fm-bottom-nav li:nth-child(1) a .icon{
-      filter: drop-shadow(0 8px 18px rgba(0,0,0,0.35));
-    }
-
-    /* reduce texto/iconos */
-    .fm-bottom-nav .nav-link span{
-      font-size: 16px !important;
-      font-weight: 950 !important;
-    }
-
-    /* (Opcional) ocultar sidebar si quieres look app total */
-    /* section[data-testid="stSidebar"]{ display:none; } */
-
-    /* ===== FORCE bottom nav (hard override) ===== */
-    .fm-bottom-nav{
-      position: fixed !important;
-      left: 0 !important;
-      right: 0 !important;
-      top: auto !important;
-      bottom: 0 !important; /* pegada abajo */
-      z-index: 999999 !important;
-      margin: 0 !important;
-    
-      /* look */
-      padding: 8px 12px !important;
-      padding-right: 90px !important; /* NO tapar botones abajo derecha */
-      background: rgba(11,16,32,0.92) !important;
-      backdrop-filter: blur(14px) !important;
-      border-top: 1px solid rgba(255,255,255,0.10) !important;
-    }
-    
-    /* espacio para que el contenido no quede debajo */
-    .block-container{
-      padding-bottom: 95px !important;
-    }
-
-    /* =========================
-       FIX: option_menu is an iframe/component (not inside your div)
-       So we pin the iframe itself to the bottom.
-       ========================= */
-    
-    /* Target the option_menu iframe by its title (Streamlit components use iframe) */
-    /* ===== Bottom nav: compatible PC + móvil ===== */
-    /* =========================
-       Bottom nav: look PRO
-       (we style the iframe container itself)
-       ========================= */
-    
-    /* Ajustes generales */
-    :root{
-      --nav-h: 76px;
-      --nav-pad-x: 10px;
-      --nav-pad-y: 10px;
-      --nav-radius: 26px;
-      --nav-bg: rgba(139, 92, 246, 0.18);   /* azul oscuro translúcido */
-      --nav-stroke: rgba(139,92,246,0.25);
-      --nav-shadow: 0 18px 45px rgba(0,0,0,0.55);
-    }
-    
-    /* El iframe del option_menu */
+    /* ---------- Bottom nav (option_menu iframe pinned) ---------- */
     iframe[title*="streamlit_option_menu"],
     iframe[src*="streamlit_option_menu"]{
       position: fixed !important;
-    
-      /* centrado tipo “dock” */
+
       left: var(--nav-pad-x) !important;
-      right: calc(90px + env(safe-area-inset-right, 0px) + var(--nav-pad-x)) !important;
+      right: calc(78px + env(safe-area-inset-right, 0px) + var(--nav-pad-x)) !important;
       bottom: calc(env(safe-area-inset-bottom, 0px) + var(--nav-pad-y)) !important;
-    
+
       height: var(--nav-h) !important;
       width: auto !important;
-    
+
       z-index: 999999 !important;
-    
-      /* look */
-      border: 1px solid var(--nav-stroke) !important;
+
+      border: 1px solid var(--dock-stroke) !important;
       border-radius: var(--nav-radius) !important;
-      background: var(--nav-bg) !important;
-      box-shadow: var(--nav-shadow) !important;
-      backdrop-filter: blur(14px) !important;
-      -webkit-backdrop-filter: blur(14px) !important;
-    
-      overflow: hidden !important; /* para que el contenido no sobresalga */
-    }
-    
-    /* Para que el contenido de la página no quede debajo */
-    .block-container{
-      padding-bottom: calc(var(--nav-h) + 34px) !important;
-    }
-    
-    /* Reduce el hueco que deja el componente en el layout (sin :has) */
-    div[data-testid="stComponent"] iframe[title*="streamlit_option_menu"],
-    div[data-testid="stComponent"] iframe[src*="streamlit_option_menu"]{
-      margin: 0 !important;
+      background: var(--dock-bg) !important;
+      box-shadow: var(--dock-shadow) !important;
+      backdrop-filter: blur(16px) !important;
+      -webkit-backdrop-filter: blur(16px) !important;
+      overflow: hidden !important;
     }
 
-    
-    /* El contenedor del componente que Streamlit pone en el flujo:
-       lo “colapsamos” para que no deje un hueco arriba */
-    
-    /* Para que el contenido no quede debajo de la barra */
-    .block-container{
-      padding-bottom: 95px !important;
-    }
-
-
-
-    /* ===== Compactar parte superior ===== */
-    
-    /* Quita el padding top general de Streamlit */
-    .block-container{
-      padding-top: 0rem !important;
-    }
-    
-    /* Quita margen superior del primer bloque */
-    .block-container > div:first-child{
-      margin-top: 0 !important;
-      padding-top: 0 !important;
-    }
-    
-    /* Elimina espacio extra del header interno */
-    div[data-testid="stHeader"]{
-      height: 0 !important;
-      padding: 0 !important;
-    }
-
-    /* Reduce espacio antes del primer card */
-    section.main > div{
-      padding-top: 0rem !important;
-    }
-
-    /* ===== ULTRA COMPACT TOP ===== */
-    
-    /* Elimina TODO el padding superior */
-    .block-container{
-      padding-top: 0.2rem !important;
-    }
-    
-    /* Mata margen del primer elemento real */
-    .block-container > div:first-child{
-      margin-top: -40px !important;
-      padding-top: 0 !important;
-    }
-    
-    /* Ajuste fino del contenedor principal */
-    section.main{
-      padding-top: 0 !important;
-    }
-    
-    /* Header invisible de Streamlit */
-    header[data-testid="stHeader"]{
-      height: 0 !important;
-      min-height: 0 !important;
-      padding: 0 !important;
-      margin: 0 !important;
-    }
-    
-    /* Elimina posible margen del primer card */
-    section.main > div:first-child{
-      margin-top: -15px !important;
-    }
-
-    /* ===== LIMPIAR ICONOS DUPLICADOS ===== */
-    
-    /* Oculta iconos secundarios (gris/duplicado) */
+    /* Limpia iconos duplicados en option_menu */
     iframe[title*="streamlit_option_menu"] li span:nth-child(2),
     iframe[src*="streamlit_option_menu"] li span:nth-child(2){
-        display: none !important;
+      display:none !important;
     }
-    
-    /* Iconos normales (inactivos) */
     iframe[title*="streamlit_option_menu"] li span:first-child,
     iframe[src*="streamlit_option_menu"] li span:first-child{
-        color: rgba(255,255,255,0.75) !important;
-        font-size: 20px !important;
-        transition: all 0.25s ease !important;
+      color: rgba(255,255,255,0.78) !important;
+      font-size: 20px !important;
+      transition: all 0.25s ease !important;
     }
-    
-    /* ICONO ACTIVO (rosa fitmacro) */
     iframe[title*="streamlit_option_menu"] li[aria-selected="true"] span:first-child,
     iframe[src*="streamlit_option_menu"] li[aria-selected="true"] span:first-child{
-        color: #ff4d8d !important;
-        transform: scale(1.15);
+      color: rgba(236,72,153,0.98) !important;
+      transform: scale(1.12);
     }
-    
-
-    /* Quitar fondo rojo enorme del activo */
     iframe[title*="streamlit_option_menu"] li[aria-selected="true"],
     iframe[src*="streamlit_option_menu"] li[aria-selected="true"]{
-        background: transparent !important;
+      background: transparent !important;
     }
 
-    /* =========================
-       MOBILE-FIRST APP SHELL
-       ========================= */
-    @media (max-width: 900px){
-      /* fuera sidebar -> look app real */
-      section[data-testid="stSidebar"]{
-        display:none !important;
-      }
-    
-      /* menos aire arriba */
-      .block-container{
-        padding-top: 10px !important;
-        padding-left: 12px !important;
-        padding-right: 12px !important;
-      }
-    
-      /* títulos más “app” */
-      h1{ font-size: 28px !important; }
-      h2{ font-size: 22px !important; }
-    }
-    
-    /* Cards más consistentes */
-    .fm-card{
-      background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.06));
-      border: 1px solid var(--stroke);
-      border-radius: var(--r20);
-      padding: 16px;
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(14px);
-    }
-    
-    /* Botones secundarios “quietos” */
-    .stButton > button{
-      border-radius: 999px !important;
-      font-weight: 850 !important;
-      border: 1px solid rgba(255,255,255,0.12) !important;
-      background: rgba(255,255,255,0.05) !important;
-      color: rgba(255,255,255,0.92) !important;
-    }
-    .stButton > button[kind="primary"]{
-      background: linear-gradient(135deg, rgba(236,72,153,0.95), rgba(168,85,247,0.95)) !important;
-      color: #0b1020 !important;
-      border: none !important;
-      box-shadow: 0 16px 34px rgba(0,0,0,0.35);
-    }
-
-    /* =========================
-       FAB (+) like mobile apps
-       ========================= */
+    /* ---------- FAB (+) ---------- */
     .fm-fab{
       position: fixed;
-      right: 18px;
-      bottom: calc(var(--nav-h) + 18px);
-      width: 58px;
-      height: 58px;
+      right: 16px;
+      bottom: calc(var(--nav-h) + 18px + env(safe-area-inset-bottom, 0px));
+      width: 56px;
+      height: 56px;
       border-radius: 999px;
       display:flex;
       align-items:center;
       justify-content:center;
       text-decoration:none !important;
+
       font-size: 34px;
       font-weight: 950;
       color: #0b1020 !important;
-      background: linear-gradient(135deg, rgba(236,72,153,0.96), rgba(168,85,247,0.96));
-      box-shadow: 0 18px 40px rgba(0,0,0,0.55);
+
+      background: linear-gradient(135deg, rgba(236,72,153,0.97), rgba(168,85,247,0.97));
+      box-shadow: 0 18px 45px rgba(0,0,0,0.62);
       border: 1px solid rgba(255,255,255,0.14);
       z-index: 999999;
     }
-    .fm-fab:active{
-      transform: translateY(1px) scale(0.98);
-    }
+    .fm-fab:active{ transform: translateY(1px) scale(0.98); }
 
-
-    /* === DEBUG VISIBLE (si esto no aparece, tu CSS NO se está cargando) === */
+    /* ---------- Debug badge ---------- */
     .fm-css-debug-badge{
       position: fixed;
       top: 10px;
@@ -899,10 +553,11 @@ def inject_fitness_ui():
       font-size: 12px;
       box-shadow: 0 10px 25px rgba(0,0,0,0.5);
     }
-
-
     </style>
     """, unsafe_allow_html=True)
+
+
+
 st.markdown('<div class="fm-css-debug-badge">CSS OK ✅</div>', unsafe_allow_html=True)
 
 
@@ -3722,6 +3377,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
