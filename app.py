@@ -309,7 +309,33 @@ section[data-testid="stSidebar"]{
   display: none !important;
 }
 
+/* ===== Registro: selector de semana tipo app ===== */
+.wk-strip{
+  margin-top: 8px;
+}
 
+.wk-strip button{
+  border-radius: 14px !important;
+  padding: 10px 6px !important;
+  font-weight: 950 !important;
+  line-height: 1.05 !important;
+  white-space: pre-line !important; /* permite L\n12 */
+  background: rgba(255,255,255,0.06) !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+}
+
+/* “pseudo-selección”: como Streamlit no sabe cuál está seleccionado visualmente,
+   lo marcamos con un highlight usando el foco del último click y el estado general */
+.wk-strip button:focus{
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(34,211,238,0.35), 0 18px 45px rgba(0,0,0,0.35) !important;
+  border-color: rgba(34,211,238,0.35) !important;
+}
+
+/* Botones flecha compactos */
+button[kind="secondary"]{
+  min-height: 42px !important;
+}
 
 
 </style>
@@ -1274,58 +1300,77 @@ elif page == "🍽 Registro":
         subtitle=f"Día: {selected_date_str}",
         pills=["🧺 Multi-añadido", "⚡ Rápido"]
     )
+
     # ==========================
-    # Selector de día (Registro)
+    # Selector de día (tipo foto)
     # ==========================
     today = date.today()
     
-    # Cuántos días atrás quieres permitir (ajústalo a gusto)
-    DAYS_BACK = 30
-    
-    # Lista de fechas: hoy, ayer, etc.
-    date_options = [today - timedelta(days=i) for i in range(DAYS_BACK + 1)]
-    
-    def _label_for(d: date) -> str:
-        if d == today:
-            return f"Hoy — {d.isoformat()}"
-        if d == today - timedelta(days=1):
-            return f"Ayer — {d.isoformat()}"
-        # Ej: lun 2026-03-02
-        return f"{d.strftime('%a').capitalize()} — {d.isoformat()}"
-    
-    labels = [_label_for(d) for d in date_options]
-    
-    # Persistencia en session_state (para que no “salte” al rerun)
+    # Estado: día seleccionado
     if "reg_selected_date" not in st.session_state:
         st.session_state["reg_selected_date"] = today.isoformat()
     
-    # Encuentra el índice actual según lo guardado
     try:
-        current_date = datetime.strptime(st.session_state["reg_selected_date"], "%Y-%m-%d").date()
+        selected_date = datetime.strptime(st.session_state["reg_selected_date"], "%Y-%m-%d").date()
     except Exception:
-        current_date = today
+        selected_date = today
+        st.session_state["reg_selected_date"] = today.isoformat()
     
-    try:
-        idx = date_options.index(current_date)
-    except ValueError:
-        idx = 0  # por defecto hoy
+    # Semana (lunes-domingo) basada en el día seleccionado
+    start_week = selected_date - timedelta(days=selected_date.weekday())  # lunes
+    week_days = [start_week + timedelta(days=i) for i in range(7)]
     
-    sel_label = st.selectbox(
-        "Seleccionar día",
-        labels,
-        index=idx,
-        key="reg_day_select",
-    )
+    # Header del mini-calendario: mes/año del día seleccionado
+    month_label = selected_date.strftime("%B %Y").capitalize()
     
-    # Traduce el label seleccionado a fecha real
-    selected_date = date_options[labels.index(sel_label)]
-    st.session_state["reg_selected_date"] = selected_date.isoformat()
+    # Card compacta (para que quede en la franja que marcaste)
+    st.markdown('<div class="fm-card" style="padding:12px 12px 10px 12px; margin-top:-6px;">', unsafe_allow_html=True)
     
-    # ✅ Usa esta variable en TODO tu Registro a partir de aquí
-    REG_DATE = selected_date.isoformat()
+    c1, c2, c3 = st.columns([1, 3, 1])
+    with c1:
+        if st.button("◀", use_container_width=True, key="wk_prev"):
+            new_date = selected_date - timedelta(days=7)
+            st.session_state["reg_selected_date"] = new_date.isoformat()
+            st.rerun()
     
-    # ✅ compatibilidad: el resto de tu página ya usa selected_date_str
-    selected_date_str = REG_DATE
+    with c2:
+        st.markdown(f"<div style='text-align:center; font-weight:950; font-size:14px; opacity:0.92;'>{month_label}</div>", unsafe_allow_html=True)
+    
+    with c3:
+        if st.button("▶", use_container_width=True, key="wk_next"):
+            new_date = selected_date + timedelta(days=7)
+            st.session_state["reg_selected_date"] = new_date.isoformat()
+            st.rerun()
+    
+    # Nombres cortos de días (como app móvil)
+    dow = ["L", "M", "X", "J", "V", "S", "D"]
+    
+    # Tira horizontal (si no cabe)
+    st.markdown("<div class='wk-strip'>", unsafe_allow_html=True)
+    
+    cols = st.columns(7)
+    for i, d in enumerate(week_days):
+        is_sel = (d == selected_date)
+        label_day = dow[i]
+        num = d.day
+    
+        # Botón por día
+        # Truco: usamos label distinto si está seleccionado para que se vea "pill"
+        btn_label = f"{label_day}\n{num}"
+        key = f"wk_day_{d.isoformat()}"
+    
+        with cols[i]:
+            if st.button(btn_label, use_container_width=True, key=key):
+                st.session_state["reg_selected_date"] = d.isoformat()
+                st.rerun()
+    
+    st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
+    
+    # ✅ variable final que usará TODO el registro
+    selected_date_str = selected_date.isoformat()
+    REG_DATE = selected_date_str
+
     
     render_food_subnav()
     # -------------------------
@@ -3188,6 +3233,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
