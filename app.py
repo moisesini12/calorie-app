@@ -3272,18 +3272,34 @@ elif page == "🏋️ Rutina IA":
             chips = f"**{days_v} días** · **{mins_v} min** · **{lvl}** · **{goal_v}**"
             st.markdown(chips)
 
-            # Botones guardar/borrar juntos (compactos)
-            cA, cB = st.columns(2)
-            with cA:
-                if st.button("💾 Guardar rutina", type="primary", use_container_width=True, key="wk_save_plan"):
-                    set_setting("workout_plan_json", json.dumps(plan, ensure_ascii=False), user_id=uid)
-                    st.success("Rutina guardada ✅")
-                    st.rerun()
-            with cB:
-                if st.button("🗑️ Borrar rutina guardada", use_container_width=True, key="wk_delete_plan"):
-                    set_setting("workout_plan_json", "", user_id=uid)
-                    st.success("Rutina borrada ✅")
-                    st.rerun()
+            # Acciones pequeñas tipo “app”: arriba derecha
+            head_l, head_r = st.columns([6, 1.4], gap="small")
+
+            with head_l:
+                st.markdown(f"## 🗓️ {plan.get('plan_name','Rutina personalizada')}")
+                summary_txt = str(plan.get("summary", "")).strip()
+                if summary_txt:
+                    st.caption(summary_txt)
+
+                # chips resumen
+                chips = f"**{days_v} días** · **{mins_v} min** · **{lvl}** · **{goal_v}**"
+                st.markdown(chips)
+
+            with head_r:
+                # mini-row para iconos
+                a1, a2 = st.columns([1, 1], gap="small")
+
+                with a1:
+                    if st.button("💾", key="wk_save_plan_icon", help="Guardar rutina"):
+                        set_setting("workout_plan_json", json.dumps(plan, ensure_ascii=False), user_id=uid)
+                        st.toast("Rutina guardada ✅")
+                        st.rerun()
+
+                with a2:
+                    if st.button("🗑️", key="wk_delete_plan_icon", help="Borrar rutina guardada"):
+                        set_setting("workout_plan_json", "", user_id=uid)
+                        st.toast("Rutina borrada ✅")
+                        st.rerun()
 
             st.divider()
 
@@ -3588,6 +3604,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
