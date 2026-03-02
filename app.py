@@ -2063,7 +2063,14 @@ elif page == "🍽 Registro":
             )
 
             selected_id = int(selected_opt["id"])
-            row = df[df["id"] == selected_id].iloc[0]
+            sel_df = df[df["id"] == selected_id]
+            
+            # ✅ Si el id ya no existe (porque lo acabas de borrar), no crashear
+            if sel_df.empty:
+                st.info("La entrada seleccionada ya no existe. Selecciona otra.")
+                st.stop()
+            
+            row = sel_df.iloc[0]
 
             colE1, colE2, colE3 = st.columns([2, 1, 1])
             with colE1:
@@ -2112,6 +2119,10 @@ elif page == "🍽 Registro":
                 confirm_del = st.checkbox("Confirmo que quiero borrar esta entrada", key=f"confirm_del_{selected_id}")
                 if st.button("Borrar entrada", disabled=not confirm_del, key=f"del_entry_{selected_id}"):
                     delete_entry_by_id(selected_id)
+                
+                    # ✅ limpiar selector para que no apunte a un id borrado
+                    st.session_state.pop("entry_select_edit", None)
+                
                     st.cache_data.clear()
                     st.success("Entrada borrada ✅")
                     st.rerun()
@@ -3531,6 +3542,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
