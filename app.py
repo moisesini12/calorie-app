@@ -1359,7 +1359,7 @@ elif page == "🍽 Registro":
     dow = ["L", "M", "X", "J", "V", "S", "D"]
     
     st.markdown('<div class="reg-weekstrip">', unsafe_allow_html=True)
-    cols = st.columns(7)
+    cols = st.columns(5)
     for i, d in enumerate(days):
         label = f"{dow[i]}\n{d.day}"
         is_sel = (d == selected_date)
@@ -3239,6 +3239,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
