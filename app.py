@@ -953,6 +953,7 @@ if st.session_state.get("profile_popup_open", False):
         d = st.date_input("📅 Día", value=st.session_state["selected_date"])
         if d != st.session_state["selected_date"]:
             st.session_state["selected_date"] = d
+            st.session_state["reg_selected_date"] = d.isoformat()
             st.toast("Fecha actualizada ✅")
             st.rerun()
 
@@ -3345,6 +3346,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
