@@ -1474,8 +1474,8 @@ if page == "📊 Dashboard":
 # PÁGINA: REGISTRO  (MULTI-AÑADIDO / “CARRITO”)
 # ==========================================================
 elif page == "🍽 Registro":
-    selected_date_str = st.session_state.get("reg_selected_date", date.today().isoformat())
-    
+    selected_date = st.session_state.get("selected_date", date.today())
+    selected_date_str = selected_date.isoformat()
     fm_hero(
         "🍽 Registro",
         subtitle=f"Día: {selected_date_str}",
@@ -3345,6 +3345,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
