@@ -3095,17 +3095,33 @@ elif page == "🏋️ Rutina IA":
                 # mini-row para iconos
                 a1, a2 = st.columns([1, 1], gap="small")
 
-                with a1:
-                    if st.button("💾", key="wk_save_plan_icon", help="Guardar rutina"):
+                if st.button("💾", key="wk_save_plan_icon", help="Guardar rutina"):
+                    try:
+                        # guarda en Sheets
                         set_setting("workout_plan_json", json.dumps(plan, ensure_ascii=False), user_id=uid)
+                
+                        # ✅ deja también copia local por si acaso
+                        st.session_state["last_workout_plan"] = plan
+                
+                        # ✅ por si hay caches por TTL en tu app/db
+                        st.cache_data.clear()
+                
                         st.toast("Rutina guardada ✅")
                         st.rerun()
+                    except Exception as e:
+                        st.error("No pude guardar la rutina.")
+                        st.exception(e)
 
-                with a2:
-                    if st.button("🗑️", key="wk_delete_plan_icon", help="Borrar rutina guardada"):
+                if st.button("🗑️", key="wk_delete_plan_icon", help="Borrar rutina guardada"):
+                    try:
                         set_setting("workout_plan_json", "", user_id=uid)
+                        st.session_state.pop("last_workout_plan", None)
+                        st.cache_data.clear()
                         st.toast("Rutina borrada ✅")
                         st.rerun()
+                    except Exception as e:
+                        st.error("No pude borrar la rutina guardada.")
+                        st.exception(e)
 
             st.divider()
 
@@ -3410,6 +3426,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
