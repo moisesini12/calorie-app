@@ -439,7 +439,7 @@ div[data-testid="stDateInput"] input{
   left: 12px !important;
   right: 12px !important;
   bottom: 2px !important;
-  top: auto !important;
+  top: 5px !important;
 
   height: 60px !important;
   width: auto !important;
@@ -3393,6 +3393,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
