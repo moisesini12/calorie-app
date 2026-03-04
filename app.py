@@ -490,23 +490,26 @@ div[data-testid="stDateInput"] input{
 }
 
 .fm-subnav-anchor + div .stButton > button{
-  width: auto !important;
-  min-width: 0 !important;
+  width:auto !important;
+  height:26px !important;
+  min-height:26px !important;
 
-  height: 28px !important;        /* antes 36 */
-  min-height: 28px !important;
+  padding:0 10px !important;
+  border-radius:999px !important;
 
-  padding: 0 10px !important;     /* antes 14 */
-  border-radius: 999px !important;
+  font-weight:800 !important;
+  font-size:12px !important;
 
-  font-weight: 800 !important;
-  font-size: 12px !important;     /* antes 13 */
-  white-space: nowrap !important;
+  background:rgba(255,255,255,0.06) !important;
+  border:1px solid rgba(255,255,255,0.12) !important;
+  color:rgba(255,255,255,0.9) !important;
 
-  background: rgba(255,255,255,0.06) !important;
-  border: 1px solid rgba(255,255,255,0.10) !important;
-  color: rgba(255,255,255,0.92) !important;
-  box-shadow: none !important;
+  transition:all .18s ease !important;
+}
+
+.fm-subnav-anchor + div .stButton > button:hover{
+  background:rgba(255,255,255,0.1) !important;
+  border-color:rgba(255,255,255,0.2) !important;
 }
 
 @media (max-width: 900px){
@@ -1004,23 +1007,33 @@ if st.session_state.get("profile_popup_open", False):
 FOOD_PAGES = {"🍽 Registro", "➕ Añadir alimento", "👨‍🍳 Chef IA", "🤖 IA Alimento"}
 
 def render_food_subnav():
-    # ✅ ANCLA: esto sí existe en el DOM justo antes de las columnas
     st.markdown('<div class="fm-subnav-anchor"></div>', unsafe_allow_html=True)
+
+    current = st.session_state.get("page", "")
 
     c1, c2, c3 = st.columns(3, gap="small")
 
     with c1:
-        if st.button("🍽 Registro", use_container_width=False, key="subnav_registro"):
+        btn = st.button("🍽 Registro", key="subnav_registro")
+        if current == "🍽 Registro":
+            st.markdown("<style>#subnav_registro button{background:linear-gradient(135deg,#22d3ee,#06b6d4);color:#001018;border:none;box-shadow:0 0 0 1px rgba(34,211,238,.35),0 6px 20px rgba(34,211,238,.35);}</style>", unsafe_allow_html=True)
+        if btn:
             _go("🍽 Registro")
             st.rerun()
 
     with c2:
-        if st.button("➕ Añadir alimento", use_container_width=False, key="subnav_add"):
+        btn = st.button("➕ Añadir alimento", key="subnav_add")
+        if current == "➕ Añadir alimento":
+            st.markdown("<style>#subnav_add button{background:linear-gradient(135deg,#22d3ee,#06b6d4);color:#001018;border:none;box-shadow:0 0 0 1px rgba(34,211,238,.35),0 6px 20px rgba(34,211,238,.35);}</style>", unsafe_allow_html=True)
+        if btn:
             _go("➕ Añadir alimento")
             st.rerun()
 
     with c3:
-        if st.button("🧑‍🍳 Chef IA", use_container_width=False, key="subnav_chef"):
+        btn = st.button("🧑‍🍳 Chef IA", key="subnav_chef")
+        if current == "👨‍🍳 Chef IA":
+            st.markdown("<style>#subnav_chef button{background:linear-gradient(135deg,#22d3ee,#06b6d4);color:#001018;border:none;box-shadow:0 0 0 1px rgba(34,211,238,.35),0 6px 20px rgba(34,211,238,.35);}</style>", unsafe_allow_html=True)
+        if btn:
             _go("👨‍🍳 Chef IA")
             st.rerun()
 
@@ -3372,6 +3385,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
