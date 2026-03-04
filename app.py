@@ -478,6 +478,70 @@ div[data-testid="stDateInput"] input{
   box-shadow: none !important;
 }
 
+
+/* =========================================================
+   BOTTOM NAV: eliminar el "hueco fantasma" del option_menu
+   Identificamos el bottom-nav por el key: fm_bottom_nav_ui
+   ========================================================= */
+
+/* 1) El iframe del bottom nav: fijo abajo */
+iframe[title*="fm_bottom_nav_ui"][title*="streamlit_option_menu"],
+iframe[src*="streamlit_option_menu"][title*="fm_bottom_nav_ui"]{
+  position: fixed !important;
+  left: 12px !important;
+  right: 12px !important;
+  bottom: 2px !important;
+  top: auto !important;
+
+  height: 60px !important;
+  width: auto !important;
+
+  z-index: 999999 !important;
+
+  background: rgba(15, 23, 42, 0.92) !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
+  border-radius: 999px !important;
+
+  box-shadow: 0 20px 60px rgba(0,0,0,0.65) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+
+  overflow: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: block !important;
+}
+
+/* 2) 🔥 APLASTAR a 0 el wrapper donde Streamlit lo "reservó" */
+div[data-testid="stElementContainer"]:has(iframe[title*="fm_bottom_nav_ui"][title*="streamlit_option_menu"]),
+div[data-testid="stElementContainer"]:has(iframe[src*="streamlit_option_menu"][title*="fm_bottom_nav_ui"]){
+  height: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: visible !important; /* para no cortar el iframe fixed */
+}
+
+/* 3) A veces hay 1-2 wrappers más arriba: también a 0 */
+div[data-testid="stVerticalBlock"]:has(iframe[title*="fm_bottom_nav_ui"][title*="streamlit_option_menu"]),
+div[data-testid="stVerticalBlock"]:has(iframe[src*="streamlit_option_menu"][title*="fm_bottom_nav_ui"]),
+div[data-testid="stHorizontalBlock"]:has(iframe[title*="fm_bottom_nav_ui"][title*="streamlit_option_menu"]),
+div[data-testid="stHorizontalBlock"]:has(iframe[src*="streamlit_option_menu"][title*="fm_bottom_nav_ui"]){
+  height: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: visible !important;
+}
+
+/* 4) El propio iframe no debe aportar espacio en flujo */
+div[data-testid="stElementContainer"] iframe[title*="fm_bottom_nav_ui"]{
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -3386,6 +3450,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
