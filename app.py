@@ -273,10 +273,10 @@ details summary{
 
 .block-container{
   max-width: 1100px;
-  padding-top: 20px !important;
+  padding-top: 6px !important;     /* antes era más grande */
   padding-left: 14px !important;
   padding-right: 14px !important;
-  padding-bottom: 110px !important; /* ya lo ponemos para el bottom nav */
+  padding-bottom: 90px !important; /* espacio justo para la barra */
 }
 
 
@@ -508,7 +508,7 @@ div[data-testid="stDateInput"] input{
   position: fixed !important;
   left: 16px !important;
   right: 16px !important;
-  bottom: 14px !important;
+  bottom: 6px !important;
   top: auto !important;
 
   height: 64px !important;
@@ -549,7 +549,19 @@ div[data-testid="stDateInput"] input{
   border: none !important;
   box-shadow: none !important;
 }
+/* eliminar hueco alrededor del bottom nav */
+.fm-bottomnav-anchor + div{
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
 
+/* quitar margen extra que Streamlit mete en bloques */
+[data-testid="stVerticalBlock"] > div:has(.fm-bottomnav-anchor){
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
 
 
 
@@ -3458,6 +3470,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
