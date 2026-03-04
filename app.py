@@ -43,9 +43,6 @@ st.set_page_config(
 
 
 def inject_fitness_ui():
-    # =========================
-    # 1) CSS
-    # =========================
     st.markdown(r"""
 <style>
 
@@ -89,7 +86,25 @@ html, body, [data-testid="stAppViewContainer"]{
   color: var(--txt) !important;
 }
 
+/* Ocultar header Streamlit */
+header[data-testid="stHeader"]{ display: none !important; }
 
+/* ===== CONTAINER (UNA SOLA VEZ) ===== */
+.block-container{
+  max-width: 1100px !important;
+  padding-top: 2px !important;      /* 🔥 casi cero */
+  padding-left: 14px !important;
+  padding-right: 14px !important;
+  padding-bottom: 78px !important;  /* espacio justo para bottom-nav */
+}
+
+/* Quitar padding superior que Streamlit mete en .main */
+div[data-testid="stAppViewContainer"] > .main{
+  padding-top: 0 !important;
+}
+section.main > div{
+  padding-top: 0 !important;
+}
 
 /* ===== TIPOGRAFÍA ===== */
 h1,h2,h3,h4,h5,h6{
@@ -148,7 +163,7 @@ p, span, li, label{
   border-radius: 999px;
 }
 
-/* ===== PILLS (alias de chip para el hero) ===== */
+/* ===== PILLS ===== */
 .fm-pill{
   background: rgba(34,211,238,0.12);
   border: 1px solid rgba(34,211,238,0.25);
@@ -160,7 +175,6 @@ p, span, li, label{
   align-items: center;
   gap: 6px;
 }
-
 .fm-pill.hot{
   background: rgba(245,158,11,0.14);
   border-color: rgba(245,158,11,0.30);
@@ -238,7 +252,6 @@ details{
   border: 1px solid var(--stroke);
   border-radius: var(--radius);
 }
-
 details summary{
   font-weight: 800;
   color: var(--txt);
@@ -250,28 +263,10 @@ details summary{
   border-radius: 999px;
   height: 12px;
 }
-
 .fm-bar > span{
   background: linear-gradient(90deg, var(--primary), #3b82f6);
   border-radius: 999px;
 }
-
-/* =========================
-   TOP NAV FLOATING CARD
-   ========================= */
-:root{
-  --nav-h: 75px;
-  --nav-top: calc(env(safe-area-inset-top, 0px) + 14px);
-}
-
-.block-container{
-  max-width: 1100px !important;
-  padding-top: 10px !important;      /* ✅ cero hueco arriba */
-  padding-left: 14px !important;
-  padding-right: 14px !important;
-  padding-bottom: 50px !important;  /* ✅ justo para la barra */
-}
-
 
 /* ===== MOBILE FIRST ===== */
 @media (max-width: 900px){
@@ -280,11 +275,8 @@ details summary{
   h2{ font-size: 20px !important; }
 }
 
-/* Ocultar header Streamlit */
-header[data-testid="stHeader"]{ display: none !important; }
-
 /* =========================
-   REGISTRO: week strip = SIEMPRE 1 fila (PC y móvil)
+   REGISTRO: week strip = SIEMPRE 1 fila
    ========================= */
 .reg-weekstrip [data-testid="stHorizontalBlock"]{
   flex-wrap: nowrap !important;
@@ -312,27 +304,18 @@ header[data-testid="stHeader"]{ display: none !important; }
   white-space: pre-line !important;
 }
 
-/* ===== Date input: NO bloquear click (nada de pointer-events:none) ===== */
+/* Date input: no bloquear click */
 div[data-testid="stDateInput"] input{
   cursor: pointer !important;
   caret-color: transparent !important;
 }
-/* Asegura que el wrapper no corte el scroll */
-.reg-weekstrip{
-  overflow: visible !important;
-}
+.reg-weekstrip{ overflow: visible !important; }
+.reg-weekstrip [data-testid="stHorizontalBlock"]{ width: 100% !important; }
 
-/* El contenedor interno no debe recortar el overflow horizontal */
-.reg-weekstrip [data-testid="stHorizontalBlock"]{
-  width: 100% !important;
-}
-
-/* =========================================
+/* =========================
    REGISTRO TABLE: scroll horizontal independiente
-   ========================================= */
-.fm-table-card{
-  overflow: hidden !important;      /* recorta bordes redondos */
-}
+   ========================= */
+.fm-table-card{ overflow: hidden !important; }
 
 .fm-table-scroll{
   overflow-x: auto !important;
@@ -341,15 +324,13 @@ div[data-testid="stDateInput"] input{
   border-radius: 14px !important;
 }
 
-/* fuerza a que la tabla “quiera” ser más ancha que el móvil */
 .fm-table-scroll table{
   width: 100% !important;
-  min-width: 900px !important;      /* ajusta 800–1100 según columnas */
+  min-width: 900px !important;
   border-collapse: separate !important;
   border-spacing: 0 !important;
 }
 
-/* scrollbar bonito (opcional) */
 .fm-table-scroll::-webkit-scrollbar{ height: 10px; }
 .fm-table-scroll::-webkit-scrollbar-track{
   background: rgba(255,255,255,0.06);
@@ -361,15 +342,13 @@ div[data-testid="stDateInput"] input{
 }
 
 /* =========================
-   SUBNAV (Registro): 3 botones tipo “segmented control”
+   SUBNAV (si aún usas versión con botones)
    ========================= */
-
 .fm-subnav{
   margin-top: 8px;
   margin-bottom: 10px;
 }
 
-/* Contenedor: hace que los 3 botones parezcan una sola pieza */
 .fm-subnav [data-testid="stHorizontalBlock"]{
   background: rgba(15, 23, 42, 0.55);
   border: 1px solid rgba(255,255,255,0.10);
@@ -379,13 +358,11 @@ div[data-testid="stDateInput"] input{
   box-shadow: 0 18px 45px rgba(0,0,0,0.45);
 }
 
-/* Cada columna ocupa su tercio y sin rarezas */
 .fm-subnav [data-testid="stHorizontalBlock"] > div{
   flex: 1 1 0 !important;
   min-width: 0 !important;
 }
 
-/* Botones: compactos, mismo alto, centrados */
 .fm-subnav .stButton > button{
   width: 100% !important;
   min-height: 44px !important;
@@ -400,26 +377,19 @@ div[data-testid="stDateInput"] input{
   box-shadow: none !important;
 }
 
-/* Hover suave */
 .fm-subnav .stButton > button:hover{
   background: rgba(255,255,255,0.08) !important;
   border-color: rgba(255,255,255,0.14) !important;
   transform: none !important;
 }
 
-/* MÓVIL: aún más compactos */
 @media (max-width: 900px){
-  .fm-subnav{
-    margin-top: 6px;
-    margin-bottom: 8px;
-  }
-
+  .fm-subnav{ margin-top: 6px; margin-bottom: 8px; }
   .fm-subnav [data-testid="stHorizontalBlock"]{
     border-radius: 20px;
     padding: 7px;
     gap: 7px !important;
   }
-
   .fm-subnav .stButton > button{
     min-height: 42px !important;
     height: 42px !important;
@@ -430,72 +400,39 @@ div[data-testid="stDateInput"] input{
 }
 
 /* =========================
-   SUBNAV: estilo por ANCLA (Streamlit-safe)
-   ========================= */
-
-/* El bloque de columnas viene justo después del markdown del anchor */
-.fm-subnav-anchor + div [data-testid="stHorizontalBlock"]{
-  background: rgba(15, 23, 42, 0.55) !important;
-  border: 1px solid rgba(255,255,255,0.10) !important;
-  border-radius: 22px !important;
-  padding: 8px !important;
-  gap: 10px !important;
-  box-shadow: 0 18px 45px rgba(0,0,0,0.45) !important;
-
-  display: flex !important;
-  flex-wrap: nowrap !important;
-  overflow-x: auto !important;
-  -webkit-overflow-scrolling: touch !important;
-}
-
-/* Cada columna = tercio, pero centramos el contenido */
-.fm-subnav-anchor + div [data-testid="stHorizontalBlock"] > div{
-  flex: 1 1 0 !important;
-  min-width: 0 !important;
-
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-}
-
-.fm-subnav-anchor + div .stButton > button{
-  width:auto !important;
-  height:26px !important;
-  min-height:26px !important;
-
-  padding:0 10px !important;
-  border-radius:999px !important;
-
-  font-weight:800 !important;
-  font-size:12px !important;
-
-  background:rgba(255,255,255,0.06) !important;
-  border:1px solid rgba(255,255,255,0.12) !important;
-  color:rgba(255,255,255,0.9) !important;
-
-  transition:all .18s ease !important;
-}
-
-.fm-subnav-anchor + div .stButton > button:hover{
-  background:rgba(255,255,255,0.1) !important;
-  border-color:rgba(255,255,255,0.2) !important;
-}
-
-@media (max-width: 900px){
-  .fm-subnav-anchor + div .stButton > button{
-    height: 34px !important;
-    min-height: 34px !important;
-    padding: 0 12px !important;
-    font-size: 12.5px !important;
-  }
-}
-
-/* =========================
    OPTION_MENU: scoping por ANCHOR
    ========================= */
 
-/* ---- BOTTOM NAV (Dashboard/Objetivos/Rutina/Perfil) ---- */
-/* El iframe del option_menu aparece justo después del anchor */
+/* ==== COLAPSAR EL HUECO FANTASMA DEL BOTTOM NAV ===== */
+/* Streamlit deja un bloque en flujo para el componente; lo hacemos 0px */
+.fm-bottomnav-anchor{
+  display: block !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* el contenedor inmediato (y sus wrappers) que contiene el iframe del option_menu */
+.fm-bottomnav-anchor + div,
+.fm-bottomnav-anchor + div > div,
+.fm-bottomnav-anchor + div [data-testid="stElementContainer"]{
+  height: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: visible !important; /* importante: no cortar el iframe fijo */
+}
+
+/* Por si Streamlit mete spacer dentro */
+.fm-bottomnav-anchor + div [data-testid="stVerticalBlock"],
+.fm-bottomnav-anchor + div [data-testid="stHorizontalBlock"]{
+  height: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* ==== IFRAME DEL BOTTOM NAV: FIXED REAL ===== */
 .fm-bottomnav-anchor + div iframe[title*="streamlit_option_menu"],
 .fm-bottomnav-anchor + div iframe[src*="streamlit_option_menu"]{
   position: fixed !important;
@@ -517,15 +454,13 @@ div[data-testid="stDateInput"] input{
   -webkit-backdrop-filter: blur(16px) !important;
 
   overflow: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: block !important;
 }
 
-/* Deja espacio para que el bottom nav no tape contenido */
-.block-container{
-  padding-bottom: 110px !important;
-}
-
-/* ---- FOOD SUBNAV (Registro/Añadir/Chef) ---- */
-/* IMPORTANTE: NO fixed, solo estética compacta */
+/* ---- FOOD SUBNAV (si usas option_menu arriba) ---- */
+/* no fixed, solo estética compacta */
 .fm-foodsubnav-anchor + div iframe[title*="streamlit_option_menu"],
 .fm-foodsubnav-anchor + div iframe[src*="streamlit_option_menu"]{
   position: relative !important;
@@ -542,55 +477,11 @@ div[data-testid="stDateInput"] input{
   border: none !important;
   box-shadow: none !important;
 }
-/* eliminar hueco alrededor del bottom nav */
-.fm-bottomnav-anchor + div{
-  margin-top: 0 !important;
-  margin-bottom: 0 !important;
-  padding-top: 0 !important;
-  padding-bottom: 0 !important;
-}
-
-/* quitar margen extra que Streamlit mete en bloques */
-[data-testid="stVerticalBlock"] > div:has(.fm-bottomnav-anchor){
-  margin-top: 0 !important;
-  margin-bottom: 0 !important;
-}
-
-
-/* =========================
-   BOTTOM NAV: eliminar wrappers con margen/padding
-   ========================= */
-
-/* el anchor en sí no ocupa nada */
-.fm-bottomnav-anchor{
-  display: block !important;
-  height: 0 !important;
-  margin: 0 !important;
-  padding: 0 !important;
-}
-
-/* recorta el contenedor inmediato y el siguiente nivel */
-.fm-bottomnav-anchor + div,
-.fm-bottomnav-anchor + div > div{
-  margin: 0 !important;
-  padding: 0 !important;
-}
-
-/* Streamlit a veces mete un "element-container" con margen */
-.fm-bottomnav-anchor + div [data-testid="stElementContainer"]{
-  margin: 0 !important;
-  padding: 0 !important;
-}
-
-/* si hay un iframe, que no meta separación */
-.fm-bottomnav-anchor + div iframe{
-  margin: 0 !important;
-  padding: 0 !important;
-  display: block !important;
-}
-
 
 </style>
+""", unsafe_allow_html=True)
+
+    # (Tu JS y lo demás queda EXACTAMENTE igual)
 """, unsafe_allow_html=True)
 
     # =========================
@@ -3495,6 +3386,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
