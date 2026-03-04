@@ -95,7 +95,7 @@ header[data-testid="stHeader"]{ display: none !important; }
   padding-top: 2px !important;      /* 🔥 casi cero */
   padding-left: 14px !important;
   padding-right: 14px !important;
-  padding-bottom: 20px !important;  /* espacio justo para bottom-nav */
+  padding-bottom: 66px !important;  /* espacio justo para bottom-nav */
 }
 
 /* Quitar padding superior que Streamlit mete en .main */
@@ -540,7 +540,72 @@ div[data-testid="stElementContainer"] iframe[title*="fm_bottom_nav_ui"]{
   padding: 0 !important;
 }
 
+/* =========================================================
+   MODO NUCLEAR: matar el hueco fantasma de streamlit_option_menu
+   (si SOLO tienes el bottom-nav hecho con option_menu)
+   ========================================================= */
 
+/* 1) El iframe del option_menu SIEMPRE fixed abajo */
+iframe[title*="streamlit_option_menu"],
+iframe[src*="streamlit_option_menu"]{
+  position: fixed !important;
+
+  left: 12px !important;
+  right: 12px !important;
+  bottom: 2px !important;
+  top: auto !important;
+
+  height: 60px !important;
+  width: auto !important;
+
+  z-index: 999999 !important;
+
+  background: rgba(15, 23, 42, 0.92) !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
+  border-radius: 999px !important;
+
+  box-shadow: 0 20px 60px rgba(0,0,0,0.65) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+
+  overflow: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: block !important;
+}
+
+/* 2) APLASTAR el contenedor que Streamlit reserva para el iframe (el hueco) */
+div[data-testid="stElementContainer"]:has(iframe[title*="streamlit_option_menu"]),
+div[data-testid="stElementContainer"]:has(iframe[src*="streamlit_option_menu"]){
+  height: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: visible !important; /* clave: no cortar el fixed */
+}
+
+/* 3) A veces hay wrappers extra: también a 0 */
+div[data-testid="stVerticalBlock"]:has(iframe[title*="streamlit_option_menu"]),
+div[data-testid="stVerticalBlock"]:has(iframe[src*="streamlit_option_menu"]),
+div[data-testid="stHorizontalBlock"]:has(iframe[title*="streamlit_option_menu"]),
+div[data-testid="stHorizontalBlock"]:has(iframe[src*="streamlit_option_menu"]){
+  height: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: visible !important;
+}
+
+/* 4) Streamlit mete a veces "gap" entre elementos: lo cortamos */
+div[data-testid="stElementContainer"]:has(iframe[title*="streamlit_option_menu"]) + div{
+  margin-top: 0 !important;
+}
+
+/* 5) Por si hay un “spacer” encima/abajo dentro del main */
+section.main > div{
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
 
 </style>
 """, unsafe_allow_html=True)
@@ -3450,6 +3515,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
