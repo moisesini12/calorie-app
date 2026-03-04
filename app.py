@@ -269,40 +269,16 @@ details summary{
   --nav-top: calc(env(safe-area-inset-top, 0px) + 14px);
 }
 
-/* NAV como card flotante */
-iframe[title*="streamlit_option_menu"],
-iframe[src*="streamlit_option_menu"]{
-  position: fixed !important;
 
-  top: var(--nav-top) !important;
-  left: 60px !important;
-  right: 60px !important;
-  bottom: auto !important;
 
-  height: var(--nav-h) !important;
-  width: auto !important;
-
-  z-index: 999999 !important;
-
-  background: rgba(15, 23, 42, 0.92) !important;
-  border: 1px solid rgba(255,255,255,0.08) !important;
-  border-radius: 22px !important;
-
-  box-shadow: 0 20px 60px rgba(0,0,0,0.65) !important;
-
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important;
-
-  overflow: hidden !important;
-}
-
-/* Ajustar contenido debajo: hueco casi nulo */
 .block-container{
-  padding-top: calc(var(--nav-top) + var(--nav-h) - 70px) !important;
+  max-width: 1100px;
+  padding-top: 20px !important;
   padding-left: 14px !important;
   padding-right: 14px !important;
-  padding-bottom: 80px !important;
+  padding-bottom: 110px !important; /* ya lo ponemos para el bottom nav */
 }
+
 
 /* ===== MOBILE FIRST ===== */
 @media (max-width: 900px){
@@ -520,6 +496,61 @@ div[data-testid="stDateInput"] input{
     font-size: 12.5px !important;
   }
 }
+
+/* =========================
+   OPTION_MENU: scoping por ANCHOR
+   ========================= */
+
+/* ---- BOTTOM NAV (Dashboard/Objetivos/Rutina/Perfil) ---- */
+/* El iframe del option_menu aparece justo después del anchor */
+.fm-bottomnav-anchor + div iframe[title*="streamlit_option_menu"],
+.fm-bottomnav-anchor + div iframe[src*="streamlit_option_menu"]{
+  position: fixed !important;
+  left: 16px !important;
+  right: 16px !important;
+  bottom: 14px !important;
+  top: auto !important;
+
+  height: 64px !important;
+  width: auto !important;
+  z-index: 999999 !important;
+
+  background: rgba(15, 23, 42, 0.92) !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
+  border-radius: 999px !important;
+
+  box-shadow: 0 20px 60px rgba(0,0,0,0.65) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+
+  overflow: hidden !important;
+}
+
+/* Deja espacio para que el bottom nav no tape contenido */
+.block-container{
+  padding-bottom: 110px !important;
+}
+
+/* ---- FOOD SUBNAV (Registro/Añadir/Chef) ---- */
+/* IMPORTANTE: NO fixed, solo estética compacta */
+.fm-foodsubnav-anchor + div iframe[title*="streamlit_option_menu"],
+.fm-foodsubnav-anchor + div iframe[src*="streamlit_option_menu"]{
+  position: relative !important;
+  left: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  top: auto !important;
+
+  height: 46px !important;
+  width: 100% !important;
+  z-index: 1 !important;
+
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+
 
 
 </style>
@@ -1033,7 +1064,7 @@ def render_food_subnav():
     # ✅ Inicialización
     if "fm_food_subnav_ui" not in st.session_state:
         st.session_state["fm_food_subnav_ui"] = desired
-
+    st.markdown('<div class="fm-foodsubnav-anchor"></div>', unsafe_allow_html=True)
     # Render segmented control
     selected = option_menu(
         menu_title=None,
@@ -3427,6 +3458,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
