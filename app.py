@@ -489,18 +489,18 @@ div[data-testid="stDateInput"] input{
   align-items: center !important;
 }
 
-/* Botones tipo “chip” */
 .fm-subnav-anchor + div .stButton > button{
   width: auto !important;
   min-width: 0 !important;
 
-  height: 36px !important;
-  min-height: 36px !important;
-  padding: 0 14px !important;
+  height: 28px !important;        /* antes 36 */
+  min-height: 28px !important;
+
+  padding: 0 10px !important;     /* antes 14 */
   border-radius: 999px !important;
 
-  font-weight: 900 !important;
-  font-size: 13px !important;
+  font-weight: 800 !important;
+  font-size: 12px !important;     /* antes 13 */
   white-space: nowrap !important;
 
   background: rgba(255,255,255,0.06) !important;
@@ -3372,6 +3372,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
