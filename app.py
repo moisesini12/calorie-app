@@ -95,7 +95,7 @@ header[data-testid="stHeader"]{ display: none !important; }
   padding-top: 2px !important;      /* 🔥 casi cero */
   padding-left: 14px !important;
   padding-right: 14px !important;
-  padding-bottom: 78px !important;  /* espacio justo para bottom-nav */
+  padding-bottom: 68px !important;  /* espacio justo para bottom-nav */
 }
 
 /* Quitar padding superior que Streamlit mete en .main */
@@ -3386,6 +3386,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
