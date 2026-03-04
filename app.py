@@ -1118,7 +1118,7 @@ def render_bottom_nav():
         st.session_state["fm_bottom_nav_ui"] = desired
 
     st.markdown('<div class="fm-bottom-nav">', unsafe_allow_html=True)
-
+    st.markdown('<div class="fm-bottomnav-anchor"></div>', unsafe_allow_html=True)
     selected = option_menu(
         menu_title=None,
         options=options,
@@ -3427,6 +3427,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
