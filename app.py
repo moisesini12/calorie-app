@@ -89,13 +89,14 @@ html, body, [data-testid="stAppViewContainer"]{
 /* Ocultar header Streamlit */
 header[data-testid="stHeader"]{ display: none !important; }
 
-/* ===== CONTAINER (UNA SOLA VEZ) ===== */
 .block-container{
   max-width: 1100px !important;
-  padding-top: 2px !important;      /* 🔥 casi cero */
+
+  padding-top: 0px !important;     /* 🔥 elimina hueco arriba */
   padding-left: 14px !important;
   padding-right: 14px !important;
-  padding-bottom: 66px !important;  /* espacio justo para bottom-nav */
+
+  padding-bottom: 10px !important; /* 🔥 elimina hueco abajo */
 }
 
 /* Quitar padding superior que Streamlit mete en .main */
@@ -412,15 +413,14 @@ div[data-testid="stDateInput"] input{
   padding: 0 !important;
 }
 
-/* el contenedor inmediato (y sus wrappers) que contiene el iframe del option_menu */
 .fm-bottomnav-anchor + div,
 .fm-bottomnav-anchor + div > div,
 .fm-bottomnav-anchor + div [data-testid="stElementContainer"]{
-  height: 0 !important;
-  min-height: 0 !important;
+  height: 1px !important;     /* 🔥 1px evita que Streamlit rompa el render */
+  min-height: 1px !important;
   margin: 0 !important;
   padding: 0 !important;
-  overflow: visible !important; /* importante: no cortar el iframe fijo */
+  overflow: visible !important;
 }
 
 /* Por si Streamlit mete spacer dentro */
@@ -478,7 +478,23 @@ div[data-testid="stDateInput"] input{
   box-shadow: none !important;
 }
 
+/* ===============================
+   ELIMINAR HUECOS SUPERIORES
+   =============================== */
 
+div[data-testid="stAppViewContainer"] > .main{
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+
+section.main > div{
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+
+[data-testid="stVerticalBlock"]{
+  gap: 0 !important;
+}
 
 
 
@@ -3377,6 +3393,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
