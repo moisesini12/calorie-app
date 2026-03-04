@@ -89,12 +89,7 @@ html, body, [data-testid="stAppViewContainer"]{
   color: var(--txt) !important;
 }
 
-/* ===== CONTAINER ===== */
-.block-container{
-  max-width: 1100px;
-  padding-top: 20px;
-  padding-bottom: 120px;
-}
+
 
 /* ===== TIPOGRAFÍA ===== */
 h1,h2,h3,h4,h5,h6{
@@ -269,14 +264,12 @@ details summary{
   --nav-top: calc(env(safe-area-inset-top, 0px) + 14px);
 }
 
-
-
 .block-container{
-  max-width: 1100px;
-  padding-top: 6px !important;     /* antes era más grande */
+  max-width: 1100px !important;
+  padding-top: 0px !important;      /* ✅ cero hueco arriba */
   padding-left: 14px !important;
   padding-right: 14px !important;
-  padding-bottom: 90px !important; /* espacio justo para la barra */
+  padding-bottom: 78px !important;  /* ✅ justo para la barra */
 }
 
 
@@ -506,12 +499,12 @@ div[data-testid="stDateInput"] input{
 .fm-bottomnav-anchor + div iframe[title*="streamlit_option_menu"],
 .fm-bottomnav-anchor + div iframe[src*="streamlit_option_menu"]{
   position: fixed !important;
-  left: 16px !important;
-  right: 16px !important;
-  bottom: 6px !important;
+  left: 12px !important;
+  right: 12px !important;
+  bottom: 2px !important;
   top: auto !important;
 
-  height: 64px !important;
+  height: 60px !important;
   width: auto !important;
   z-index: 999999 !important;
 
@@ -563,6 +556,38 @@ div[data-testid="stDateInput"] input{
   margin-bottom: 0 !important;
 }
 
+
+/* =========================
+   BOTTOM NAV: eliminar wrappers con margen/padding
+   ========================= */
+
+/* el anchor en sí no ocupa nada */
+.fm-bottomnav-anchor{
+  display: block !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* recorta el contenedor inmediato y el siguiente nivel */
+.fm-bottomnav-anchor + div,
+.fm-bottomnav-anchor + div > div{
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Streamlit a veces mete un "element-container" con margen */
+.fm-bottomnav-anchor + div [data-testid="stElementContainer"]{
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* si hay un iframe, que no meta separación */
+.fm-bottomnav-anchor + div iframe{
+  margin: 0 !important;
+  padding: 0 !important;
+  display: block !important;
+}
 
 
 </style>
@@ -3470,6 +3495,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
