@@ -53,9 +53,9 @@ def inject_fitness_ui():
 
 :root{
   /* Fondo */
-  --bg0: #0b0f19;
-  --bg1: #0e1422;
-  --bg2: #111827;
+  --bg0: #eaf6ff;
+  --bg1: #f1f8ff;
+  --bg2: #f7fbff;
 
   /* Superficies */
   --card: #161f2e;
@@ -3401,6 +3401,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
