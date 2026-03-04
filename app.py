@@ -478,7 +478,63 @@ div[data-testid="stDateInput"] input{
   box-shadow: none !important;
 }
 
+/* =========================================================
+   BOTTOM NAV (option_menu): FIX + hueco mínimo sin romper render
+   ========================================================= */
 
+/* El iframe del option_menu (tu bottom nav) */
+iframe[title*="streamlit_option_menu"],
+iframe[src*="streamlit_option_menu"]{
+  position: fixed !important;
+  left: 12px !important;
+  right: 12px !important;
+  bottom: 2px !important;
+  top: auto !important;
+
+  height: 60px !important;
+  width: auto !important;
+
+  z-index: 999999 !important;
+
+  background: rgba(15, 23, 42, 0.92) !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
+  border-radius: 999px !important;
+
+  box-shadow: 0 20px 60px rgba(0,0,0,0.65) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+  display: block !important;
+}
+
+/* 🔥 Aquí está la magia:
+   el wrapper donde Streamlit “reserva” espacio -> casi 0, pero NO 0 */
+div[data-testid="stElementContainer"]:has(iframe[title*="streamlit_option_menu"]),
+div[data-testid="stElementContainer"]:has(iframe[src*="streamlit_option_menu"]){
+  height: 1px !important;
+  min-height: 1px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+
+  /* para que el fixed no se corte */
+  overflow: visible !important;
+}
+
+/* A veces hay wrappers extra arriba: también colapsados */
+div[data-testid="stVerticalBlock"]:has(iframe[title*="streamlit_option_menu"]),
+div[data-testid="stVerticalBlock"]:has(iframe[src*="streamlit_option_menu"]),
+div[data-testid="stHorizontalBlock"]:has(iframe[title*="streamlit_option_menu"]),
+div[data-testid="stHorizontalBlock"]:has(iframe[src*="streamlit_option_menu"]){
+  margin: 0 !important;
+  padding: 0 !important;
+
+  /* NO a 0 para no romper pintura */
+  height: 1px !important;
+  min-height: 1px !important;
+  overflow: visible !important;
+}
 
 
 
@@ -3378,6 +3434,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
