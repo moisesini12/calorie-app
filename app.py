@@ -461,38 +461,83 @@ div[data-testid="stDateInput"] input{
 }
 
 /* =========================
-   SUBNAV (Registro): 3 botones en 1 fila SIEMPRE
+   SUBNAV (Registro): 3 botones en 1 fila SIEMPRE (COMPACTOS)
    ========================= */
 
-/* El wrapper que tú ya metes con st.markdown('<div class="fm-subnav">') */
 .fm-subnav{
   margin-top: 10px;
 }
 
-/* Forzamos que el row de columns NO se parta y tenga scroll si hiciera falta */
+/* Row: no wrap + scroll por si móvil mini */
 .fm-subnav [data-testid="stHorizontalBlock"]{
   display: flex !important;
-  flex-wrap: nowrap !important;              /* <- clave: no columnas en vertical */
+  flex-wrap: nowrap !important;
   gap: 10px !important;
-  overflow-x: auto !important;               /* por si un móvil ultra pequeño */
+  overflow-x: auto !important;
   -webkit-overflow-scrolling: touch !important;
   padding-bottom: 6px !important;
+
+  /* Mantén el “card” de fondo */
+  background: rgba(15, 23, 42, 0.55) !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
+  border-radius: 22px !important;
+  padding: 8px !important;
+  box-shadow: 0 18px 45px rgba(0,0,0,0.45) !important;
 }
 
-/* Cada columna ocupa 1/3 del ancho (y no se encoge a nada) */
+/* Cada tercio existe, pero centramos el contenido (el botón) */
 .fm-subnav [data-testid="stHorizontalBlock"] > div{
   flex: 1 1 0 !important;
   min-width: 0 !important;
+
+  display: flex !important;
+  justify-content: center !important;  /* <- centra el botón dentro del tercio */
+  align-items: center !important;
 }
 
-/* Los botones llenan su “hueco” */
+/* Botón: tamaño “chip”, NO full width */
 .fm-subnav .stButton > button{
-  width: 100% !important;
-  min-height: 52px !important;
+  width: auto !important;              /* <- clave: deja de ocupar todo */
+  min-width: 0 !important;
+  min-height: 36px !important;
+  height: 36px !important;
+
+  padding: 0 14px !important;          /* <- pastilla compacta */
   border-radius: 999px !important;
+
   font-weight: 900 !important;
+  font-size: 13px !important;
   white-space: nowrap !important;
+
+  background: rgba(255,255,255,0.06) !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
+  color: rgba(255,255,255,0.92) !important;
+  box-shadow: none !important;
 }
+
+/* Hover suave */
+.fm-subnav .stButton > button:hover{
+  background: rgba(255,255,255,0.08) !important;
+  border-color: rgba(255,255,255,0.14) !important;
+  transform: none !important;
+}
+
+/* Móvil: un pelín más pequeño aún */
+@media (max-width: 900px){
+  .fm-subnav [data-testid="stHorizontalBlock"]{
+    border-radius: 20px !important;
+    padding: 7px !important;
+    gap: 8px !important;
+  }
+
+  .fm-subnav .stButton > button{
+    height: 34px !important;
+    min-height: 34px !important;
+    padding: 0 12px !important;
+    font-size: 12.5px !important;
+  }
+}
+
 
 </style>
 """, unsafe_allow_html=True)
@@ -3346,6 +3391,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
