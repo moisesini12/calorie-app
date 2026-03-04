@@ -2837,14 +2837,23 @@ elif page == "🏋️ Rutina IA":
     # ======================================================
     # Cargar rutina (para saber si hay plan y poder hacer 2 columnas)
     # ======================================================
+    # ======================================================
+    # Cargar rutina guardada (PRIORIDAD) y fallback a session_state
+    # ======================================================
     saved_plan_raw = get_setting("workout_plan_json", default="", user_id=uid)
-    plan = st.session_state.get("last_workout_plan")
-
-    if plan is None and saved_plan_raw:
+    
+    plan = None
+    
+    # 1) PRIORIDAD: lo guardado en Sheets
+    if saved_plan_raw:
         try:
             plan = json.loads(saved_plan_raw)
         except Exception:
             plan = None
+    
+    # 2) Fallback: lo generado en esta sesión
+    if plan is None:
+        plan = st.session_state.get("last_workout_plan")
 
     has_plan = bool(plan)
 
@@ -3401,6 +3410,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
