@@ -439,7 +439,7 @@ div[data-testid="stDateInput"] input{
   left: 12px !important;
   right: 12px !important;
   bottom: 2px !important;
-  top: 5px !important;
+  top: 10px !important;
 
   height: 60px !important;
   width: auto !important;
@@ -496,8 +496,16 @@ section.main > div{
   gap: 0 !important;
 }
 
+/* espacio pequeño debajo de la navbar */
+.block-container{
+  padding-top: 12px !important;
+}
 
 
+/* espacio antes de la primera sección */
+.fm-hero{
+  margin-bottom: 10px !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -3393,6 +3401,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
