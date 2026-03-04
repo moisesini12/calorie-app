@@ -901,6 +901,8 @@ def _go(target_page: str):
     st.session_state["page"] = target_page
     st.session_state["food_popup_open"] = False
     st.session_state["profile_popup_open"] = False
+    st.session_state["_nav_sync"] = True
+    st.session_state["_food_subnav_sync"] = True   # ✅ NUEVO
 
     # ✅ clave: cuando cambiamos page desde código, pedimos sync del nav
     st.session_state["_nav_sync"] = True
@@ -1007,35 +1009,75 @@ if st.session_state.get("profile_popup_open", False):
 FOOD_PAGES = {"🍽 Registro", "➕ Añadir alimento", "👨‍🍳 Chef IA", "🤖 IA Alimento"}
 
 def render_food_subnav():
-    st.markdown('<div class="fm-subnav-anchor"></div>', unsafe_allow_html=True)
+    # Tabs y mapeo
+    tab_to_page = {
+        "🍽 Registro": "🍽 Registro",
+        "➕ Añadir": "➕ Añadir alimento",
+        "🧑‍🍳 Chef IA": "👨‍🍳 Chef IA",
+    }
 
-    current = st.session_state.get("page", "")
+    page = st.session_state.get("page", "🍽 Registro")
 
-    c1, c2, c3 = st.columns(3, gap="small")
+    # Qué pestaña debería estar seleccionada según la page actual
+    desired = "🍽 Registro"
+    if page == "➕ Añadir alimento":
+        desired = "➕ Añadir"
+    elif page == "👨‍🍳 Chef IA":
+        desired = "🧑‍🍳 Chef IA"
 
-    with c1:
-        btn = st.button("🍽 Registro", key="subnav_registro")
-        if current == "🍽 Registro":
-            st.markdown("<style>#subnav_registro button{background:linear-gradient(135deg,#22d3ee,#06b6d4);color:#001018;border:none;box-shadow:0 0 0 1px rgba(34,211,238,.35),0 6px 20px rgba(34,211,238,.35);}</style>", unsafe_allow_html=True)
-        if btn:
-            _go("🍽 Registro")
-            st.rerun()
+    # ✅ Sync cuando el cambio vino por _go()
+    if st.session_state.get("_food_subnav_sync", False):
+        st.session_state["fm_food_subnav_ui"] = desired
+        st.session_state["_food_subnav_sync"] = False
 
-    with c2:
-        btn = st.button("➕ Añadir alimento", key="subnav_add")
-        if current == "➕ Añadir alimento":
-            st.markdown("<style>#subnav_add button{background:linear-gradient(135deg,#22d3ee,#06b6d4);color:#001018;border:none;box-shadow:0 0 0 1px rgba(34,211,238,.35),0 6px 20px rgba(34,211,238,.35);}</style>", unsafe_allow_html=True)
-        if btn:
-            _go("➕ Añadir alimento")
-            st.rerun()
+    # ✅ Inicialización
+    if "fm_food_subnav_ui" not in st.session_state:
+        st.session_state["fm_food_subnav_ui"] = desired
 
-    with c3:
-        btn = st.button("🧑‍🍳 Chef IA", key="subnav_chef")
-        if current == "👨‍🍳 Chef IA":
-            st.markdown("<style>#subnav_chef button{background:linear-gradient(135deg,#22d3ee,#06b6d4);color:#001018;border:none;box-shadow:0 0 0 1px rgba(34,211,238,.35),0 6px 20px rgba(34,211,238,.35);}</style>", unsafe_allow_html=True)
-        if btn:
-            _go("👨‍🍳 Chef IA")
-            st.rerun()
+    # Render segmented control
+    selected = option_menu(
+        menu_title=None,
+        options=["🍽 Registro", "➕ Añadir", "🧑‍🍳 Chef IA"],
+        icons=["journal-text", "plus-circle", "robot"],
+        orientation="horizontal",
+        key="fm_food_subnav_ui",
+        styles={
+            "container": {
+                "padding": "6px 8px",
+                "background-color": "rgba(15, 23, 42, 0.55)",
+                "border": "1px solid rgba(255,255,255,0.10)",
+                "border-radius": "999px",
+                "box-shadow": "0 18px 45px rgba(0,0,0,0.45)",
+            },
+            "icon": {"font-size": "14px"},
+            "nav-link": {
+                "padding": "6px 10px",          # ✅ tamaño chip
+                "margin": "0px 6px 0px 0px",
+                "border-radius": "999px",
+                "font-weight": "800",
+                "font-size": "12px",
+                "white-space": "nowrap",
+                "background-color": "rgba(255,255,255,0.06)",
+                "border": "1px solid rgba(255,255,255,0.12)",
+            },
+            "nav-link-selected": {
+                "border-radius": "999px",
+                "background": "linear-gradient(135deg, #22d3ee, #06b6d4)",
+                "color": "#001018",
+                "box-shadow": "0 0 0 1px rgba(34,211,238,.35), 0 8px 22px rgba(34,211,238,.35)",
+                "border": "0px",
+            },
+        },
+    )
+
+    # Click real -> navegar
+    prev = st.session_state.get("_fm_food_prev", None)
+    st.session_state["_fm_food_prev"] = selected
+    if prev is None or selected == prev:
+        return
+
+    _go(tab_to_page[selected])
+    st.rerun()
 
     st.markdown("</div>", unsafe_allow_html=True)
 # =========================
@@ -3385,6 +3427,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
