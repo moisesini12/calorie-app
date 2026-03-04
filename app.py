@@ -479,133 +479,9 @@ div[data-testid="stDateInput"] input{
 }
 
 
-/* =========================================================
-   BOTTOM NAV: eliminar el "hueco fantasma" del option_menu
-   Identificamos el bottom-nav por el key: fm_bottom_nav_ui
-   ========================================================= */
 
-/* 1) El iframe del bottom nav: fijo abajo */
-iframe[title*="fm_bottom_nav_ui"][title*="streamlit_option_menu"],
-iframe[src*="streamlit_option_menu"][title*="fm_bottom_nav_ui"]{
-  position: fixed !important;
-  left: 12px !important;
-  right: 12px !important;
-  bottom: 2px !important;
-  top: auto !important;
 
-  height: 60px !important;
-  width: auto !important;
 
-  z-index: 999999 !important;
-
-  background: rgba(15, 23, 42, 0.92) !important;
-  border: 1px solid rgba(255,255,255,0.10) !important;
-  border-radius: 999px !important;
-
-  box-shadow: 0 20px 60px rgba(0,0,0,0.65) !important;
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important;
-
-  overflow: hidden !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  display: block !important;
-}
-
-/* 2) 🔥 APLASTAR a 0 el wrapper donde Streamlit lo "reservó" */
-div[data-testid="stElementContainer"]:has(iframe[title*="fm_bottom_nav_ui"][title*="streamlit_option_menu"]),
-div[data-testid="stElementContainer"]:has(iframe[src*="streamlit_option_menu"][title*="fm_bottom_nav_ui"]){
-  height: 0 !important;
-  min-height: 0 !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  overflow: visible !important; /* para no cortar el iframe fixed */
-}
-
-/* 3) A veces hay 1-2 wrappers más arriba: también a 0 */
-div[data-testid="stVerticalBlock"]:has(iframe[title*="fm_bottom_nav_ui"][title*="streamlit_option_menu"]),
-div[data-testid="stVerticalBlock"]:has(iframe[src*="streamlit_option_menu"][title*="fm_bottom_nav_ui"]),
-div[data-testid="stHorizontalBlock"]:has(iframe[title*="fm_bottom_nav_ui"][title*="streamlit_option_menu"]),
-div[data-testid="stHorizontalBlock"]:has(iframe[src*="streamlit_option_menu"][title*="fm_bottom_nav_ui"]){
-  height: 0 !important;
-  min-height: 0 !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  overflow: visible !important;
-}
-
-/* 4) El propio iframe no debe aportar espacio en flujo */
-div[data-testid="stElementContainer"] iframe[title*="fm_bottom_nav_ui"]{
-  margin: 0 !important;
-  padding: 0 !important;
-}
-
-/* =========================================================
-   MODO NUCLEAR: matar el hueco fantasma de streamlit_option_menu
-   (si SOLO tienes el bottom-nav hecho con option_menu)
-   ========================================================= */
-
-/* 1) El iframe del option_menu SIEMPRE fixed abajo */
-iframe[title*="streamlit_option_menu"],
-iframe[src*="streamlit_option_menu"]{
-  position: fixed !important;
-
-  left: 12px !important;
-  right: 12px !important;
-  bottom: 2px !important;
-  top: auto !important;
-
-  height: 60px !important;
-  width: auto !important;
-
-  z-index: 999999 !important;
-
-  background: rgba(15, 23, 42, 0.92) !important;
-  border: 1px solid rgba(255,255,255,0.10) !important;
-  border-radius: 999px !important;
-
-  box-shadow: 0 20px 60px rgba(0,0,0,0.65) !important;
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important;
-
-  overflow: hidden !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  display: block !important;
-}
-
-/* 2) APLASTAR el contenedor que Streamlit reserva para el iframe (el hueco) */
-div[data-testid="stElementContainer"]:has(iframe[title*="streamlit_option_menu"]),
-div[data-testid="stElementContainer"]:has(iframe[src*="streamlit_option_menu"]){
-  height: 0 !important;
-  min-height: 0 !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  overflow: visible !important; /* clave: no cortar el fixed */
-}
-
-/* 3) A veces hay wrappers extra: también a 0 */
-div[data-testid="stVerticalBlock"]:has(iframe[title*="streamlit_option_menu"]),
-div[data-testid="stVerticalBlock"]:has(iframe[src*="streamlit_option_menu"]),
-div[data-testid="stHorizontalBlock"]:has(iframe[title*="streamlit_option_menu"]),
-div[data-testid="stHorizontalBlock"]:has(iframe[src*="streamlit_option_menu"]){
-  height: 0 !important;
-  min-height: 0 !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  overflow: visible !important;
-}
-
-/* 4) Streamlit mete a veces "gap" entre elementos: lo cortamos */
-div[data-testid="stElementContainer"]:has(iframe[title*="streamlit_option_menu"]) + div{
-  margin-top: 0 !important;
-}
-
-/* 5) Por si hay un “spacer” encima/abajo dentro del main */
-section.main > div{
-  padding-top: 0 !important;
-  padding-bottom: 0 !important;
-}
 
 </style>
 """, unsafe_allow_html=True)
@@ -1290,19 +1166,6 @@ if page == "📊 Dashboard":
     st.markdown(hero_html, unsafe_allow_html=True)
 
     # Acciones rápidas (móvil-friendly)
-    st.markdown("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
-    c1, c2 = st.columns(2)
-    with c1:
-        if st.button("➕ Añadir comida", type="primary", use_container_width=True, key="dash_add_food"):
-            _go("🍽 Registro")
-            st.rerun()
-    
-    with c2:
-        if st.button("🎯 Cambiar objetivos", use_container_width=True, key="dash_go_goals"):
-            _go("🎯 Objetivos")
-            st.rerun()
-
-    st.markdown("<div style='height:24px'></div>", unsafe_allow_html=True)
 
     # --- Datos del día ---
     rows = cached_list_entries_by_date(selected_date_str, st.session_state["user_id"])
@@ -3515,6 +3378,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
