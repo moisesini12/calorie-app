@@ -266,10 +266,10 @@ details summary{
 
 .block-container{
   max-width: 1100px !important;
-  padding-top: -10px !important;      /* ✅ cero hueco arriba */
+  padding-top: 10px !important;      /* ✅ cero hueco arriba */
   padding-left: 14px !important;
   padding-right: 14px !important;
-  padding-bottom: 78px !important;  /* ✅ justo para la barra */
+  padding-bottom: 50px !important;  /* ✅ justo para la barra */
 }
 
 
@@ -3495,6 +3495,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
