@@ -482,7 +482,7 @@ div[data-testid="stDateInput"] input{
 """, unsafe_allow_html=True)
 
     # (Tu JS y lo demás queda EXACTAMENTE igual)
-""", unsafe_allow_html=True)
+
 
     # =========================
     # 2) JS: evitar teclado pero mantener click
@@ -3386,6 +3386,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
