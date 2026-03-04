@@ -461,48 +461,42 @@ div[data-testid="stDateInput"] input{
 }
 
 /* =========================
-   SUBNAV (Registro): 3 botones en 1 fila SIEMPRE (COMPACTOS)
+   SUBNAV: estilo por ANCLA (Streamlit-safe)
    ========================= */
 
-.fm-subnav{
-  margin-top: 10px;
-}
-
-/* Row: no wrap + scroll por si móvil mini */
-.fm-subnav [data-testid="stHorizontalBlock"]{
-  display: flex !important;
-  flex-wrap: nowrap !important;
-  gap: 10px !important;
-  overflow-x: auto !important;
-  -webkit-overflow-scrolling: touch !important;
-  padding-bottom: 6px !important;
-
-  /* Mantén el “card” de fondo */
+/* El bloque de columnas viene justo después del markdown del anchor */
+.fm-subnav-anchor + div [data-testid="stHorizontalBlock"]{
   background: rgba(15, 23, 42, 0.55) !important;
   border: 1px solid rgba(255,255,255,0.10) !important;
   border-radius: 22px !important;
   padding: 8px !important;
+  gap: 10px !important;
   box-shadow: 0 18px 45px rgba(0,0,0,0.45) !important;
+
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
 }
 
-/* Cada tercio existe, pero centramos el contenido (el botón) */
-.fm-subnav [data-testid="stHorizontalBlock"] > div{
+/* Cada columna = tercio, pero centramos el contenido */
+.fm-subnav-anchor + div [data-testid="stHorizontalBlock"] > div{
   flex: 1 1 0 !important;
   min-width: 0 !important;
 
   display: flex !important;
-  justify-content: center !important;  /* <- centra el botón dentro del tercio */
+  justify-content: center !important;
   align-items: center !important;
 }
 
-/* Botón: tamaño “chip”, NO full width */
-.fm-subnav .stButton > button{
-  width: auto !important;              /* <- clave: deja de ocupar todo */
+/* Botones tipo “chip” */
+.fm-subnav-anchor + div .stButton > button{
+  width: auto !important;
   min-width: 0 !important;
-  min-height: 36px !important;
-  height: 36px !important;
 
-  padding: 0 14px !important;          /* <- pastilla compacta */
+  height: 36px !important;
+  min-height: 36px !important;
+  padding: 0 14px !important;
   border-radius: 999px !important;
 
   font-weight: 900 !important;
@@ -515,22 +509,8 @@ div[data-testid="stDateInput"] input{
   box-shadow: none !important;
 }
 
-/* Hover suave */
-.fm-subnav .stButton > button:hover{
-  background: rgba(255,255,255,0.08) !important;
-  border-color: rgba(255,255,255,0.14) !important;
-  transform: none !important;
-}
-
-/* Móvil: un pelín más pequeño aún */
 @media (max-width: 900px){
-  .fm-subnav [data-testid="stHorizontalBlock"]{
-    border-radius: 20px !important;
-    padding: 7px !important;
-    gap: 8px !important;
-  }
-
-  .fm-subnav .stButton > button{
+  .fm-subnav-anchor + div .stButton > button{
     height: 34px !important;
     min-height: 34px !important;
     padding: 0 12px !important;
@@ -1024,22 +1004,23 @@ if st.session_state.get("profile_popup_open", False):
 FOOD_PAGES = {"🍽 Registro", "➕ Añadir alimento", "👨‍🍳 Chef IA", "🤖 IA Alimento"}
 
 def render_food_subnav():
-    st.markdown('<div class="fm-subnav">', unsafe_allow_html=True)
+    # ✅ ANCLA: esto sí existe en el DOM justo antes de las columnas
+    st.markdown('<div class="fm-subnav-anchor"></div>', unsafe_allow_html=True)
 
     c1, c2, c3 = st.columns(3, gap="small")
 
     with c1:
-        if st.button("🍽 Registro", use_container_width=True, key="subnav_registro"):
+        if st.button("🍽 Registro", use_container_width=False, key="subnav_registro"):
             _go("🍽 Registro")
             st.rerun()
 
     with c2:
-        if st.button("➕ Añadir alimento", use_container_width=True, key="subnav_add"):
+        if st.button("➕ Añadir alimento", use_container_width=False, key="subnav_add"):
             _go("➕ Añadir alimento")
             st.rerun()
 
     with c3:
-        if st.button("🧑‍🍳 Chef IA", use_container_width=True, key="subnav_chef"):
+        if st.button("🧑‍🍳 Chef IA", use_container_width=False, key="subnav_chef"):
             _go("👨‍🍳 Chef IA")
             st.rerun()
 
@@ -3391,6 +3372,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
