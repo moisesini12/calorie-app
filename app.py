@@ -2926,65 +2926,7 @@ elif page == "🏋️ Rutina IA":
                 st.markdown(f"- {x}")
             st.markdown("")
     
-    def sanitize_workout_plan(plan):
-    
-        muscle_map = {
-            "abs": [
-                "plancha", "crunch", "elevacion", "elevación", "russian twist",
-                "dead bug", "hollow", "mountain climber", "ab wheel", "bicycle"
-            ],
-    
-            "hombro": [
-                "press militar", "shoulder press", "elevacion lateral",
-                "elevaciones laterales", "pajaro", "arnold press"
-            ],
-    
-            "biceps": [
-                "curl", "biceps", "bíceps", "martillo"
-            ],
-    
-            "triceps": [
-                "triceps", "tríceps", "fondos", "extension"
-            ],
-    
-            "pecho": [
-                "press banca", "bench press", "flexiones", "aperturas"
-            ],
-    
-            "espalda": [
-                "remo", "jalon", "jalón", "dominada", "pulldown"
-            ],
-    
-            "pierna": [
-                "sentadilla", "squat", "zancada", "lunge",
-                "peso muerto", "hip thrust", "prensa"
-            ]
-        }
-    
-        for day in plan.get("weekly_schedule", []):
-    
-            focus = str(day.get("focus", "")).lower()
-            session = day.get("session", {})
-            main = session.get("main", [])
-    
-            valid_keywords = []
-    
-            for key, words in muscle_map.items():
-                if key in focus:
-                    valid_keywords += words
-    
-            cleaned = []
-    
-            for ex in main:
-                name = str(ex.get("exercise", "")).lower()
-    
-                if any(word in name for word in valid_keywords):
-                    cleaned.append(ex)
-    
-            session["main"] = cleaned
-            day["session"] = session
-    
-        return plan
+  
         # ======================================================
     # Sanitizador de rutina IA (coherencia + 5 ejercicios fijos)
     # ======================================================
@@ -3815,6 +3757,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
