@@ -3385,7 +3385,7 @@ elif page == "🏋️ Rutina IA":
 
             try:
                 plan_new = json.loads(raw)
-                plan_new = sanitize_workout_plan(plan_new)
+               
             except json.JSONDecodeError:
                 st.error("La IA devolvió un formato raro. Reintenta.")
                 st.code(raw)
@@ -3757,6 +3757,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
