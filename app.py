@@ -2926,6 +2926,311 @@ elif page == "🏋️ Rutina IA":
                 st.markdown(f"- {x}")
             st.markdown("")
 
+
+        # ======================================================
+    # Sanitizador de rutina IA (coherencia + 5 ejercicios fijos)
+    # ======================================================
+    def _norm_text(s: str) -> str:
+        return str(s or "").strip().lower()
+
+    def _split_focus_tags(focus_text: str) -> set:
+        t = _norm_text(focus_text)
+        tags = set()
+
+        if any(x in t for x in ["hombro", "delto"]):
+            tags.add("shoulders")
+        if any(x in t for x in ["brazo", "biceps", "bíceps", "triceps", "tríceps"]):
+            tags.add("arms")
+        if any(x in t for x in ["pecho", "chest"]):
+            tags.add("chest")
+        if any(x in t for x in ["espalda", "dorsal", "trapecio", "remo"]):
+            tags.add("back")
+        if any(x in t for x in ["pierna", "cuadriceps", "cuádriceps", "femoral", "isquio", "gemelo", "pantorrilla"]):
+            tags.add("legs")
+        if any(x in t for x in ["glute", "glúte"]):
+            tags.add("glutes")
+        if any(x in t for x in ["abs", "abdominal", "core"]):
+            tags.add("core")
+        if any(x in t for x in ["full body", "cuerpo completo", "completo"]):
+            tags.add("fullbody")
+
+        return tags
+
+    def _exercise_tags(ex_name: str) -> set:
+        t = _norm_text(ex_name)
+        tags = set()
+
+        # shoulders
+        if any(x in t for x in [
+            "press militar", "shoulder press", "elevacion lateral", "elevación lateral",
+            "elevaciones laterales", "elevacion frontal", "elevación frontal",
+            "pajaro", "pájaro", "face pull", "arnold press", "remo al menton", "remo al mentón"
+        ]):
+            tags.add("shoulders")
+
+        # arms
+        if any(x in t for x in [
+            "curl", "biceps", "bíceps", "martillo", "hammer curl",
+            "triceps", "tríceps", "fondos", "extension de triceps", "extensión de tríceps",
+            "press frances", "press francés", "patada de triceps", "patada de tríceps"
+        ]):
+            tags.add("arms")
+
+        # chest
+        if any(x in t for x in [
+            "press banca", "bench press", "press inclinado", "flexiones", "push up", "aperturas", "fly"
+        ]):
+            tags.add("chest")
+
+        # back
+        if any(x in t for x in [
+            "remo", "jalon", "jalón", "dominada", "pull up", "pulldown", "face pull"
+        ]):
+            tags.add("back")
+
+        # legs
+        if any(x in t for x in [
+            "sentadilla", "squat", "zancada", "lunge", "peso muerto", "hip thrust",
+            "prensa", "extension de cuadriceps", "extensión de cuádriceps",
+            "curl femoral", "gemelo", "pantorrilla", "step up", "bulgara", "búlgara"
+        ]):
+            tags.add("legs")
+
+        # glutes
+        if any(x in t for x in [
+            "hip thrust", "puente de gluteo", "puente de glúteo", "patada de gluteo",
+            "patada de glúteo", "abduccion", "abducción", "peso muerto rumano", "sentadilla sumo"
+        ]):
+            tags.add("glutes")
+
+        # core
+        if any(x in t for x in [
+            "plancha", "crunch", "elevacion de piernas", "elevación de piernas",
+            "dead bug", "hollow", "russian twist", "ab wheel", "mountain climber"
+        ]):
+            tags.add("core")
+
+        return tags
+
+    def _exercise_matches_focus(ex_name: str, focus_text: str) -> bool:
+        focus_tags = _split_focus_tags(focus_text)
+        ex_tags = _exercise_tags(ex_name)
+
+        # Si el día es fullbody, dejamos pasar casi todo
+        if "fullbody" in focus_tags:
+            return True
+
+        # Si no se detecta foco, mejor no filtrar agresivo
+        if not focus_tags:
+            return True
+
+        # Coincidencia directa
+        if ex_tags & focus_tags:
+            return True
+
+        # Reglas suaves útiles
+        if {"shoulders", "arms"} <= focus_tags and ex_tags & {"shoulders", "arms"}:
+            return True
+        if {"chest", "arms"} <= focus_tags and ex_tags & {"chest", "arms"}:
+            return True
+        if {"back", "arms"} <= focus_tags and ex_tags & {"back", "arms"}:
+            return True
+        if {"legs", "glutes"} <= focus_tags and ex_tags & {"legs", "glutes"}:
+            return True
+
+        return False
+
+    def _fallback_exercises_for_focus(focus_text: str, equipment_text: str = "") -> list:
+        f = _norm_text(focus_text)
+        eq = _norm_text(equipment_text)
+
+        has_dumbbells = any(x in eq for x in ["mancuerna", "mancuernas", "dumbbell"])
+        has_band = any(x in eq for x in ["banda", "goma", "elastica", "elástica"])
+        bodyweight_only = not has_dumbbells and not has_band
+
+        if "hombro" in f and "brazo" in f:
+            base = [
+                "Press militar con mancuernas" if has_dumbbells else "Pike push-ups",
+                "Elevaciones laterales" if has_dumbbells else "Elevaciones laterales con banda" if has_band else "Flexiones inclinadas",
+                "Curl de bíceps con mancuernas" if has_dumbbells else "Curl de bíceps con banda" if has_band else "Curl isométrico con mochila",
+                "Curl martillo" if has_dumbbells else "Curl martillo con banda" if has_band else "Fondos entre sillas",
+                "Extensión de tríceps por encima de la cabeza" if has_dumbbells else "Extensión de tríceps con banda" if has_band else "Fondos en banco",
+            ]
+            return base
+
+        if "pecho" in f and "triceps" in f or "pecho" in f and "tríceps" in f:
+            return [
+                "Press banca con mancuernas" if has_dumbbells else "Flexiones",
+                "Press inclinado con mancuernas" if has_dumbbells else "Flexiones inclinadas",
+                "Aperturas con mancuernas" if has_dumbbells else "Aperturas con banda" if has_band else "Flexiones lentas",
+                "Fondos en banco",
+                "Extensión de tríceps por encima de la cabeza" if has_dumbbells else "Extensión de tríceps con banda" if has_band else "Flexiones cerradas",
+            ]
+
+        if "espalda" in f and "biceps" in f or "espalda" in f and "bíceps" in f:
+            return [
+                "Remo con mancuerna a una mano" if has_dumbbells else "Remo con banda" if has_band else "Remo con mochila",
+                "Remo inclinado con mancuernas" if has_dumbbells else "Jalón con banda" if has_band else "Superman",
+                "Face pull con banda" if has_band else "Pájaros con mancuernas" if has_dumbbells else "Superman con pausa",
+                "Curl de bíceps con mancuernas" if has_dumbbells else "Curl de bíceps con banda" if has_band else "Curl con mochila",
+                "Curl martillo" if has_dumbbells else "Curl martillo con banda" if has_band else "Isométrico de bíceps",
+            ]
+
+        if "pierna" in f or "glute" in f or "glúte" in f:
+            return [
+                "Sentadilla goblet" if has_dumbbells else "Sentadilla",
+                "Peso muerto rumano con mancuernas" if has_dumbbells else "Buenos días con banda" if has_band else "Puente de glúteo",
+                "Zancadas alternas",
+                "Hip thrust",
+                "Elevación de gemelos",
+            ]
+
+        if "abs" in f or "core" in f or "abdominal" in f:
+            return [
+                "Plancha frontal",
+                "Dead bug",
+                "Crunch",
+                "Elevación de piernas",
+                "Russian twist",
+            ]
+
+        if bodyweight_only:
+            return [
+                "Flexiones",
+                "Sentadillas",
+                "Zancadas",
+                "Plancha frontal",
+                "Puente de glúteo",
+            ]
+
+        return [
+            "Press militar con mancuernas" if has_dumbbells else "Flexiones",
+            "Remo con mancuerna a una mano" if has_dumbbells else "Remo con banda" if has_band else "Remo con mochila",
+            "Sentadilla goblet" if has_dumbbells else "Sentadilla",
+            "Peso muerto rumano con mancuernas" if has_dumbbells else "Hip thrust",
+            "Plancha frontal",
+        ]
+
+    def _default_scheme_for_focus(focus_text: str, level_text: str) -> tuple:
+        f = _norm_text(focus_text)
+        lvl = _norm_text(level_text)
+
+        if any(x in f for x in ["abs", "core", "abdominal"]):
+            return (3, "12-20", 45)
+
+        if any(x in f for x in ["pierna", "glute", "glúte"]):
+            if "principiante" in lvl:
+                return (3, "10-12", 75)
+            elif "avanzado" in lvl:
+                return (4, "6-10", 90)
+            return (4, "8-12", 90)
+
+        if "principiante" in lvl:
+            return (3, "10-12", 60)
+        elif "avanzado" in lvl:
+            return (4, "6-10", 75)
+        return (4, "8-12", 75)
+
+    def _sanitize_session(session: dict, day_focus: str, equipment_text: str, level_text: str, target_main_count: int = 5) -> dict:
+        session = session or {}
+        main = session.get("main", []) or []
+
+        cleaned = []
+        seen = set()
+
+        # 1) dejar solo ejercicios coherentes con el foco
+        for ex in main:
+            if not isinstance(ex, dict):
+                continue
+
+            ex_name = str(ex.get("exercise", "")).strip()
+            if not ex_name:
+                continue
+
+            ex_name_key = _norm_text(ex_name)
+            if ex_name_key in seen:
+                continue
+
+            if _exercise_matches_focus(ex_name, day_focus):
+                sets = ex.get("sets")
+                reps = ex.get("reps")
+                rest = ex.get("rest_sec")
+
+                d_sets, d_reps, d_rest = _default_scheme_for_focus(day_focus, level_text)
+
+                cleaned.append({
+                    "exercise": ex_name,
+                    "sets": int(sets) if str(sets).strip().isdigit() else d_sets,
+                    "reps": str(reps).strip() if str(reps).strip() else d_reps,
+                    "rest_sec": int(rest) if str(rest).strip().isdigit() else d_rest,
+                    "notes": str(ex.get("notes", "")).strip()
+                })
+                seen.add(ex_name_key)
+
+        # 2) si faltan ejercicios, rellenar con una biblioteca coherente
+        fallback = _fallback_exercises_for_focus(day_focus, equipment_text)
+        d_sets, d_reps, d_rest = _default_scheme_for_focus(day_focus, level_text)
+
+        for ex_name in fallback:
+            if len(cleaned) >= target_main_count:
+                break
+            ex_name_key = _norm_text(ex_name)
+            if ex_name_key in seen:
+                continue
+            cleaned.append({
+                "exercise": ex_name,
+                "sets": d_sets,
+                "reps": d_reps,
+                "rest_sec": d_rest,
+                "notes": ""
+            })
+            seen.add(ex_name_key)
+
+        # 3) recortar si sobran
+        cleaned = cleaned[:target_main_count]
+
+        session["main"] = cleaned
+        session["warmup"] = session.get("warmup", []) or []
+        session["finisher_optional"] = session.get("finisher_optional", []) or []
+        session["cooldown"] = session.get("cooldown", []) or []
+
+        return session
+
+    def _sanitize_workout_plan(plan_obj: dict, profile: dict) -> dict:
+        if not isinstance(plan_obj, dict):
+            return {"plan_name": "Rutina personalizada", "weekly_schedule": [], "progression_4_weeks": [], "nutrition_ties": {}}
+
+        schedule = plan_obj.get("weekly_schedule", []) or []
+        fixed_schedule = []
+
+        for day_block in schedule:
+            if not isinstance(day_block, dict):
+                continue
+
+            focus = str(day_block.get("focus", "")).strip()
+            session = day_block.get("session", {}) or {}
+
+            fixed_session = _sanitize_session(
+                session=session,
+                day_focus=focus,
+                equipment_text=profile.get("equipment", ""),
+                level_text=profile.get("level", "Principiante"),
+                target_main_count=5
+            )
+
+            day_block["session"] = fixed_session
+            fixed_schedule.append(day_block)
+
+        plan_obj["weekly_schedule"] = fixed_schedule
+        if "plan_name" not in plan_obj:
+            plan_obj["plan_name"] = "Rutina personalizada"
+        if "progression_4_weeks" not in plan_obj:
+            plan_obj["progression_4_weeks"] = []
+        if "nutrition_ties" not in plan_obj:
+            plan_obj["nutrition_ties"] = {}
+
+        return plan_obj
+        
     # ======================================================
     # COLUMNA IZQUIERDA: Perfil + Generación
     # ======================================================
@@ -2967,6 +3272,16 @@ elif page == "🏋️ Rutina IA":
                     key="wk_goal"
                 )
 
+
+                exercise_count = st.number_input(
+                    "Número de ejercicios por día",
+                    min_value=1,
+                    max_value=12,
+                    value=int(saved_profile.get("exercise_count", 5)),
+                    step=1,
+                    key="wk_exercise_count"
+                )
+
             st.markdown("**Capacidades (aprox.)**")
             c1, c2, c3 = st.columns(3)
             with c1:
@@ -2997,6 +3312,7 @@ elif page == "🏋️ Rutina IA":
                         "days": int(days),
                         "minutes": int(minutes),
                         "goal": goal,
+                        "exercise_count": int(exercise_count),
                         "pushups": int(pushups),
                         "squats": int(squats),
                         "plank_sec": int(plank_sec),
@@ -3025,6 +3341,7 @@ elif page == "🏋️ Rutina IA":
                 "days": int(st.session_state.get("wk_days", 3)),
                 "minutes": int(st.session_state.get("wk_minutes", 45)),
                 "goal": st.session_state.get("wk_goal", "Recomposición"),
+                "exercise_count": int(st.session_state.get("wk_exercise_count", 5)),
                 "pushups": int(st.session_state.get("wk_pushups", 10)),
                 "squats": int(st.session_state.get("wk_squats", 25)),
                 "plank_sec": int(st.session_state.get("wk_plank", 30)),
@@ -3046,9 +3363,22 @@ elif page == "🏋️ Rutina IA":
                 f"- Capacidades: flexiones {profile['pushups']}, sentadillas {profile['squats']}, plancha {profile['plank_sec']}s\n"
                 f"- Objetivo: {profile['goal']}\n"
                 f"- Foco: {profile['focus'] or 'equilibrado'}\n"
-                f"- Limitaciones: {profile['limitations'] or 'ninguna'}\n\n"
+                f"- Limitaciones: {profile['limitations'] or 'ninguna'}\n"
+                f"- EJERCICIOS POR DÍA: {profile['exercise_count']}\n\n"
+            
                 f"{nutrition_context}\n\n"
-                f"Preferencias: rutina razonable, progresiva, segura. Formato claro para móvil."
+            
+                f"REGLAS OBLIGATORIAS:\n"
+                f"1. Cada día debe tener EXACTAMENTE {profile['exercise_count']} ejercicios en session.main\n"
+                f"2. Los ejercicios deben coincidir con el focus del día\n"
+                f"3. No mezclar piernas con hombros/brazos\n"
+                f"4. No mezclar pecho con piernas\n"
+                f"5. No repetir ejercicios dentro del mismo día\n"
+                f"6. Si el focus es 'hombros y brazos', solo hombros/bíceps/tríceps\n"
+                f"7. Si el focus es 'espalda y bíceps', solo espalda/bíceps\n"
+                f"8. Si el focus es 'piernas y glúteos', solo tren inferior\n"
+                f"9. Evita ejercicios fuera del material disponible\n"
+                f"10. Devuelve JSON válido siguiendo exactamente la estructura esperada.\n"
             )
 
             raw = generate_workout_plan_json(ctx)
@@ -3426,6 +3756,7 @@ elif page == "🤖 IA Alimento":
             st.exception(e)
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
